@@ -53,12 +53,22 @@ public:
 	std::size_t precision;
 };
 template<typename T>
-struct floating_point_default
+struct shortest
 {
 public:
 	T& reference;
 	std::size_t precision;
 };
+
+
+template<std::size_t bs,bool uppercase,typename T>
+requires fast_io::details::base_number_upper_constraints<bs,uppercase>::value
+struct setz_base_t
+{
+	std::size_t width;
+	T& reference;
+};
+
 }
 template<std::integral T>
 inline constexpr manip::char_view_t<T> char_view(T& ch)
@@ -148,7 +158,7 @@ inline constexpr manip::scientific<T const> scientific(T const &f,std::size_t pr
 	return {f,precision};
 }
 template<typename T>
-inline constexpr manip::floating_point_default<T const> floating_point_default(T const &f,std::size_t precision)
+inline constexpr manip::shortest<T const> shortest(T const &f,std::size_t precision)
 {
 	return {f,precision};
 }
@@ -188,26 +198,38 @@ inline constexpr manip::setw_fill_t<T const,char_type> setw(std::size_t width,T 
 	return {width,t,ch};
 }
 
-template<character_output_stream output,typename T,std::integral U>
-inline void print(output& out,manip::setw_fill_t<T,U> a)
+namespace details
+{
+template<character_output_stream output,typename T,std::unsignged_integral W,std::integral U>
+inline constexpr void print_width(output& out,T const& reference,W width,U ch)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> bas;
-	print(bas,a.reference);
+	print(bas,reference);
 	std::size_t const size(bas.str().size());
-	if(size<a.width)
-		fill_nc(out,a.width-size,a.ch);
+	if(size<width)
+		fill_nc(out,width-size,ch);
 	print(out,bas.str());
 }
 
-template<character_output_stream output,typename T>
-inline void print(output& out,manip::setw_t<T> a)
+}
+
+template<character_output_stream output,typename T,std::integral U>
+inline constexpr print(output& out,manip::setw_fill_t<T,U> a)
 {
-	basic_ostring<std::basic_string<typename output::char_type>> bas;
-	print(bas,a.reference);
-	std::size_t const size(bas.str().size());
-	if(size<a.width)
-		fill_nc(out,a.width-size,' ');
-	print(out,bas.str());
+	return details::print_width(out,a.reference,a.width,a.ch);
+}
+
+template<character_output_stream output,typename T>
+inline constexpr print(output& out,manip::setw_t<T> a)
+{
+	return details::print_width(out,a.reference,a.width,' ');
+}
+
+
+template<character_output_stream output,typename T,std::integral U>
+inline void print(output& out,manip::setz_t<T,U> a)
+{
+	return details::print_width(out,a.reference,a.width,'0');
 }
 
 }

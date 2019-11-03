@@ -4401,11 +4401,10 @@ static const uint64_t POW10_SPLIT_2[3133][3] = {
 
 int main()
 {
-	println(fast_io::out,std::size(POW10_SPLIT));
 	fast_io::obuf ob("fixed_table.h");
 	print(ob,R"abcdef(#pragma once
 
-namespace fast_io::ryu_details
+namespace fast_io::details::ryu
 {
 
 template<bool controller=true>
@@ -4425,6 +4424,50 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 	print(ob,"};\nusing a=std::array<std::uint64_t,3>;\ninline static constexpr std::array split={");
 	first=true;
 	for(auto const & e : POW10_SPLIT)
+	{
+		if(first)
+			first=false;
+		else
+			put(ob,',');
+		print(ob,"a{");
+		std::size_t should_print(std::size(e));
+		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
+		for(std::size_t i(0);i!=should_print;++i)
+		{
+			if(i)
+				put(ob,',');
+			if(e[i]<1677216)
+				print(ob,e[i]);
+			else
+				print(ob,"0x",fast_io::hexupper(e[i]));
+		}
+		print(ob,"}");
+	}
+	print(ob,"};\ninline static constexpr std::array<std::uint8_t,69> min_block_2={");
+	first=true;
+	for(auto const & e : MIN_BLOCK_2)
+	{
+		if(first)
+			first=false;
+		else
+			put(ob,',');
+		print(ob,e);
+	}
+	first = false;
+	print(ob,"};\ninline static constexpr std::array<std::uint16_t,69> offset_2={");
+	first=true;
+	for(auto const & e : POW10_OFFSET_2)
+	{
+		if(first)
+			first=false;
+		else
+			put(ob,',');
+		print(ob,e);
+	}
+	first = true;
+	print(ob,"};\ninline static constexpr std::array split_2={");
+	first=true;
+	for(auto const & e : POW10_SPLIT_2)
 	{
 		if(first)
 			first=false;

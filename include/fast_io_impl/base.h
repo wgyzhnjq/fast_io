@@ -94,6 +94,34 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 */
 }
 
+//exploit for ryu algorithm
+template<std::uint8_t base,bool uppercase,std::size_t width,output_stream output,std::unsigned_integral U>
+requires base_number_upper_constraints<bs,uppercase>::value
+inline constexpr void unsafe_setw_base_number(output& out,U a)
+{
+	if constexpr(buffer_output_stream<output>)
+	{
+		auto reserved(oreserve(out,width));
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		{
+			if(reserved)
+			{
+				fill_nc(out,output_base_number_impl<base,uppercase>(reserved,a)-reserved,'0');
+				return;
+			}
+		}
+		else
+		{
+			fill_nc(out,output_base_number_impl<base,uppercase>(reserved,a)-reserved,'0');
+			return;
+		}
+	}
+	std::array<typename output::char_type,width> v;
+	auto const e(v.data()+v.size());
+	fill_nc(out,output_base_number_impl<base,uppercase>(e,a)-v.data(),'0');
+	writes(out,v.data(),e);
+}
+
 template<std::size_t base,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
@@ -151,7 +179,7 @@ inline void output_base_number(output& out,T b)
 		{
 			if(reserved)
 			{
-				auto p(output_base_number_impl<base,uppercase>(std::to_address(reserved),a));
+				auto p(output_base_number_impl<base,uppercase>(reserved,a));
 				if(minus)
 					*--p='-';
 				return;
@@ -159,7 +187,7 @@ inline void output_base_number(output& out,T b)
 		}
 		else
 		{
-			auto p(output_base_number_impl<base,uppercase>(std::to_address(reserved),a));
+			auto p(output_base_number_impl<base,uppercase>(reserved,a));
 			if(minus)
 				*--p='-';
 			return;
