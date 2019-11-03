@@ -185,7 +185,7 @@ inline void print(output& out,manip::scientific<T const> a)
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,manip::floating_point_default<T const> a)
+inline void print(output& out,manip::shortest<T const> a)
 {
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
@@ -233,7 +233,7 @@ inline void print(output& out,manip::floating_point_default<T const> a)
 template<character_output_stream soutp,std::floating_point T>
 inline void print(soutp &output,T const& p)
 {
-	print(output,floating_point_default(p,6));
+	print(output,shortest(p,6));
 }
 
 template<character_input_stream input,std::floating_point T>
@@ -329,7 +329,7 @@ inline constexpr void scan(input& in,T &t)
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,manip::floating_point_default<T const> a)
+inline void print(output& out,manip::shortest<T const> a)
 {
 	print(out,a.reference);
 }

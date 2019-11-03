@@ -31,6 +31,13 @@ struct setw_t
 	T& reference;
 };
 
+template<typename T>
+struct setz_t
+{
+	std::size_t width;
+	T& reference;
+};
+
 template<typename T,std::integral char_type>
 struct setw_fill_t
 {
@@ -200,7 +207,7 @@ inline constexpr manip::setw_fill_t<T const,char_type> setw(std::size_t width,T 
 
 namespace details
 {
-template<character_output_stream output,typename T,std::unsignged_integral W,std::integral U>
+template<character_output_stream output,typename T,std::unsigned_integral W,std::integral U>
 inline constexpr void print_width(output& out,T const& reference,W width,U ch)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> bas;
@@ -214,20 +221,20 @@ inline constexpr void print_width(output& out,T const& reference,W width,U ch)
 }
 
 template<character_output_stream output,typename T,std::integral U>
-inline constexpr print(output& out,manip::setw_fill_t<T,U> a)
+inline constexpr void print(output& out,manip::setw_fill_t<T,U> a)
 {
 	return details::print_width(out,a.reference,a.width,a.ch);
 }
 
 template<character_output_stream output,typename T>
-inline constexpr print(output& out,manip::setw_t<T> a)
+inline constexpr void print(output& out,manip::setw_t<T> a)
 {
 	return details::print_width(out,a.reference,a.width,' ');
 }
 
 
 template<character_output_stream output,typename T,std::integral U>
-inline void print(output& out,manip::setz_t<T,U> a)
+inline constexpr void print(output& out,manip::setz_t<T> a)
 {
 	return details::print_width(out,a.reference,a.width,'0');
 }

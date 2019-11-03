@@ -96,7 +96,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 
 //exploit for ryu algorithm
 template<std::uint8_t base,bool uppercase,std::size_t width,output_stream output,std::unsigned_integral U>
-requires base_number_upper_constraints<bs,uppercase>::value
+requires base_number_upper_constraints<base,uppercase>::value
 inline constexpr void unsafe_setw_base_number(output& out,U a)
 {
 	if constexpr(buffer_output_stream<output>)
