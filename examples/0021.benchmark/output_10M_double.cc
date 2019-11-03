@@ -39,6 +39,17 @@ try
 		println(obuf,fast_io::fixed(vec[i],6));
 	}
 	{
+		cqw::timer t("obuf");
+		fast_io::obuf obuf("obuf_no_extra_alloc.txt");
+		fast_io::ostring ostr;
+		for(std::size_t i(0);i!=N;++i)
+		{
+			ostr.clear();
+			println(ostr,fast_io::fixed(vec[i],6));
+			print(obuf,ostr.str());
+		}
+	}
+	{
 	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
