@@ -104,11 +104,11 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 	bool nonzero(false);
 	if(-52<=r2.e)
 	{
-		E const idx(neganegative_r2_etive_e?0:index_for_exponent(static_cast<E>(r2.e)));
+		E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
 		auto const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
-			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow<>::split[fixed_pow<>::offset[idx]+i],static_cast<signed_E>(j+8)));
+			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],static_cast<signed_E>(p10bitsmr2e+8)));
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -129,7 +129,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		std::size_t const blocks(precision/9+1);
 		std::size_t round_up(0);
 		std::size_t i(0);
-		auto const mb2_idx(fixed_pow<>::min_block_2[idx]);
+		auto const mb2_idx(fixed_pow10<>::min_block_2[idx]);
 		if (blocks<=mb2_idx)
 		{
 			i=blocks;
@@ -140,8 +140,8 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		for(;i<blocks;++i)
 		{
 			signed_E j(120+(abs_e2-(idx<<4)));
-			E p(fixed_pow<>::offset_2[idx]+i-mb2_idx);
-			if(p<=fixed_pow<>::offset_2[idx+1])
+			E p(fixed_pow10<>::offset_2[idx]+i-mb2_idx);
+			if(p<=fixed_pow10<>::offset_2[idx+1])
 			{
 				fill_nc(out,precision-9*i,'0');
 				break;
@@ -155,7 +155,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 				E lastdigit(0);
 				for(E k(maximum);k<9;++k)
 				{
-					lastdigit = digit%10;
+					lastdigit = digits%10;
 					digits /= 10;
 				}
 				if(lastdigit!=5)
