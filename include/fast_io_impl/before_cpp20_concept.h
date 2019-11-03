@@ -4,6 +4,7 @@
 #include<concepts>
 
 #include<iterator>
+#include<ranges>
 #ifdef _MSC_VER
 namespace std
 {

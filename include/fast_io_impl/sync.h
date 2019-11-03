@@ -27,6 +27,18 @@ inline constexpr void flush(basic_sync<output,ostr>& sync)
 	sync.buffer().clear();
 }
 
+template<output_stream output,typename ostr>
+inline constexpr auto& orange(basic_sync<output,ostr>& sync)
+{
+	return orange(sync.buffer());
+}
+
+template<output_stream output,typename ostr>
+inline constexpr auto oreserve(basic_sync<output,ostr>& sync)
+{
+	return oreserve(sync.buffer());
+}
+
 template<output_stream output,typename ostr,std::contiguous_iterator Iter>
 inline constexpr void writes(basic_sync<output,ostr>& sync,Iter cbegin,Iter cend)
 {

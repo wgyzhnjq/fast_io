@@ -1,4 +1,5 @@
 #pragma once
+#include"ryu/ryu.h"
 
 namespace fast_io
 {
@@ -337,12 +338,20 @@ inline void print(output& out,manip::shortest<T const> a)
 template<character_output_stream output,std::integral T>
 inline void print(output& out,manip::fixed<T const> a)
 {
-	print(out,a.reference);
+/*	print(out,a.reference);
 	if(a.precision)
 	{
 		put(out,'.');
 		for(std::size_t i(0);i!=a.precision;++i)
 			put(out,'0');
+	}*/
+	if constexpr(range_output_stream<output>)
+		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(out,static_cast<double>(a.reference),a.precision);
+	else
+	{
+		basic_ostring<std::basic_string<typename output::char_type>> os;
+		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(os,static_cast<double>(a.reference),a.precision);
+		print(out,orange(os));
 	}
 }
 

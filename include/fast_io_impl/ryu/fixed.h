@@ -44,7 +44,7 @@ return (uint32_t) ((((uint64_t) e) * 169464822037455ull) >> 49);
 }
 template<std::unsigned_integral T>
 inline constexpr std::size_t length_for_index(T idx)
-{return log10_pow2((idx<<4)+25)/9;}
+{return (log10_pow2(idx<<4)+25)/9;}
 
 template<typename T>
 inline constexpr uint32_t mul_shift_mod_1e9(__uint128_t m, std::array<T,3> const& mul, std::size_t j)
@@ -74,12 +74,13 @@ template<std::floating_point floating,std::unsigned_integral mantissaType,std::s
 inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& mantissa,exponentType const& exponent)
 {
 	if(!exponent)
-		return {mantissa,static_cast<exponentType>(-(1+floating_traits<floating>::bias+floating_traits<floating>::exponent_bits))};
-	return {static_cast<mantissaType>(static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits|mantissa),
-		static_cast<exponentType>(exponent-floating_traits<floating>::bias-floating_traits<floating>::exponent_bits-2)};
+		return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::exponent_bits)};
+	return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
+		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
 template<std::unsigned_integral T,std::unsigned_integral E,character_output_stream output,std::floating_point F>
+requires range_output_stream<output>
 inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 {
 	using signed_E = std::make_signed_t<E>;
@@ -89,6 +90,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 	T const mantissa(bits & ((static_cast<T>(1u) << floating_traits<F>::mantissa_bits) - 1u));
 	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & ((static_cast<E>(1u) << floating_traits<F>::exponent_bits) - 1u))));
 	// Case distinction; exit early for the easy cases.
+	std::size_t const start_pos(size(orange(out)));
 	if(exponent == ((1u << floating_traits<F>::exponent_bits) - 1u))
 	{
 		easy_case(out,sign,mantissa);
@@ -114,11 +116,9 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 	{
 		E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
 		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
-		println(out,r2.e," ",idx," ",p10bitsmr2e);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
 			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
-			print(fast_io::out,digits);
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -128,7 +128,6 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 			}
 		}
 	}
-
 	if(!nonzero)
 		put(out,'0');
 	if(precision)
@@ -148,16 +147,12 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		}
 		else if(i<mb2_idx)
 			fill_nc(out,9*(i=mb2_idx),'0');
-		for(;i<blocks;++i)
+		signed_E j(128+(abs_e2-(idx<<4)));
+		auto const of2i(fixed_pow10<>::offset_2[idx]);
+		for(std::size_t k(i);k<blocks;++k)
 		{
-			signed_E j(120+(abs_e2-(idx<<4)));
-			E p(fixed_pow10<>::offset_2[idx]+i-mb2_idx);
-			if(p<=fixed_pow10<>::offset_2[idx+1])
-			{
-				fill_nc(out,precision-9*i,'0');
-				break;
-			}
-			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j+8));
+			E p(of2i+k-mb2_idx);
+			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
 			if(i+1<blocks)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else
@@ -174,7 +169,10 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 				else
 				{
 					auto const required_twos(-static_cast<std::common_type_t<std::ptrdiff_t,signed_E>>(abs_e2+precision+1));
-					bool const trailing_zeros(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))));
+					if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))))
+						round_up = 2;
+					else
+						round_up = 1;
 				}
 				if(maximum)
 					print(out,digits);
@@ -183,18 +181,50 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		}
 		if(round_up)
 		{
-/*			std::size_t round_index(index);
-			for(;round_index--;)
+			auto &result(orange(out));
+			std::size_t round_index(size(orange(out))-start_pos);
+			std::size_t dot_index(0);
+			while(round_index--)
 			{
+				auto c(result[round_index]);
+				if (c == '-')
+				{
+					result[round_index+1] = '1';
+					if(dot_index)
+					{
+						result[dot_index] = '0';
+						result[dot_index+1] = '.';
+					}
+					put(out,'0');
+					return;
+				}
+				if (c == '.')
+				{
+					dot_index = round_index;
+					continue;
+				}
+				else if (c == '9')
+				{
+					result[round_index] = '0';
+					round_up = 1;
+					continue;
+				}
+				if (round_up==2&&(!c&1))
+					return;
+				result[round_index]=c+1;
+				return;
 			}
-			if(round_index==static_cast<std::size_t>(-1))
+			result.front()='1';
+			if(dot_index)
 			{
-
+				result[dot_index] = '0';
+				result[dot_index+1] = '.';
 			}
-			return;*/
+			put(out,'0');
 		}
 	}
-	fill_nc(out,precision,'0');
+	else
+		fill_nc(out,precision,'0');
 }
 
 }
