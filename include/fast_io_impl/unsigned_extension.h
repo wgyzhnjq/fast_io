@@ -493,12 +493,12 @@ inline constexpr void print(output& out,basic_unsigned_extension<T> const& a)
 }
 
 template<std::size_t base,bool uppercase,character_output_stream output,typename T>
-inline constexpr void print(output& out,details::base_t<base,uppercase,basic_unsigned_extension<T> const> v)
+inline constexpr void print(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T> const> v)
 {
 	details::output_base_extension_number<base,uppercase>(out,v.reference);
 }
 template<std::size_t base,bool uppercase,character_output_stream output,typename T>
-inline constexpr void print(output& out,details::base_t<base,uppercase,basic_unsigned_extension<T>> v)
+inline constexpr void print(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
 {
 	details::output_base_extension_number<base,uppercase>(out,v.reference);
 }
@@ -559,7 +559,7 @@ inline constexpr void input_base_extension_number(input& in,basic_unsigned_exten
 }
 
 template<std::size_t base,bool uppercase,character_input_stream input,typename T>
-inline constexpr void scan(input& in,details::base_t<base,uppercase,basic_unsigned_extension<T>> v)
+inline constexpr void scan(input& in,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
 {
 	details::input_base_extension_number<base>(in,v.reference);
 }

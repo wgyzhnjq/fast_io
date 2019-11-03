@@ -137,7 +137,7 @@ inline void output_fixed_floats(output& out,T e,std::size_t precision)
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,details::fixed<T const> a)
+inline void print(output& out,manip::fixed<T const> a)
 {
 	auto e(a.reference);
 	if(e<0)
@@ -151,7 +151,7 @@ inline void print(output& out,details::fixed<T const> a)
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,details::scientific<T const> a)
+inline void print(output& out,manip::scientific<T const> a)
 {
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
@@ -185,7 +185,7 @@ inline void print(output& out,details::scientific<T const> a)
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,details::floating_point_default<T const> a)
+inline void print(output& out,manip::floating_point_default<T const> a)
 {
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
@@ -329,13 +329,13 @@ inline constexpr void scan(input& in,T &t)
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,details::floating_point_default<T const> a)
+inline void print(output& out,manip::floating_point_default<T const> a)
 {
 	print(out,a.reference);
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,details::fixed<T const> a)
+inline void print(output& out,manip::fixed<T const> a)
 {
 	print(out,a.reference);
 	if(a.precision)
@@ -347,7 +347,7 @@ inline void print(output& out,details::fixed<T const> a)
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,details::scientific<T const> sc)
+inline void print(output& out,manip::scientific<T const> sc)
 {
 	print(out,scientific(static_cast<long double>(sc.reference),sc.precision));
 }

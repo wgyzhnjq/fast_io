@@ -930,19 +930,19 @@ inline constexpr void print(output& out,natural const& a)
 }
 
 template<std::size_t base,bool uppercase,character_output_stream output>
-inline constexpr void print(output& out,details::base_t<base,uppercase,natural const> v)
+inline constexpr void print(output& out,manip::base_t<base,uppercase,natural const> v)
 {
 	details::output_base_natural_number<base,uppercase>(out,v.reference);
 }
 template<std::size_t base,bool uppercase,character_output_stream output>
-inline constexpr void print(output& out,details::base_t<base,uppercase,natural> v)
+inline constexpr void print(output& out,manip::base_t<base,uppercase,natural> v)
 {
 	details::output_base_natural_number<base,uppercase>(out,v.reference);
 }
 
 
 template<std::size_t base,bool uppercase,character_input_stream input>
-inline constexpr void scan(input& in,details::base_t<base,uppercase,natural> v)
+inline constexpr void scan(input& in,manip::base_t<base,uppercase,natural> v)
 {
 	details::input_base_natural_number<base>(in,v.reference);
 }

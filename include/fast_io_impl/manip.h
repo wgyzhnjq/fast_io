@@ -4,7 +4,7 @@
 
 namespace fast_io
 {
-namespace details
+namespace manip
 {
 template<typename T>
 struct char_view_t
@@ -61,12 +61,12 @@ public:
 };
 }
 template<std::integral T>
-inline constexpr details::char_view_t<T> char_view(T& ch)
+inline constexpr manip::char_view_t<T> char_view(T& ch)
 {
 	return {ch};
 }
 template<std::integral T>
-inline constexpr details::char_view_t<T const> char_view(T const& ch)
+inline constexpr manip::char_view_t<T const> char_view(T const& ch)
 {
 	return {ch};
 }
@@ -126,70 +126,70 @@ inline constexpr std::size_t unsigned_view(T * const pointer)
 }
 
 template<std::floating_point T>
-inline constexpr details::char_view_t<T const> char_view(T const& ch)
+inline constexpr manip::char_view_t<T const> char_view(T const& ch)
 {
 	return {ch};
 }
 
 template<std::floating_point T>
-inline constexpr details::char_view_t<T> char_view(T& ch)
+inline constexpr manip::char_view_t<T> char_view(T& ch)
 {
 	return {ch};
 }
 
 template<typename T>
-inline constexpr details::fixed<T const> fixed(T const &f,std::size_t precision)
+inline constexpr manip::fixed<T const> fixed(T const &f,std::size_t precision)
 {
 	return {f,precision};
 }
 template<typename T>
-inline constexpr details::scientific<T const> scientific(T const &f,std::size_t precision)
+inline constexpr manip::scientific<T const> scientific(T const &f,std::size_t precision)
 {
 	return {f,precision};
 }
 template<typename T>
-inline constexpr details::floating_point_default<T const> floating_point_default(T const &f,std::size_t precision)
+inline constexpr manip::floating_point_default<T const> floating_point_default(T const &f,std::size_t precision)
 {
 	return {f,precision};
 }
 
 template<character_input_stream input,std::integral T>
-inline void scan(input& in,details::char_view_t<T> a)
+inline void scan(input& in,manip::char_view_t<T> a)
 {
 	a.reference = get(in);
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,details::char_view_t<T> a)
+inline void print(output& out,manip::char_view_t<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
 }
 template<character_input_stream input,std::floating_point T>
-inline void scan(input& in,details::char_view_t<T> a)
+inline void scan(input& in,manip::char_view_t<T> a)
 {
 	a.reference = get(in);
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,details::char_view_t<T> a)
+inline void print(output& out,manip::char_view_t<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
 }
 
 template<typename T>
-inline details::setw_t<T const> setw(std::size_t width,T const&t)
+inline manip::setw_t<T const> setw(std::size_t width,T const&t)
 {
 	return {width,t};
 }
 
 template<typename T,std::integral char_type>
-inline constexpr details::setw_fill_t<T const,char_type> setw(std::size_t width,T const&t,char_type ch)
+inline constexpr manip::setw_fill_t<T const,char_type> setw(std::size_t width,T const&t,char_type ch)
 {
 	return {width,t,ch};
 }
 
 template<character_output_stream output,typename T,std::integral U>
-inline void print(output& out,details::setw_fill_t<T,U> a)
+inline void print(output& out,manip::setw_fill_t<T,U> a)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> bas;
 	print(bas,a.reference);
@@ -200,7 +200,7 @@ inline void print(output& out,details::setw_fill_t<T,U> a)
 }
 
 template<character_output_stream output,typename T>
-inline void print(output& out,details::setw_t<T> a)
+inline void print(output& out,manip::setw_t<T> a)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> bas;
 	print(bas,a.reference);

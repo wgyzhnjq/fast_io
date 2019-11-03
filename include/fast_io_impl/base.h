@@ -13,7 +13,7 @@ struct base_number_upper_constraints
 	static constexpr bool value = 2<=bs&&bs<=36&&((bs<=10&&!uppercase)||10<bs);
 };
 
-template<std::uint8_t base,bool uppercase,std::contiguous_iterator Iter,std::unsigned_integral U>
+template<std::uint8_t base,bool uppercase,std::random_access_iterator Iter,std::unsigned_integral U>
 inline constexpr auto output_base_number_impl(Iter iter,U a)
 {
 //number: 0:48 9:57
@@ -130,7 +130,7 @@ inline constexpr void output_base_number(output& out,U a)
 		}
 		else
 		{
-			output_base_number_impl<base,uppercase>(std::to_address(reserved),a);
+			output_base_number_impl<base,uppercase>(reserved,a);
 			return;
 		}
 	}
@@ -140,7 +140,7 @@ inline constexpr void output_base_number(output& out,U a)
 }
 
 template<std::uint8_t base,bool uppercase,output_stream output,std::signed_integral T>
-inline  void output_base_number(output& out,T b)
+inline void output_base_number(output& out,T b)
 {
 	bool const minus(b<0);
 	auto const a(static_cast<std::make_unsigned_t<T>>(minus?-b:b));
@@ -256,8 +256,13 @@ inline constexpr void input_base_number(input& in,T& a)
 		a=-a;
 }
 
+}
+
+namespace manip
+{
+	
 template<std::size_t bs,bool uppercase,typename T>
-requires base_number_upper_constraints<bs,uppercase>::value
+requires fast_io::details::base_number_upper_constraints<bs,uppercase>::value
 struct base_t
 {
 	T& reference;
@@ -266,33 +271,33 @@ struct base_t
 }
 
 template<std::size_t b,bool uppercase=false,typename T>
-inline constexpr details::base_t<b,uppercase,T> base(T& t) {return {t};}
+inline constexpr manip::base_t<b,uppercase,T> base(T& t) {return {t};}
 template<std::size_t b,bool uppercase=false,typename T>
-inline constexpr details::base_t<b,uppercase,T const> base(T const& t) {return {t};}
+inline constexpr manip::base_t<b,uppercase,T const> base(T const& t) {return {t};}
 
-template<typename T> inline constexpr details::base_t<16,false,T> hex(T& t) {return {t};}
-template<typename T> inline constexpr details::base_t<16,false,T const> hex(T const& t){return {t};}
+template<typename T> inline constexpr manip::base_t<16,false,T> hex(T& t) {return {t};}
+template<typename T> inline constexpr manip::base_t<16,false,T const> hex(T const& t){return {t};}
 
-template<typename T> inline constexpr details::base_t<16,true,T> hexupper(T& t){return {t};}
-template<typename T> inline constexpr details::base_t<16,true,T const> hexupper(T const& t) {return {t};}
+template<typename T> inline constexpr manip::base_t<16,true,T> hexupper(T& t){return {t};}
+template<typename T> inline constexpr manip::base_t<16,true,T const> hexupper(T const& t) {return {t};}
 
-template<typename T> inline constexpr details::base_t<8,false,T> oct(T& t) {return {t};}
-template<typename T> inline constexpr details::base_t<8,false,T const> oct(T const& t){return {t};}
+template<typename T> inline constexpr manip::base_t<8,false,T> oct(T& t) {return {t};}
+template<typename T> inline constexpr manip::base_t<8,false,T const> oct(T const& t){return {t};}
 
-template<typename T> inline constexpr details::base_t<10,false,T> dec(T& t) {return {t};}
-template<typename T> inline constexpr details::base_t<10,false,T const> dec(T const& t){return {t};}
+template<typename T> inline constexpr manip::base_t<10,false,T> dec(T& t) {return {t};}
+template<typename T> inline constexpr manip::base_t<10,false,T const> dec(T const& t){return {t};}
 
-template<typename T> inline constexpr details::base_t<2,false,T> bin(T& t){return {t};}
-template<typename T> inline constexpr details::base_t<2,false,T const> bin(T const& t) {return {t};}
+template<typename T> inline constexpr manip::base_t<2,false,T> bin(T& t){return {t};}
+template<typename T> inline constexpr manip::base_t<2,false,T const> bin(T const& t) {return {t};}
 
 template<std::size_t base,bool uppercase,character_output_stream output,std::integral T>
-inline constexpr void print(output& out,details::base_t<base,uppercase,T> v)
+inline constexpr void print(output& out,manip::base_t<base,uppercase,T> v)
 {
 	details::output_base_number<base,uppercase>(out,v.reference);
 }
 
 template<std::size_t base,bool uppercase,character_input_stream input,std::integral T>
-inline constexpr void scan(input& in,details::base_t<base,uppercase,T> v)
+inline constexpr void scan(input& in,manip::base_t<base,uppercase,T> v)
 {
 	details::input_base_number<base>(in,v.reference);
 }
