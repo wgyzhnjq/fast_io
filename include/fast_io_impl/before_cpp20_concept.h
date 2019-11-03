@@ -16,6 +16,17 @@ concept floating_point = std::is_floating_point_v<T>;
 namespace fast_io
 {
 
+//Since Currently No C++ Compilers have implemented this important stuff. We can only emulate it with memcpy.
+//And unfortuntely, this is not what it should be. It is impossible to correctly implement this without compiler magic.
+template<typename To,typename From>
+requires (sizeof(To)==sizeof(From) && std::is_trivially_copyable_v<To> && std::is_trivial_v<From>)
+inline To bit_cast(From const& src) noexcept
+{
+	To dst;
+	std::memcpy(std::addressof(dst), std::addressof(src), sizeof(To));
+	return dst;
+}
+
 template<typename T>
 concept Trivial_copyable=std::is_trivially_copyable_v<T>;
 

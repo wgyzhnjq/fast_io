@@ -9,8 +9,7 @@ namespace fast_io
 namespace ryu_details
 {
 
-template<typename T>
-requires std::floating_point<T>	
+template<std::floating_point T>
 struct floating_traits
 {
 };
@@ -25,7 +24,7 @@ struct floating_traits<double>
 	static inline constexpr std::size_t pow5_bitcount= 121;
 };
 
-template<typename mantissaType,typename exponentType>
+template<std::integral mantissaType,std::integral exponentType>
 struct unrep
 {
 //	using floating_type = floating;
@@ -74,7 +73,7 @@ inline constexpr T to_bits(F const& f)
 	return */
 }
 
-template<character_output_stream output,typename mantissaType>
+template<character_output_stream output,std::unsigned_integral mantissaType>
 inline constexpr void easy_case(output& out,bool sign, mantissaType const& mantissa)
 {
 	if (mantissa)
@@ -84,7 +83,7 @@ inline constexpr void easy_case(output& out,bool sign, mantissaType const& manti
 	}
 	if (sign)
 		put(out,'-');
-	print(out,"Inf");
+	print(out,"inf");
 }
 
 template<typename mantissaType,typename exponentType>
@@ -117,7 +116,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		if(precision)
 		{
 			put(out,'.');
-			fill_nc(out,precision,0);
+			fill_nc(out,precision,'0');
 		}
 		return;
 	}
