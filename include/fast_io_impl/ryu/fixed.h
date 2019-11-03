@@ -34,18 +34,26 @@ inline constexpr T index_for_exponent(T e){return (e+15)>>4;}
 template<std::unsigned_integral T>
 inline constexpr T pow10_bits_for_index(T idx){return (idx<<4)+120;}
 
+inline constexpr bool multiple_of_power_of_2(__uint128_t value,std::size_t p) {
+// return __builtin_ctz(value) >= p;
+return !(value & ((static_cast<__uint128_t>(1)<<p) - 1));
+}
+
+inline constexpr uint32_t log10_pow2(uint64_t e) {
+return (uint32_t) ((((uint64_t) e) * 169464822037455ull) >> 49);
+}
 template<std::unsigned_integral T>
 inline constexpr std::size_t length_for_index(T idx)
-{return (log10_pow2(idx<<4)+25)/9;}
+{return log10_pow2((idx<<4)+25)/9;}
 
-template<typename M,typename T>
-inline constexpr uint32_t mul_shift_mod_1e9(M m, std::array<T,3> const& mul, std::size_t j)
+template<typename T>
+inline constexpr uint32_t mul_shift_mod_1e9(__uint128_t m, std::array<T,3> const& mul, std::size_t j)
 {
-	M const b0(m * mul[0]);
-	M const b1(m * mul[1]);
-	M const b2(m * mul[2]);
-	M const mid(b1 + static_cast<T>(b0 >> 64));
-	M const s1(b2 + static_cast<T>(mid >> 64));
+	__uint128_t const b0(m * mul[0]);
+	__uint128_t const b1(m * mul[1]);
+	__uint128_t const b2(m * mul[2]);
+	__uint128_t const mid(b1 + (b0 >> 64));
+	__uint128_t const s1(b2 + (mid >> 64));
 	return (s1 >> (j - 128))%1000000000;
 }
 
@@ -62,15 +70,16 @@ inline constexpr void easy_case(output& out,bool sign, mantissaType const& manti
 	print(out,"inf");
 }
 
-template<std::floating_point floating,std::unsigned_integral mantissaType,std::integral exponentType>
+template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
 inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& mantissa,exponentType const& exponent)
 {
 	if(!exponent)
-		return {mantissa,-1-floating_traits<floating>::bias-floating_traits<floating>::bits};
-	return {static_cast<mantissaType>(1)<<floating_traits<floating>::bits|mantissa,exponent-floating_traits<floating>::bias-floating_traits<floating>::bits-2};
+		return {mantissa,static_cast<exponentType>(-(1+floating_traits<floating>::bias+floating_traits<floating>::exponent_bits))};
+	return {static_cast<mantissaType>(static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits|mantissa),
+		static_cast<exponentType>(exponent-floating_traits<floating>::bias-floating_traits<floating>::exponent_bits-2)};
 }
 
-template<character_output_stream output,std::unsigned_integral T,std::unsigned_integral E,std::floating_point F>
+template<std::unsigned_integral T,std::unsigned_integral E,character_output_stream output,std::floating_point F>
 inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 {
 	using signed_E = std::make_signed_t<E>;
@@ -96,8 +105,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		}
 		return;
 	}
-
-	auto const r2(init_rep(mantissa,static_cast<signed_E>(exponent)));
+	auto const r2(init_rep<F>(mantissa,static_cast<signed_E>(exponent)));
 	if (sign)
 		put(out,'-');
 	bool const negative_r2_e(r2.e<0);
@@ -105,10 +113,12 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 	if(-52<=r2.e)
 	{
 		E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
-		auto const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e);
+		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
+		println(out,r2.e," ",idx," ",p10bitsmr2e);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
-			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],static_cast<signed_E>(p10bitsmr2e+8)));
+			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+			print(fast_io::out,digits);
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -118,6 +128,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 			}
 		}
 	}
+
 	if(!nonzero)
 		put(out,'0');
 	if(precision)
@@ -146,7 +157,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 				fill_nc(out,precision-9*i,'0');
 				break;
 			}
-			E digits(mul_shift_mod1e9(r2.m));
+			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j+8));
 			if(i+1<blocks)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else

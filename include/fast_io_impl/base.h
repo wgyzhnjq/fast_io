@@ -106,19 +106,19 @@ inline constexpr void unsafe_setw_base_number(output& out,U a)
 		{
 			if(reserved)
 			{
-				fill_nc(out,output_base_number_impl<base,uppercase>(reserved,a)-reserved,'0');
+				std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
 				return;
 			}
 		}
 		else
 		{
-			fill_nc(out,output_base_number_impl<base,uppercase>(reserved,a)-reserved,'0');
+			std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
 			return;
 		}
 	}
 	std::array<typename output::char_type,width> v;
 	auto const e(v.data()+v.size());
-	fill_nc(out,output_base_number_impl<base,uppercase>(e,a)-v.data(),'0');
+	std::fill(v.data(),output_base_number_impl<base,uppercase>(e,a),'0');
 	writes(out,v.data(),e);
 }
 
@@ -174,7 +174,7 @@ inline void output_base_number(output& out,T b)
 	auto const a(static_cast<std::make_unsigned_t<T>>(minus?-b:b));
 	if constexpr(buffer_output_stream<output>)
 	{
-		auto reserved(oreserve(out,chars_len<base>(a)));
+		auto reserved(oreserve(out,chars_len<base>(a)+minus));
 		if constexpr(std::is_pointer_v<decltype(reserved)>)
 		{
 			if(reserved)
