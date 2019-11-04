@@ -68,13 +68,15 @@ concept buffer_output_stream_impl = requires(T& out,std::size_t n)
 template<typename T>
 concept range_input_stream_impl = requires(T& in)
 {
-	std::ranges::random_access_range<std::remove_reference_t<decltype(irange(in))>>;
+	{std::ranges::random_access_range<std::remove_reference_t<decltype(irange(in))>>};
+	{isize(in)};
 };
 
 template<typename T>
 concept range_output_stream_impl = requires(T& out)
 {
-	std::ranges::random_access_range<std::remove_reference_t<decltype(orange(out))>>;
+	{std::ranges::random_access_range<std::remove_reference_t<decltype(orange(out))>>};
+	{orange(out)};
 };
 
 template<typename T>

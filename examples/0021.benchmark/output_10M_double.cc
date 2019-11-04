@@ -49,6 +49,19 @@ try
 			print(obuf,ostr.str());
 		}
 	}
+#ifdef __cpp_lib_span
+	{
+		cqw::timer t("ospan");
+		fast_io::obuf obuf("ospan.txt");
+		std::array<char,1000> arr;
+		for(std::size_t i(0);i!=N;++i)
+		{
+			fast_io::ospan ostr(arr);
+			println(ostr,fast_io::fixed(vec[i],6));
+			print(obuf,ostr);
+		}
+	}
+#endif
 	{
 	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");

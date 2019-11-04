@@ -14,6 +14,7 @@
 #include<algorithm>
 #include<cstring>
 #include<cstdint>
+#include<version>
 #include"fast_io_impl/concept.h"
 #include"fast_io_impl/eof.h"
 #include"fast_io_impl/io_ref.h"
@@ -40,6 +41,7 @@
 #include"fast_io_impl/sync.h"
 #include"fast_io_impl/streambuf_view.h"
 #include"fast_io_impl/stream_view.h"
+#include"fast_io_impl/ospan.h"
 
 namespace fast_io
 {

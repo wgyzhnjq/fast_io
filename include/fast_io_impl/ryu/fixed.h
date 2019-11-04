@@ -215,7 +215,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		if(round_up)
 		{
 			auto &result(orange(out));
-			std::size_t round_index(size(orange(out))-start_pos);
+			std::size_t round_index(osize(out)-start_pos);
 			std::size_t dot_index(0);
 			while(round_index--)
 			{

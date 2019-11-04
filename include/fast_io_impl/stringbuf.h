@@ -26,6 +26,12 @@ template<typename T>
 }
 
 template<typename T>
+[[nodiscard]] inline constexpr std::size_t isize(basic_istring_view<T>& isv)
+{
+	return isv.str().size();
+}
+
+template<typename T>
 [[nodiscard]] inline constexpr auto ireserve(basic_istring_view<T>& isv,std::size_t size)
 {
 	isv.str().remove_prefix(size);
@@ -83,6 +89,12 @@ template<typename T>
 [[nodiscard]] inline constexpr auto& orange(basic_ostring<T>& ob)
 {
 	return ob.str();
+}
+
+template<typename T>
+[[nodiscard]] inline constexpr std::size_t osize(basic_ostring<T>& ob)
+{
+	return ob.str().size();
 }
 
 template<typename T>
