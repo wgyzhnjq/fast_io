@@ -102,5 +102,5 @@ inline basic_obuf<system_io_handle> log(native_stderr_number);
 
 #include"fast_io_impl/network/network.h"
 #include"fast_io_impl/crypto/crypto.h"
-#include"fast_io_impl/natural.h"
-#include"fast_io_impl/unsigned_extension.h"
+//#include"fast_io_impl/natural.h"
+//#include"fast_io_impl/unsigned_extension.h"

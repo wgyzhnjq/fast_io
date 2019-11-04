@@ -122,6 +122,7 @@ inline constexpr void unsafe_setw_base_number(output& out,U a)
 	writes(out,v.data(),e);
 }
 
+
 template<std::size_t base,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {

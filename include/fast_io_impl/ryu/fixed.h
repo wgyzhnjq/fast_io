@@ -9,6 +9,34 @@ struct floating_traits
 {
 };
 
+template<std::uint8_t base,bool uppercase,output_stream output,std::unsigned_integral U>
+requires base_number_upper_constraints<base,uppercase>::value
+inline constexpr void unsafe_setz_base_number(output& out,U a,std::size_t width)
+{
+	if constexpr(buffer_output_stream<output>)
+	{
+		auto reserved(oreserve(out,width));
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		{
+			if(reserved)
+			{
+				std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
+				return;
+			}
+		}
+		else
+		{
+			std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
+			return;
+		}
+	}
+	basic_ostring<std::basic_string<typename output::char_type>> bos(sizeof(a)*8,0);
+	auto &v(orange(bos));
+	auto const e(v.data()+v.size());
+	std::fill(v.data(),output_base_number_impl<base,uppercase>(e,a),'0');
+	writes(out,v.data(),e);
+}
+
 template<>	
 struct floating_traits<double>
 {
@@ -149,10 +177,15 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 			fill_nc(out,9*(i=mb2_idx),'0');
 		signed_E j(128+(abs_e2-(idx<<4)));
 		auto const of2i(fixed_pow10<>::offset_2[idx]);
-		for(std::size_t k(i);k<blocks;++k)
+		for(;i<blocks;++i)
 		{
-			E p(of2i+k-mb2_idx);
+			E p(of2i+i-mb2_idx);
 			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
+			if (fixed_pow10<>::offset_2[idx+1]<=p)
+			{
+				fill_nc(out,precision-9*i,'0');
+				break;
+			}
 			if(i+1<blocks)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else
@@ -175,7 +208,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 						round_up = 1;
 				}
 				if(maximum)
-					print(out,digits);
+					unsafe_setz_base_number<10,false>(out,digits,maximum);
 				break;
 			}
 		}
