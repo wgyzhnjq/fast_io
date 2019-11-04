@@ -118,7 +118,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 	T const mantissa(bits & ((static_cast<T>(1u) << floating_traits<F>::mantissa_bits) - 1u));
 	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & ((static_cast<E>(1u) << floating_traits<F>::exponent_bits) - 1u))));
 	// Case distinction; exit early for the easy cases.
-	std::size_t const start_pos(size(orange(out)));
+	std::size_t const start_pos(osize(out));
 	if(exponent == ((1u << floating_traits<F>::exponent_bits) - 1u))
 	{
 		easy_case(out,sign,mantissa);
