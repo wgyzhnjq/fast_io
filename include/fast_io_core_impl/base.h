@@ -320,26 +320,26 @@ template<typename T> inline constexpr manip::base_t<2,false,T> bin(T& t){return 
 template<typename T> inline constexpr manip::base_t<2,false,T const> bin(T const& t) {return {t};}
 
 template<std::size_t base,bool uppercase,character_output_stream output,std::integral T>
-inline constexpr void print(output& out,manip::base_t<base,uppercase,T> v)
+inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v)
 {
 	details::output_base_number<base,uppercase>(out,v.reference);
 }
 
 template<std::size_t base,bool uppercase,character_input_stream input,std::integral T>
-inline constexpr void scan(input& in,manip::base_t<base,uppercase,T> v)
+inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	details::input_base_number<base>(in,v.reference);
 }
 
 
 template<character_input_stream input,std::integral T>
-inline constexpr void scan(input& in,T& a)
+inline constexpr void scan_define(input& in,T& a)
 {
 	details::input_base_number<10>(in,a);
 }
 
 template<character_output_stream output,std::integral T>
-inline constexpr void print(output& out,T const& a)
+inline constexpr void print_define(output& out,T const& a)
 {
 	details::output_base_number<10,false>(out,a);
 }

@@ -5,24 +5,6 @@ namespace fast_io
 
 
 template<output_stream Ohandler>
-requires (!character_output_stream<Ohandler>)
-class nobuf_writer :public Ohandler
-{
-public:
-	using char_type = typename Ohandler::char_type;
-	template<typename... Args>
-	requires std::constructible_from<Ohandler,Args...>
-	constexpr nobuf_writer(Args&&... args) :Ohandler(std::forward<Args>(args)...) {}
-};
-
-template<output_stream Ohandler>
-inline constexpr void put(nobuf_writer<Ohandler>& ob,typename Ohandler::char_type ch)
-{
-	auto address(std::addressof(ch));
-	writes(ob,address, address + 1);
-}
-
-template<output_stream Ohandler>
 class immediately_flush:public Ohandler
 {
 public:

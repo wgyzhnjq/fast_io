@@ -160,24 +160,24 @@ inline constexpr manip::shortest<T const> shortest(T const &f,std::size_t precis
 }
 
 template<character_input_stream input,std::integral T>
-inline void scan(input& in,manip::char_view_t<T> a)
+inline void scan_define(input& in,manip::char_view_t<T> a)
 {
 	a.reference = get(in);
 }
 
 template<character_output_stream output,std::integral T>
-inline void print(output& out,manip::char_view_t<T> a)
+inline void print_define(output& out,manip::char_view_t<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
 }
 template<character_input_stream input,std::floating_point T>
-inline void scan(input& in,manip::char_view_t<T> a)
+inline void scan_define(input& in,manip::char_view_t<T> a)
 {
 	a.reference = get(in);
 }
 
 template<character_output_stream output,std::floating_point T>
-inline void print(output& out,manip::char_view_t<T> a)
+inline void print_define(output& out,manip::char_view_t<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
 }

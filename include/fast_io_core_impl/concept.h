@@ -154,4 +154,31 @@ concept buffer_output_stream = output_stream<T>&&details::buffer_output_stream_i
 template<typename T>
 concept buffer_io_stream = buffer_input_stream<T>&&buffer_output_stream<T>&&io_stream<T>;
 
+
+template<typename input,typename T>
+concept scanable=input_stream<input>&&requires(input& in,T&& t)
+{
+	scan_define(in,std::forward<T>(t));
+};
+
+template<typename input,typename T>
+concept readable=input_stream<input>&&requires(input& in,T&& t)
+{
+	read_define(in,std::forward<T>(t));
+};
+
+
+template<typename output,typename T>
+concept printable=output_stream<output>&&requires(output& out,T&& t)
+{
+	print_define(out,std::forward<T>(t));
+};
+
+template<typename output,typename T>
+concept writeable=output_stream<output>&&requires(output& out,T&& t)
+{
+	write_define(out,std::forward<T>(t));
+};
+
+
 }

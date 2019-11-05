@@ -487,18 +487,18 @@ inline void output_base_extension_number(output& out,basic_unsigned_extension<T>
 }
 
 template<output_stream output,typename T>
-inline constexpr void print(output& out,basic_unsigned_extension<T> const& a)
+inline constexpr void print_define(output& out,basic_unsigned_extension<T> const& a)
 {
 	details::output_base_extension_number<10,false>(out,a);
 }
 
 template<std::size_t base,bool uppercase,character_output_stream output,typename T>
-inline constexpr void print(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T> const> v)
+inline constexpr void print_define(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T> const> v)
 {
 	details::output_base_extension_number<base,uppercase>(out,v.reference);
 }
 template<std::size_t base,bool uppercase,character_output_stream output,typename T>
-inline constexpr void print(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
+inline constexpr void print_define(output& out,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
 {
 	details::output_base_extension_number<base,uppercase>(out,v.reference);
 }
@@ -571,13 +571,13 @@ inline constexpr void scan(input& in,basic_unsigned_extension<T>& a)
 }
 
 template<character_output_stream output,typename T>
-inline constexpr void write(output& out,basic_unsigned_extension<T> const& n)
+inline constexpr void write_define(output& out,basic_unsigned_extension<T> const& n)
 {
 	writes(out,std::addressof(n),std::addressof(n)+1);
 }
 
 template<character_input_stream input,typename T>
-inline constexpr void read(input& in,basic_unsigned_extension<T>& n)
+inline constexpr void read_define(input& in,basic_unsigned_extension<T>& n)
 {
 	reads(in,std::addressof(n),std::addressof(n)+1);
 }

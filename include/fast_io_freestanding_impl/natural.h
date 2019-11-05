@@ -960,9 +960,9 @@ inline void write(output& out,natural const& n)
 }
 
 template<character_input_stream input>
-inline void read(input& in,natural& n)
+inline void read_define(input& in,natural& n)
 {
-	read(in,n.vec());
+	read_define(in,n.vec());
 }
 
 namespace literals

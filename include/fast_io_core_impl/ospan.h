@@ -64,7 +64,7 @@ inline constexpr void fill_nc(basic_ospan<T>& os,std::size_t count,typename T::v
 }
 
 template<output_stream output,typename T>
-inline constexpr void print(output& out,basic_ospan<T> s)
+inline constexpr void print_define(output& out,basic_ospan<T> s)
 {
 	writes(out,s.span().data(),s.internal_pointer);
 }

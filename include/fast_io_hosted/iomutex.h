@@ -44,12 +44,6 @@ inline auto writes(basic_iomutex<T>& t,Iter b,Iter e)
 	std::lock_guard lg(t.mutex());
 	return writes(t.native_handle(),b,e);
 }
-template<character_output_stream T>
-inline void put(basic_iomutex<T>& t,typename T::char_type ch)
-{
-	std::lock_guard lg(t.mutex());
-	put(t.native_handle(),ch);
-}
 
 template<output_stream T>
 inline void flush(basic_iomutex<T>& t)
@@ -64,19 +58,6 @@ inline Iter reads(basic_iomutex<T>& t,Iter begin,Iter end)
 	return reads(t.native_handle(),begin,end);
 }
 
-template<character_input_stream T>
-inline auto get(basic_iomutex<T>& t)
-{
-	std::lock_guard lg(t.mutex());
-	return get(t.native_handle());
-}
-
-template<character_input_stream T>
-inline auto try_get(basic_iomutex<T>& t)
-{
-	std::lock_guard lg(t.mutex());
-	return try_get(t.native_handle());
-}
 
 template<random_access_stream T,typename... Args>
 inline auto seek(basic_iomutex<T>& t,Args&& ...args)
@@ -97,13 +78,14 @@ inline void swap(basic_iomutex<T>& a,basic_iomutex<T>& b) noexcept
 {
 	a.swap(b);
 }
-
+/*
 template<mutex_input_stream input,typename ...Args>
 inline constexpr void scan(input &in,Args&& ...args)
 {
 	std::lock_guard lg{mutex(in)};
 	scan(in.native_handle(),std::forward<Args>(args)...);
 }
+
 template<mutex_input_stream input,typename ...Args>
 inline constexpr void read(input &in,Args&& ...args)
 {
@@ -165,6 +147,6 @@ inline constexpr void write_flush(output& out,Args&& ...args)
 {
 	std::lock_guard lg(mutex(out));
 	write_flush(out.native_handle(),std::forward<Args>(args)...);
-}
+}*/
 
 }

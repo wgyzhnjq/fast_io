@@ -20,20 +20,20 @@ inline constexpr void print_width(output& out,T const& reference,W width,U ch)
 }
 
 template<character_output_stream output,typename T,std::integral U>
-inline constexpr void print(output& out,manip::setw_fill_t<T,U> a)
+inline constexpr void print_define(output& out,manip::setw_fill_t<T,U> a)
 {
 	return details::print_width(out,a.reference,a.width,a.ch);
 }
 
 template<character_output_stream output,typename T>
-inline constexpr void print(output& out,manip::setw_t<T> a)
+inline constexpr void print_define(output& out,manip::setw_t<T> a)
 {
 	return details::print_width(out,a.reference,a.width,' ');
 }
 
 
 template<character_output_stream output,typename T,std::integral U>
-inline constexpr void print(output& out,manip::setz_t<T> a)
+inline constexpr void print_define(output& out,manip::setz_t<T> a)
 {
 	return details::print_width(out,a.reference,a.width,'0');
 }
