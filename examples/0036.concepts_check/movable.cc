@@ -1,4 +1,4 @@
-#include"../../include/fast_io.h"
+#include"../../include/fast_io_device.h"
 
 void transfer_ownership(fast_io::stream auto strm)
 {

@@ -1,4 +1,5 @@
 #include"../../include/fast_io.h"
+#include"../../include/fast_io_device.h"
 #include<thread>
 #include<random>
 #include<vector>
@@ -18,7 +19,7 @@ int main(int argc,char **argv)
 {
 	if(argc!=2)
 	{
-		println(fast_io::err,"Usage: ",*argv," <process tag>");
+		print(fast_io::err,"Usage: ",*argv," <process tag>\n");
 		return 1;
 	}
 	process_tag=argv[1];
