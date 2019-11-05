@@ -14,6 +14,7 @@
 //compile floating point is slow since it requires algorithms like ryu
 #include"fast_io_freestanding_impl/floating.h"
 #include"fast_io_freestanding_impl/iobuf.h"
+#include"fast_io_freestanding_impl/dynamic.h"
 //#include"fast_io_freestanding_impl/read_write.h"
 //#include"fast_io_freestanding_impl/natural.h"
 #include"fast_io_freestanding_impl/ucs.h"
