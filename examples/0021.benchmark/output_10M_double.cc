@@ -1,6 +1,8 @@
 #include"timer.h"
 #include<fstream>
 #include"../../include/fast_io.h"
+#include"../../include/fast_io_device.h"
+#include"../../include/fast_io_crypto.h"
 #include<exception>
 #include<cmath>
 #include<memory>

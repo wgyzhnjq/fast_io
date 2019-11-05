@@ -78,7 +78,7 @@ inline void swap(basic_iomutex<T>& a,basic_iomutex<T>& b) noexcept
 {
 	a.swap(b);
 }
-/*
+
 template<mutex_input_stream input,typename ...Args>
 inline constexpr void scan(input &in,Args&& ...args)
 {
@@ -147,6 +147,6 @@ inline constexpr void write_flush(output& out,Args&& ...args)
 {
 	std::lock_guard lg(mutex(out));
 	write_flush(out.native_handle(),std::forward<Args>(args)...);
-}*/
+}
 
 }

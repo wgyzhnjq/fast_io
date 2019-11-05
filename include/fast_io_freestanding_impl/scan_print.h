@@ -24,7 +24,7 @@ inline constexpr void print(output &out,Args&& ...args)
 	writes(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
-template<character_output_stream output,typename ...Args>
+template<output_stream output,typename ...Args>
 requires(weak_printable<output,Args>&&...)
 inline constexpr void println(output &out,Args&& ...args)
 {

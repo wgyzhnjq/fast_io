@@ -6,7 +6,7 @@
 
 namespace fast_io
 {
-using pipe = immediately_flush<nobuf_reader<io_wrapper<system_pipe>>>;
+using pipe = immediately_flush<io_wrapper<system_pipe>>;
 
 using isystem_file = input_file_wrapper<system_file>;
 using osystem_file = output_file_wrapper<system_file>;

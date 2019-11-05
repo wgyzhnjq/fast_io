@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <array>
-#include "../concept.h"
 
 namespace fast_io::crypto::speck
 {

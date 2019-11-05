@@ -165,7 +165,8 @@ template<output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
 inline constexpr void println_flush(output &out,Args&& ...args)
 {
-	println(out,std::forward<Args>(args)...);
+	(print_define(out,std::forward<Args>(args)),...);
+	put(out,'\n');
 	flush(out);
 }
 
