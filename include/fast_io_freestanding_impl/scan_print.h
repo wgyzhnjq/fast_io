@@ -34,12 +34,20 @@ inline constexpr void println(output &out,Args&& ...args)
 	writes(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
+template<output_stream output>
+inline constexpr void fprint(output &out,std::basic_string_view<typename output::char_type> format)
+{
+	basic_ostring<std::basic_string<typename output::char_type>> ostr;
+	details::fprint_impl(ostr,format);
+	writes(out,ostr.str().cbegin(),ostr.str().cend());
+}
+
 template<output_stream output,typename ...Args>
 requires(weak_printable<output,Args>&&...)
 inline constexpr void fprint(output &out,std::basic_string_view<typename output::char_type> format,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
-	details::fprint(ostr,format,std::forward<Args>(args)...);
+	details::fprint_impl(ostr,format,std::forward<Args>(args)...);
 	writes(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
@@ -78,7 +86,7 @@ requires(weak_printable<output,Args>&&...)
 inline constexpr void fprint_flush(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
-	details::fprint(ostr,format,std::forward<Args>(args)...);
+	details::fprint_impl(ostr,format,std::forward<Args>(args)...);
 	put(ostr,'\n');
 	writes(out,ostr.str().cbegin(),ostr.str().cend());
 	flush(out);

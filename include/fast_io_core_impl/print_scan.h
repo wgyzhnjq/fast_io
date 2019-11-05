@@ -83,7 +83,7 @@ inline void getwhole(input& in,std::basic_string<typename input::char_type> &str
 namespace details
 {
 template<output_stream os,typename ...Args>
-inline void fprint(os &out,std::basic_string_view<typename os::char_type> format)
+inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format)
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
@@ -96,7 +96,7 @@ inline void fprint(os &out,std::basic_string_view<typename os::char_type> format
 }
 
 template<output_stream os,typename T,typename ...Args>
-inline void fprint(os &out,std::basic_string_view<typename os::char_type> format,T&& cr,Args&& ...args)
+inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format,T&& cr,Args&& ...args)
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
@@ -112,7 +112,7 @@ inline void fprint(os &out,std::basic_string_view<typename os::char_type> format
 		format.remove_prefix(percent_pos+1);
 	}
 	print(out,std::forward<T>(cr));
-	fprint(out,format,std::forward<Args>(args)...);
+	fprint_impl(out,format,std::forward<Args>(args)...);
 }
 }
 
@@ -141,9 +141,16 @@ inline constexpr void println(output &out,Args&& ...args)
 
 template<output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
+inline constexpr void fprint(output &out,std::basic_string_view<typename output::char_type> format)
+{
+	details::fprint_impl(out,format);
+}
+
+template<output_stream output,typename ...Args>
+requires(printable<output,Args>&&...)
 inline constexpr void fprint(output &out,std::basic_string_view<typename output::char_type> format,Args&& ...args)
 {
-	details::fprint(out,format,std::forward<Args>(args)...);
+	details::fprint_impl(out,format,std::forward<Args>(args)...);
 }
 
 template<output_stream output,typename ...Args>
@@ -166,7 +173,7 @@ template<output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
 inline constexpr void fprint_flush(output &out,std::basic_string_view<typename output::char_type> format,Args&& ...args)
 {
-	details::fprint(out,format,std::forward<Args>(args)...);
+	details::fprint_impl(out,format,std::forward<Args>(args)...);
 	flush(out);
 }
 
