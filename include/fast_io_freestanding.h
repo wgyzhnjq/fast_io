@@ -8,7 +8,6 @@
 #include<bitset>
 #include<cmath>
 
-#include"fast_io_freestanding_impl/eof.h"
 #include"fast_io_freestanding_impl/concat.h"
 #include"fast_io_freestanding_impl/manip.h"
 //compile floating point is slow since it requires algorithms like ryu
