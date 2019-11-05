@@ -3,13 +3,11 @@
 //fast_io_freestanding.h is usable when the underlining system implements dynamic memory allocations and exceptions
 
 #include"fast_io_core.h"
-#include<exception>
 #include<stdexcept>
 #include<string>
 #include<bitset>
 #include<cmath>
 
-#include"fast_io_freestanding_impl/exception.h"
 #include"fast_io_freestanding_impl/eof.h"
 #include"fast_io_freestanding_impl/concat.h"
 #include"fast_io_freestanding_impl/manip.h"
