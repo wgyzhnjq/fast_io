@@ -1,4 +1,4 @@
-#include<fast_io.h>
+#include"../../include/fast_io.h"
 
 
 inline constexpr std::uint16_t POW10_OFFSET[]=
@@ -4421,7 +4421,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 			put(ob,',');
 		print(ob,e);
 	}
-	print(ob,"};\nusing a=std::array<std::uint64_t,3>;\ninline static constexpr std::array split={");
+	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,",std::size(POW10_SPLIT),"> split={{");
 	first=true;
 	for(auto const & e : POW10_SPLIT)
 	{
@@ -4429,7 +4429,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 			first=false;
 		else
 			put(ob,',');
-		print(ob,"a{");
+		print(ob,"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
@@ -4443,7 +4443,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 		}
 		print(ob,"}");
 	}
-	print(ob,"};\ninline static constexpr std::array<std::uint8_t,69> min_block_2={");
+	print(ob,"}};\ninline static constexpr std::array<std::uint8_t,",std::size(MIN_BLOCK_2),"> min_block_2={");
 	first=true;
 	for(auto const & e : MIN_BLOCK_2)
 	{
@@ -4454,7 +4454,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 		print(ob,e);
 	}
 	first = false;
-	print(ob,"};\ninline static constexpr std::array<std::uint16_t,69> offset_2={");
+	print(ob,"};\ninline static constexpr std::array<std::uint16_t,",std::size(POW10_OFFSET_2),"> offset_2={");
 	first=true;
 	for(auto const & e : POW10_OFFSET_2)
 	{
@@ -4465,7 +4465,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 		print(ob,e);
 	}
 	first = true;
-	print(ob,"};\ninline static constexpr std::array split_2={");
+	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,",std::size(POW10_SPLIT_2),"> split_2={{");
 	first=true;
 	for(auto const & e : POW10_SPLIT_2)
 	{
@@ -4473,7 +4473,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 			first=false;
 		else
 			put(ob,',');
-		print(ob,"a{");
+		print(ob,"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
@@ -4487,7 +4487,7 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 		}
 		print(ob,"}");
 	}
-	print(ob,"};\n};\n}");
+	print(ob,"}};\n};\n}");
 }
 
 
