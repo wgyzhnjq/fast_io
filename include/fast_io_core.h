@@ -27,7 +27,6 @@
 
 //fast_io core
 #include"fast_io_core_impl/concept.h"
-#include"fast_io_core_impl/ospan.h"
 #include"fast_io_core_impl/fill_nc.h"
 #include"fast_io_core_impl/io_ref.h"
 #include"fast_io_core_impl/manip.h"
@@ -37,6 +36,7 @@
 #include"fast_io_core_impl/base.h"
 #include"fast_io_core_impl/mode.h"
 #include"fast_io_core_impl/istring_view.h"
+#include"fast_io_core_impl/ospan.h"
 // Provide template prototype for custom string types
 #include"fast_io_core_impl/ostring.h"
 

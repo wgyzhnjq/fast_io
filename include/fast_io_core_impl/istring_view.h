@@ -52,8 +52,10 @@ inline constexpr Iter reads(basic_istring_view<T>& istrvw,Iter begin,Iter end)
 template<typename T>
 inline constexpr typename T::value_type get(basic_istring_view<T>& istrvw)
 {
-//	if(istrvw.empty())
-//		throw eof();
+#ifdef __EXCEPTIONS
+	if(istrvw.empty())
+		throw eof();
+#endif
 	auto ch(istrvw.str().front());
 	istrvw.str().remove_prefix(1);
 	return ch;
