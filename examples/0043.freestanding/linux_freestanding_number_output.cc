@@ -14,6 +14,6 @@ void _start() noexcept
 	auto isv(to_istring_view(out));
 	int value(5);
 	scan(isv,value);
-_Exit(value);
+	_Exit(value);
 }
 }
