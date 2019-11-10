@@ -16,7 +16,7 @@ concept weak_writeable=output_stream<output>&&(!writeable<output,T>)&&requires(b
 };
 
 template<output_stream output,typename ...Args>
-requires(weak_printable<output,Args>&&...)
+requires(weak_printable<output,Args>||...)
 inline constexpr void print(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
@@ -25,7 +25,7 @@ inline constexpr void print(output &out,Args&& ...args)
 }
 
 template<output_stream output,typename ...Args>
-requires(weak_printable<output,Args>&&...)
+requires(weak_printable<output,Args>||...)
 inline constexpr void println(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;

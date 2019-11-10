@@ -84,6 +84,7 @@ add_executable(output_10M_double "./0021.benchmark/output_10M_double.cc")
 add_executable(input_10M_double "./0021.benchmark/input_10M_double.cc")
 add_executable(input_10M_size_t_as_string "./0021.benchmark/input_10M_size_t_as_string.cc")
 add_executable(charconv "./0021.benchmark/charconv.cc")
+add_executable(dynamic "./0020.dynamic/dynamic.cc")
 
 add_executable(client "./0033.socket/client.cc")
 add_executable(server "./0033.socket/server.cc")

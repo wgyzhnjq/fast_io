@@ -2,12 +2,12 @@
 
 namespace fast_io
 {
-template<input_stream input>
+template<character_input_stream input>
 inline constexpr void read(input&){}
 template<output_stream output>
 inline constexpr void write(output&){}
 
-template<input_stream input,Trivial_copyable T>
+template<character_input_stream input,Trivial_copyable T>
 inline constexpr void read(input& in,T& v)
 {
 	auto address(std::addressof(v));
@@ -88,22 +88,6 @@ inline constexpr void write(output& out,D const& v)
 {
 	for(auto const& e : v)
 		write(out,e);
-}
-
-template<output_stream output,typename T,typename R,typename ...Args>
-inline constexpr void write(output& out,T&& t,R&& r,Args&& ...args)
-{
-	write(out,std::forward<T>(t));
-	write(out,std::forward<R>(r));
-	write(out,std::forward<Args>(args)...);
-}
-
-template<input_stream input,typename T,typename R,typename ...Args>
-inline constexpr void read(input& in,T&& t,R&& r,Args&& ...args)
-{
-	read(in,std::forward<T>(t));
-	read(in,std::forward<R>(r));
-	read(in,std::forward<Args>(args)...);
 }
 
 }
