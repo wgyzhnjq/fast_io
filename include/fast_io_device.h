@@ -12,8 +12,8 @@ using isystem_file = input_file_wrapper<system_file>;
 using osystem_file = output_file_wrapper<system_file>;
 using iosystem_file = io_file_wrapper<system_file>;
 
-using sync = basic_sync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>>;
-using fsync = basic_fsync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>>;
+using sync = basic_sync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::string>>;
+using fsync = basic_fsync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::string>>;
 
 using sync_mutex = basic_iomutex<sync>;
 using fsync_mutex = basic_iomutex<fsync>;

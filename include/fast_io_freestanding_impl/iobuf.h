@@ -23,7 +23,6 @@ struct io_aligned_allocator
 	}
 };
 
-
 template<typename CharT,typename Allocator = io_aligned_allocator<CharT>,std::size_t buffer_size = 65536>
 class basic_buf_handler
 {
