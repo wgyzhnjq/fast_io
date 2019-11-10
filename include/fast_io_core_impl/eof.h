@@ -1,6 +1,5 @@
 #pragma once
 
-#ifdef __EXCEPTIONS
 #include<exception>
 
 namespace fast_io
@@ -15,4 +14,3 @@ public:
 
 
 }
-#endif
