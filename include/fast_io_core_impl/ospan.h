@@ -72,7 +72,13 @@ inline constexpr void print_define(output& out,basic_ospan<T> s)
 template<typename T>
 [[nodiscard]] inline constexpr basic_istring_view<std::basic_string_view<typename T::value_type>> to_istring_view(basic_ospan<T> s)
 {
-	return {s.span().data(),s.internal_pointer-s.span().data()};
+	return {s.span().data(),static_cast<std::size_t>(s.internal_pointer-s.span().data())};
+}
+
+template<typename T>
+[[nodiscard]] inline constexpr std::basic_string_view<typename T::value_type> to_string_view(basic_ospan<T> s)
+{
+	return {s.span().data(),static_cast<std::size_t>(s.internal_pointer-s.span().data())};
 }
 
 }
