@@ -60,7 +60,7 @@ inline constexpr void flush(basic_ospan<T>&){}
 template<typename T>
 inline constexpr void fill_nc(basic_ospan<T>& os,std::size_t count,typename T::value_type const& ch)
 {
-	os.internal_pointer=std::fill_n(os.internal_pointer,ch,count);
+	os.internal_pointer=std::fill_n(os.internal_pointer,count,ch);
 }
 
 template<output_stream output,typename T>

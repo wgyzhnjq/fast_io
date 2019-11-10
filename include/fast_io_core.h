@@ -50,6 +50,6 @@
 #include"fast_io_core_impl/text.h"
 #include"fast_io_core_impl/tie.h"
 #include"fast_io_core_impl/transmit.h"
-//#include"fast_io_core_impl/unsigned_extension.h"
+#include"fast_io_core_impl/unsigned_extension.h"
 #include"fast_io_core_impl/wrapper.h"
 #include"fast_io_core_impl/flush.h"

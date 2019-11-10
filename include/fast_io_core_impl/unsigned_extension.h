@@ -27,6 +27,14 @@ struct basic_unsigned_extension
 	{
 		return (*static_cast<std::uint8_t const*>(static_cast<void const*>(this)))&1;
 	}
+	inline explicit constexpr operator T()
+	{
+		return low;
+	}
+	inline explicit constexpr operator std::uint32_t()
+	{
+		return static_cast<std::uint32_t>(low);
+	}
 };
 
 
@@ -581,8 +589,9 @@ inline constexpr void read_define(input& in,basic_unsigned_extension<T>& n)
 {
 	reads(in,std::addressof(n),std::addressof(n)+1);
 }
-
+/*
 using uint128_t = basic_unsigned_extension<std::uint64_t>;
+
 using uint256_t = basic_unsigned_extension<uint128_t>;
 using uint512_t = basic_unsigned_extension<uint256_t>;
 using uint1024_t = basic_unsigned_extension<uint512_t>;
@@ -774,6 +783,6 @@ inline constexpr auto operator "" _u4096h(char const* cstr, size_t n)
 	return nt;
 }
 
-}
+}*/
 
 }

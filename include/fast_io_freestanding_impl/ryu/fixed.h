@@ -1,5 +1,4 @@
 #pragma once
-#include"fixed_table.h"
 
 namespace fast_io::details::ryu
 {
@@ -56,15 +55,21 @@ struct unrep
 	exponent_type e=0;
 };
 
+#ifdef __SIZEOF_INT128__
+using ryu_uint128_t=__uint128_t;
+#else
+using ryu_uint128_t=basic_unsigned_extension<std::uint64_t>;
+#endif
 template<std::unsigned_integral T>
 inline constexpr T index_for_exponent(T e){return (e+15)>>4;}
 
 template<std::unsigned_integral T>
 inline constexpr T pow10_bits_for_index(T idx){return (idx<<4)+120;}
 
-inline constexpr bool multiple_of_power_of_2(__uint128_t value,std::size_t p) {
+template<std::unsigned_integral T>
+inline constexpr bool multiple_of_power_of_2(T value,std::size_t p) {
 // return __builtin_ctz(value) >= p;
-return !(value & ((static_cast<__uint128_t>(1)<<p) - 1));
+return !(static_cast<ryu_uint128_t>(value) & ((static_cast<ryu_uint128_t>(1)<<p) - 1));
 }
 
 inline constexpr uint32_t log10_pow2(uint64_t e) {
@@ -75,14 +80,14 @@ inline constexpr std::size_t length_for_index(T idx)
 {return (log10_pow2(idx<<4)+25)/9;}
 
 template<typename T>
-inline constexpr uint32_t mul_shift_mod_1e9(__uint128_t m, std::array<T,3> const& mul, std::size_t j)
+inline constexpr uint32_t mul_shift_mod_1e9(ryu_uint128_t m, std::array<T,3> const& mul, std::size_t j)
 {
-	__uint128_t const b0(m * mul[0]);
-	__uint128_t const b1(m * mul[1]);
-	__uint128_t const b2(m * mul[2]);
-	__uint128_t const mid(b1 + (b0 >> 64));
-	__uint128_t const s1(b2 + (mid >> 64));
-	return (s1 >> (j - 128))%1000000000;
+	ryu_uint128_t const b0(m * mul[0]);
+	ryu_uint128_t const b1(m * mul[1]);
+	ryu_uint128_t const b2(m * mul[2]);
+	ryu_uint128_t const mid(b1 + (b0 >> 64));
+	ryu_uint128_t const s1(b2 + (mid >> 64));
+	return static_cast<uint32_t>((s1 >> (j - 128))%static_cast<ryu_uint128_t>(1000000000));
 }
 
 template<character_output_stream output,std::unsigned_integral mantissaType>
@@ -146,7 +151,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
-			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+			E digits(mul_shift_mod_1e9(static_cast<ryu_uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -180,7 +185,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		for(;i<blocks;++i)
 		{
 			E p(of2i+i-mb2_idx);
-			E digits(mul_shift_mod_1e9(static_cast<__uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
+			E digits(mul_shift_mod_1e9(static_cast<ryu_uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
 			if (fixed_pow10<>::offset_2[idx+1]<=p)
 			{
 				fill_nc(out,precision-9*i,'0');
