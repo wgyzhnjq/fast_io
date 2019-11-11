@@ -8,32 +8,24 @@ struct floating_traits
 {
 };
 
-template<std::uint8_t base,bool uppercase,output_stream output,std::unsigned_integral U>
+template<std::uint8_t base,bool uppercase,buffer_output_stream output,std::unsigned_integral U>
 requires base_number_upper_constraints<base,uppercase>::value
 inline constexpr void unsafe_setz_base_number(output& out,U a,std::size_t width)
 {
-	if constexpr(buffer_output_stream<output>)
+	auto reserved(oreserve(out,width));
+	if constexpr(std::is_pointer_v<decltype(reserved)>)
 	{
-		auto reserved(oreserve(out,width));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
-		{
-			if(reserved)
-			{
-				std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
-				return;
-			}
-		}
-		else
+		if(reserved)
 		{
 			std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
 			return;
 		}
 	}
-	basic_ostring<std::basic_string<typename output::char_type>> bos(sizeof(a)*8,0);
-	auto &v(orange(bos));
-	auto const e(v.data()+v.size());
-	std::fill(v.data(),output_base_number_impl<base,uppercase>(e,a),'0');
-	writes(out,v.data(),e);
+	else
+	{
+		std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
+		return;
+	}
 }
 
 template<>	
@@ -54,12 +46,6 @@ struct unrep
 	mantissa_type m=0;
 	exponent_type e=0;
 };
-
-#ifdef __SIZEOF_INT128__
-using ryu_uint128_t=__uint128_t;
-#else
-using ryu_uint128_t=basic_unsigned_extension<std::uint64_t>;
-#endif
 template<std::unsigned_integral T>
 inline constexpr T index_for_exponent(T e){return (e+15)>>4;}
 
@@ -69,7 +55,7 @@ inline constexpr T pow10_bits_for_index(T idx){return (idx<<4)+120;}
 template<std::unsigned_integral T>
 inline constexpr bool multiple_of_power_of_2(T value,std::size_t p) {
 // return __builtin_ctz(value) >= p;
-return !(static_cast<ryu_uint128_t>(value) & ((static_cast<ryu_uint128_t>(1)<<p) - 1));
+return !(static_cast<uint128_t>(value) & ((static_cast<uint128_t>(1)<<p) - 1));
 }
 
 inline constexpr uint32_t log10_pow2(uint64_t e) {
@@ -80,14 +66,20 @@ inline constexpr std::size_t length_for_index(T idx)
 {return (log10_pow2(idx<<4)+25)/9;}
 
 template<typename T>
-inline constexpr std::uint32_t mul_shift_mod_1e9(ryu_uint128_t m, std::array<T,3> const& mul, std::size_t j)
+inline constexpr std::uint32_t mul_shift_mod_1e9(uint128_t m, std::array<T,3> const& mul, std::size_t j)
 {
-	ryu_uint128_t const b0(m * mul[0]);
-	ryu_uint128_t const b1(m * mul[1]);
-	ryu_uint128_t const b2(m * mul[2]);
-	ryu_uint128_t const mid(b1 + high(b0));
-	ryu_uint128_t const s1(b2 + high(mid));
-	return static_cast<std::uint32_t>((s1 >> (j - 128))%1000000000);
+	uint128_t const b0(m*mul[0]);
+	uint128_t b1(m*mul[1]);
+	b1+=high(b0);
+	uint128_t s1(m*mul[2]);
+	s1+=high(b1);
+	uint128_t const v(s1 >> (j - 128));
+#ifdef __SIZEOF_INT128__
+	uint128_t constexpr mulb(construct_unsigned_extension(static_cast<std::uint64_t>(0x31680A88F8953031),static_cast<std::uint64_t>(0x89705F4136B4A597)));
+	return static_cast<std::uint32_t>(v)-1000000000*static_cast<std::uint32_t>(low(mul_high(v,mulb))>>29);
+#else
+	return static_cast<std::uint32_t>(v%1000000000);
+#endif
 }
 
 template<character_output_stream output,std::unsigned_integral mantissaType>
@@ -151,7 +143,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
-			E digits(mul_shift_mod_1e9(static_cast<ryu_uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+			E digits(mul_shift_mod_1e9(static_cast<uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -185,7 +177,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		for(;i<blocks;++i)
 		{
 			E p(of2i+i-mb2_idx);
-			E digits(mul_shift_mod_1e9(static_cast<ryu_uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
+			E digits(mul_shift_mod_1e9(static_cast<uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
 			if (fixed_pow10<>::offset_2[idx+1]<=p)
 			{
 				fill_nc(out,precision-9*i,'0');

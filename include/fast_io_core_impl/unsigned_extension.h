@@ -1,5 +1,9 @@
 #pragma once
-
+/*
+#if defined(_MSC_VER) && defined(_M_X64)
+#include<intrin.h>
+#endif
+*/
 namespace fast_io
 {
 template<typename T>
@@ -27,11 +31,15 @@ struct basic_unsigned_extension
 	{
 		return (*static_cast<std::uint8_t const*>(static_cast<void const*>(this)))&1;
 	}
-	inline explicit constexpr operator T()
+	inline explicit constexpr operator T() const
 	{
 		return low;
 	}
-	inline explicit constexpr operator std::uint32_t()
+	inline explicit constexpr operator std::uint64_t() const requires(sizeof(T)!=8)
+	{
+		return static_cast<std::uint64_t>(low);
+	}
+	inline explicit constexpr operator std::uint32_t() const
 	{
 		return static_cast<std::uint32_t>(low);
 	}
@@ -60,6 +68,12 @@ inline constexpr std::uint32_t high(std::uint64_t a)
 	return a>>32;
 }
 
+template<typename T>
+inline constexpr basic_unsigned_extension<basic_unsigned_extension<T>> construct(basic_unsigned_extension<T> const& a,basic_unsigned_extension<T> const& b)
+{
+	return {a,b};
+}
+
 #ifdef __SIZEOF_INT128__
 inline constexpr std::uint64_t low(__uint128_t a)
 {
@@ -71,6 +85,33 @@ inline constexpr std::uint64_t high(__uint128_t a)
 	return a>>64;
 }
 
+inline constexpr __uint128_t construct_unsigned_extension(std::uint64_t a,std::uint64_t b)
+{
+	return (static_cast<__uint128_t>(b)<<64)|a;
+}
+
+inline constexpr basic_unsigned_extension<__uint128_t> construct_unsigned_extension(__uint128_t a,__uint128_t b)
+{
+	return {a,b};
+}
+
+template<typename T>
+requires std::same_as<T,__uint128_t>
+inline constexpr T reset_high(T& a)
+{
+	T temp(a>>64);
+	a&=UINT64_MAX;
+	return temp;
+}
+inline constexpr __uint128_t merge(__uint128_t a,__uint128_t b)
+{
+	return a|(b<<64);
+}
+#else
+inline constexpr basic_unsigned_extension<std::uint64_t> construct_unsigned_extension(std::uint64_t a,std::uint64_t b)
+{
+	return {a,b};
+}
 #endif
 
 inline constexpr std::uint64_t merge(std::uint64_t a,std::uint64_t b)
@@ -484,6 +525,35 @@ inline constexpr auto pow(basic_unsigned_extension<T> lhs, basic_unsigned_extens
 	return ans;
 }
 
+template<typename T>
+inline constexpr basic_unsigned_extension<T> mul_extend(T const& a,T const& b)
+{
+	T a0(low(a));
+	T a1(high(a));
+	T b0(low(b));
+	T b1(high(b));
+	T c0(a0*b0);
+	T c1(a1*b0+a0*b1);
+	c1+=reset_high(c0);
+	T c2(a1*b1);
+	c2+=reset_high(c1);
+	return {merge(c0,c1),c2};	//RVO
+}
+
+template<typename T>
+inline constexpr T mul_high(T const& a,T const& b)
+{
+	T a0(low(a));
+	T a1(high(a));
+	T b0(low(b));
+	T b1(high(b));
+	T c0(a0*b0);
+	T c1(a1*b0);
+	c1+=a0*b1;
+	c1+=reset_high(c0);
+	return a1*b1+reset_high(c1);	//RVO
+}
+
 namespace details
 {
 
@@ -595,13 +665,13 @@ inline constexpr void input_base_extension_number(input& in,basic_unsigned_exten
 }
 
 template<std::size_t base,bool uppercase,character_input_stream input,typename T>
-inline constexpr void scan(input& in,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
+inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,basic_unsigned_extension<T>> v)
 {
 	details::input_base_extension_number<base>(in,v.reference);
 }
 
 template<character_input_stream input,typename T>
-inline constexpr void scan(input& in,basic_unsigned_extension<T>& a)
+inline constexpr void scan_define(input& in,basic_unsigned_extension<T>& a)
 {
 	details::input_base_extension_number<10>(in,a);
 }
@@ -617,10 +687,13 @@ inline constexpr void read_define(input& in,basic_unsigned_extension<T>& n)
 {
 	reads(in,std::addressof(n),std::addressof(n)+1);
 }
-/*
+#ifdef __SIZEOF_INT128__
+using uint128_t = __uint128_t;
+#else
 using uint128_t = basic_unsigned_extension<std::uint64_t>;
-
+#endif
 using uint256_t = basic_unsigned_extension<uint128_t>;
+/*
 using uint512_t = basic_unsigned_extension<uint256_t>;
 using uint1024_t = basic_unsigned_extension<uint512_t>;
 using uint2048_t = basic_unsigned_extension<uint1024_t>;

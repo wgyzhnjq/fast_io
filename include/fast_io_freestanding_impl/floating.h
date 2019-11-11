@@ -154,15 +154,18 @@ inline void print_define(output& out,manip::fixed<T const> a)
 	else
 	{
 #ifdef __cpp_lib_span
-		std::array<typename output::char_type,625> array;
-		ospan osp{array.data(),array.size()};
-		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(osp,static_cast<double>(a.reference),a.precision);
-		print(out,osp);
-#else
+		if(a.precision<320)[[likely]]
+		{
+			std::array<typename output::char_type,640> array;
+			ospan osp{array.data(),array.size()};
+			details::ryu::output_fixed<std::uint64_t,std::uint32_t>(osp,static_cast<double>(a.reference),a.precision);
+			print(out,osp);
+			return;
+		}
+#endif
 		basic_ostring<std::basic_string<typename output::char_type>> os;
 		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(os,static_cast<double>(a.reference),a.precision);
 		print(out,orange(os));
-#endif
 	}
 }
 
