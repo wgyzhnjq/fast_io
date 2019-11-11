@@ -73,12 +73,8 @@ inline constexpr std::uint32_t mul_shift_mod_1e9(std::uint64_t m, std::array<T,3
 	uint128_t s1(mul_extend(m,mul[2]));
 	s1+=high(b1);
 	uint128_t const v(s1 >> (j - 128));
-#ifdef __SIZEOF_INT128__
 	uint128_t constexpr mulb(construct_unsigned_extension(static_cast<std::uint64_t>(0x31680A88F8953031),static_cast<std::uint64_t>(0x89705F4136B4A597)));
 	return static_cast<std::uint32_t>(v)-1000000000*static_cast<std::uint32_t>(low(mul_high(v,mulb))>>29);
-#else
-	return static_cast<std::uint32_t>(v%1000000000);
-#endif
 }
 
 template<character_output_stream output,std::unsigned_integral mantissaType>
