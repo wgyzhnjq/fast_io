@@ -35,6 +35,18 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		fout<<vec[i]<<'\n';
 	}
+
+	{
+		cqw::timer t("charconv");
+		fast_io::obuf obuf("charconvdb.txt");
+		std::array<char,1000> arr;
+		for(std::size_t i(0);i!=N;++i)
+		{
+			auto [p,ec]= std::to_chars(arr.data(),arr.data()+arr.size(),vec[i],std::chars_format::fixed,6);
+			*p++='\n';
+			writes(obuf,arr.data(),p);
+		}
+	}
 	{
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obufdb.txt");
@@ -70,17 +82,6 @@ try
 	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,fast_io::fixed(vec[i],6));
-	}
-	{
-		cqw::timer t("charconv");
-		fast_io::obuf obuf("charconvdb.txt");
-		std::array<char,1000> arr;
-		for(std::size_t i(0);i!=N;++i)
-		{
-			auto [p,ec]= std::to_chars(arr.data(),arr.data()+arr.size(),vec[i],std::chars_format::fixed,6);
-			*p++='\n';
-			writes(obuf,arr.data(),p);
-		}
 	}
 	{
 	cqw::timer t("speck128/128");
