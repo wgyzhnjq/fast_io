@@ -1,9 +1,9 @@
 #pragma once
-/*
+
 #if defined(_MSC_VER) && defined(_M_X64)
 #include<intrin.h>
 #endif
-*/
+
 namespace fast_io
 {
 template<typename T>
@@ -197,24 +197,57 @@ inline constexpr basic_unsigned_extension<T>& operator--(basic_unsigned_extensio
 }
 
 template<typename T>
+requires
+#ifdef __SIZEOF_INT128__
+(std::unsigned_integral<T>||std::same_as<T,__uint128_t>)
+#else
+std::unsigned_integral<T>
+#endif
+inline constexpr bool add_carry_assignment(bool carry_flag,T& a,T const& b)
+{
+	auto const temp(carry_flag+a+b);
+	bool const carry(temp<a);
+	a=temp;
+	return carry;
+}
+
+#if defined(_MSC_VER) && defined(_M_X64)
+template<typename T>
+requires std::unsigned_integral<T>&&std::same_as<T,std::uint64_t>
+inline constexpr bool add_carry_assignment(bool carry_flag,T& a,T const& b)
+{
+	return _addcarry_u64(carry_flag,a,b,std::addressof(a));
+}
+#endif
+template<typename T>
+inline constexpr bool add_carry_assignment(bool carry_flag,basic_unsigned_extension<T>& a,basic_unsigned_extension<T> const& b)
+{
+	return add_carry_assignment(add_carry_assignment(carry_flag,a.low,b.low),a.high,b.high);
+}
+
+inline constexpr bool add_carry_assignment_single(bool carry_flag,std::uint64_t& a,std::uint64_t value)
+{
+	return add_carry_assignment(carry_flag,a,value);
+}
+
+template<typename T>
+inline constexpr bool add_carry_assignment_single(bool carry_flag,basic_unsigned_extension<T>& a,std::uint64_t value)
+{
+	return add_carry_assignment_single(add_carry_assignment_single(carry_flag,a.low,value),a.high,0);
+}
+
+template<typename T>
 inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extension<T>& a,basic_unsigned_extension<T> const& b)
 {
-	auto added_low(a.low);
-	added_low+=b.low;
-	a.high+=b.high;
-	if(added_low<a.low)
-		++a.high;
-	a.low=added_low;
+	add_carry_assignment(false,a,b);
 	return a;
 }
 
-template<typename T,typename U>
-inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extension<T>& a,U const& b)
+template<typename T>
+requires std::unsigned_integral<T>
+inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extension<T>& a,T const& b)
 {
-	auto const added_low(a.low+b);
-	if(added_low<a.low)
-		++a.high;
-	a.low = added_low;
+	add_carry_assignment_single(false,a,b);
 	return a;
 }
 
@@ -321,6 +354,32 @@ inline constexpr basic_unsigned_extension<T> operator&(basic_unsigned_extension<
 	return a&=std::forward<P>(b);
 }
 
+#if defined(_MSC_VER) && defined(_M_X64)
+
+inline constexpr basic_unsigned_extension<std::uint64_t>& operator<<=(basic_unsigned_extension<std::uint64_t>& a,std::size_t shift)
+{
+	if(shift<128) [[likely]]
+	{
+		a.high=__shiftleft128(a.low,a.high,static_cast<unsigned char>(shift));
+		a.low<<=shift;
+	}
+	else
+		a.high=a.low=0;
+	return a;
+}
+inline constexpr basic_unsigned_extension<std::uint64_t>& operator>>=(basic_unsigned_extension<std::uint64_t>& a,std::size_t shift)
+{
+	if(shift<128) [[likely]]
+	{
+		a.low=__shiftright128(a.low,a.high,static_cast<unsigned char>(shift));
+		a.high>>=shift;
+	}
+	else
+		a.high=a.low=0;
+	return a;
+}
+#endif
+
 template<typename T>
 inline constexpr basic_unsigned_extension<T>& operator<<=(basic_unsigned_extension<T>& a,std::size_t shift)
 {
@@ -391,6 +450,15 @@ requires std::same_as<std::uint64_t,T>
 inline constexpr __uint128_t mul_extend(T const& a,T const& b)
 {
 	return static_cast<__uint128_t>(a)*b;
+}
+#elif defined(_MSC_VER) && defined(_M_X64)
+template<typename T>
+requires std::same_as<std::uint64_t,T>
+inline constexpr basic_unsigned_extension<std::uint64_t> mul_extend(T const& a,T const& b)
+{
+	std::uint64_t high;
+	std::uint64_t low(_umul128(a,b,std::addressof(high)));
+	return {low,high};
 }
 #endif
 
