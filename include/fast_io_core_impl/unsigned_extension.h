@@ -377,6 +377,51 @@ inline constexpr basic_unsigned_extension<T> operator>>(basic_unsigned_extension
 	return a>>=shift;
 }
 
+
+template<typename T>
+requires std::same_as<std::uint32_t,T>
+inline constexpr std::uint64_t mul_extend(T const& a,T const& b)
+{
+	return static_cast<std::uint64_t>(a)*b;
+}
+
+#ifdef __SIZEOF_INT128__
+template<typename T>
+requires std::same_as<std::uint64_t,T>
+inline constexpr __uint128_t mul_extend(T const& a,T const& b)
+{
+	return static_cast<__uint128_t>(a)*b;
+}
+#endif
+
+
+template<typename T>
+inline constexpr basic_unsigned_extension<T> mul_extend(T const& a,T const& b)
+{
+	decltype(auto) a0(low(a));
+	decltype(auto) a1(high(a));
+	decltype(auto) b0(low(b));
+	decltype(auto) b1(high(b));
+	decltype(auto) c0(mul_extend(a0,b0));
+	decltype(auto) c1(mul_extend(a1,b0)+mul_extend(a0,b1));
+	c1+=reset_high(c0);
+	T c2(mul_extend(a1,b1));
+	c2+=reset_high(c1);
+	return {merge(c0,c1),c2};	//RVO
+}
+template<typename T>
+inline constexpr T mul_high(T const& a,T const& b)
+{
+	decltype(auto) a0(low(a));
+	decltype(auto) a1(high(a));
+	decltype(auto) b0(low(b));
+	decltype(auto) b1(high(b));
+	T c1(mul_extend(a0,b1));
+	c1+=mul_extend(a1,b0);
+	c1+=high(mul_extend(a0,b0));
+	return mul_extend(a1,b1)+reset_high(c1);	//RVO
+}
+
 template<typename T,typename U>
 requires std::unsigned_integral<U>&&std::same_as<std::common_type_t<U,std::uint32_t>,std::uint32_t>
 inline constexpr basic_unsigned_extension<T>& operator*=(basic_unsigned_extension<T>& a,U b)
@@ -398,34 +443,34 @@ inline constexpr basic_unsigned_extension<T>& operator*=(basic_unsigned_extensio
 template<typename T>
 inline constexpr basic_unsigned_extension<T>& operator*=(basic_unsigned_extension<T>& a,T const& b)
 {
-	T a0(low(a.low));
-	T a1(high(a.low));
-	T a2(low(a.high));
-	T a3(high(a.high));
-	T b0(low(b));
-	T b1(high(b));
-	T c0(a0*b0);
-	T c1(a0*b1+a1*b0+reset_high(c0));
-	T c2(a1*b1+a2*b0+reset_high(c1));
-	T c3(a2*b1+a3*b0+reset_high(c2));
+	decltype(auto) a0(low(a.low));
+	decltype(auto) a1(high(a.low));
+	decltype(auto) a2(low(a.high));
+	decltype(auto) a3(high(a.high));
+	decltype(auto) b0(low(b));
+	decltype(auto) b1(high(b));
+	T c0(mul_extend(a0,b0));
+	T c1(mul_extend(a0,b1)+mul_extend(a1,b0)+reset_high(c0));
+	T c2(mul_extend(a1,b1)+mul_extend(a2,b0)+reset_high(c1));
+	T c3(mul_extend(a2,b1)+mul_extend(a3,b0)+reset_high(c2));
 	return a={merge(c0,c1),merge(c2,c3)};
 }
 
 template<typename T>
 inline constexpr basic_unsigned_extension<T>& operator*=(basic_unsigned_extension<T>& a,basic_unsigned_extension<T> const& b)
 {
-	T a0(low(a.low));
-	T a1(high(a.low));
-	T a2(low(a.high));
-	T a3(high(a.high));
-	T b0(low(b.low));
-	T b1(high(b.low));
-	T b2(low(b.high));
-	T b3(high(b.high));
-	T c0(a0*b0);
-	T c1(a0*b1+a1*b0+reset_high(c0));
-	T c2(a0*b2+a1*b1+a2*b0+reset_high(c1));
-	T c3(a0*b3+a1*b2+a2*b1+a3*b0+reset_high(c2));
+	decltype(auto) a0(low(a.low));
+	decltype(auto) a1(high(a.low));
+	decltype(auto) a2(low(a.high));
+	decltype(auto) a3(high(a.high));
+	decltype(auto) b0(low(b.low));
+	decltype(auto) b1(high(b.low));
+	decltype(auto) b2(low(b.high));
+	decltype(auto) b3(high(b.high));
+	T c0(mul_extend(a0,b0));
+	T c1(mul_extend(a0,b1)+mul_extend(a1,b0)+reset_high(c0));
+	T c2(mul_extend(a0,b2)+mul_extend(a1,b1)+mul_extend(a2,b0)+reset_high(c1));
+	T c3(mul_extend(a0,b3)+mul_extend(a1,b2)+mul_extend(a2,b1)+mul_extend(a3,b0)+reset_high(c2));
 	return a={merge(c0,c1),merge(c2,c3)};
 }
 
@@ -523,42 +568,6 @@ inline constexpr auto pow(basic_unsigned_extension<T> lhs, basic_unsigned_extens
 		lhs *=lhs;
 	}
 	return ans;
-}
-
-template<typename T>
-inline constexpr basic_unsigned_extension<T> mul_extend(T const& a,T const& b)
-{
-	T a0(low(a));
-	T a1(high(a));
-	T b0(low(b));
-	T b1(high(b));
-	T c0(a0*b0);
-	T c1(a1*b0+a0*b1);
-	c1+=reset_high(c0);
-	T c2(a1*b1);
-	c2+=reset_high(c1);
-	return {merge(c0,c1),c2};	//RVO
-}
-#ifdef __SIZEOF_INT128__
-template<typename T>
-requires std::same_as<std::uint64_t,T>
-inline constexpr __uint128_t mul_extend(T const& a,T const& b)
-{
-	return static_cast<__uint128_t>(a)*b;
-}
-#endif
-template<typename T>
-inline constexpr T mul_high(T const& a,T const& b)
-{
-	T a0(low(a));
-	T a1(high(a));
-	T b0(low(b));
-	T b1(high(b));
-	T c0(a0*b0);
-	T c1(a1*b0);
-	c1+=a0*b1;
-	c1+=reset_high(c0);
-	return a1*b1+reset_high(c1);	//RVO
 }
 
 namespace details
