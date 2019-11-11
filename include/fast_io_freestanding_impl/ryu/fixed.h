@@ -80,14 +80,14 @@ inline constexpr std::size_t length_for_index(T idx)
 {return (log10_pow2(idx<<4)+25)/9;}
 
 template<typename T>
-inline constexpr uint32_t mul_shift_mod_1e9(ryu_uint128_t m, std::array<T,3> const& mul, std::size_t j)
+inline constexpr std::uint32_t mul_shift_mod_1e9(ryu_uint128_t m, std::array<T,3> const& mul, std::size_t j)
 {
 	ryu_uint128_t const b0(m * mul[0]);
 	ryu_uint128_t const b1(m * mul[1]);
 	ryu_uint128_t const b2(m * mul[2]);
-	ryu_uint128_t const mid(b1 + (b0 >> 64));
-	ryu_uint128_t const s1(b2 + (mid >> 64));
-	return static_cast<uint32_t>((s1 >> (j - 128))%static_cast<ryu_uint128_t>(1000000000));
+	ryu_uint128_t const mid(b1 + high(b0));
+	ryu_uint128_t const s1(b2 + high(mid));
+	return static_cast<std::uint32_t>((s1 >> (j - 128))%1000000000);
 }
 
 template<character_output_stream output,std::unsigned_integral mantissaType>

@@ -60,6 +60,19 @@ inline constexpr std::uint32_t high(std::uint64_t a)
 	return a>>32;
 }
 
+#ifdef __SIZEOF_INT128__
+inline constexpr std::uint64_t low(__uint128_t a)
+{
+	return a&UINT64_MAX;
+}
+
+inline constexpr std::uint64_t high(__uint128_t a)
+{
+	return a>>64;
+}
+
+#endif
+
 inline constexpr std::uint64_t merge(std::uint64_t a,std::uint64_t b)
 {
 	return a|(b<<32);
@@ -422,6 +435,21 @@ template<typename T>
 inline constexpr basic_unsigned_extension<T> operator/(basic_unsigned_extension<T> a,basic_unsigned_extension<T> const& b)
 {
 	return div_mod(a,b).first;
+}
+
+template<typename T>
+inline constexpr std::uint32_t operator%(basic_unsigned_extension<T> const& a,std::uint32_t value)
+{
+	std::array<std::uint32_t,sizeof(T)/2> v;
+	memcpy(v.data(),std::addressof(a),sizeof(v));		//should use std::bit_cast instead. However, current compilers haven't implemented std::bit_cast magic. memcpy first.
+	std::uint64_t quo(0);
+	for(std::size_t i(v.size());i--;)
+	{
+		auto const tot(v[i]+(quo<<32));
+		v[i]=tot/value;
+		quo=tot%value;
+	}
+	return quo;
 }
 
 template<typename T>
