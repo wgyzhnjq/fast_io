@@ -210,17 +210,7 @@ inline constexpr bool add_carry_assignment(bool carry_flag,T& a,T const& b)
 	a=temp;
 	return carry;
 }
-/*
-#if defined(_MSC_VER) && defined(_M_X64)
-template<typename T>
-requires std::unsigned_integral<T>&&std::same_as<T,std::uint64_t>
-inline constexpr bool add_carry_assignment(bool carry_flag,T& a,T const& b)
-{
-	return _addcarry_u64(carry_flag,a,b,std::addressof(a));
-}
-#endif
-using intrinsic will interfere the opimization of compiler. No reason to do this
-*/
+
 template<typename T>
 inline constexpr bool add_carry_assignment(bool carry_flag,basic_unsigned_extension<T>& a,basic_unsigned_extension<T> const& b)
 {
