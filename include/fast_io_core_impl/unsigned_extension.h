@@ -539,7 +539,14 @@ inline constexpr basic_unsigned_extension<T> mul_extend(T const& a,T const& b)
 	c2+=reset_high(c1);
 	return {merge(c0,c1),c2};	//RVO
 }
-
+#ifdef __SIZEOF_INT128__
+template<typename T>
+requires std::same_as<std::uint64_t,T>
+inline constexpr __uint128_t mul_extend(T const& a,T const& b)
+{
+	return static_cast<__uint128_t>(a)*b;
+}
+#endif
 template<typename T>
 inline constexpr T mul_high(T const& a,T const& b)
 {

@@ -66,12 +66,11 @@ inline constexpr std::size_t length_for_index(T idx)
 {return (log10_pow2(idx<<4)+25)/9;}
 
 template<typename T>
-inline constexpr std::uint32_t mul_shift_mod_1e9(uint128_t m, std::array<T,3> const& mul, std::size_t j)
+inline constexpr std::uint32_t mul_shift_mod_1e9(std::uint64_t m, std::array<T,3> const& mul, std::size_t j)
 {
-	uint128_t const b0(m*mul[0]);
-	uint128_t b1(m*mul[1]);
-	b1+=high(b0);
-	uint128_t s1(m*mul[2]);
+	uint128_t b1(mul_extend(m,mul[1]));
+	b1+=high(mul_extend(m,mul[0]));
+	uint128_t s1(mul_extend(m,mul[2]));
 	s1+=high(b1);
 	uint128_t const v(s1 >> (j - 128));
 #ifdef __SIZEOF_INT128__
@@ -143,7 +142,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
 		for(std::size_t i(length_for_index(idx));i--;)
 		{
-			E digits(mul_shift_mod_1e9(static_cast<uint128_t>(r2.m<<8),fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 			if(nonzero)
 				unsafe_setw_base_number<10,false,9>(out,digits);
 			else if(digits)
@@ -177,7 +176,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		for(;i<blocks;++i)
 		{
 			E p(of2i+i-mb2_idx);
-			E digits(mul_shift_mod_1e9(static_cast<uint128_t>(r2.m<<8),fixed_pow10<>::split_2[p],j));
+			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
 			if (fixed_pow10<>::offset_2[idx+1]<=p)
 			{
 				fill_nc(out,precision-9*i,'0');
