@@ -15,7 +15,10 @@ inline constexpr std::pair<std::size_t,std::size_t> cal_base_pw_size(std::size_t
 		retpw=pw;
 		pw*=u;
 	}
-	return {retch,retpw};
+	if(retch<2)
+		return {2,u*u};
+	else
+		return {retch,retpw};
 }
 
 template<std::size_t base,bool upper>
