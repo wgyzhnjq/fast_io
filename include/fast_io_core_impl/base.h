@@ -20,9 +20,8 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 //upper: 65 :A 70: F
 //lower: 97 :a 102 :f
 	constexpr auto &table(details::shared_static_base_table<base,uppercase>::table);
-	constexpr std::size_t pw(table.size()),chars(table.front().size());
-//	std::array<typename output::char_type,sizeof(a)*8> v;
-//	auto iter(v.data()+v.size());
+	constexpr std::common_type_t<U,std::uint16_t> pw(table.size());
+	constexpr std::size_t chars(table.front().size());
 	for(;pw<=a;)
 	{
 		auto const rem(a%pw);
@@ -55,51 +54,14 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			*--iter=a+'0';
 	}
 	return iter;
-//	writes(out,iter,v.data()+v.size());
-/*	for(;base<=a;--iter)
-	{
-		auto const quo(a/base);
-		auto const rem(a%base);
-		if constexpr(10 < base)
-		{
-			if(rem<10)
-				*iter = static_cast<typename output::char_type>(rem+48);
-			else
-			{
-				if constexpr (uppercase)
-					*iter = static_cast<typename output::char_type>(rem+55);	
-				else
-					*iter = static_cast<typename output::char_type>(rem+87);
-			}
-		}
-		else
-			*iter = static_cast<typename output::char_type>(rem+48);
-		a=quo;
-	}
-	if constexpr(10 < base)
-	{
-		if(a<10)
-			*iter = static_cast<typename output::char_type>(a+48);
-		else
-		{
-			if constexpr (uppercase)
-				*iter = static_cast<typename output::char_type>(a+55);	
-			else
-				*iter = static_cast<typename output::char_type>(a+87);
-		}
-	}
-	else
-		*iter=static_cast<typename output::char_type>(a+48);
-	writes(out,iter,v.data()+v.size());
-*/
 }
 
 template<std::uint32_t base,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
-	constexpr std::common_type_t<std::uint32_t,U> base2(base  * base);
-	constexpr std::common_type_t<std::uint32_t,U> base3(base2 * base);
-	constexpr std::common_type_t<std::uint32_t,U> base4(base3 * base);
+	constexpr std::uint32_t base2(base  * base);
+	constexpr std::uint32_t base3(base2 * base);
+	constexpr std::uint32_t base4(base3 * base);
 	for (std::size_t n(1);;n+=4)
 	{
 		if (value < base)

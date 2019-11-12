@@ -28,7 +28,7 @@ try
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf,fast_io::fixed(vec[i],M));
+		println(obuf,fast_io::fixed<M>(vec[i]));
 	}
 
 /*	{
@@ -61,7 +61,7 @@ try
 		for(std::size_t i(0);i!=N;++i)
 		{
 			fast_io::ospan ostr(arr);
-			println(ostr,fast_io::fixed(vec[i],M));
+			println(ostr,fast_io::fixed<M>(vec[i]));
 			print(obuf,ostr);
 		}
 	}
@@ -70,7 +70,7 @@ try
 	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf,fast_io::fixed(vec[i],M));
+		println(obuf,fast_io::fixed<M>(vec[i]));
 	}
 	{
 	cqw::timer t("speck128/128");
@@ -78,7 +78,7 @@ try
 		std::array<uint8_t, 16>{'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'},
 		std::array<uint8_t, 8>{'1','2','3','4','1','2','3','4'},"speckdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(enc_stream,fast_io::fixed(vec[i],M));
+		println(enc_stream,fast_io::fixed<M>(vec[i]));
 	}
 }
 catch(std::exception const& e)

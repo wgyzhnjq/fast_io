@@ -96,7 +96,7 @@ inline constexpr basic_unsigned_extension<__uint128_t> construct_unsigned_extens
 }
 
 template<typename T>
-requires std::same_as<T,__uint128_t>
+requires (!std::unsigned_integral<T>&&std::same_as<T,__uint128_t>)
 inline constexpr T reset_high(T& a)
 {
 	T temp(a>>64);

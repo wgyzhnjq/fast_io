@@ -83,7 +83,6 @@ add_executable(output_10M_size_t "./0021.benchmark/output_10M_size_t.cc")
 add_executable(output_10M_double "./0021.benchmark/output_10M_double.cc")
 add_executable(input_10M_double "./0021.benchmark/input_10M_double.cc")
 add_executable(input_10M_size_t_as_string "./0021.benchmark/input_10M_size_t_as_string.cc")
-add_executable(charconv "./0021.benchmark/charconv.cc")
 add_executable(dynamic "./0020.dynamic/dynamic.cc")
 
 add_executable(client "./0033.socket/client.cc")
@@ -95,12 +94,6 @@ add_executable(scan_int_until_eof "./0032.eof/scan_int_until_eof.cc")
 
 
 
-add_executable(double_default "./0009.floating point/double_default.cc")
-add_executable(double_scientific "./0009.floating point/double_scientific.cc")
-add_executable(double_fixed "./0009.floating point/double_fixed.cc")
-add_executable(double_fixed_setw "./0009.floating point/double_fixed_setw.cc")
-add_executable(integer_scientific "./0009.floating point/integer_scientific.cc")
-add_executable(floating_view "./0009.floating point/floating_view.cc")
 add_executable(one_time_pad "./0034.crypto/one_time_pad.cc")
 add_executable(my_copy "./0035.transmit/my_copy.cc")
 

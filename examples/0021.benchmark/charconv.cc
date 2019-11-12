@@ -9,7 +9,7 @@ int main()
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf,fast_io::fixed(i,6));
+		println(obuf,fast_io::fixed<6>(i));
 	}
 
 	{
