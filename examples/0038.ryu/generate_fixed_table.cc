@@ -26,6 +26,15 @@ inline constexpr auto generate_fixed_offset_table()
 	return offset;
 }
 
+inline constexpr auto generate_pow10_split(auto const& offset)
+{
+	std::size_t split_size(0);
+	for(auto const & e : offset)
+		split_size+=e;
+	std::array<std::uint64_t,split_size> split{};
+	return split;
+}
+
 int main()
 {
 	constexpr auto fixed_table(generate_fixed_offset_table());
