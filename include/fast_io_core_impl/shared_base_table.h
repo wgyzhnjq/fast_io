@@ -9,7 +9,7 @@ inline constexpr std::pair<std::size_t,std::size_t> cal_base_pw_size(std::size_t
 
 	std::size_t chars(0);
 	std::size_t pw(1);
-	for(;pw*chars<4096;++chars)
+	for(;pw*chars<512;++chars)
 	{
 		retch=chars;
 		retpw=pw;
