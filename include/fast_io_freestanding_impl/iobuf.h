@@ -317,10 +317,10 @@ template<output_stream Ohandler,typename Buf>
 	return ob.obuffer.curr+=size;
 }
 
-template<input_stream Ihandler,typename Buf>
-inline constexpr void orelease(basic_obuf<Ihandler,Buf>& ib,std::size_t size)
+template<output_stream Ohandler,typename Buf>
+inline constexpr void orelease(basic_obuf<Ohandler,Buf>& ob,std::size_t size)
 {
-	return ib.ibuffer.curr-=size;
+	ob.obuffer.curr-=size;
 }
 
 namespace details
