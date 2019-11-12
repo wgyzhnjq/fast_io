@@ -23,12 +23,6 @@ public:
 };
 
 template<typename T>
-[[nodiscard]] inline constexpr auto& orange(basic_ospan<T>& ob)
-{
-	return ob.span();
-}
-
-template<typename T>
 [[nodiscard]] inline constexpr std::size_t osize(basic_ospan<T>& ob)
 {
 	return ob.internal_pointer-ob.span().data();
@@ -38,6 +32,12 @@ template<typename T>
 [[nodiscard]] inline constexpr auto oreserve(basic_ospan<T>& ob,std::size_t size)
 {
 	return ob.internal_pointer+=size;
+}
+
+template<typename T>
+inline constexpr void orelease(basic_ospan<T>& ob,std::size_t size)
+{
+	ob.internal_pointer-=size;
 }
 
 template<typename T,std::contiguous_iterator Iter>

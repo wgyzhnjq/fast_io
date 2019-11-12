@@ -23,12 +23,6 @@ public:
 };
 
 template<typename T>
-[[nodiscard]] inline constexpr auto& orange(basic_ostring<T>& ob)
-{
-	return ob.str();
-}
-
-template<typename T>
 [[nodiscard]] inline constexpr std::size_t osize(basic_ostring<T>& ob)
 {
 	return ob.str().size();
@@ -39,6 +33,12 @@ template<typename T>
 {
 	ob.str().append(size,0);
 	return ob.str().end();
+}
+
+template<typename T>
+inline constexpr void orelease(basic_ostring<T>& ob,std::size_t size)
+{
+	ob.str().erase(ob.str().cend()-size,ob.str().cend());
 }
 
 template<typename T,std::contiguous_iterator Iter>

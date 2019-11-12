@@ -62,6 +62,12 @@ template<input_stream Ihandler,std::size_t N>
 	return ib.curr+=size;
 }
 
+template<input_stream Ihandler,std::size_t N>
+inline constexpr void irelease(istack<Ihandler,N>& ib,std::size_t size)
+{
+	ib.curr-=size;
+}
+
 template<input_stream Ihandler,std::size_t N,std::contiguous_iterator Iter>
 inline constexpr Iter reads(istack<Ihandler,N>& ib,Iter begin,Iter end)
 {

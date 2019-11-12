@@ -3,7 +3,7 @@
 
 namespace fast_io
 {
-
+/*
 namespace details
 {
 
@@ -137,40 +137,8 @@ inline void output_fixed_floats(output& out,T e,std::size_t precision)
 
 }
 
-template<character_output_stream output,std::floating_point T>
-inline void print_define(output& out,manip::fixed<T const> a)
-{
-/*	auto e(a.reference);
-	if(e<0)
-	{
-		e=-e;
-		put(out,'-');
-	}
-	if(details::output_inf(out,e))
-		return;
-	details::output_fixed_floats(out,e,a.precision);*/
-	if constexpr(range_output_stream<output>)
-		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(out,static_cast<double>(a.reference),a.precision);
-	else
-	{
-#ifdef __cpp_lib_span
-		if(a.precision<320)[[likely]]
-		{
-			std::array<typename output::char_type,640> array;
-			ospan osp{array.data(),array.size()};
-			details::ryu::output_fixed<std::uint64_t,std::uint32_t>(osp,static_cast<double>(a.reference),a.precision);
-			print(out,osp);
-			return;
-		}
-#endif
-		basic_ostring<std::basic_string<typename output::char_type>> os;
-		details::ryu::output_fixed<std::uint64_t,std::uint32_t>(os,static_cast<double>(a.reference),a.precision);
-		print(out,orange(os));
-	}
-}
-
-template<character_output_stream output,std::floating_point T>
-inline void print_define(output& out,manip::scientific<T const> a)
+template<character_output_stream output,std::size_t precision,std::floating_point T>
+inline void print_define(output& out,manip::scientific<precision,T const> a)
 {
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
@@ -179,7 +147,7 @@ inline void print_define(output& out,manip::scientific<T const> a)
 		if(a.precision)
 		{
 			put(out,'.');
-			for(std::size_t i(0);i!=a.precision;++i)
+			for(std::size_t i(0);i!=precision;++i)
 				put(out,'0');
 		}
 		print(out,"e0");
@@ -193,7 +161,7 @@ inline void print_define(output& out,manip::scientific<T const> a)
 	if(details::output_inf(out,e))
 		return;
 	auto x(std::floor(std::log10(e)));
-	details::output_fixed_floats(out,e*std::pow(10,-x),a.precision);
+	details::output_fixed_floats(out,e*std::pow(10,-x),precision);
 	put(out,'e');
 	if(x<0)
 	{
@@ -203,8 +171,8 @@ inline void print_define(output& out,manip::scientific<T const> a)
 	print(out,static_cast<std::uint64_t>(x));
 }
 
-template<character_output_stream output,std::floating_point T>
-inline void print_define(output& out,manip::shortest<T const> a)
+template<character_output_stream output,std::size_t precision,std::floating_point T>
+inline void print_define(output& out,manip::shortest<std::size_t,T const> a)
 {
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
@@ -221,12 +189,12 @@ inline void print_define(output& out,manip::shortest<T const> a)
 		return;
 	auto x(std::floor(std::log10(e)));
 	{
-	auto fix(std::fabs(x)<=a.precision);
+	auto fix(std::fabs(x)<=precision);
 	basic_ostring<std::basic_string<typename output::char_type>> bas;
 	if(fix)
-		details::output_fixed_floats(bas,e,a.precision);
+		details::output_fixed_floats(bas,e,precision);
 	else
-		details::output_fixed_floats(bas,e*std::pow(10,-x),a.precision);
+		details::output_fixed_floats(bas,e*std::pow(10,-x),precision);
 	auto& str(bas.str());
 	if(str.find('.')!=std::string::npos)
 	{
@@ -252,7 +220,53 @@ inline void print_define(output& out,manip::shortest<T const> a)
 template<character_output_stream soutp,std::floating_point T>
 inline void print_define(soutp &output,T const& p)
 {
-	print(output,shortest(p,6));
+	print(output,shortest<6>(p));
+}
+*/
+
+template<output_stream output,std::size_t precision,std::floating_point T>
+inline void print_define(output& out,manip::fixed<precision,T const> a)
+{
+
+	std::size_t constexpr reserved_size(precision+325);
+	if constexpr(buffer_output_stream<output>)
+	{
+
+		auto reserved(oreserve(out,reserved_size));
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		{
+			if(reserved)
+			{
+				auto start(reserved-reserved_size);
+				orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(start,a.reference));
+				return;
+			}
+		}
+		else
+		{
+			auto start(reserved-reserved_size);
+			orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(start,a.reference));
+			return;
+		}
+	}
+	if constexpr (precision<325)
+	{
+		std::array<typename output::char_type,reserved_size> array;
+		writes(out,array.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(array.data(),a.reference));
+	}
+	else
+	{
+		std::basic_string<typename output::char_type> str(reserved_size);
+		writes(out,str.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(str.data(),a.reference));
+	}
+}
+
+template<buffer_output_stream soutp,std::floating_point T>
+inline void print_define(soutp &output,T const& p)
+{
+//	I haven't implement shortest & scientific. Use fixed mode first
+//	print(output,shortest<6>(p));
+	print_define(output,fixed<6>(p));
 }
 
 template<character_input_stream input,std::floating_point T>
@@ -345,29 +359,6 @@ inline constexpr void scan(input& in,T &t)
 	t*=std::pow(10,p);
 	if(negative)
 		t=-t;
-}
-
-template<character_output_stream output,std::integral T>
-inline void print_define(output& out,manip::shortest<T const> a)
-{
-	print(out,a.reference);
-}
-
-template<character_output_stream output,std::integral T>
-inline void print_define(output& out,manip::fixed<T const> a)
-{
-	print(out,a.reference);
-	if(a.precision)
-	{
-		put(out,'.');
-		fill_nc(out,a.precision,'0');
-	}
-}
-
-template<character_output_stream output,std::integral T>
-inline void print_define(output& out,manip::scientific<T const> sc)
-{
-	print(out,scientific(static_cast<long double>(sc.reference),sc.precision));
 }
 
 }

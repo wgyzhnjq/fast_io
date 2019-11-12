@@ -30,17 +30,6 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,fast_io::fixed(vec[i],M));
 	}
-	{
-		cqw::timer t("obuf");
-		fast_io::obuf obuf("obuf_no_extra_alloc.txt");
-		fast_io::ostring ostr;
-		for(std::size_t i(0);i!=N;++i)
-		{
-			ostr.clear();
-			println(ostr,fast_io::fixed(vec[i],M));
-			print(obuf,ostr.str());
-		}
-	}
 
 /*	{
 		cqw::timer t("charconv");

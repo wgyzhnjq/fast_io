@@ -19,13 +19,6 @@ public:
 	}
 	constexpr auto empty() const {return s.empty();}
 };
-
-template<typename T>
-[[nodiscard]] inline constexpr auto& irange(basic_istring_view<T>& isv)
-{
-	return isv.str();
-}
-
 template<typename T>
 [[nodiscard]] inline constexpr std::size_t isize(basic_istring_view<T>& isv)
 {
@@ -37,6 +30,12 @@ template<typename T>
 {
 	isv.str().remove_prefix(size);
 	return isv.str().begin();
+}
+
+template<typename T>
+inline constexpr void irelease(basic_istring_view<T>& isv,std::size_t size)
+{
+	isv.str()={isv.str().data()-size,isv.str().size()+size};
 }
 
 template<typename T,std::contiguous_iterator Iter>

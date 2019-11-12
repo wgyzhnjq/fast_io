@@ -131,6 +131,12 @@ template<input_stream Ihandler,typename Buf>
 	return ib.ibuffer.curr+=size;
 }
 
+template<input_stream Ihandler,typename Buf>
+inline constexpr void irelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
+{
+	ib.ibuffer.curr-=size;
+}
+
 template<input_stream Ihandler,typename Buf,std::contiguous_iterator Iter>
 inline constexpr Iter reads(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
@@ -310,6 +316,13 @@ template<output_stream Ohandler,typename Buf>
 		return nullptr;
 	return ob.obuffer.curr+=size;
 }
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr void orelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
+{
+	return ib.ibuffer.curr-=size;
+}
+
 namespace details
 {
 template<io_stream io_handler,typename Buf>

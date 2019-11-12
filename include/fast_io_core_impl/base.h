@@ -42,7 +42,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		if constexpr(10 < base)
 		{
 			if(a<10)
-				*--iter = a+48;
+				*--iter = a+'0';
 			else
 			{
 				if constexpr (uppercase)
@@ -52,7 +52,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			}
 		}
 		else
-			*--iter=a+48;
+			*--iter=a+'0';
 	}
 	return iter;
 //	writes(out,iter,v.data()+v.size());
@@ -93,35 +93,6 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 	writes(out,iter,v.data()+v.size());
 */
 }
-
-//exploit for ryu algorithm
-template<std::uint8_t base,bool uppercase,std::size_t width,output_stream output,std::unsigned_integral U>
-requires base_number_upper_constraints<base,uppercase>::value
-inline constexpr void unsafe_setw_base_number(output& out,U a)
-{
-	if constexpr(buffer_output_stream<output>)
-	{
-		auto reserved(oreserve(out,width));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
-		{
-			if(reserved)
-			{
-				std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
-				return;
-			}
-		}
-		else
-		{
-			std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
-			return;
-		}
-	}
-	std::array<typename output::char_type,width> v;
-	auto const e(v.data()+v.size());
-	std::fill(v.data(),output_base_number_impl<base,uppercase>(e,a),'0');
-	writes(out,v.data(),e);
-}
-
 
 template<std::uint32_t base,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept

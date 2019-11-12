@@ -38,6 +38,11 @@ inline constexpr auto oreserve(basic_sync<output,ostr>& sync)
 {
 	return oreserve(sync.buffer());
 }
+template<output_stream output,typename ostr>
+inline constexpr void orelease(basic_sync<output,ostr>& sync)
+{
+	orelease(sync.buffer());
+}
 
 
 template<output_stream output,typename ostr>

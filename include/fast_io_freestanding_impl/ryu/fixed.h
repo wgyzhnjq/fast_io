@@ -8,31 +8,12 @@ struct floating_traits
 {
 };
 
-template<std::uint8_t base,bool uppercase,buffer_output_stream output,std::unsigned_integral U>
-requires base_number_upper_constraints<base,uppercase>::value
-inline constexpr void unsafe_setz_base_number(output& out,U a,std::size_t width)
-{
-	auto reserved(oreserve(out,width));
-	if constexpr(std::is_pointer_v<decltype(reserved)>)
-	{
-		if(reserved)
-		{
-			std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
-			return;
-		}
-	}
-	else
-	{
-		std::fill(reserved-width,output_base_number_impl<base,uppercase>(reserved,a),'0');
-		return;
-	}
-}
-
 template<>	
 struct floating_traits<double>
 {
-	static inline constexpr std::size_t mantissa_bits = 52;
-	static inline constexpr std::size_t exponent_bits = 11;
+	static inline constexpr std::uint64_t mantissa_bits = 52;
+	static inline constexpr std::uint32_t exponent_bits = 11;
+	static inline constexpr std::uint32_t exponent_max = (std::uint32_t(1)<<exponent_bits)-1;
 	static inline constexpr std::size_t bias = 1023;
 	static inline constexpr std::size_t pow5_inv_bitcount= 122;
 	static inline constexpr std::size_t pow5_bitcount= 121;
@@ -77,17 +58,14 @@ inline constexpr std::uint32_t mul_shift_mod_1e9(std::uint64_t m, std::array<T,3
 	return static_cast<std::uint32_t>(s1)-1000000000*static_cast<std::uint32_t>(low(mul_high(s1,mulb))>>29);
 }
 
-template<character_output_stream output,std::unsigned_integral mantissaType>
-inline constexpr void easy_case(output& out,bool sign, mantissaType const& mantissa)
+template<std::random_access_iterator Iter,std::unsigned_integral mantissaType>
+inline constexpr auto easy_case(Iter result,bool sign, mantissaType const& mantissa)
 {
 	if (mantissa)
-	{
-		print(out,"nan");
-		return;
-	}
+		return std::copy_n("nan",3,result);
 	if (sign)
-		put(out,'-');
-	print(out,"inf");
+		return std::copy_n("-inf",4,result);
+	return std::copy_n("inf",3,result);
 }
 
 template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
@@ -99,37 +77,42 @@ inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& m
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
-template<std::unsigned_integral T,std::unsigned_integral E,character_output_stream output,std::floating_point F>
-requires range_output_stream<output>
-inline constexpr void output_fixed(output& out, F d,std::size_t precision)
+template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,std::random_access_iterator Iter,std::floating_point F>
+inline constexpr auto output_fixed(Iter result, F d)
 {
 	using signed_E = std::make_signed_t<E>;
 	auto const bits(bit_cast<T>(d));
 	// Decode bits into sign, mantissa, and exponent.
 	bool const sign((bits >> (floating_traits<F>::mantissa_bits + floating_traits<F>::exponent_bits)) & 1u);
 	T const mantissa(bits & ((static_cast<T>(1u) << floating_traits<F>::mantissa_bits) - 1u));
-	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & ((static_cast<E>(1u) << floating_traits<F>::exponent_bits) - 1u))));
+	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & floating_traits<F>::exponent_max)));
 	// Case distinction; exit early for the easy cases.
-	std::size_t const start_pos(osize(out));
-	if(exponent == ((1u << floating_traits<F>::exponent_bits) - 1u))
-	{
-		easy_case(out,sign,mantissa);
-		return;
-	}
+	auto start(result);
+	if(exponent == floating_traits<F>::exponent_max)
+		return easy_case(result,sign,mantissa);;
 	if(!exponent&&!mantissa)
 	{
 		if(sign)
-			put(out,'-');
-		if(precision)
 		{
-			put(out,'.');
-			fill_nc(out,precision,'0');
+			*result='-';
+			++result;
 		}
-		return;
+		*result='0';
+		++result;
+		if constexpr(precision!=0)
+		{
+			*result='.';
+			++result;
+			result=std::fill_n(result,precision,'0');
+		}
+		return result;
 	}
 	auto const r2(init_rep<F>(mantissa,static_cast<signed_E>(exponent)));
 	if (sign)
-		put(out,'-');
+	{
+		*result='-';
+		++result;
+	}
 	bool const negative_r2_e(r2.e<0);
 	bool nonzero(false);
 	if(-52<=r2.e)
@@ -140,33 +123,42 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 		{
 			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 			if(nonzero)
-				unsafe_setw_base_number<10,false,9>(out,digits);
+			{
+				std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+				result+=9;
+			}
 			else if(digits)
 			{
-				print(out,digits);
+				output_base_number_impl<10,false>(result+=chars_len<10>(digits),digits);
 				nonzero = true;
 			}
 		}
 	}
 	if(!nonzero)
-		put(out,'0');
-	if(precision)
-		put(out,'.');
+	{
+		*result='0';
+		++result;
+	}
+	if constexpr(precision!=0)
+	{
+		*result='.';
+		++result;
+	}
 	if(negative_r2_e)
 	{
 		auto abs_e2(-r2.e);
 		E const idx(static_cast<E>(abs_e2)>>4);
-		std::size_t const blocks(precision/9+1);
+		constexpr std::size_t blocks(precision/9+1);
 		std::size_t round_up(0);
 		std::size_t i(0);
 		auto const mb2_idx(fixed_pow10<>::min_block_2[idx]);
 		if (blocks<=mb2_idx)
 		{
 			i=blocks;
-			fill_nc(out,precision,'0');
+			result=std::fill_n(result,precision,'0');
 		}
 		else if(i<mb2_idx)
-			fill_nc(out,9*(i=mb2_idx),'0');
+			result=std::fill_n(result,9*(i=mb2_idx),'0');
 		signed_E j(128+(abs_e2-(idx<<4)));
 		auto const of2i(fixed_pow10<>::offset_2[idx]);
 		for(;i<blocks;++i)
@@ -175,11 +167,14 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
 			if (fixed_pow10<>::offset_2[idx+1]<=p)
 			{
-				fill_nc(out,precision-9*i,'0');
+				result=std::fill_n(result,precision-9*i,'0');
 				break;
 			}
 			if(i+1<blocks)
-				unsafe_setw_base_number<10,false,9>(out,digits);
+			{
+				std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+				result+=9;
+			}
 			else
 			{
 				E const maximum(precision-9*i);
@@ -200,90 +195,84 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 						round_up = 1;
 				}
 				if(maximum)
-					unsafe_setz_base_number<10,false>(out,digits,maximum);
+				{
+					std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),'0');
+					result+=maximum;
+				}
 				break;
 			}
 		}
 		if(round_up)
 		{
-			auto &result(orange(out));
-			std::size_t round_index(osize(out)-start_pos);
-			std::size_t dot_index(0);
-/*			while (true)
+			std::size_t round_index(result-start);
+			if constexpr(precision!=0)
 			{
-				--round_index;
-				char c(0);
-				if (round_index == -1 || (c = result[round_index], c == '-'))
+				std::size_t dot_index(0);
+				while(round_index--)
 				{
-					result[round_index+1] = '1';
-					if (dot_index > 0)
+					auto c(start[round_index]);
+					if (c == '-')
 					{
-						result[round_index] = '0';
-						result[round_index + 1] = '.';
+						start[round_index+1] = '1';
+						if(dot_index)
+						{
+							start[dot_index] = '0';
+							start[dot_index+1] = '.';
+						}
+						*result='0';
+						return ++result;
 					}
-					put(out,'0');
-					break;
-				}
-				if (c == '.')
-				{
-					dot_index = round_index;
-					continue;
-				}
-				else if (c == '9')
-				{
-					result[round_index] = '0';
-					round_up = 1;
-					continue;
-				}
-				else
-				{
-					if (round_up == 2 && c % 2 == 0)
-						break;
-					result[round_index] = c + 1;
-					break;
-				}
-			}*/
-			while(round_index--)
-			{
-				auto c(result[round_index]);
-				if (c == '-')
-				{
-					result[round_index+1] = '1';
-					if(dot_index)
+					if (c == '.')
 					{
-						result[dot_index] = '0';
-						result[dot_index+1] = '.';
+						dot_index = round_index;
+						continue;
 					}
-					put(out,'0');
-					return;
+					else if (c == '9')
+					{
+						start[round_index] = '0';
+						round_up = 1;
+						continue;
+					}
+					if (round_up!=2||c&1)
+						start[round_index]=c+1;
+					return result;
 				}
-				if (c == '.')
+				*start='1';
+				if(dot_index)
 				{
-					dot_index = round_index;
-					continue;
+					start[dot_index] = '0';
+					start[dot_index+1] = '.';
 				}
-				else if (c == '9')
-				{
-					result[round_index] = '0';
-					round_up = 1;
-					continue;
-				}
-				if (round_up==2&&!(c&1))
-					return;
-				result[round_index]=c+1;
-				return;
 			}
-			result.front()='1';
-			if(dot_index)
+			else
 			{
-				result[dot_index] = '0';
-				result[dot_index+1] = '.';
+				while(round_index--)
+				{
+					auto c(start[round_index]);
+					if (c == '-')
+					{
+						start[round_index+1] = '1';
+						*result='0';
+						return ++result;
+					}
+					if (c == '9')
+					{
+						start[round_index] = '0';
+						round_up = 1;
+						continue;
+					}
+					if (round_up!=2||c&1)
+						start[round_index]=c+1;
+					return result;
+				}
+				*start='1';
 			}
-			put(out,'0');
+			*result='0';
+			++result;
 		}
+		return result;
 	}
-	else
-		fill_nc(out,precision,'0');
+	return std::fill_n(result,precision,'0');
 }
 
 }
