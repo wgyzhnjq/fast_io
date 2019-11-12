@@ -9,7 +9,8 @@
 #include<cstdio>
 #include<random>
 #include<iomanip>
-#include<charconv>
+//#include<charconv>
+#include"ryu.h"
 
 int main()
 try
@@ -41,7 +42,7 @@ try
 		}
 	}
 
-	{
+/*	{
 		cqw::timer t("charconv");
 		fast_io::obuf obuf("charconvdb.txt");
 		std::array<char,1000> arr;
@@ -50,6 +51,17 @@ try
 			auto [p,ec]= std::to_chars(arr.data(),arr.data()+arr.size(),vec[i],std::chars_format::fixed,M);
 			*p++='\n';
 			writes(obuf,arr.data(),p);
+		}
+	}*/
+	{
+		cqw::timer t("ryu_source");
+		fast_io::obuf obuf("ryu_sourcedb.txt");
+		std::array<char,1000> arr;
+		for(std::size_t i(0);i!=N;++i)
+		{
+			auto p(arr.data()+d2fixed_buffered_n(vec[i],static_cast<std::uint32_t>(M),arr.data()));
+			*p='\n';
+			writes(obuf,arr.data(),++p);
 		}
 	}
 #ifdef __cpp_lib_span

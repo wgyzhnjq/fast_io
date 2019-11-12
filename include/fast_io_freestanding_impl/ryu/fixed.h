@@ -193,7 +193,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 					round_up=lastdigit>5;
 				else
 				{
-					auto const required_twos(-static_cast<std::common_type_t<std::ptrdiff_t,signed_E>>(abs_e2+precision+1));
+					auto const required_twos(static_cast<signed_E>(abs_e2-precision-1));
 					if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))))
 						round_up = 2;
 					else
@@ -209,6 +209,40 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 			auto &result(orange(out));
 			std::size_t round_index(osize(out)-start_pos);
 			std::size_t dot_index(0);
+/*			while (true)
+			{
+				--round_index;
+				char c(0);
+				if (round_index == -1 || (c = result[round_index], c == '-'))
+				{
+					result[round_index+1] = '1';
+					if (dot_index > 0)
+					{
+						result[round_index] = '0';
+						result[round_index + 1] = '.';
+					}
+					put(out,'0');
+					break;
+				}
+				if (c == '.')
+				{
+					dot_index = round_index;
+					continue;
+				}
+				else if (c == '9')
+				{
+					result[round_index] = '0';
+					round_up = 1;
+					continue;
+				}
+				else
+				{
+					if (round_up == 2 && c % 2 == 0)
+						break;
+					result[round_index] = c + 1;
+					break;
+				}
+			}*/
 			while(round_index--)
 			{
 				auto c(result[round_index]);
@@ -234,7 +268,7 @@ inline constexpr void output_fixed(output& out, F d,std::size_t precision)
 					round_up = 1;
 					continue;
 				}
-				if (round_up==2&&(!c&1))
+				if (round_up==2&&!(c&1))
 					return;
 				result[round_index]=c+1;
 				return;
