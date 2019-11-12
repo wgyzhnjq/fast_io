@@ -123,12 +123,12 @@ inline constexpr void unsafe_setw_base_number(output& out,U a)
 }
 
 
-template<std::size_t base,std::unsigned_integral U>
+template<std::uint32_t base,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
-	constexpr std::size_t base2(base  * base);
-	constexpr std::size_t base3(base2 * base);
-	constexpr std::size_t base4(base3 * base);
+	constexpr std::common_type_t<std::uint32_t,U> base2(base  * base);
+	constexpr std::common_type_t<std::uint32_t,U> base3(base2 * base);
+	constexpr std::common_type_t<std::uint32_t,U> base4(base3 * base);
 	for (std::size_t n(1);;n+=4)
 	{
 		if (value < base)
