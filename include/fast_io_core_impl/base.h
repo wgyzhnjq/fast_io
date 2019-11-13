@@ -13,7 +13,7 @@ struct base_number_upper_constraints
 	static constexpr bool value = 2<=bs&&bs<=36&&((bs<=10&&!uppercase)||10<bs);
 };
 
-template<std::uint8_t base,bool uppercase,std::random_access_iterator Iter,std::unsigned_integral U>
+template<std::uint8_t base,bool uppercase,bool point=false,std::random_access_iterator Iter,std::unsigned_integral U>
 inline constexpr auto output_base_number_impl(Iter iter,U a)
 {
 //number: 0:48 9:57
@@ -34,10 +34,19 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		auto i(tm.data());
 		for(;*i=='0';++i);
 		auto const ed(tm.data()+chars);
-		std::copy(i,ed,iter-=ed-i);
+		if constexpr(point)
+		{
+			std::copy(i,ed,iter-=ed-i+1);
+			*--iter='.';
+			*--iter=ed[-1];
+		}	
+		else
+			std::copy(i,ed,iter-=ed-i);
 	}
 	else
 	{
+		if constexpr(point)
+			*--iter='.';
 		if constexpr(10 < base)
 		{
 			if(a<10)

@@ -77,7 +77,7 @@ inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& m
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
-template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,std::random_access_iterator Iter,std::floating_point F>
+template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,bool scientific = false,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr auto output_fixed(Iter result, F d)
 {
 	using signed_E = std::make_signed_t<E>;
@@ -114,163 +114,283 @@ inline constexpr auto output_fixed(Iter result, F d)
 		++result;
 	}
 	bool const negative_r2_e(r2.e<0);
-	bool nonzero(false);
-	if(-52<=r2.e)
+	if constexpr(scientific)
 	{
-		E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
-		signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
-		for(std::size_t i(length_for_index(idx));i--;)
+		E digits(0),printed_digits(0),available_digits(0);
+		signed_E exp(0);
+		if(-52<=r2.e)
 		{
-			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
-			if(nonzero)
+			E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
+			signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
+			for(auto i(length_for_index(idx));i--;)
 			{
-				std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
-				result+=9;
-			}
-			else if(digits)
-			{
-				output_base_number_impl<10,false>(result+=chars_len<10>(digits),digits);
-				nonzero = true;
-			}
-		}
-	}
-	if(!nonzero)
-	{
-		*result='0';
-		++result;
-	}
-	if constexpr(precision!=0)
-	{
-		*result='.';
-		++result;
-	}
-	if(negative_r2_e)
-	{
-		auto abs_e2(-r2.e);
-		E const idx(static_cast<E>(abs_e2)>>4);
-		constexpr std::size_t blocks(precision/9+1);
-		std::size_t round_up(0);
-		std::size_t i(0);
-		auto const mb2_idx(fixed_pow10<>::min_block_2[idx]);
-		if (blocks<=mb2_idx)
-		{
-			i=blocks;
-			result=std::fill_n(result,precision,'0');
-		}
-		else if(i<mb2_idx)
-			result=std::fill_n(result,9*(i=mb2_idx),'0');
-		signed_E j(128+(abs_e2-(idx<<4)));
-		auto const of2i(fixed_pow10<>::offset_2[idx]);
-		for(;i<blocks;++i)
-		{
-			E p(of2i+i-mb2_idx);
-			E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
-			if (fixed_pow10<>::offset_2[idx+1]<=p)
-			{
-				result=std::fill_n(result,precision-9*i,'0');
-				break;
-			}
-			if(i+1<blocks)
-			{
-				std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
-				result+=9;
-			}
-			else
-			{
-				E const maximum(precision-9*i);
-				E lastdigit(0);
-				for(E k(maximum);k<9;++k)
+				digits=mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e);
+				if(printed_digits)
 				{
-					lastdigit = digits%10;
-					digits /= 10;
+					if constexpr(precision<10)
+					{
+						available_digits=9;
+						break;
+					}
+					else if(precision < printed_digits + 9)
+					{
+						available_digits=9;
+						break;
+					}
+					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+					result+=9;
+					printed_digits+=9;
 				}
-				if(lastdigit!=5)
-					round_up=lastdigit>5;
-				else
+				else if(digits)
 				{
-					auto const required_twos(static_cast<signed_E>(abs_e2-precision-1));
-					if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))))
-						round_up = 2;
+					available_digits = chars_len<10>(digits);
+					exp = static_cast<signed_E>(i*9 + available_digits - 1);
+					if(precision < available_digits)
+						break;
+					if constexpr (precision!=0)
+					{
+						//639 Line
+						std::fill(result,output_base_number_impl<10,false,true>(result+available_digits+1,digits),'0');
+						result+=available_digits+1;
+					}
 					else
-						round_up = 1;
+					{
+						*result='0'+static_cast<char>(digits);
+						++result;
+					}
+					printed_digits = available_digits;
+					available_digits = 0;
 				}
-				if(maximum)
-				{
-					std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),'0');
-					result+=maximum;
-				}
-				break;
 			}
 		}
-		if(round_up)
+		if(negative_r2_e&&!available_digits)
 		{
-			std::size_t round_index(result-start);
-			if constexpr(precision!=0)
+			auto abs_e2(-r2.e);
+			E const idx(static_cast<E>(abs_e2)>>4);
+			signed_E j(128+(abs_e2-(idx<<4)));
+			for (E i(fixed_pow10<>::min_block_2[idx]); i < 200; ++i)
 			{
-				std::size_t dot_index(0);
-				while(round_index--)
+				E const p(of2i+i-mb2_idx);
+				digits=(p<=fixed_pow10<>::offset_2[idx+1])?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
+				if(printed_digits)
 				{
-					auto c(start[round_index]);
-					if (c == '-')
+					if constexpr(precision<10)
 					{
-						start[round_index+1] = '1';
-						if(dot_index)
-						{
-							start[dot_index] = '0';
-							start[dot_index+1] = '.';
-						}
-						*result='0';
-						return ++result;
+						available_digits=9;
+						break;
 					}
-					if (c == '.')
+					else if(precision < printed_digits + 9)
 					{
-						dot_index = round_index;
-						continue;
+						available_digits=9;
+						break;
 					}
-					else if (c == '9')
-					{
-						start[round_index] = '0';
-						round_up = 1;
-						continue;
-					}
-					if (round_up!=2||c&1)
-						start[round_index]=c+1;
-					return result;
+					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+					result+=9;
 				}
-				*start='1';
-				if(dot_index)
+				else if(digits)
 				{
-					start[dot_index] = '0';
-					start[dot_index+1] = '.';
+					available_digits=chars_len<10>(digits);
+					exp = static_cast<int32_t> (availableDigits -(i + 1) * 9 - 1);
+					if (precision<available_digits)
+						break;
+					if constexpr (precision!=0)
+					{
+						std::fill(result,output_base_number_impl<10,false,true>(result+10,digits),'0');
+						result+=available_digits+1;						
+					}
+					else
+					{
+						*result='0'+static_cast<char>(digits);
+						++result;
+					}
+					printed_digits = available_digits;
+					available_digits = 0;
 				}
 			}
-			else
+		}
+		E lastdigit(0);
+		for(E k(maximum);k<available_digits;++k)
+		{
+			lastdigit = digits%10;
+			digits /= 10;
+		}
+		std::size_t round_up(0);
+		if(lastdigit!=5)
+			round_up = 5 < lastdigit;
+		else
+		{
+			signedE const rexp (static_cast<signedE> (recision - exp));
+			signedE const required_twos(-e2 - rexp);
+			bool trailing_zeros(required_twos <= 0);
+			|| (required_twos < 60 && multiple_of_power_of_2(m2, static_cast<E>(required_twos)));
+			if (rexp < 0)
 			{
-				while(round_index--)
-				{
-					auto c(start[round_index]);
-					if (c == '-')
-					{
-						start[round_index+1] = '1';
-						*result='0';
-						return ++result;
-					}
-					if (c == '9')
-					{
-						start[round_index] = '0';
-						round_up = 1;
-						continue;
-					}
-					if (round_up!=2||c&1)
-						start[round_index]=c+1;
-					return result;
-				}
-				*start='1';
+				signed_E requiredFives = -rexp;
+				trailingZeros = trailingZeros && multipleOfPowerOf5(m2, static_cast<E>(requiredFives));
 			}
+			round_up = trailing_zeros ? 2 : 1;
+		}
+	}
+	else
+	{
+		bool nonzero(false);
+		if(-52<=r2.e)
+		{
+			E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
+			signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
+			for(std::size_t i(length_for_index(idx));i--;)
+			{
+				E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+				if(nonzero)
+				{
+					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+					result+=9;
+				}
+				else if(digits)
+				{
+					output_base_number_impl<10,false>(result+=chars_len<10>(digits),digits);
+					nonzero = true;
+				}
+			}
+		}
+		if(!nonzero)
+		{
 			*result='0';
 			++result;
 		}
-		return result;
+		if constexpr(precision!=0)
+		{
+			*result='.';
+			++result;
+		}
+		if(negative_r2_e)
+		{
+			auto abs_e2(-r2.e);
+			E const idx(static_cast<E>(abs_e2)>>4);
+			constexpr std::size_t blocks(precision/9+1);
+			std::size_t round_up(0);
+			std::size_t i(0);
+			auto const mb2_idx(fixed_pow10<>::min_block_2[idx]);
+			if (blocks<=mb2_idx)
+			{
+				i=blocks;
+				result=std::fill_n(result,precision,'0');
+			}
+			else if(i<mb2_idx)
+				result=std::fill_n(result,9*(i=mb2_idx),'0');
+			signed_E j(128+(abs_e2-(idx<<4)));
+			auto const of2i(fixed_pow10<>::offset_2[idx]);
+			for(;i<blocks;++i)
+			{
+				E p(of2i+i-mb2_idx);
+				E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
+				if (fixed_pow10<>::offset_2[idx+1]<=p)
+				{
+					result=std::fill_n(result,precision-9*i,'0');
+					break;
+				}
+				if(i+1<blocks)
+				{
+					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
+					result+=9;
+				}
+				else
+				{
+					E const maximum(precision-9*i);
+					E lastdigit(0);
+					for(E k(maximum);k<9;++k)
+					{
+						lastdigit = digits%10;
+						digits /= 10;
+					}
+					if(lastdigit!=5)
+						round_up=lastdigit>5;
+					else
+					{
+						auto const required_twos(static_cast<signed_E>(abs_e2-precision-1));
+						if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))))
+							round_up = 2;
+						else
+							round_up = 1;
+					}
+					if(maximum)
+					{
+						std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),'0');
+						result+=maximum;
+					}
+					break;
+				}
+			}
+			if(round_up)
+			{
+				std::size_t round_index(result-start);
+				if constexpr(precision!=0)
+				{
+					std::size_t dot_index(0);
+					while(round_index--)
+					{
+						auto c(start[round_index]);
+						if (c == '-')
+						{
+							start[round_index+1] = '1';
+							if(dot_index)
+							{
+								start[dot_index] = '0';
+								start[dot_index+1] = '.';
+							}
+							*result='0';
+							return ++result;
+						}
+						if (c == '.')
+						{
+							dot_index = round_index;
+							continue;
+						}
+						else if (c == '9')
+						{
+							start[round_index] = '0';
+							round_up = 1;
+							continue;
+						}
+						if (round_up!=2||c&1)
+							start[round_index]=c+1;
+						return result;
+					}
+					*start='1';
+					if(dot_index)
+					{
+						start[dot_index] = '0';
+						start[dot_index+1] = '.';
+					}
+				}
+				else
+				{
+					while(round_index--)
+					{
+						auto c(start[round_index]);
+						if (c == '-')
+						{
+							start[round_index+1] = '1';
+							*result='0';
+							return ++result;
+						}
+						if (c == '9')
+						{
+							start[round_index] = '0';
+							round_up = 1;
+							continue;
+						}
+						if (round_up!=2||c&1)
+							start[round_index]=c+1;
+						return result;
+					}
+					*start='1';
+				}
+				*result='0';
+				++result;
+			}
+			return result;
+		}
 	}
 	return std::fill_n(result,precision,'0');
 }
