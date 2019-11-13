@@ -196,14 +196,14 @@ inline constexpr basic_unsigned_extension<T>& operator--(basic_unsigned_extensio
 	return a;
 }
 
-template<typename T>
+template<typename T,typename P>
 requires
 #ifdef __SIZEOF_INT128__
-(std::unsigned_integral<T>||std::same_as<T,__uint128_t>)
+((std::unsigned_integral<T>||std::same_as<T,__uint128_t>)&&(std::unsigned_integral<P>||std::same_as<P,__uint128_t>))
 #else
-std::unsigned_integral<T>
+(std::unsigned_integral<T>&&std::unsigned_integral<P>)
 #endif
-inline constexpr bool add_carry_assignment(bool carry_flag,T& a,T const& b)
+inline constexpr bool add_carry_assignment(bool carry_flag,T& a,P b)
 {
 	auto const temp(carry_flag+a+b);
 	bool const carry(temp<a);
@@ -217,16 +217,25 @@ inline constexpr bool add_carry_assignment(bool carry_flag,basic_unsigned_extens
 	return add_carry_assignment(add_carry_assignment(carry_flag,a.low,b.low),a.high,b.high);
 }
 
-inline constexpr bool add_carry_assignment_single(bool carry_flag,std::uint64_t& a,std::uint64_t value)
+template<typename T,typename P>
+requires
+#ifdef __SIZEOF_INT128__
+(std::unsigned_integral<P>||std::same_as<P,__uint128_t>)
+#else
+(std::unsigned_integral<P>)
+#endif
+inline constexpr bool add_carry_assignment(bool carry_flag,basic_unsigned_extension<T>& a,P value)
 {
-	return add_carry_assignment(carry_flag,a,value);
+	return add_carry_assignment(add_carry_assignment(carry_flag,a.low,value),a.high,0u);
 }
-
+/*
 template<typename T>
-inline constexpr bool add_carry_assignment_single(bool carry_flag,basic_unsigned_extension<T>& a,std::uint64_t value)
+inline constexpr bool add_carry_assignment_single(bool carry_flag,basic_unsigned_extension<T>& a,T value)
 {
-	return add_carry_assignment_single(add_carry_assignment_single(carry_flag,a.low,value),a.high,0);
+	return false;
+//	return add_carry_assignment(add_carry_assignment(carry_flag,a.low,value),a.high,0u);
 }
+*/
 
 template<typename T>
 inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extension<T>& a,basic_unsigned_extension<T> const& b)
@@ -236,15 +245,13 @@ inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extensio
 }
 
 template<typename T>
-requires std::unsigned_integral<T>
 inline constexpr basic_unsigned_extension<T>& operator+=(basic_unsigned_extension<T>& a,T const& b)
 {
-	add_carry_assignment_single(false,a,b);
+	add_carry_assignment(add_carry_assignment(false,a.low,b),a.high,0u);
 	return a;
 }
 
 template<typename T,typename P>
-requires std::constructible_from<basic_unsigned_extension<T>,P>
 inline constexpr basic_unsigned_extension<T> operator+(basic_unsigned_extension<T> a,P&& b)
 {
 	return a+=std::forward<P>(b);
@@ -623,6 +630,26 @@ inline constexpr auto pow(basic_unsigned_extension<T> lhs, basic_unsigned_extens
 	while(rhs)
 	{
 		if(rhs.front())
+			ans *= lhs;
+		rhs >>= 1;
+		lhs *=lhs;
+	}
+	return ans;
+}
+
+template<typename T,typename P>
+requires
+#ifdef __SIZEOF_INT128__
+(std::unsigned_integral<P>||std::same_as<P,__uint128_t>)
+#else
+(std::unsigned_integral<P>)
+#endif
+inline constexpr auto pow(basic_unsigned_extension<T> lhs, P rhs)
+{
+	basic_unsigned_extension<T> ans(1);
+	while(rhs)
+	{
+		if(rhs&1)
 			ans *= lhs;
 		rhs >>= 1;
 		lhs *=lhs;

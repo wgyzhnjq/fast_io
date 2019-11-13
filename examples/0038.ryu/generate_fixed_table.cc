@@ -1,5 +1,10 @@
 #include"../../include/fast_io.h"
 
+inline constexpr auto pow10_bits_for_index(std::uint32_t idx)
+{
+	return (idx<<4)+128;
+}
+
 inline constexpr std::uint16_t length_for_index(std::uint64_t idx)
 {
 // [log_10(2^i)] = ((16 * i) * 78913L) >> 18 <-- floor
@@ -26,18 +31,53 @@ inline constexpr auto generate_fixed_offset_table()
 	return offset;
 }
 
-inline constexpr auto generate_pow10_split(auto const& offset)
+template<typename T>
+inline constexpr auto fixed_sum_split(T const& offset)
 {
-	std::size_t split_size(0);
+	std::size_t sum(0);
 	for(auto const & e : offset)
-		split_size+=e;
-	std::array<std::uint64_t,split_size> split{};
+		sum+=e;
+	return sum;
+}
+
+constexpr auto fixed_table(generate_fixed_offset_table());
+
+inline constexpr auto generate_pow10_split()
+{
+	std::array<std::array<std::uint64_t,3>,fixed_sum_split(fixed_table)> split{};
+	fast_io::uint256_t tpslb(1000000000);
+	tpslb<<=136;
+	std::size_t tot(0);
+	for(std::size_t j(0);j!=64;++j)
+	{
+		std::uint32_t pow10bits(pow10_bits_for_index(j));
+		fast_io::uint256_t vo(1);
+		vo<<=pow10bits;
+		std::size_t len(length_for_index(j));
+		for(std::size_t i(0);i!=len;++i)
+		{
+			fast_io::uint256_t tenpowi(9*i);
+			fast_io::uint256_t v(vo);
+			v/=tenpowi;
+			++v;
+			v%=tpslb;
+			for(std::size_t k(0);k!=3;++k)
+			{
+				fast_io::uint256_t bits(v);
+				bits>>=64*k;
+				split[tot][k]=static_cast<std::uint64_t>(bits);
+			}
+			++tot;
+		}
+	}
 	return split;
 }
 
+auto split(generate_pow10_split());
+
 int main()
 {
-	constexpr auto fixed_table(generate_fixed_offset_table());
-	for(auto const & e : fixed_table)
-			println(fast_io::out,e);
+
+	for(auto const & e : split)
+		fprint(fast_io::out,"% % %\n",e[0],e[1],e[2]);
 }
