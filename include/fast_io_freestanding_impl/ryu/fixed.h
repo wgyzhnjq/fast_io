@@ -600,7 +600,7 @@ inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const&
 }
 
 template<bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
-inline constexpr void output_shortest(Iter result, F d)
+inline constexpr Iter output_shortest(Iter result, F d)
 {
 	using floating_trait = floating_traits<F>;
 	using mantissa_type = typename floating_trait::mantissa_type;
@@ -629,7 +629,7 @@ inline constexpr void output_shortest(Iter result, F d)
 	}
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
-	auto const mv(r2.m2<<2);
+	auto const mv(r2.m<<2);
 	exponent_type const mm_shift(mantissa||exponent<2);
 	std::array<mantissa_type,3> v{};
 	//vr,vp,vm
@@ -751,7 +751,7 @@ inline constexpr void output_shortest(Iter result, F d)
 		++result;
 	}
 	output_base_number_impl<10,false,true>(result+=chars_len<10,true>(v.front())+1,v.front());
-	return output_exp<uppercase_e>(exp,result);
+	return output_exp<uppercase_e>(static_cast<std::int32_t>(e10 + removed),result);
 }
 
 }
