@@ -11,6 +11,8 @@ struct floating_traits
 template<>	
 struct floating_traits<double>
 {
+	using mantissa_type = std::uint64_t;
+	using exponent_type = std::uint32_t;
 	static inline constexpr std::uint64_t mantissa_bits = 52;
 	static inline constexpr std::uint32_t exponent_bits = 11;
 	static inline constexpr std::uint32_t exponent_max = (std::uint32_t(1)<<exponent_bits)-1;
@@ -96,18 +98,21 @@ inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& m
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
-template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
+template<std::size_t precision,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr auto output_fixed(Iter result, F d)
 {
-	using signed_E = std::make_signed_t<E>;
+	using floating_trait = floating_traits<F>;
+	using mantissa_type = typename floating_trait::mantissa_type;
+	using exponent_type = typename floating_trait::exponent_type;
+	using signed_exponent_type = std::make_signed_t<exponent_type>;
 	using char_type = std::remove_reference_t<decltype(*result)>;
-	auto const bits(bit_cast<T>(d));
+	auto const bits(bit_cast<mantissa_type>(d));
 	// Decode bits into sign, mantissa, and exponent.
-	bool const sign((bits >> (floating_traits<F>::mantissa_bits + floating_traits<F>::exponent_bits)) & 1u);
-	T const mantissa(bits & ((static_cast<T>(1u) << floating_traits<F>::mantissa_bits) - 1u));
-	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & floating_traits<F>::exponent_max)));
+	bool const sign((bits >> (floating_trait::mantissa_bits + floating_trait::exponent_bits)) & 1u);
+	mantissa_type const mantissa(bits & ((static_cast<mantissa_type>(1u) << floating_trait::mantissa_bits) - 1u));
+	exponent_type const exponent(static_cast<exponent_type>(((bits >> floating_trait::mantissa_bits) & floating_trait::exponent_max)));
 	// Case distinction; exit early for the easy cases.
-	if(exponent == floating_traits<F>::exponent_max)
+	if(exponent == floating_trait::exponent_max)
 		return easy_case(result,sign,mantissa);
 	auto start(result);
 	if(!exponent&&!mantissa)
@@ -135,7 +140,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 		}
 		return result;
 	}
-	auto const r2(init_rep<F>(mantissa,static_cast<signed_E>(exponent)));
+	auto const r2(init_rep<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	if (sign)
 	{
 		*result='-';
@@ -145,12 +150,12 @@ inline constexpr auto output_fixed(Iter result, F d)
 	if constexpr(scientific)
 	{
 		constexpr std::size_t scientific_precision(precision+1);
-		E digits(0),printed_digits(0),available_digits(0);
-		signed_E exp(0);
+		exponent_type digits(0),printed_digits(0),available_digits(0);
+		signed_exponent_type exp(0);
 		if(-52<=r2.e)
 		{
-			E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
-			signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
+			exponent_type const idx(negative_r2_e?0:index_for_exponent(static_cast<exponent_type>(r2.e)));
+			signed_exponent_type const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
 			auto const idx_offset(fixed_pow10<>::offset[idx]);
 			for(std::size_t i(length_for_index(idx));i--;)
 			{
@@ -174,7 +179,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				else if(digits)
 				{
 					available_digits = chars_len<10,true>(digits);
-					exp = static_cast<signed_E>(i*9 + available_digits - 1);
+					exp = static_cast<signed_exponent_type>(i*9 + available_digits - 1);
 					if(scientific_precision < available_digits)
 						break;
 					if constexpr (precision!=0)
@@ -192,14 +197,14 @@ inline constexpr auto output_fixed(Iter result, F d)
 		if(negative_r2_e&&!available_digits)
 		{
 			auto abs_e2(-r2.e);
-			E const idx(static_cast<E>(abs_e2)>>4);
-			signed_E j(128+(abs_e2-(idx<<4)));
-			E const of2i(fixed_pow10<>::offset_2[idx]);
-			E const idxp1(fixed_pow10<>::offset_2[idx+1]);
-			E const mb2_idx(fixed_pow10<>::min_block_2[idx]);
-			for (E i(mb2_idx); i < 200; ++i)
+			exponent_type const idx(static_cast<exponent_type>(abs_e2)>>4);
+			signed_exponent_type j(128+(abs_e2-(idx<<4)));
+			exponent_type const of2i(fixed_pow10<>::offset_2[idx]);
+			exponent_type const idxp1(fixed_pow10<>::offset_2[idx+1]);
+			exponent_type const mb2_idx(fixed_pow10<>::min_block_2[idx]);
+			for (exponent_type i(mb2_idx); i < 200; ++i)
 			{
-				E const p(of2i+i-mb2_idx);
+				exponent_type const p(of2i+i-mb2_idx);
 				digits=(idxp1<=p)?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
 				if(printed_digits)
 				{
@@ -220,7 +225,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				else if(digits)
 				{
 					available_digits=chars_len<10,true>(digits);
-					exp = static_cast<signed_E> (available_digits -(i + 1) * 9 - 1);
+					exp = static_cast<signed_exponent_type> (available_digits -(i + 1) * 9 - 1);
 					if (scientific_precision<available_digits)
 						break;
 					if constexpr (precision!=0)
@@ -235,9 +240,9 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 			}
 		}
-		E const maximum(scientific_precision - printed_digits);
-		E lastdigit(0);
-		for(E k(maximum);k<available_digits;++k)
+		exponent_type const maximum(scientific_precision - printed_digits);
+		exponent_type lastdigit(0);
+		for(exponent_type k(maximum);k<available_digits;++k)
 		{
 			lastdigit = digits%10;
 			digits /= 10;
@@ -247,13 +252,13 @@ inline constexpr auto output_fixed(Iter result, F d)
 			round_up = 5 < lastdigit;
 		else
 		{
-			signed_E const rexp (static_cast<signed_E> (scientific_precision - exp));
-			signed_E const required_twos(-r2.e - rexp);
-			bool trailing_zeros(required_twos <= 0 || (required_twos < 60 && multiple_of_power_of_2(r2.m, static_cast<E>(required_twos))));
+			signed_exponent_type const rexp (static_cast<signed_exponent_type> (scientific_precision - exp));
+			signed_exponent_type const required_twos(-r2.e - rexp);
+			bool trailing_zeros(required_twos <= 0 || (required_twos < 60 && multiple_of_power_of_2(r2.m, static_cast<exponent_type>(required_twos))));
 			if (rexp < 0)
 			{
-				signed_E required_fives = -rexp;
-				trailing_zeros = trailing_zeros && multiple_of_power_of5(r2.m, static_cast<E>(required_fives));
+				signed_exponent_type required_fives = -rexp;
+				trailing_zeros = trailing_zeros && multiple_of_power_of5(r2.m, static_cast<exponent_type>(required_fives));
 			}
 			round_up = trailing_zeros ? 2 : 1;
 		}
@@ -349,7 +354,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 			*result='+';
 			++result;
 		}
-		E unsigned_exp(exp);
+		exponent_type unsigned_exp(exp);
 		if(99<unsigned_exp)
 		{
 			auto const quo(unsigned_exp/100);
@@ -367,11 +372,11 @@ inline constexpr auto output_fixed(Iter result, F d)
 		bool nonzero(false);
 		if(-52<=r2.e)
 		{
-			E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
-			signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
+			exponent_type const idx(negative_r2_e?0:index_for_exponent(static_cast<exponent_type>(r2.e)));
+			signed_exponent_type const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
 			for(std::size_t i(length_for_index(idx));i--;)
 			{
-				E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
+				exponent_type digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 				if(nonzero)
 				{
 					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
@@ -397,7 +402,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 		if(negative_r2_e)
 		{
 			auto abs_e2(-r2.e);
-			E const idx(static_cast<E>(abs_e2)>>4);
+			exponent_type const idx(static_cast<exponent_type>(abs_e2)>>4);
 			constexpr std::size_t blocks(precision/9+1);
 			std::size_t round_up(0);
 			std::size_t i(0);
@@ -409,12 +414,12 @@ inline constexpr auto output_fixed(Iter result, F d)
 			}
 			else if(i<mb2_idx)
 				result=std::fill_n(result,9*(i=mb2_idx),'0');
-			signed_E j(128+(abs_e2-(idx<<4)));
+			signed_exponent_type j(128+(abs_e2-(idx<<4)));
 			auto const of2i(fixed_pow10<>::offset_2[idx]);
 			for(;i<blocks;++i)
 			{
-				E p(of2i+i-mb2_idx);
-				E digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
+				exponent_type p(of2i+i-mb2_idx);
+				exponent_type digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
 				if (fixed_pow10<>::offset_2[idx+1]<=p)
 				{
 					result=std::fill_n(result,precision-9*i,'0');
@@ -427,9 +432,9 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 				else
 				{
-					E const maximum(precision-9*i);
-					E lastdigit(0);
-					for(E k(maximum);k<9;++k)
+					exponent_type const maximum(precision-9*i);
+					exponent_type lastdigit(0);
+					for(exponent_type k(maximum);k<9;++k)
 					{
 						lastdigit = digits%10;
 						digits /= 10;
@@ -438,8 +443,8 @@ inline constexpr auto output_fixed(Iter result, F d)
 						round_up=lastdigit>5;
 					else
 					{
-						auto const required_twos(static_cast<signed_E>(abs_e2-precision-1));
-						if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<E>(required_twos))))
+						auto const required_twos(static_cast<signed_exponent_type>(abs_e2-precision-1));
+						if(required_twos<=0||(required_twos<60&&multiple_of_power_of_2(r2.m,static_cast<exponent_type>(required_twos))))
 							round_up = 2;
 						else
 							round_up = 1;

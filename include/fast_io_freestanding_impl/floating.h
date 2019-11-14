@@ -238,26 +238,26 @@ inline void print_define(output& out,manip::fixed<precision,T const> a)
 			if(reserved)
 			{
 				auto start(reserved-reserved_size);
-				orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(start,a.reference));
+				orelease(out,reserved-details::ryu::output_fixed<precision>(start,static_cast<double>(a.reference)));
 				return;
 			}
 		}
 		else
 		{
 			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(start,a.reference));
+			orelease(out,reserved-details::ryu::output_fixed<precision>(start,static_cast<double>(a.reference)));
 			return;
 		}
 	}
 	if constexpr (precision<325)
 	{
 		std::array<typename output::char_type,reserved_size> array;
-		writes(out,array.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(array.data(),a.reference));
+		writes(out,array.data(),details::ryu::output_fixed<precision>(array.data(),static_cast<double>(a.reference)));
 	}
 	else
 	{
 		std::basic_string<typename output::char_type> str(reserved_size);
-		writes(out,str.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t>(str.data(),a.reference));
+		writes(out,str.data(),details::ryu::output_fixed<precision>(str.data(),static_cast<double>(a.reference)));
 	}
 }
 
@@ -275,26 +275,26 @@ inline void print_define(output& out,manip::scientific<precision,uppercase_e,T c
 			if(reserved)
 			{
 				auto start(reserved-reserved_size);
-				orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(start,a.reference));
+				orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
 				return;
 			}
 		}
 		else
 		{
 			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(start,a.reference));
+			orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(static_cast<double>(a.reference)));
 			return;
 		}
 	}
 	if constexpr (precision<325)
 	{
 		std::array<typename output::char_type,reserved_size> array;
-		writes(out,array.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(array.data(),a.reference));
+		writes(out,array.data(),details::ryu::output_fixed<precision,true,uppercase_e>(array.data(),static_cast<double>(a.reference)));
 	}
 	else
 	{
 		std::basic_string<typename output::char_type> str(reserved_size);
-		writes(out,str.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(str.data(),a.reference));
+		writes(out,str.data(),details::ryu::output_fixed<precision,true,uppercase_e>(str.data(),static_cast<double>(a.reference)));
 	}
 }
 
