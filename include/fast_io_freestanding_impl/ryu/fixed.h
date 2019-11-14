@@ -39,6 +39,25 @@ inline constexpr bool multiple_of_power_of_2(T value,std::size_t p) {
 return !(static_cast<uint128_t>(value) & ((static_cast<uint128_t>(1)<<p) - 1));
 }
 
+template<typename T>
+inline constexpr uint32_t pow5_factor(T value) {
+	for (uint32_t count = 0; value ; ++count)
+	{
+		if (value % 5)
+			return count;
+		value /= 5;
+	}
+	return 0;
+}
+
+// Returns true if value is divisible by 5^p.
+template<typename T>
+inline constexpr bool multiple_of_power_of5(T value, uint32_t p)
+{
+	// The author tried a case distinction on p, but there was no performance difference.
+	return p <= pow5_factor(value);
+}
+
 inline constexpr uint32_t log10_pow2(uint64_t e) {
 return (uint32_t) ((((uint64_t) e) * 169464822037455ull) >> 49);
 }
@@ -155,7 +174,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 					}
 					else
 					{
-						*result='0'+static_cast<char>(digits);
+						*result=static_cast<char>('0'+digits);
 						++result;
 					}
 					printed_digits = available_digits;
@@ -168,10 +187,13 @@ inline constexpr auto output_fixed(Iter result, F d)
 			auto abs_e2(-r2.e);
 			E const idx(static_cast<E>(abs_e2)>>4);
 			signed_E j(128+(abs_e2-(idx<<4)));
-			for (E i(fixed_pow10<>::min_block_2[idx]); i < 200; ++i)
+			E const of2i(fixed_pow10<>::offset_2[idx]);
+			E const idxp1(fixed_pow10<>::offset_2[idx+1]);
+			E const mb2_idx(fixed_pow10<>::min_block_2[idx]);
+			for (E i(mb2_idx); i < 200; ++i)
 			{
 				E const p(of2i+i-mb2_idx);
-				digits=(p<=fixed_pow10<>::offset_2[idx+1])?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
+				digits=(p<=idxp1)?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
 				if(printed_digits)
 				{
 					if constexpr(precision<10)
@@ -190,7 +212,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				else if(digits)
 				{
 					available_digits=chars_len<10>(digits);
-					exp = static_cast<int32_t> (availableDigits -(i + 1) * 9 - 1);
+					exp = static_cast<int32_t> (available_digits -(i + 1) * 9 - 1);
 					if (precision<available_digits)
 						break;
 					if constexpr (precision!=0)
@@ -200,7 +222,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 					}
 					else
 					{
-						*result='0'+static_cast<char>(digits);
+						*result=static_cast<char>('0'+digits);
 						++result;
 					}
 					printed_digits = available_digits;
@@ -208,6 +230,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 			}
 		}
+		E const maximum(precision - printed_digits);
 		E lastdigit(0);
 		for(E k(maximum);k<available_digits;++k)
 		{
@@ -219,17 +242,83 @@ inline constexpr auto output_fixed(Iter result, F d)
 			round_up = 5 < lastdigit;
 		else
 		{
-			signedE const rexp (static_cast<signedE> (recision - exp));
-			signedE const required_twos(-e2 - rexp);
-			bool trailing_zeros(required_twos <= 0);
-			|| (required_twos < 60 && multiple_of_power_of_2(m2, static_cast<E>(required_twos)));
+			signed_E const rexp (static_cast<signed_E> (precision - exp));
+			signed_E const required_twos(-r2.e - rexp);
+			bool trailing_zeros(required_twos <= 0 || (required_twos < 60 && multiple_of_power_of_2(r2.m, static_cast<E>(required_twos))));
 			if (rexp < 0)
 			{
-				signed_E requiredFives = -rexp;
-				trailingZeros = trailingZeros && multipleOfPowerOf5(m2, static_cast<E>(requiredFives));
+				signed_E required_fives = -rexp;
+				trailing_zeros = trailing_zeros && multiple_of_power_of5(r2.m, static_cast<E>(required_fives));
 			}
 			round_up = trailing_zeros ? 2 : 1;
 		}
+		if(printed_digits)
+		{
+			if(digits)
+			{
+				std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),'0');
+				result+=maximum;
+			}
+			else
+				result=std::fill_n(result,maximum,'0');
+		}
+		else
+		{
+			if constexpr(precision!=0)
+			{
+				std::fill(result,output_base_number_impl<10,false,true>(result+maximum+1,digits),'0');
+				result+=maximum+1;
+			}
+			else
+			{
+				*result = static_cast<char>('0' + digits);
+				++result;
+			}
+		}
+		if(round_up)
+		{
+			std::size_t round_index(result-start);
+			while(round_index--)
+			{
+				auto c(start[round_index]);
+				if (c == '-')
+				{
+					start[round_index+1] = '1';
+					++exp;
+					break;
+				}
+				if (c == '.')
+					continue;
+				else if (c == '9')
+				{
+					start[round_index] = '0';
+					round_up = 1;
+					continue;
+				}
+				else
+				{
+					if (round_up!=2||c&1)
+						break;
+					start[round_index]=c+1;
+					break;
+				}
+			}
+			if(round_index==static_cast<std::size_t>(-1))
+			{
+				start[round_index+1] = '1';
+				++exp;
+			}
+		}
+		*result='e';
+		++result;
+		if(exp<0)
+		{
+			*result='-';
+			++result;
+		}
+		E unsigned_exp(exp);
+		output_base_number_impl<10,false>(result+=chars_len<10>(unsigned_exp),unsigned_exp);
+		return result;
 	}
 	else
 	{
@@ -391,8 +480,8 @@ inline constexpr auto output_fixed(Iter result, F d)
 			}
 			return result;
 		}
+		return std::fill_n(result,precision,'0');
 	}
-	return std::fill_n(result,precision,'0');
 }
 
 }
