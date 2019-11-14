@@ -34,7 +34,7 @@ struct fixed
 	T& reference;
 };
 
-template<std::size_t precision,typename T>
+template<std::size_t precision,bool uppercase_e,typename T>
 struct scientific
 {
 	T& reference;
@@ -111,8 +111,8 @@ inline constexpr std::size_t unsigned_view(T * const pointer)
 template<std::size_t precision,typename T>
 inline constexpr manip::fixed<precision,T const> fixed(T const &f){return {f};}
 
-template<std::size_t precision,typename T>
-inline constexpr manip::scientific<precision,T const> scientific(T const &f){return {f};}
+template<std::size_t precision,bool uppercase_e=false,typename T>
+inline constexpr manip::scientific<precision,uppercase_e,T const> scientific(T const &f){return {f};}
 
 template<character_input_stream input,std::integral T>
 inline void scan_define(input& in,manip::char_view<T> a)

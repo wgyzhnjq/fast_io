@@ -96,19 +96,20 @@ inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& m
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
-template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,bool scientific = false,std::random_access_iterator Iter,std::floating_point F>
+template<std::size_t precision,std::unsigned_integral T,std::unsigned_integral E,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr auto output_fixed(Iter result, F d)
 {
 	using signed_E = std::make_signed_t<E>;
+	using char_type = std::remove_reference_t<decltype(*result)>;
 	auto const bits(bit_cast<T>(d));
 	// Decode bits into sign, mantissa, and exponent.
 	bool const sign((bits >> (floating_traits<F>::mantissa_bits + floating_traits<F>::exponent_bits)) & 1u);
 	T const mantissa(bits & ((static_cast<T>(1u) << floating_traits<F>::mantissa_bits) - 1u));
 	E const exponent(static_cast<E>(((bits >> floating_traits<F>::mantissa_bits) & floating_traits<F>::exponent_max)));
 	// Case distinction; exit early for the easy cases.
-	auto start(result);
 	if(exponent == floating_traits<F>::exponent_max)
-		return easy_case(result,sign,mantissa);;
+		return easy_case(result,sign,mantissa);
+	auto start(result);
 	if(!exponent&&!mantissa)
 	{
 		if(sign)
@@ -123,6 +124,14 @@ inline constexpr auto output_fixed(Iter result, F d)
 			*result='.';
 			++result;
 			result=std::fill_n(result,precision,'0');
+			if constexpr(scientific)
+			{
+				if constexpr(uppercase_e)
+					return std::copy_n("E+00",4,result);
+				else
+					return std::copy_n("e+00",4,result);
+				
+			}
 		}
 		return result;
 	}
@@ -135,23 +144,25 @@ inline constexpr auto output_fixed(Iter result, F d)
 	bool const negative_r2_e(r2.e<0);
 	if constexpr(scientific)
 	{
+		constexpr std::size_t scientific_precision(precision+1);
 		E digits(0),printed_digits(0),available_digits(0);
 		signed_E exp(0);
 		if(-52<=r2.e)
 		{
 			E const idx(negative_r2_e?0:index_for_exponent(static_cast<E>(r2.e)));
 			signed_E const p10bitsmr2e(pow10_bits_for_index(idx)-r2.e+8);
-			for(auto i(length_for_index(idx));i--;)
+			auto const idx_offset(fixed_pow10<>::offset[idx]);
+			for(std::size_t i(length_for_index(idx));i--;)
 			{
-				digits=mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e);
+				digits=mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[idx_offset+i],p10bitsmr2e);
 				if(printed_digits)
 				{
-					if constexpr(precision<10)
+					if constexpr(precision<9)
 					{
 						available_digits=9;
 						break;
 					}
-					else if(precision < printed_digits + 9)
+					else if(scientific_precision < printed_digits + 9)
 					{
 						available_digits=9;
 						break;
@@ -164,17 +175,13 @@ inline constexpr auto output_fixed(Iter result, F d)
 				{
 					available_digits = chars_len<10>(digits);
 					exp = static_cast<signed_E>(i*9 + available_digits - 1);
-					if(precision < available_digits)
+					if(scientific_precision < available_digits)
 						break;
 					if constexpr (precision!=0)
-					{
-						//639 Line
-						std::fill(result,output_base_number_impl<10,false,true>(result+available_digits+1,digits),'0');
-						result+=available_digits+1;
-					}
+						output_base_number_impl<10,false,true>(result+=available_digits+1,digits);
 					else
 					{
-						*result=static_cast<char>('0'+digits);
+						*result=static_cast<char_type>('0'+digits);
 						++result;
 					}
 					printed_digits = available_digits;
@@ -193,36 +200,34 @@ inline constexpr auto output_fixed(Iter result, F d)
 			for (E i(mb2_idx); i < 200; ++i)
 			{
 				E const p(of2i+i-mb2_idx);
-				digits=(p<=idxp1)?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
+				digits=(idxp1<=p)?0:mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j);
 				if(printed_digits)
 				{
-					if constexpr(precision<10)
+					if constexpr(precision<9)
 					{
 						available_digits=9;
 						break;
 					}
-					else if(precision < printed_digits + 9)
+					else if(scientific_precision < printed_digits + 9)
 					{
 						available_digits=9;
 						break;
 					}
 					std::fill(result,output_base_number_impl<10,false>(result+9,digits),'0');
 					result+=9;
+					printed_digits+=9;
 				}
 				else if(digits)
 				{
 					available_digits=chars_len<10>(digits);
-					exp = static_cast<int32_t> (available_digits -(i + 1) * 9 - 1);
-					if (precision<available_digits)
+					exp = static_cast<signed_E> (available_digits -(i + 1) * 9 - 1);
+					if (scientific_precision<available_digits)
 						break;
 					if constexpr (precision!=0)
-					{
-						std::fill(result,output_base_number_impl<10,false,true>(result+10,digits),'0');
-						result+=available_digits+1;						
-					}
+						output_base_number_impl<10,false,true>(result+=available_digits+1,digits);
 					else
 					{
-						*result=static_cast<char>('0'+digits);
+						*result=static_cast<char_type>('0'+digits);
 						++result;
 					}
 					printed_digits = available_digits;
@@ -230,7 +235,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 			}
 		}
-		E const maximum(precision - printed_digits);
+		E const maximum(scientific_precision - printed_digits);
 		E lastdigit(0);
 		for(E k(maximum);k<available_digits;++k)
 		{
@@ -242,7 +247,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 			round_up = 5 < lastdigit;
 		else
 		{
-			signed_E const rexp (static_cast<signed_E> (precision - exp));
+			signed_E const rexp (static_cast<signed_E> (scientific_precision - exp));
 			signed_E const required_twos(-r2.e - rexp);
 			bool trailing_zeros(required_twos <= 0 || (required_twos < 60 && multiple_of_power_of_2(r2.m, static_cast<E>(required_twos))));
 			if (rexp < 0)
@@ -271,7 +276,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 			}
 			else
 			{
-				*result = static_cast<char>('0' + digits);
+				*result = '0' + digits;
 				++result;
 			}
 		}
@@ -287,20 +292,39 @@ inline constexpr auto output_fixed(Iter result, F d)
 					++exp;
 					break;
 				}
-				if (c == '.')
-					continue;
-				else if (c == '9')
+				if constexpr(precision==0)
 				{
-					start[round_index] = '0';
-					round_up = 1;
-					continue;
+					if (c == '9')
+					{
+						start[round_index] = '0';
+						round_up = 1;
+						continue;
+					}
+					else
+					{
+						if (round_up==2&&!(c&1))
+							break;
+						start[round_index]=c+1;
+						break;
+					}
 				}
 				else
 				{
-					if (round_up!=2||c&1)
+					if (c == '.')
+						continue;
+					else if (c == '9')
+					{
+						start[round_index] = '0';
+						round_up = 1;
+						continue;
+					}
+					else
+					{
+						if (round_up==2&&!(c&1))
+							break;
+						start[round_index]=c+1;
 						break;
-					start[round_index]=c+1;
-					break;
+					}
 				}
 			}
 			if(round_index==static_cast<std::size_t>(-1))
@@ -309,15 +333,33 @@ inline constexpr auto output_fixed(Iter result, F d)
 				++exp;
 			}
 		}
-		*result='e';
+		if constexpr(uppercase_e)
+			*result='E';
+		else
+			*result='e';
 		++result;
 		if(exp<0)
 		{
 			*result='-';
 			++result;
+			exp=-exp;
+		}
+		else
+		{
+			*result='+';
+			++result;
 		}
 		E unsigned_exp(exp);
-		output_base_number_impl<10,false>(result+=chars_len<10>(unsigned_exp),unsigned_exp);
+		if(99<unsigned_exp)
+		{
+			auto const quo(unsigned_exp/100);
+			unsigned_exp%=100;
+			*result=static_cast<char_type>(quo+'0');
+			++result;
+		}
+		auto exp_tb(shared_static_base_table<10,false>::table[unsigned_exp]);
+		constexpr auto sz(exp_tb.size()-2);
+		result=std::copy_n(exp_tb.data()+sz,2,result);
 		return result;
 	}
 	else

@@ -139,7 +139,7 @@ inline constexpr void print_flush(output &out,Args&& ...args)
 	flush(out);
 }
 
-template<output_stream output,typename ...Args>
+template<character_output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
 inline constexpr void println_flush(output &out,Args&& ...args)
 {

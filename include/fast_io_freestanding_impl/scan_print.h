@@ -25,7 +25,7 @@ inline constexpr void print(output &out,Args&& ...args)
 }
 
 template<output_stream output,typename ...Args>
-requires(weak_printable<output,Args>||...)
+requires ((!character_output_stream<output>)||(weak_printable<output,Args>||...))
 inline constexpr void println(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
@@ -63,7 +63,7 @@ inline constexpr void print_flush(output &out,Args&& ...args)
 }
 
 template<output_stream output,typename ...Args>
-requires(weak_printable<output,Args>||...)
+requires ((!character_output_stream<output>)||(weak_printable<output,Args>||...))
 inline constexpr void println_flush(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;

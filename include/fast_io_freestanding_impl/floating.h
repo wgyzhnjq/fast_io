@@ -261,6 +261,44 @@ inline void print_define(output& out,manip::fixed<precision,T const> a)
 	}
 }
 
+template<output_stream output,std::size_t precision,bool uppercase_e,std::floating_point T>
+inline void print_define(output& out,manip::scientific<precision,uppercase_e,T const> a)
+{
+
+	std::size_t constexpr reserved_size(precision+10);
+	if constexpr(buffer_output_stream<output>)
+	{
+
+		auto reserved(oreserve(out,reserved_size));
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		{
+			if(reserved)
+			{
+				auto start(reserved-reserved_size);
+				orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(start,a.reference));
+				return;
+			}
+		}
+		else
+		{
+			auto start(reserved-reserved_size);
+			orelease(out,reserved-details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(start,a.reference));
+			return;
+		}
+	}
+	if constexpr (precision<325)
+	{
+		std::array<typename output::char_type,reserved_size> array;
+		writes(out,array.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(array.data(),a.reference));
+	}
+	else
+	{
+		std::basic_string<typename output::char_type> str(reserved_size);
+		writes(out,str.data(),details::ryu::output_fixed<precision,std::uint64_t,std::uint32_t,true,uppercase_e>(str.data(),a.reference));
+	}
+}
+
+
 template<buffer_output_stream soutp,std::floating_point T>
 inline void print_define(soutp &output,T const& p)
 {

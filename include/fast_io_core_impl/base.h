@@ -36,10 +36,10 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		auto const ed(tm.data()+chars);
 		if constexpr(point)
 		{
-			std::copy(i,ed,iter-=ed-i+1);
+			std::copy(i+1,ed,iter-=ed-(i+1));
 			*--iter='.';
-			*--iter=ed[-1];
-		}	
+			*--iter=*i;
+		}
 		else
 			std::copy(i,ed,iter-=ed-i);
 	}
