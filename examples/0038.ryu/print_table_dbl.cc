@@ -786,23 +786,9 @@ inline static constexpr std::array<std::uint64_t,)abcdef",std::size(POW5_ERRORS)
 		else
 			print(ob,"0x",fast_io::hexupper(e));
 	}
-	print(ob,"};\ninline static constexpr std::array<std::uint64_t,",std::size(POW5_INV_ERRORS),"> inv_errors={");
+	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,4>,",std::size(GENERIC_POW5_SPLIT),"> split={{");
 	first=true;
-	for(auto const & e : POW5_INV_ERRORS)
-	{
-		if(first)
-			first=false;
-		else
-			put(ob,',');
-		if(e<1677216)
-			print(ob,e);
-		else
-			print(ob,"0x",fast_io::hexupper(e));
-	}
-print(ob,R"abcdef(};
-inline static constexpr std::array<std::array<std::uint64_t,4>,)abcdef",std::size(GENERIC_POW5_INV_SPLIT),"> inv_split={{");
-	first=true;
-	for(auto const & e : GENERIC_POW5_INV_SPLIT)
+	for(auto const & e : GENERIC_POW5_SPLIT)
 	{
 		if(first)
 			first=false;
@@ -822,9 +808,23 @@ inline static constexpr std::array<std::array<std::uint64_t,4>,)abcdef",std::siz
 		}
 		print(ob,"}");
 	}
-	print(ob,"}};\ninline static constexpr std::array<std::array<std::uint64_t,4>,",std::size(GENERIC_POW5_SPLIT),"> split={{");
+	print(ob,"}};\ninline static constexpr std::array<std::uint64_t,",std::size(POW5_INV_ERRORS),"> inv_errors={");
 	first=true;
-	for(auto const & e : GENERIC_POW5_SPLIT)
+	for(auto const & e : POW5_INV_ERRORS)
+	{
+		if(first)
+			first=false;
+		else
+			put(ob,',');
+		if(e<1677216)
+			print(ob,e);
+		else
+			print(ob,"0x",fast_io::hexupper(e));
+	}
+print(ob,R"abcdef(};
+inline static constexpr std::array<std::array<std::uint64_t,4>,)abcdef",std::size(GENERIC_POW5_INV_SPLIT),"> inv_split={{");
+	first=true;
+	for(auto const & e : GENERIC_POW5_INV_SPLIT)
 	{
 		if(first)
 			first=false;
