@@ -8,17 +8,44 @@ struct floating_traits
 {
 };
 
+
+template<>	
+struct floating_traits<float>
+{
+	using mantissa_type = std::uint32_t;
+	using exponent_type = std::uint32_t;
+	static inline constexpr exponent_type exponent_bits = 8;
+	static inline constexpr mantissa_type mantissa_bits = sizeof(float)*8-1-exponent_bits;
+	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
+	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
+	static inline constexpr exponent_type pow5_inv_bitcount= 59;
+	static inline constexpr exponent_type pow5_bitcount= pow5_inv_bitcount-1;
+};
+
 template<>	
 struct floating_traits<double>
 {
 	using mantissa_type = std::uint64_t;
 	using exponent_type = std::uint32_t;
-	static inline constexpr std::uint64_t mantissa_bits = 52;
-	static inline constexpr std::uint32_t exponent_bits = 11;
-	static inline constexpr std::uint32_t exponent_max = (std::uint32_t(1)<<exponent_bits)-1;
-	static inline constexpr std::size_t bias = 1023;
-	static inline constexpr std::size_t pow5_inv_bitcount= 122;
-	static inline constexpr std::size_t pow5_bitcount= 121;
+	static inline constexpr exponent_type exponent_bits = 11;
+	static inline constexpr mantissa_type mantissa_bits = sizeof(double)*8-1-exponent_bits;
+	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
+	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
+	static inline constexpr exponent_type pow5_inv_bitcount= 122;
+	static inline constexpr exponent_type pow5_bitcount= pow5_inv_bitcount-1;
+};
+
+template<>	
+struct floating_traits<long double>
+{
+	using mantissa_type = uint128_t;
+	using exponent_type = std::uint32_t;
+	static inline constexpr exponent_type exponent_bits = 17;
+	static inline constexpr std::uint64_t mantissa_bits = sizeof(long double)*8-1-exponent_bits;
+	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
+	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
+//	static inline constexpr std::size_t pow5_inv_bitcount= ??;
+//	static inline constexpr std::size_t pow5_bitcount= ??;
 };
 
 template<std::integral mantissaType,std::integral exponentType>
@@ -42,26 +69,27 @@ return !(static_cast<uint128_t>(value) & ((static_cast<uint128_t>(1)<<p) - 1));
 }
 
 template<typename T>
-inline constexpr std::uint32_t pow5_factor(T value) {
-	for (std::uint32_t count = 0; value ; ++count)
+inline constexpr std::uint32_t pow5_factor(T value)
+{
+	for (std::uint32_t count(0);value;++count)
 	{
-		if (value % 5)
+		if (value%5)
 			return count;
-		value /= 5;
+		value/=5;
 	}
 	return 0;
 }
 
 // Returns true if value is divisible by 5^p.
 template<typename T>
-inline constexpr bool multiple_of_power_of5(T value, uint32_t p)
+inline constexpr bool multiple_of_power_of5(T value,std::uint32_t p)
 {
 	// The author tried a case distinction on p, but there was no performance difference.
-	return p <= pow5_factor(value);
+	return p<=pow5_factor(value);
 }
 
-inline constexpr uint32_t log10_pow2(uint64_t e) {
-return (uint32_t) ((((uint64_t) e) * 169464822037455ull) >> 49);
+inline constexpr uint32_t log10_pow2(std::uint64_t e) {
+return static_cast<std::uint32_t> (((static_cast<std::uint64_t>(e)) * 169464822037455ull) >> 49);
 }
 template<std::unsigned_integral T>
 inline constexpr std::size_t length_for_index(T idx)
