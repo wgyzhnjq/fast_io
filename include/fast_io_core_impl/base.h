@@ -68,25 +68,56 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 template<std::uint32_t base,bool ryu_mode=false,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
-	if constexpr(base==10&&ryu_mode)
+	if constexpr(base==10&&sizeof(U)<9)
 	{
+		if constexpr(7<sizeof(U))
+		{
+			if(!ryu_mode)
+			{
+				if(10000000000000000000ULL<=value)
+					return 20;
+				if(1000000000000000000ULL<=value)
+					return 19;
+				if(100000000000000000ULL<=value)
+					return 18;
+			}
+			if(10000000000000000ULL<=value)
+				return 17;
+			if(1000000000000000ULL<=value)
+				return 16;
+			if(100000000000000ULL<=value)
+				return 15;
+			if(10000000000000ULL<=value)
+				return 14;
+			if(1000000000000ULL<=value)
+				return 13;
+			if(100000000000ULL<=value)
+				return 12;
+			if(10000000000ULL<=value)
+				return 11;
+		}
 		if constexpr(3<sizeof(U))
 		{
-			if(100000000<=value)
+			if(!ryu_mode)
+			{
+				if(1000000000U<=value)
+					return 10;
+			}
+			if(100000000U<=value)
 				return 9;
-			if(10000000<=value)
+			if(10000000U<=value)
 				return 8;
-			if(1000000<=value)
+			if(1000000U<=value)
 				return 7;
-			if(100000<=value)
+			if(100000U<=value)
 				return 6;
-			if(10000<=value)
+			if(10000U<=value)
 				return 5;
-			if(1000<=value)
+			if(1000U<=value)
 				return 4;
-			if(100<=value)
+			if(100U<=value)
 				return 3;
-			if(10<=value)
+			if(10U<=value)
 				return 2;
 			return 1;
 		}
