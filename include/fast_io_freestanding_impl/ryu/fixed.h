@@ -173,7 +173,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 				else if(digits)
 				{
-					available_digits = chars_len<10>(digits);
+					available_digits = chars_len<10,true>(digits);
 					exp = static_cast<signed_E>(i*9 + available_digits - 1);
 					if(scientific_precision < available_digits)
 						break;
@@ -219,7 +219,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 				else if(digits)
 				{
-					available_digits=chars_len<10>(digits);
+					available_digits=chars_len<10,true>(digits);
 					exp = static_cast<signed_E> (available_digits -(i + 1) * 9 - 1);
 					if (scientific_precision<available_digits)
 						break;
@@ -379,7 +379,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				}
 				else if(digits)
 				{
-					output_base_number_impl<10,false>(result+=chars_len<10>(digits),digits);
+					output_base_number_impl<10,false>(result+=chars_len<10,true>(digits),digits);
 					nonzero = true;
 				}
 			}

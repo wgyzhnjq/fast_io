@@ -65,23 +65,49 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 	return iter;
 }
 
-template<std::uint32_t base,std::unsigned_integral U>
+template<std::uint32_t base,bool ryu_mode,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
-	constexpr std::uint32_t base2(base  * base);
-	constexpr std::uint32_t base3(base2 * base);
-	constexpr std::uint32_t base4(base3 * base);
-	for (std::size_t n(1);;n+=4)
+	if constexpr(base==10&&ryu_mode)
 	{
-		if (value < base)
-			return n;
-		if (value < base2)
-			return n + 1;
-		if (value < base3)
-			return n + 2;
-		if (value < base4)
-			return n + 3;
-		value /= base4;
+		if constexpr(3<sizeof(U))
+		{
+			if(100000000<=value)
+				return 9;
+			if(10000000<=value)
+				return 8;
+			if(1000000<=value)
+				return 7;
+			if(100000<=value)
+				return 6;
+			if(10000<=value)
+				return 5;
+			if(1000<=value)
+				return 4;
+			if(100<=value)
+				return 3;
+			if(10<=value)
+				return 2;
+			return 1;
+		}
+	}
+	else
+	{
+		constexpr std::uint32_t base2(base  * base);
+		constexpr std::uint32_t base3(base2 * base);
+		constexpr std::uint32_t base4(base3 * base);
+		for (std::size_t n(1);;n+=4)
+		{
+			if (value < base)
+				return n;
+			if (value < base2)
+				return n + 1;
+			if (value < base3)
+				return n + 2;
+			if (value < base4)
+				return n + 3;
+			value /= base4;
+		}
 	}
 }
 
