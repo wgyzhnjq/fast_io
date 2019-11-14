@@ -28,39 +28,79 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		a/=pw;
 		std::copy_n(table[rem].data(),chars,iter-=chars);
 	}
-	if(base<=a)
+	if constexpr(chars==2)
 	{
-		auto const& tm(table[a]);
-		auto i(tm.data());
-		for(;*i=='0';++i);
-		auto const ed(tm.data()+chars);
-		if constexpr(point)
+		if(base<=a)
 		{
-			std::copy(i+1,ed,iter-=ed-(i+1));
-			*--iter='.';
-			*--iter=*i;
-		}
-		else
-			std::copy(i,ed,iter-=ed-i);
-	}
-	else
-	{
-		if constexpr(point)
-			*--iter='.';
-		if constexpr(10 < base)
-		{
-			if(a<10)
-				*--iter = a+'0';
+			auto const& tm(table[a]);
+			
+			if constexpr(point)
+			{
+				*--iter=tm[1];
+				*--iter='.';
+				*--iter=tm.front();
+			}
 			else
 			{
-				if constexpr (uppercase)
-					*--iter = a+55;	
-				else
-					*--iter = a+87;
+				std::copy_n(tm.data(),chars,iter-=chars);
 			}
 		}
 		else
-			*--iter=a+'0';
+		{
+			if constexpr(point)
+				*--iter='.';
+			if constexpr(10 < base)
+			{
+				if(a<10)
+					*--iter = a+'0';
+				else
+				{
+					if constexpr (uppercase)
+						*--iter = a+55;	
+					else
+						*--iter = a+87;
+				}
+			}
+			else
+				*--iter=a+'0';
+		}
+	}
+	else
+	{
+		if(base<=a)
+		{
+			auto const& tm(table[a]);
+			auto i(tm.data());
+			for(;*i=='0';++i);
+			auto const ed(tm.data()+chars);
+			if constexpr(point)
+			{
+				std::copy(i+1,ed,iter-=ed-(i+1));
+				*--iter='.';
+				*--iter=*i;
+			}
+			else
+				std::copy(i,ed,iter-=ed-i);
+		}
+		else
+		{
+			if constexpr(point)
+				*--iter='.';
+			if constexpr(10 < base)
+			{
+				if(a<10)
+					*--iter = a+'0';
+				else
+				{
+					if constexpr (uppercase)
+						*--iter = a+55;	
+					else
+						*--iter = a+87;
+				}
+			}
+			else
+				*--iter=a+'0';
+		}
 	}
 	return iter;
 }
