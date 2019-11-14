@@ -65,7 +65,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 	return iter;
 }
 
-template<std::uint32_t base,bool ryu_mode,std::unsigned_integral U>
+template<std::uint32_t base,bool ryu_mode=false,std::unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
 	if constexpr(base==10&&ryu_mode)
