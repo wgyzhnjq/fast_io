@@ -9,6 +9,7 @@
 #include<cstdio>
 #include<random>
 #include<iomanip>
+#include<charconv>
 
 int main()
 try
@@ -40,27 +41,16 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,fast_io::fixed<6>(vec[i]));
 	}
+#ifdef _MSC_VER
 	{
-		cqw::timer t("obuf");
-		fast_io::obuf obuf("obuf_no_extra_alloc.txt");
-		fast_io::ostring ostr;
+		cqw::timer t("charconv");
+		fast_io::obuf obuf("charconv.txt");
+		std::array<char,100> arr;
 		for(std::size_t i(0);i!=N;++i)
 		{
-			ostr.clear();
-			println(ostr,fast_io::fixed<6>(vec[i]));
-			print(obuf,ostr.str());
-		}
-	}
-#ifdef __cpp_lib_span
-	{
-		cqw::timer t("ospan");
-		fast_io::obuf obuf("ospan.txt");
-		std::array<char,1000> arr;
-		for(std::size_t i(0);i!=N;++i)
-		{
-			fast_io::ospan ostr(arr);
-			println(ostr,fast_io::fixed<6>(vec[i]));
-			print(obuf,ostr);
+			auto [p,ec]=std::to_chars(arr.data(),arr.data()+arr.size(),vec[i],std::chars_format::fixed,6);
+			*p='\n';
+			writes(obuf,arr.data(),++p);
 		}
 	}
 #endif
