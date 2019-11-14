@@ -41,7 +41,7 @@ struct floating_traits<long double>
 	using mantissa_type = uint128_t;
 	using exponent_type = std::uint32_t;
 	static inline constexpr exponent_type exponent_bits = 17;
-	static inline constexpr std::uint64_t mantissa_bits = sizeof(long double)*8-1-exponent_bits;
+	static inline constexpr std::uint32_t mantissa_bits = sizeof(long double)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
 //	static inline constexpr std::size_t pow5_inv_bitcount= ??;
