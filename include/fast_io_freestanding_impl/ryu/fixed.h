@@ -80,11 +80,12 @@ inline constexpr std::uint32_t pow5_factor(T value)
 	return 0;
 }
 
-template<std::unsigned_integral U>
+template<std::integral U>
 inline constexpr std::int32_t pow5bits(U e)
 {
 	return static_cast<int32_t>(((static_cast<std::uint32_t>(e) * 1217359) >> 19) + 1);
 }
+
 
 // Returns true if value is divisible by 5^p.
 template<typename T>
@@ -102,7 +103,7 @@ template<std::unsigned_integral T>
 inline constexpr std::size_t length_for_index(T idx){return (log10_pow2(idx<<4)+25)/9;}
 
 template<std::integral T>
-inline constexpr uint32_t log10Pow5(T e)
+inline constexpr uint32_t log10_pow5(T e)
 {
 	// The first value this approximation fails for is 5^2621 which is just greater than 10^1832.
 	return static_cast<uint32_t> (((static_cast<uint64_t>(e)) * 196742565691928ull) >> 48);
