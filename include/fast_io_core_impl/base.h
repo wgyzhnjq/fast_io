@@ -20,7 +20,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 //upper: 65 :A 70: F
 //lower: 97 :a 102 :f
 	constexpr auto &table(details::shared_static_base_table<base,uppercase>::table);
-	constexpr std::uint16_t pw(table.size());
+	constexpr std::uint32_t pw(table.size());
 	constexpr std::size_t chars(table.front().size());
 	for(;pw<=a;)
 	{
