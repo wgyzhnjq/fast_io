@@ -607,7 +607,6 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	using mantissa_type = typename floating_trait::mantissa_type;
 	using exponent_type = typename floating_trait::exponent_type;
 	using signed_exponent_type = std::make_signed_t<exponent_type>;
-	using char_type = std::remove_reference_t<decltype(*result)>;
 	auto const bits(bit_cast<mantissa_type>(d));
 	// Decode bits into sign, mantissa, and exponent.
 	bool const sign((bits >> (floating_trait::mantissa_bits + floating_trait::exponent_bits)) & 1u);
@@ -616,7 +615,6 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	// Case distinction; exit early for the easy cases.
 	if(exponent == floating_trait::exponent_max)
 		return easy_case(result,sign,mantissa);
-	auto start(result);
 	if(!exponent&&!mantissa)
 	{
 		if(sign)
@@ -682,12 +680,12 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		{
 			mantissa_type const vpdiv10(v[1]/10);
 			mantissa_type const vmdiv10(v[2]/10);
-			std::uint32_t const vmmod10(static_cast<std::uint32_t>(v[2]%10));
+			auto const vmmod10(static_cast<std::uint8_t>(v[2]%10));
 			if(vpdiv10 <= vmdiv10)
 				break;
 			mantissa_type const vrdiv10(v.front()/10);
-			auto const vrmod10(v.front()%10);
-			vm_is_trailing_zeros&=!vrmod10;
+			auto const vrmod10(static_cast<std::uint8_t>(v.front()%10));
+			vm_is_trailing_zeros&=!vmmod10;
 			vr_is_trailing_zeros&=!last_removed_digit;
 			last_removed_digit=static_cast<std::uint8_t>(vrmod10);
 			v.front()=vrdiv10;
@@ -699,7 +697,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			for(;;)
 			{
 				mantissa_type const vmdiv10(v[2]/10);
-				std::uint32_t const vmmod10(static_cast<std::uint32_t>(v[2]%10));
+				auto const vmmod10(static_cast<std::uint8_t>(v[2]%10));
 				if(vmmod10)
 					break;
 				mantissa_type const vpdiv10(v[1]/10);
