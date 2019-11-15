@@ -112,7 +112,7 @@ template<std::unsigned_integral T>
 requires std::same_as<T,std::uint64_t>
 inline constexpr T mul_shift(T m, std::array<T,2> const& mul, std::size_t j)
 {
-	return low((high(mul_extend(m,mul.front()))+mul_extend(m,mul.back()))>>(j-64));
+	return low((mul_extend(m,mul.back())+high(mul_extend(m,mul.front())))>>(j-64));
 }
 
 inline constexpr std::array<std::uint64_t,3> mul_shift_all(std::uint64_t m, std::array<std::uint64_t,2> const& mul,std::size_t j,std::uint32_t mmshift)
