@@ -18,8 +18,8 @@ struct floating_traits<float>
 	static inline constexpr mantissa_type mantissa_bits = sizeof(float)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
-	static inline constexpr exponent_type pow5_inv_bitcount= 59;
-	static inline constexpr exponent_type pow5_bitcount= pow5_inv_bitcount-1;
+//	static inline constexpr exponent_type pow5_inv_bitcount= 61;
+	static inline constexpr exponent_type pow5_bitcount= 61;
 };
 
 template<>	
@@ -31,8 +31,8 @@ struct floating_traits<double>
 	static inline constexpr mantissa_type mantissa_bits = sizeof(double)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
-	static inline constexpr exponent_type pow5_inv_bitcount= 122;
-	static inline constexpr exponent_type pow5_bitcount= pow5_inv_bitcount-1;
+//	static inline constexpr exponent_type pow5_inv_bitcount= 125;
+	static inline constexpr exponent_type pow5_bitcount= 125;
 };
 
 template<>	
@@ -44,8 +44,8 @@ struct floating_traits<long double>
 	static inline constexpr std::uint32_t mantissa_bits = sizeof(long double)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
-	static inline constexpr std::size_t pow5_inv_bitcount= 249;
-	static inline constexpr std::size_t pow5_bitcount= 249;//why?????
+//	static inline constexpr std::size_t pow5_inv_bitcount= 249;
+	static inline constexpr std::size_t pow5_bitcount= 249;
 };
 
 template<std::integral mantissaType,std::integral exponentType>
@@ -118,7 +118,7 @@ inline constexpr T mul_shift(T m, std::array<T,2> const& mul, std::size_t j)
 inline constexpr std::array<std::uint64_t,3> mul_shift_all(std::uint64_t m, std::array<std::uint64_t,2> const& mul,std::size_t j,std::uint32_t mmshift)
 {
 	auto const m4(m<<2);
-	return {mul_shift(m4+2,mul,j),mul_shift(m4-1-mmshift,mul,j),mul_shift(m4,mul,j)};
+	return {mul_shift(m4,mul,j),mul_shift(m4+2,mul,j),mul_shift(m4-1-mmshift,mul,j)};
 }
 
 template<typename T>
@@ -631,7 +631,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
 	auto const mv(r2.m<<2);
-	exponent_type const mm_shift(mantissa||exponent<2);
+	exponent_type const mm_shift(mantissa||static_cast<signed_exponent_type>(exponent)<2);
 	std::array<mantissa_type,3> v{};
 	//vr,vp,vm
 	signed_exponent_type e10{};
@@ -640,7 +640,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	{
 		exponent_type const q(log10_pow2(r2.e)-(3<r2.e));
 		e10=static_cast<signed_exponent_type>(q);
-		signed_exponent_type const k(floating_trait::pow5_inv_bitcount + pow5bits(q) - 1);
+		signed_exponent_type const k(floating_trait::pow5_bitcount + pow5bits(q) - 1);
 		signed_exponent_type const i(-r2.e+static_cast<signed_exponent_type>(q)+k);
 		v=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,mm_shift);
 		if(q<=21)
@@ -675,7 +675,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			vr_is_trailing_zeros=multiple_of_power_of_2(mv,q);
 	}
 	signed_exponent_type removed(0);
-	std::uint8_t last_removed_digit=0;
+	std::uint8_t last_removed_digit(0);
 	if(vm_is_trailing_zeros||vr_is_trailing_zeros)
 	{
 		for(;;)
@@ -714,13 +714,14 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			}
 		if(vr_is_trailing_zeros&&last_removed_digit==5&&!(v.front()&1))
 			last_removed_digit=4;
+		v.front() += ((v.front()==std::get<2>(v)&&(!accept_bounds || !vm_is_trailing_zeros))|| 4 < last_removed_digit);
 	}
 	else
 	{
 		bool round_up(false);
 		mantissa_type const vpdiv100(v[1]/100);
 		mantissa_type const vmdiv100(v[2]/100);
-		if(vpdiv100<vmdiv100)
+		if(vmdiv100<vpdiv100)
 		{
 			mantissa_type const vrdiv100(v.front()/100);
 			auto const vrmod100(v.front()%100);
@@ -751,8 +752,9 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		*result='-';
 		++result;
 	}
-	output_base_number_impl<10,false,true>(result+=chars_len<10,true>(v.front())+1,v.front());
-	return output_exp<uppercase_e>(static_cast<std::int32_t>(e10 + removed),result);
+	std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));
+	output_base_number_impl<10,false,true>(result+=olength+1,v.front());
+	return output_exp<uppercase_e>(static_cast<std::int32_t>(e10 + removed + olength - 1),result);
 }
 
 }
