@@ -302,7 +302,7 @@ inline void print_define(output& out,manip::scientific<precision,uppercase_e,T c
 template<output_stream output,std::floating_point T>
 inline void print_define(output& out,T a)
 {
-	std::size_t constexpr reserved_size(325);
+	std::size_t constexpr reserved_size(30);
 	if constexpr(buffer_output_stream<output>)
 	{
 
