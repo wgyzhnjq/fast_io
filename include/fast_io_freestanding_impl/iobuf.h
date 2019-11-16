@@ -193,9 +193,9 @@ inline constexpr auto seek(basic_ibuf<Ihandler,Buf>& ib,Args&& ...args)
 }
 
 template<zero_copy_input_stream Ihandler,typename Buf>
-inline constexpr auto zero_copy_input_handle(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr auto zero_copy_in_handle(basic_ibuf<Ihandler,Buf>& ib)
 {
-	return zero_copy_input_handle(ib.native_handle());
+	return zero_copy_in_handle(ib.native_handle());
 }
 
 template<output_stream Ohandler,typename Buf=basic_buf_handler<typename Ohandler::char_type>>
@@ -337,9 +337,9 @@ inline constexpr void orelease(basic_obuf<Ohandler,Buf>& ob,std::size_t size)
 }
 
 template<zero_copy_output_stream Ohandler,typename Buf>
-inline constexpr void zero_copy_output_handle(basic_obuf<Ohandler,Buf>& ob)
+inline constexpr void zero_copy_out_handle(basic_obuf<Ohandler,Buf>& ob)
 {
-	return zero_copy_output_handle(ob.native_handle());
+	return zero_copy_out_handle(ob.native_handle());
 }
 
 namespace details
@@ -411,9 +411,18 @@ public:
 	{
 		return ibuffer(iob.ibf);
 	}
-	friend inline constexpr auto& idump(basic_iobuf& iob)
+	friend inline constexpr void irelease(basic_iobuf& iob,std::size_t size)
 	{
-		return idump(iob.ibf);
+		irelease(iob.ibf,size);
+	}
+	friend inline constexpr auto ireserve(basic_iobuf& iob,std::size_t size)
+	{
+		return ireserve(iob.ibf,size);
+	}
+	template<output_stream output>
+	friend inline constexpr auto& idump(output& out,basic_iobuf& iob)
+	{
+		return idump(out,iob.ibf);
 	}
 	friend inline constexpr auto& obuffer(basic_iobuf& iob)
 	{
@@ -427,6 +436,14 @@ public:
 	{
 		fill_nc(ob.ibf.native_handle(),count,ch);
 	}
+	friend inline constexpr void orelease(basic_iobuf& ob,std::size_t size)
+	{
+		orelease(ob.ibf.native_handle(),size);
+	}
+	friend inline constexpr auto oreserve(basic_iobuf& iob,std::size_t size)
+	{
+		return oreserve(iob.ibf.native_handle(),size);
+	}
 	template<typename... Args>
 	requires random_access_stream<io_handler>
 	friend inline constexpr auto seek(basic_iobuf<io_handler,Buf>& iob,Args&& ...args)
@@ -437,15 +454,15 @@ public:
 };
 
 template<zero_copy_input_stream Ihandler,typename Buf>
-inline constexpr auto zero_copy_input_handle(basic_iobuf<Ihandler,Buf>& ib)
+inline constexpr auto zero_copy_in_handle(basic_iobuf<Ihandler,Buf>& ib)
 {
-	return zero_copy_input_handle(ib.native_handle());
+	return zero_copy_in_handle(ib.native_handle());
 }
 
 template<zero_copy_output_stream Ohandler,typename Buf>
-inline constexpr auto zero_copy_output_handle(basic_iobuf<Ohandler,Buf>& ob)
+inline constexpr auto zero_copy_out_handle(basic_iobuf<Ohandler,Buf>& ob)
 {
-	return zero_copy_output_handle(ob.native_handle());
+	return zero_copy_out_handle(ob.native_handle());
 }
 
 }

@@ -207,7 +207,7 @@ public:
 	}
 };
 
-inline auto zero_copy_input_handle(win32_file& handle)
+inline auto zero_copy_in_handle(win32_file& handle)
 {
 	return handle.native_handle();
 }

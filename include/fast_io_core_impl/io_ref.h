@@ -109,7 +109,7 @@ inline constexpr void irelease(io_ref<in>& t)
 	irelease(*t);
 }
 
-template<buffer_output_stream output,buffer_input_stream in>
+template<output_stream output,buffer_input_stream in>
 inline constexpr void idump(output& out,io_ref<in>& t)
 {
 	idump(out,*t);

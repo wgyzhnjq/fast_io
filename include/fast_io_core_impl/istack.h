@@ -138,9 +138,9 @@ inline constexpr void writes(istack<Ihandler,N>& ib,Iter cbegin,Iter cend)
 
 template<input_stream Ihandler,std::size_t N>
 requires zero_copy_output_stream<Ihandler>
-inline constexpr auto zero_copy_output_handle(istack<Ihandler,N>& ib)
+inline constexpr auto zero_copy_out_handle(istack<Ihandler,N>& ib)
 {
-	return zero_copy_output_handle(ib.native_handle());
+	return zero_copy_out_handle(ib.native_handle());
 }
 
 }

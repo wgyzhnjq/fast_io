@@ -57,6 +57,7 @@ namespace dummy
 {
 	struct dummy_output_stream
 	{
+		using char_type = char;
 	};
 	inline void flush(dummy_output_stream&){}
 	template<std::contiguous_iterator Iter>
@@ -64,11 +65,13 @@ namespace dummy
 }
 
 template<typename T>
-concept buffer_input_stream_impl = requires(T& in,std::size_t n,dummy::dummy_output_stream dum)
+concept buffer_input_stream_impl = requires(T& in,std::size_t n)
 {
 	ireserve(in,n);
 	irelease(in,n);
-	idump(dum,in);
+}&&requires(dummy::dummy_output_stream& dumout,T& in)
+{
+	idump(dumout,in);
 };
 
 template<typename T>
