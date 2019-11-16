@@ -5,7 +5,7 @@
 int main()
 try
 {
-	fast_io::server hd(fast_io::ipv4{},2000,fast_io::sock::type::stream);
+	fast_io::server hd(2000,fast_io::sock::type::stream);
 	for(;;)
 	{
 		fast_io::acceptor_buf accept(hd);

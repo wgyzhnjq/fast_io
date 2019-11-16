@@ -100,11 +100,16 @@ class server
 	socket soc;
 public:
 	template<typename addrType,std::integral U,typename ...Args>
+	requires (!std::integral<addrType>)
 	server(addrType const& add,U u,Args&& ...args):soc(family(add),std::forward<Args>(args)...)
 	{
 		auto stg(to_socket_address_storage(add,u));
 		sock::details::bind(soc.native_handle(),std::addressof(stg),native_socket_address_size(add));
 		sock::details::listen(soc.native_handle(),10);
+	}
+	template<std::integral U,typename ...Args>
+	server(U u,Args&& ...args):server(ipv4{},u,std::forward<Args>(args)...)
+	{
 	}
 	constexpr auto& handle()
 	{

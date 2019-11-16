@@ -220,6 +220,14 @@ public:
 	constexpr auto& variant() const { return var; }
 };
 
+template<std::integral U>
+inline constexpr auto to_socket_address_storage(address const& v,U port)
+{
+	return std::visit([port](auto const &arg) {
+		return to_socket_address_storage(arg,port);
+	}, v.variant());
+}
+
 inline constexpr std::size_t native_socket_address_size(address const& v)
 {
 	return std::visit([](auto const &arg) {
