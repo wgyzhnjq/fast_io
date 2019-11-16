@@ -59,3 +59,4 @@ udp = IPPROTO_UDP,
 #include"address.h"
 #include"socket.h"
 #include"dns.h"
+#include"http.h"

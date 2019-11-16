@@ -68,6 +68,14 @@ inline constexpr void irelease(istack<Ihandler,N>& ib,std::size_t size)
 	ib.curr-=size;
 }
 
+
+template<output_stream output,input_stream Ihandler,std::size_t N>
+inline constexpr void idump(output& out,istack<Ihandler,N>& ib)
+{
+	writes(out,ib.curr,ib.end);
+	ib.curr=ib.end;
+}
+
 template<input_stream Ihandler,std::size_t N,std::contiguous_iterator Iter>
 inline constexpr Iter reads(istack<Ihandler,N>& ib,Iter begin,Iter end)
 {

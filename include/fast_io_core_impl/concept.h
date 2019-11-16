@@ -53,11 +53,22 @@ concept random_access_stream_impl = requires(T& t)
 	seek(t);
 };
 
+namespace dummy
+{
+	struct dummy_output_stream
+	{
+	};
+	inline void flush(dummy_output_stream&){}
+	template<std::contiguous_iterator Iter>
+	inline void writes(dummy_output_stream&,Iter,Iter){}
+}
+
 template<typename T>
-concept buffer_input_stream_impl = requires(T& in,std::size_t n)
+concept buffer_input_stream_impl = requires(T& in,std::size_t n,dummy::dummy_output_stream dum)
 {
 	ireserve(in,n);
 	irelease(in,n);
+	idump(dum,in);
 };
 
 template<typename T>
@@ -115,15 +126,6 @@ template<typename T>
 concept mutex_io_stream = mutex_input_stream<T>&&mutex_output_stream<T>;
 
 template<typename T>
-concept zero_copy_input_stream = input_stream<T>&&details::zero_copy_input_stream_impl<T>;
-
-template<typename T>
-concept zero_copy_output_stream = output_stream<T>&&details::zero_copy_output_stream_impl<T>;
-
-template<typename T>
-concept zero_copy_io_stream = zero_copy_input_stream<T>&&zero_copy_output_stream<T>&&io_stream<T>;
-
-template<typename T>
 concept buffer_input_stream = input_stream<T>&&details::buffer_input_stream_impl<T>;
 
 template<typename T>
@@ -131,6 +133,25 @@ concept buffer_output_stream = output_stream<T>&&details::buffer_output_stream_i
 
 template<typename T>
 concept buffer_io_stream = buffer_input_stream<T>&&buffer_output_stream<T>&&io_stream<T>;
+
+template<typename T>
+concept zero_copy_buffer_input_stream = details::zero_copy_input_stream_impl<T>&&buffer_input_stream<T>;
+
+template<typename T>
+concept zero_copy_buffer_output_stream = details::zero_copy_output_stream_impl<T>&&buffer_output_stream<T>;
+
+template<typename T>
+concept zero_copy_buffer_io_stream = zero_copy_buffer_input_stream<T>&&zero_copy_buffer_output_stream<T>;
+
+
+template<typename T>
+concept zero_copy_input_stream = input_stream<T>&&details::zero_copy_input_stream_impl<T>&&!zero_copy_buffer_input_stream<T>;
+
+template<typename T>
+concept zero_copy_output_stream = output_stream<T>&&details::zero_copy_output_stream_impl<T>&&!zero_copy_buffer_output_stream<T>;
+
+template<typename T>
+concept zero_copy_io_stream = zero_copy_input_stream<T>&&zero_copy_output_stream<T>;
 
 
 template<typename input,typename T>

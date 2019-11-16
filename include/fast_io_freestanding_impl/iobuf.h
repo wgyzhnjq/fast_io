@@ -137,6 +137,13 @@ inline constexpr void irelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
 	ib.ibuffer.curr-=size;
 }
 
+template<output_stream output,input_stream Ihandler,typename Buf>
+inline constexpr void idump(output& out,basic_ibuf<Ihandler,Buf>& ib)
+{
+	writes(out,ib.ibuffer.curr,ib.ibuffer.end);
+	ib.ibuffer.curr=ib.ibuffer.end;
+}
+
 template<input_stream Ihandler,typename Buf,std::contiguous_iterator Iter>
 inline constexpr Iter reads(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
@@ -183,6 +190,12 @@ inline constexpr auto seek(basic_ibuf<Ihandler,Buf>& ib,Args&& ...args)
 {
 	ib.ibuffer.curr=ib.ibuffer.end;
 	return seek(ib.native_handle(),std::forward<Args>(args)...);
+}
+
+template<zero_copy_input_stream Ihandler,typename Buf>
+inline constexpr auto zero_copy_input_handle(basic_ibuf<Ihandler,Buf>& ib)
+{
+	return zero_copy_input_handle(ib.native_handle());
 }
 
 template<output_stream Ohandler,typename Buf=basic_buf_handler<typename Ohandler::char_type>>
@@ -323,6 +336,12 @@ inline constexpr void orelease(basic_obuf<Ohandler,Buf>& ob,std::size_t size)
 	ob.obuffer.curr-=size;
 }
 
+template<zero_copy_output_stream Ohandler,typename Buf>
+inline constexpr void zero_copy_output_handle(basic_obuf<Ohandler,Buf>& ob)
+{
+	return zero_copy_output_handle(ob.native_handle());
+}
+
 namespace details
 {
 template<io_stream io_handler,typename Buf>
@@ -392,6 +411,10 @@ public:
 	{
 		return ibuffer(iob.ibf);
 	}
+	friend inline constexpr auto& idump(basic_iobuf& iob)
+	{
+		return idump(iob.ibf);
+	}
 	friend inline constexpr auto& obuffer(basic_iobuf& iob)
 	{
 		return obuffer(iob.ibf.native_handle());
@@ -412,5 +435,17 @@ public:
 		return seek(iob.ibf,std::forward<Args>(args)...);
 	}
 };
+
+template<zero_copy_input_stream Ihandler,typename Buf>
+inline constexpr auto zero_copy_input_handle(basic_iobuf<Ihandler,Buf>& ib)
+{
+	return zero_copy_input_handle(ib.native_handle());
+}
+
+template<zero_copy_output_stream Ohandler,typename Buf>
+inline constexpr auto zero_copy_output_handle(basic_iobuf<Ohandler,Buf>& ob)
+{
+	return zero_copy_output_handle(ob.native_handle());
+}
 
 }
