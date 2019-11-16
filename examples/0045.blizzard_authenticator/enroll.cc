@@ -49,12 +49,14 @@ try
 	std::memcpy(p.vec().data(),std::addressof(one_time_pad_key),38);
 	auto result(pow_mod(p,exponent,modules));
 	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
-	print(hd,"POST ",battlenet::enroll_path," HTTP/1.1\r\n",
+	print_flush(hd,"POST ",battlenet::enroll_path," HTTP/1.1\r\n",
+		"Host: ",domain,"\r\n"
 		"Content-Type: application/octet-stream\r\n"
 		"Content-Length: ",result.vec().size()*8,"\r\n"
 		"Timeout: 10000\r\n\r\n");
-	writes(hd,result.vec().cbegin(),result.vec().cend());
 	fast_io::osystem_file buffer_file("buf.txt");
+	writes(hd,result.vec().cbegin(),result.vec().cend());
+
 	print(buffer_file,"One Time Pad: ");
 	writes(buffer_file,one_time_pad_key.cbegin(),one_time_pad_key.cend());
 	println(buffer_file,"\n\n\n\n\n");
