@@ -386,4 +386,37 @@ inline constexpr void print_define(output& out,T const& a)
 	details::output_base_number<10,false>(out,a);
 }
 
+template<std::size_t base,bool uppercase,character_output_stream output,typename T>
+requires std::same_as<std::byte,std::remove_cvref_t<T>>
+inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v)
+{
+	details::output_base_number<base,uppercase>(out,std::to_integer<char unsigned>(v.reference));
+}
+
+template<std::size_t base,bool uppercase,character_input_stream input,typename T>
+requires std::same_as<std::byte,std::remove_cvref_t<T>>
+inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
+{
+	char unsigned u{};
+	details::input_base_number<base>(in,u);
+	v.reference=static_cast<std::byte>(u);
+}
+
+
+template<character_input_stream input,typename T>
+requires std::same_as<std::byte,std::remove_cvref_t<T>>
+inline constexpr void scan_define(input& in,T& a)
+{
+	char unsigned u{};
+	details::input_base_number<10>(in,u);
+	a=static_cast<std::byte>(u);
+}
+
+template<character_output_stream output,typename T>
+requires std::same_as<std::byte,std::remove_cvref_t<T>>
+inline constexpr void print_define(output& out,T& a)
+{
+	details::output_base_number<10,false>(out,std::to_integer<char unsigned>(a));
+}
+
 }

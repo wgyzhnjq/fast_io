@@ -1,17 +1,13 @@
-
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_network.h"
 
 int main()
 try
 {
-	fast_io::ipv4_dns d("www.baidu.com");
-    for(auto const& addr:d)
-    {
-        println(fast_io::out, addr);
-    }
+	for(auto const& address:fast_io::dns("www.google.com"))
+		println(fast_io::out, address);
 }
-catch(std::system_error const & e)
+catch(std::exception const & e)
 {
 	println(fast_io::err,e);
 	return 1;

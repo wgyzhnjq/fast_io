@@ -69,13 +69,13 @@ inline auto socket(Args&& ...args)
 template<typename T>
 inline auto accept(SOCKET sck,T& sock_address,socklen_t& storage_size)
 {
-	return call_win32_ws2_32_invalid_socket<decltype(::accept)*>("accept",sck,static_cast<sockaddr*>(static_cast<void*>(std::addressof(sock_address))),std::addressof(storage_size));
+	return call_win32_ws2_32_invalid_socket<decltype(::accept)*>("accept",sck,std::addressof(sock_address),std::addressof(storage_size));
 }
 
-template<typename sock_type,typename T>
-inline auto connect(SOCKET sck,T& sock_address)
+template<typename T,std::unsigned_integral sock_type_size>
+inline auto connect(SOCKET sck,T& sock_address,sock_type_size size)
 {
-	return call_win32_ws2_32_minus_one<decltype(::connect)*>("connect",sck,static_cast<sockaddr*>(static_cast<void*>(std::addressof(sock_address))),sizeof(T));
+	return call_win32_ws2_32_minus_one<decltype(::connect)*>("connect",sck,std::addressof(sock_address),size);
 }
 
 template<typename mem_address,typename ...Args>
@@ -95,10 +95,10 @@ inline auto closesocket(Args&& ...args)
 	return call_win32_ws2_32<decltype(::closesocket)*>("closesocket",std::forward<Args>(args)...);
 }
 
-template<typename sock_type,typename T>
-inline auto bind(SOCKET sck,T& sock_address)
+template<typename T,std::unsigned_integral sock_type_size>
+inline auto bind(SOCKET sck,T& sock_address,sock_type_size size)
 {
-	return call_win32_ws2_32_minus_one<decltype(::bind)*>("bind",sck,static_cast<sockaddr*>(static_cast<void*>(std::addressof(sock_address))),sizeof(sock_type));
+	return call_win32_ws2_32_minus_one<decltype(::bind)*>("bind",sck,std::addressof(sock_address),size);
 }
 
 template<typename ...Args>
@@ -149,7 +149,7 @@ std::int16_t;
 
 
 using socket_type = SOCKET;
-auto constexpr invalid_socket(INVALID_SOCKET);
+inline constexpr auto invalid_socket(INVALID_SOCKET);
 
 
 }
