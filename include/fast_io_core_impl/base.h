@@ -450,13 +450,10 @@ inline constexpr void print_define(output& out,T& a)
 
 
 template<std::size_t bas,bool uppercase,std::integral char_type,character_output_stream output,std::ranges::range T>
-requires requires(T&& t)
-{
-	printable<output,std::remove_cvref_t<decltype(*cbegin(t))>>;
-}
 inline constexpr void print_define(output& out,manip::base_split_t<bas,uppercase,T,char_type> rangeref)
 {
-	auto i(rangeref.reference.cbegin()),e(rangeref.reference.cend());
+	auto i(cbegin(rangeref.reference));
+	auto e(cend(rangeref.reference));
 	if(i==e)
 		return;
 	print(out,base<bas,uppercase>(*i));
