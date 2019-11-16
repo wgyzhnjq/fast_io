@@ -119,6 +119,12 @@ inline auto getaddrinfo(Args&& ...args)
 	return call_win32_ws2_32<decltype(::getaddrinfo)*>("getaddrinfo",std::forward<Args>(args)...);
 }
 
+template<typename ...Args>
+inline void freeaddrinfo(Args&& ...args)
+{
+	get_proc_address<decltype(::freeaddrinfo)*>("freeaddrinfo")(std::forward<Args>(args)...);
+}
+
 class win32_startup
 {
 public:

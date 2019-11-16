@@ -89,6 +89,28 @@ public:
 	{
 		return result;
 	}
+	basic_dns(basic_dns const&) = delete;
+	basic_dns& operator=(basic_dns const&) = delete;
+	basic_dns(basic_dns&& d) noexcept:result(d.result)
+	{
+		d.result=nullptr;
+	}
+	basic_dns& operator=(basic_dns&& d) noexcept
+	{
+		if(std::addressof(d)!=this)
+		{
+			if(result)
+				fast_io::sock::details::freeaddrinfo(result);
+			result=d.result;
+			d.result=nullptr;
+		}
+		return *this;
+	}
+	~basic_dns()
+	{
+		if(result)
+			fast_io::sock::details::freeaddrinfo(result);
+	}
 };
 
 using ipv4_dns = basic_dns<fast_io::sock::family::ipv4>;
