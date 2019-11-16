@@ -147,4 +147,11 @@ inline constexpr details::dns_sentinal cend(basic_dns<fam> const& d)
 	return {};
 }
 
+template<fast_io::sock::family fam=fast_io::sock::family::unspec>
+inline constexpr auto dns_once(std::string_view host)
+{
+	return *cbegin(basic_dns<fam>(host));
+}
+
+
 }

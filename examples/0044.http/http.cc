@@ -5,17 +5,14 @@
 int main()
 try
 {
-	for(auto const& address:fast_io::dns("www.jszg.edu.cn"))
-	{
-		fast_io::client_buf hd(address,80,fast_io::sock::type::stream);
-		print_flush(hd,"abc(GET / HTTP/1.1\r\n"
-			"Host:www.jszg.edu.cn\r\n"
-			"User-agent:whatever\r\n"
-			"Accept-Type:*/*\r\n"
-			"Connection:close\r\n\r\n");
-		fast_io::obuf file("http.txt");
-		transmit(file,hd);
-	}
+	fast_io::client_buf hd(fast_io::dns_once("www.jszg.edu.cn"),80,fast_io::sock::type::stream);
+	print_flush(hd,"GET /portal/home/index HTTP/1.1\r\n"
+		"Host:www.jszg.edu.cn\r\n"
+		"User-agent:whatever\r\n"
+		"Accept-Type:*/*\r\n"
+		"Connection:close\r\n\r\n");
+	fast_io::obuf file("http.txt");
+	transmit(file,hd);
 }
 catch(std::exception const& e)
 {
