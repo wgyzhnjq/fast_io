@@ -339,6 +339,14 @@ struct base_t
 	T& reference;
 };
 
+template<std::size_t bs,bool uppercase,typename T,std::integral char_type>
+requires fast_io::details::base_number_upper_constraints<bs,uppercase>::value
+struct base_split_t
+{
+	T& reference;
+	char_type character;
+};
+
 }
 
 template<std::size_t b,bool uppercase=false,typename T>
@@ -360,6 +368,27 @@ template<typename T> inline constexpr manip::base_t<10,false,T const> dec(T cons
 
 template<typename T> inline constexpr manip::base_t<2,false,T> bin(T& t){return {t};}
 template<typename T> inline constexpr manip::base_t<2,false,T const> bin(T const& t) {return {t};}
+
+
+template<std::size_t b,bool uppercase=false,typename T,std::integral char_type>
+inline constexpr manip::base_split_t<b,uppercase,T,char_type> base_split(T& t,char_type ch) {return {t,ch};}
+template<std::size_t b,bool uppercase=false,typename T,std::integral char_type>
+inline constexpr manip::base_split_t<b,uppercase,T const,char_type> base_split(T const& t,char_type ch) {return {t,ch};}
+
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<16,false,T,char_type> hex_split(T& t,char_type ch) {return {t,ch};}
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<16,false,T const,char_type> hex_split(T const& t,char_type ch){return {t,ch};}
+
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<16,true,T,char_type> hexupper_split(T& t,char_type ch){return {t,ch};}
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<16,true,T const,char_type> hexupper_split(T const& t,char_type ch) {return {t,ch};}
+
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<8,false,T,char_type> oct_split(T& t,char_type ch) {return {t,ch};}
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<8,false,T const,char_type> oct_split(T const& t,char_type ch){return {t,ch};}
+
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<10,false,T,char_type> dec_split(T& t,char_type ch) {return {t,ch};}
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<10,false,T const,char_type> dec_split(T const& t,char_type ch){return {t,ch};}
+
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<2,false,T,char_type> bin_split(T& t,char_type ch){return {t,ch};}
+template<typename T,std::integral char_type> inline constexpr manip::base_split_t<2,false,T const,char_type> bin_split(T const& t,char_type ch) {return {t,ch};}
 
 template<std::size_t base,bool uppercase,character_output_stream output,std::integral T>
 inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v)
@@ -417,6 +446,18 @@ requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr void print_define(output& out,T& a)
 {
 	details::output_base_number<10,false>(out,std::to_integer<char unsigned>(a));
+}
+
+template<std::size_t bas,bool uppercase,std::integral char_type,output_stream output,std::ranges::range T>
+requires printable<output,std::remove_cvref_t<decltype(*cbegin(T()))>>
+inline constexpr void print_define(output& out,manip::base_split_t<bas,uppercase,T,char_type> rangeref)
+{
+	auto i(rangeref.reference.cbegin()),e(rangeref.reference.cend());
+	if(i==e)
+		return;
+	print(out,base<bas,uppercase>(*i));
+	for(;i!=e;++i)
+		print(out,char_view(rangeref.character),base<bas,uppercase>(*i));
 }
 
 }
