@@ -62,7 +62,7 @@ inline constexpr void flush(socket&)
 {
 }
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__WINNT__) || defined(_MSC_VER)
 inline auto zero_copy_out_handle(socket& soc)
 {
 	return soc.native_handle();

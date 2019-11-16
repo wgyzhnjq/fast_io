@@ -207,7 +207,7 @@ public:
 	}
 };
 
-inline auto zero_copy_output_handle(win32_file& handle)
+inline auto zero_copy_input_handle(win32_file& handle)
 {
 	return handle.native_handle();
 }
@@ -322,8 +322,8 @@ using system_io_handle = win32_io_handle;
 using system_pipe_unique = win32_pipe_unique;
 using system_pipe = win32_pipe;
 
-inline DWORD constexpr native_stdin_number = -10;
-inline DWORD constexpr native_stdout_number = -11;
-inline DWORD constexpr native_stderr_number = -12;
+inline constexpr DWORD native_stdin_number(-10);
+inline constexpr DWORD native_stdout_number(-11);
+inline constexpr DWORD native_stderr_number(-12);
 
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include"mswsock.h"
 
 namespace fast_io::sock::details
 {
@@ -158,4 +159,52 @@ using socket_type = SOCKET;
 inline constexpr auto invalid_socket(INVALID_SOCKET);
 
 
+}
+
+namespace fast_io
+{
+//zero copy IO for win32
+namespace details::win32
+{
+template<zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
+{
+	if(!::TransmitFile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,nullptr,nullptr,TF_USE_DEFAULT_WORKER))
+		throw std::system_error(errno,std::generic_category());
+	return bytes;
+}
+}
+
+
+template<zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::size_t zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
+{
+	std::size_t constexpr maximum_transmit_bytes(2147483646);
+	std::size_t transmitted(0);
+	for(;bytes;)
+	{
+		std::size_t should_transfer(maximum_transmit_bytes);
+		if(bytes<should_transfer)
+			should_transfer=bytes;
+		std::size_t transferred_this_round(details::win32::zero_copy_transmit_once(outp,inp,should_transfer));
+		transmitted+=transferred_this_round;
+		if(transferred_this_round!=should_transfer)
+			return transmitted;
+		bytes-=transferred_this_round;
+	}
+	return transmitted;
+	
+}
+template<zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::size_t zero_copy_transmit(output& outp,input& inp)
+{
+	constexpr std::size_t maximum_transmit_bytes(2147483646);
+	for(std::size_t transmitted(0);;)
+	{
+		std::size_t transferred_this_round(details::win32::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes));
+		transmitted+=transferred_this_round;
+		if(transferred_this_round!=maximum_transmit_bytes)
+			return transmitted;
+	}
+}
 }
