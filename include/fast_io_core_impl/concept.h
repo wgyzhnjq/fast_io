@@ -50,7 +50,7 @@ concept character_output_stream_impl = requires(T& out,typename T::char_type ch)
 template<typename T>
 concept random_access_stream_impl = requires(T& t)
 {
-	seek(t);
+	seek(t,5);
 };
 
 namespace dummy

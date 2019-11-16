@@ -317,7 +317,7 @@ template<output_stream Ohandler,typename Buf,typename... Args>
 requires random_access_stream<Ohandler>
 inline constexpr auto seek(basic_obuf<Ohandler,Buf>& ob,Args&& ...args)
 {
-	writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer().curr);
+	writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
 	ob.obuffer.curr=ob.obuffer.beg;
 	return seek(ob.native_handle(),std::forward<Args>(args)...);
 }
@@ -367,9 +367,7 @@ public:
 	using native_handle_type = io_handler;
 	using buffer_type = Buf;
 	using char_type = typename Buf::char_type;
-private:
 	basic_ibuf<details::fake_basic_ihandler<native_handle_type,Buf>> ibf;
-public:
 	template<typename... Args>
 	requires std::constructible_from<io_handler,Args...>
 	basic_iobuf(Args&& ...args):ibf(std::forward<Args>(args)...){}
@@ -444,13 +442,7 @@ public:
 	{
 		return oreserve(iob.ibf.native_handle(),size);
 	}
-	template<typename... Args>
-	requires random_access_stream<io_handler>
-	friend inline constexpr auto seek(basic_iobuf<io_handler,Buf>& iob,Args&& ...args)
-	{
-		flush(iob.ibf.native_handle());
-		return seek(iob.ibf,std::forward<Args>(args)...);
-	}
+
 };
 
 template<zero_copy_input_stream Ihandler,typename Buf>
@@ -463,6 +455,14 @@ template<zero_copy_output_stream Ohandler,typename Buf>
 inline constexpr auto zero_copy_out_handle(basic_iobuf<Ohandler,Buf>& ob)
 {
 	return zero_copy_out_handle(ob.native_handle());
+}
+
+template<io_stream io_handler,typename Buf,typename... Args>
+requires random_access_stream<io_handler>
+inline constexpr auto seek(basic_iobuf<io_handler,Buf>& iob,Args&& ...args)
+{
+	flush(iob.ibf.native_handle());
+	return seek(iob.ibf,std::forward<Args>(args)...);
 }
 
 }
