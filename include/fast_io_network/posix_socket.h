@@ -92,7 +92,7 @@ inline void getaddrinfo(Args&& ...args)
 template<typename ...Args>
 inline void freeaddrinfo(Args&& ...args)
 {
-	::freeaddrinfo(std::forward<Args>(args)...));
+	::freeaddrinfo(std::forward<Args>(args)...);
 }
 
 
