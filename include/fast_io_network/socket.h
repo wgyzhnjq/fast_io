@@ -99,11 +99,11 @@ class server
 {
 	socket soc;
 public:
-	template<typename addrType,typename ...Args>
-	requires std::constructible_from<socket,Args...>
-	server(addrType const& add,Args&& ...args):soc(family(add),std::forward<Args>(args)...)
+	template<typename addrType,std::integral U,typename ...Args>
+	server(addrType const& add,U u,Args&& ...args):soc(family(add),std::forward<Args>(args)...)
 	{
-		sock::details::bind(soc.native_handle(),to_socket_address_storage(add,0),native_socket_address_size(add));
+		auto stg(to_socket_address_storage(add,u));
+		sock::details::bind(soc.native_handle(),std::addressof(stg),native_socket_address_size(add));
 		sock::details::listen(soc.native_handle(),10);
 	}
 	constexpr auto& handle()
