@@ -9,7 +9,7 @@ try
 	for(;;)
 	{
 		fast_io::acceptor_buf accept(hd);
-		println(accept,"hello world");
+		print(accept,"hello world\n");
 		println_flush(fast_io::log,"a client connect to this server");
 	}
 }
