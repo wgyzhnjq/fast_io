@@ -7,6 +7,8 @@
 #include<unistd.h>
 #include<arpa/inet.h>
 #include<fcntl.h>
+#include <sys/types.h>
+#include <netdb.h>
 #endif
 
 namespace fast_io
@@ -60,3 +62,4 @@ public:
 }
 
 #include"socket.h"
+#include"dns.h"

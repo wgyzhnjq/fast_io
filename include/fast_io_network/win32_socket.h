@@ -51,6 +51,15 @@ inline auto call_win32_ws2_32_minus_one(char const *name,Args&& ...args)
 	return ret;
 }
 
+template<typename prototype,typename ...Args>
+inline auto call_win32_ws2_32_nullptr(char const *name,Args&& ...args)
+{
+	auto ret(get_proc_address<prototype>(name)(std::forward<Args>(args)...));
+	if(ret==nullptr)
+		throw std::system_error(get_last_error(),std::system_category());
+	return ret;
+}
+
 template<typename ...Args>
 inline auto socket(Args&& ...args)
 {
@@ -102,6 +111,12 @@ inline auto inet_pton(family fm,std::string_view address,void* dst)
 {
 	auto wstr(fast_io::utf8_to_ucs<std::wstring>(address));
 	return call_win32_ws2_32_minus_one<decltype(::InetPtonW)*>("InetPtonW",static_cast<int>(fm),wstr.c_str(),dst);
+}
+
+template<typename ...Args>
+inline auto getaddrinfo(Args&& ...args)
+{
+	return call_win32_ws2_32<decltype(::getaddrinfo)*>("getaddrinfo",std::forward<Args>(args)...);
 }
 
 class win32_startup

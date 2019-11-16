@@ -70,6 +70,12 @@ inline auto inet_pton(family fm,std::string_view address,void* dst)
 	return call_posix(::inet_pton,static_cast<int>(fm),address.data(),dst);
 }
 
+template<typename ...Args>
+inline auto getaddrinfo(Args&& ...args)
+{
+	return call_posix(::getaddrinfo,std::forward<Args>(args)...);
+}
+
 using address_family = sa_family_t;
 using socket_type = int;
 auto constexpr invalid_socket(-1);
