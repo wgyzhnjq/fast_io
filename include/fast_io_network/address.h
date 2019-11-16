@@ -124,7 +124,6 @@ inline constexpr void scan_define(input& in,ipv6& v6)
 	for(auto i(v6.storage.begin()),e(v6.storage.end());i!=e;++i)
 	{
 		fast_io::scan(istrbuf,fast_io::hex(temp));
-		println(fast_io::out,fast_io::hex(temp));
 		*i=static_cast<std::byte>(temp>>8);
 		*++i=static_cast<std::byte>(temp&255);
 	}
