@@ -460,7 +460,7 @@ inline constexpr void print_define(output& out,manip::base_split_t<bas,uppercase
 	if(i==e)
 		return;
 	print(out,base<bas,uppercase>(*i));
-	for(;i!=e;++i)
+	for(++i;i!=e;++i)
 		print(out,char_view(rangeref.character),base<bas,uppercase>(*i));
 }
 
