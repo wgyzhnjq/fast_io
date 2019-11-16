@@ -207,6 +207,11 @@ public:
 	}
 };
 
+inline auto zero_copy_output_handle(win32_file& handle)
+{
+	return handle.native_handle();
+}
+
 class win32_pipe_unique:public win32_io_handle
 {
 public:
