@@ -49,11 +49,15 @@ try
 	p.vec().resize(5);
 	std::memcpy(p.vec().data(),std::addressof(one_time_pad_key),38);
 	auto result(pow_mod(p,exponent,modules));
-
-	fast_io::iobuf iob(argv[2],fast_io::open::in|fast_io::open::app);
 	std::vector<battlenet::key_info> keys;
-	if(seek(iob,0))
-		read(iob,keys);
+	{
+	fast_io::ibuf ib(argv[2],fast_io::open::in|fast_io::open::ate);
+	if(seek(ib,0))
+	{
+		seek(ib,0,fast_io::seekdir::beg);
+		read(ib,keys);
+	}
+	}
 	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
 	print_flush(hd,"POST ",battlenet::enroll_path," HTTP/1.1\r\n",
 		"Host: ",domain,"\r\n"
@@ -75,7 +79,9 @@ try
 	read(hd,encrypted_key);
 	for(std::size_t i(0);i!=encrypted_key.size();++i)
 		key.secret_key.push_back(encrypted_key[i]^one_time_pad_key[i]);
-	write(iob,key);
+	keys.emplace_back(std::move(key));
+	fast_io::obuf ob(argv[2]);
+	write(ob,keys);
 }
 catch(std::exception const& e)
 {
