@@ -17,7 +17,7 @@ try
 	std::vector<battlenet::key_info> keys;
 	read(ib,keys);
 	println(fast_io::out,"Count:\t",keys.size());
-	println(fast_io::out,fast_io::hex_split(keys,'\n'));
+	println(fast_io::out,fast_io::dec_split(keys,'\n'));
 }
 catch(std::exception const& e)
 {
