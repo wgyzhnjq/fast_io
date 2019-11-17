@@ -8,7 +8,7 @@ namespace fast_io
 template<output_stream output,typename Rep,typename Period>
 void print_define(output& out, std::chrono::duration<Rep,Period> const& duration)
 {
-	print(out,fast_io::fixed<10>(std::chrono::duration_cast<std::chrono::duration<double>>(duration).count()));	//should use shortest however ryu does not support that
+	print(out,std::chrono::duration_cast<std::chrono::duration<double>>(duration).count());	//should use shortest however ryu does not support that
 }
 
 template<output_stream output,typename Clock,typename Duration>
