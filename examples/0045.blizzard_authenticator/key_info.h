@@ -52,8 +52,8 @@ template<std::size_t bas,bool uppercase,fast_io::buffer_output_stream output,typ
 requires std::same_as<key_info,std::remove_cvref_t<T>>
 inline constexpr void print_define(output& out,fast_io::manip::base_t<bas,uppercase,T> ref)
 {
-	print(out,"Time difference:",ref.reference.time_difference.count(),
-		"ms\tBlizzard Auth Server Time since epoch:",
+	print(out,"Time difference:",ref.reference.time_difference,
+		"s\tBlizzard Auth Server Time since epoch:",
 		server_time(ref.reference),
 		"s\nSerial:",ref.reference.serial,"\tKey:",fast_io::base_split<bas,uppercase>(ref.reference.secret_key,','));
 }
