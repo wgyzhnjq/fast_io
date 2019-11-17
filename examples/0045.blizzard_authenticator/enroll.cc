@@ -50,13 +50,14 @@ try
 	std::memcpy(p.vec().data(),std::addressof(one_time_pad_key),38);
 	auto result(pow_mod(p,exponent,modules));
 	std::vector<battlenet::key_info> keys;
+	try
 	{
-	fast_io::ibuf ib(argv[2],fast_io::open::in|fast_io::open::ate);
-	if(seek(ib,0))
-	{
-		seek(ib,0,fast_io::seekdir::beg);
+		fast_io::ibuf ib(argv[2],fast_io::open::in);
 		read(ib,keys);
 	}
+	catch(std::exception const&)
+	{
+		keys.clear();
 	}
 	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
 	print_flush(hd,"POST ",battlenet::enroll_path," HTTP/1.1\r\n",
@@ -70,7 +71,7 @@ try
 	read(hd,time);
 	std::reverse(time.begin(),time.end());
 	battlenet::key_info key;
-	key.time=fast_io::bit_cast<std::uint64_t>(time);
+	key.time_difference=battlenet::to_time_difference(fast_io::bit_cast<std::uint64_t>(time));
 	std::array<std::uint8_t,17> serial;
 	read(hd,serial);
 	key.serial.resize(17);
