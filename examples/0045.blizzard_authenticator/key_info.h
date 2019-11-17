@@ -54,8 +54,8 @@ inline constexpr void print_define(output& out,fast_io::manip::base_t<bas,upperc
 {
 	print(out,"Time difference:",ref.reference.time_difference.count(),
 		"ms\tBlizzard Auth Server Time since epoch:",
-		std::chrono::duration_cast<std::chrono::milliseconds>(server_time(ref.reference).time_since_epoch()).count(),
-		"ms\nSerial:",ref.reference.serial,"\tKey:",fast_io::base_split<bas,uppercase>(ref.reference.secret_key,','));
+		server_time(ref.reference),
+		"s\nSerial:",ref.reference.serial,"\tKey:",fast_io::base_split<bas,uppercase>(ref.reference.secret_key,','));
 }
 
 
