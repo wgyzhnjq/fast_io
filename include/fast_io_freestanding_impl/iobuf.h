@@ -337,7 +337,7 @@ inline constexpr void orelease(basic_obuf<Ohandler,Buf>& ob,std::size_t size)
 }
 
 template<zero_copy_output_stream Ohandler,typename Buf>
-inline constexpr void zero_copy_out_handle(basic_obuf<Ohandler,Buf>& ob)
+inline constexpr auto zero_copy_out_handle(basic_obuf<Ohandler,Buf>& ob)
 {
 	return zero_copy_out_handle(ob.native_handle());
 }

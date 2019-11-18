@@ -8,7 +8,7 @@ try
 	fast_io::server hd(2000,fast_io::sock::type::stream);
 	for(;;)
 	{
-		fast_io::acceptor_buf accept(hd);
+		fast_io::acceptor accept(hd);
 		print(accept,"hello world\n");
 		println_flush(fast_io::log,"a client connect to this server");
 	}
