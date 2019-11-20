@@ -3,8 +3,6 @@
 namespace fast_io
 {
 
-namespace details
-{
 template<typename output,typename T>
 concept weak_printable=output_stream<output>&&requires(basic_ostring<std::basic_string<typename output::char_type>>& ostr,T&& t)
 {
@@ -52,6 +50,5 @@ inline constexpr void buffer_write(output &out,Args&& ...args)
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	(write_define(ostr,std::forward<Args>(args)),...);
 	writes(out,ostr.str().cbegin(),ostr.str().cend());
-}
 }
 }
