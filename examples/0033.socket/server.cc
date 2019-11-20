@@ -8,9 +8,9 @@ try
 	fast_io::server hd(2000,fast_io::sock::type::stream);
 	for(;;)
 	{
-		fast_io::acceptor accept(hd);
+		fast_io::acceptor_buf accept(hd);
 		print(accept,"hello world\n");
-		println_flush(fast_io::log,"a client connect to this server");
+		println(fast_io::out,"a client connect to this server");
 	}
 }
 catch(std::system_error const & e)

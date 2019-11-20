@@ -53,8 +53,8 @@ inline auto transmit(output& outp,input& inp,Args&& ...args)
 		}
 		else if constexpr(zero_copy_output_stream<output>&&zero_copy_buffer_input_stream<input>)
 		{
-			idump(outp,outp);
-			return zero_copy_transmit(outp,inp.native_handle(),std::forward<Args>(args)...);
+			idump(outp,inp);
+			return zero_copy_transmit(outp.native_handle(),std::forward<Args>(args)...);
 		}
 		else
 		{
