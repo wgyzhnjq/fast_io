@@ -1,6 +1,7 @@
+#include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_network.h"
-#include"../../include/fast_io.h"
+
 
 int main()
 try
