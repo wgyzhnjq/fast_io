@@ -3,6 +3,7 @@
 namespace fast_io::details::ryu
 {
 
+//FUCK CONSTEXPR NOT ALLOWING ME TO USE GOTO. FUCK WG21
 template<std::floating_point F,character_input_stream input>
 inline constexpr F input_floating(input& in)
 {
@@ -179,7 +180,6 @@ inline constexpr F input_floating(input& in)
 				return static_cast<F>(ipart);
 			}
 		}
-		//FUCK CONSTEXPR NOT ALLOWING ME TO USE GOTO
 		if(m10digits==floating_trait::digits10)
 		{
 			unsigned_char_type const ch(static_cast<unsigned_char_type>(try_get(in).first)-48);
@@ -434,18 +434,18 @@ inline constexpr F input_floating(input& in)
 	}
 	bool trailing_zeros{};
 	using std::log2p1;
-	signed_exponent_type e2(static_cast<signed_exponent_type>(log2p1(ipart))-1+m10e);
+	signed_exponent_type e2(static_cast<signed_exponent_type>(log2p1(ipart))-1+m10e-(floating_trait::mantissa_bits+1));
 	mantissa_type m2{};
 	if(m10e<0)
 	{
-		auto const p5bm10e(pow5bits(m10e));
-		e2-=p5bm10e+(floating_trait::mantissa_bits+1);
+		auto const p5bm10e(pow5bits(-m10e));
+		e2-=p5bm10e;
 		m2=mul_shift(ipart,pow5<F,true>::inv_split[-m10e],e2-m10e+p5bm10e-1+floating_trait::pow5_bitcount);
 		trailing_zeros=multiple_of_power_of_5(ipart,-m10e);
 	}
 	else
 	{
-		e2+=log2pow5(m10e)-(floating_trait::mantissa_bits+1);
+		e2+=log2pow5(m10e);
 		m2=mul_shift(ipart,pow5<F,true>::split[m10e],e2-m10e+pow5bits(m10e)+floating_trait::pow5_bitcount);
 		trailing_zeros = e2 < m10e || multiple_of_power_of_2(ipart, e2 - m10e);
 	}
