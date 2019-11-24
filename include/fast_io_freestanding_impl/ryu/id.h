@@ -434,7 +434,7 @@ inline constexpr F input_floating(input& in)
 	}
 	bool trailing_zeros{};
 	using std::log2p1;
-	signed_exponent_type e2(static_cast<signed_exponent_type>(log2p1(ipart))-1+m10e-(floating_trait::mantissa_bits+1));
+	signed_exponent_type e2(static_cast<signed_exponent_type>(log2p1(ipart))+m10e-(2+floating_trait::mantissa_bits));
 	mantissa_type m2{};
 	if(m10e<0)
 	{
@@ -446,7 +446,7 @@ inline constexpr F input_floating(input& in)
 	else
 	{
 		e2+=log2pow5(m10e);
-		m2=mul_shift(ipart,pow5<F,true>::split[m10e],e2-m10e+pow5bits(m10e)+floating_trait::pow5_bitcount);
+		m2=mul_shift(ipart,pow5<F,true>::split[m10e],e2-m10e-pow5bits(m10e)+floating_trait::pow5_bitcount);
 		trailing_zeros = e2 < m10e || multiple_of_power_of_2(ipart, e2 - m10e);
 	}
 	exponent_type ieee_e2(e2 + (floating_trait::bias-1) + log2p1(m2));
