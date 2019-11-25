@@ -135,7 +135,7 @@ inline constexpr void print(output &out,Args&& ...args)
 		typename output::lock_guard_type lg{mutex(out)};
 		print(out.native_handle(),std::forward<Args>(args)...);
 	}
-	else if constexpr(sizeof...(Args)==1||buffer_output_stream<output>)
+	else if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 		normal_print(out,std::forward<Args>(args)...);
 	else
 		buffer_print(out,std::forward<Args>(args)...);
@@ -150,7 +150,7 @@ inline constexpr void println(output &out,Args&& ...args)
 		typename output::lock_guard_type lg{mutex(out)};
 		println(out.native_handle(),std::forward<Args>(args)...);
 	}
-	else if constexpr(buffer_output_stream<output>||(sizeof...(Args)==1&&character_output_stream<output>))
+	else if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>||(sizeof...(Args)==1&&character_output_stream<output>)))
 		normal_println(out,std::forward<Args>(args)...);
 	else
 		buffer_println(out,std::forward<Args>(args)...);
@@ -166,7 +166,7 @@ inline constexpr void write(output &out,Args&& ...args)
 		typename output::lock_guard_type lg{mutex(out)};
 		write(out.native_handle(),std::forward<Args>(args)...);
 	}
-	else if constexpr(sizeof...(Args)==1||buffer_output_stream<output>)
+	else if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 		normal_write(out,std::forward<Args>(args)...);
 	else
 		buffer_write(out,std::forward<Args>(args)...);
@@ -185,7 +185,7 @@ inline constexpr void print_flush(output &out,Args&& ...args)
 	}
 	else
 	{
-		if constexpr(sizeof...(Args)==1||buffer_output_stream<output>)
+		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_print(out,std::forward<Args>(args)...);
 		else
 			buffer_print(out,std::forward<Args>(args)...);
@@ -204,7 +204,7 @@ inline constexpr void println_flush(output &out,Args&& ...args)
 	}
 	else
 	{
-		if constexpr(buffer_output_stream<output>&&(sizeof...(Args)==1&&character_output_stream<output>))
+		if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>&&(sizeof...(Args)==1&&character_output_stream<output>)))
 			normal_println(out,std::forward<Args>(args)...);
 		else
 			buffer_println(out,std::forward<Args>(args)...);
@@ -224,7 +224,7 @@ inline constexpr void write_flush(output &out,Args&& ...args)
 	}
 	else
 	{
-		if constexpr(sizeof...(Args)==1||buffer_output_stream<output>)
+		if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_write(out,std::forward<Args>(args)...);
 		else
 			buffer_write(out,std::forward<Args>(args)...);
@@ -288,7 +288,7 @@ inline constexpr void fprint(output &out,Args&& ...args)
 		typename output::lock_guard_type lg{mutex(out)};
 		fprint(out.native_handle(),std::forward<Args>(args)...);
 	}
-	else if constexpr(sizeof...(Args)==1||(buffer_output_stream<output>&&character_output_stream<output>))
+	else if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||(buffer_output_stream<output>&&character_output_stream<output>)))
 		normal_fprint(out,std::forward<Args>(args)...);
 	else
 		buffer_fprint(out,std::forward<Args>(args)...);
@@ -306,7 +306,7 @@ inline constexpr void fprint_flush(output &out,Args&& ...args)
 	}
 	else
 	{
-		if constexpr(sizeof...(Args)==1||buffer_output_stream<output>)
+		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_fprint(out,std::forward<Args>(args)...);
 		else
 			buffer_fprint(out,std::forward<Args>(args)...);
