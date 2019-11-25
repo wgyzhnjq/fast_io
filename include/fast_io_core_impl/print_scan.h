@@ -57,6 +57,15 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 {
 	writes(out,str.data(),str.data()+str.size());
 }
+#if defined(__cpp_lib_char8_t)
+template<output_stream output>
+requires (std::same_as<typename output::char_type,char>)
+inline constexpr void print_define(output& out,std::basic_string_view<char8_t> str)
+{
+	writes(out,str.data(),str.data()+str.size());
+}
+#endif
+
 inline namespace print_scan_details
 {
 template<input_stream input,typename ...Args>
