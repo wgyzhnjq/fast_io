@@ -158,7 +158,8 @@ inline constexpr void transform(std::array<std::uint32_t,5>& digest, std::array<
 }
 inline namespace
 {
-struct sha1
+
+struct [[deprecated("sha1 is no longer a secure algorithm, see wikipedia. The SHAppening: https://en.wikipedia.org/wiki/SHA-1#The_SHAppening")]] sha1
 {
 	using char_type = char;
 	std::array<std::uint32_t,5> digest{0x67452301,0xefcdab89,0x98badcfe,0x10325476,0xc3d2e1f0};
