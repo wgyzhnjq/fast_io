@@ -177,6 +177,9 @@ inline constexpr void put(sha1& sh,char ch)
 {
 	if(sh.it==sh.ed) [[unlikely]]
 	{
+		if constexpr(std::endian::native==std::endian::little)
+			for(auto& e : sh.block)
+				e=details::big_endian(e);
 		details::sha1::transform(sh.digest,sh.block);
 		++sh.transforms;
 		sh.it=sh.ed-64;
@@ -205,6 +208,9 @@ inline constexpr void writes(sha1& sh,Iter cbegin,Iter cend)
 	for(std::size_t n{};(n=static_cast<std::size_t>(sh.ed-sh.it))<static_cast<std::size_t>(e-b);b+=n)
 	{
 		sh.it=std::copy_n(b,n,sh.it)-64;
+		if constexpr(std::endian::native==std::endian::little)
+			for(auto& e : sh.block)
+				e=details::big_endian(e);
 		details::sha1::transform(sh.digest,sh.block);
 		++sh.transforms;
 	}
@@ -215,11 +221,15 @@ inline constexpr void writes(sha1& sh,Iter cbegin,Iter cend)
 inline constexpr void flush(sha1& sh)
 {
 	put(sh,0x80);
-	std::uint64_t const total_count(sh.transforms*64+(64-(sh.ed-sh.it)));
+	std::uint64_t const total_count((sh.transforms*64+(63-(sh.ed-sh.it)))<<3);
 	std::fill(sh.it,sh.ed,0);
+	if constexpr(std::endian::native==std::endian::little)
+		for(auto& e : sh.block)
+			e=details::big_endian(e);
 	sh.block[sh.block.size()-2]=static_cast<std::uint32_t>(total_count>>32);
 	sh.block.back()=static_cast<std::uint32_t>(total_count);
 	details::sha1::transform(sh.digest,sh.block);
+
 }
 
 template<std::contiguous_iterator Iter>
@@ -237,9 +247,8 @@ inline constexpr Iter reads(sha1& sh,Iter begin,Iter end)
 template<buffer_output_stream output>
 inline constexpr void print_define(output& out,sha1 const& sh)
 {
-	print(out,hexupper(sh.digest.front()));
-	for(std::size_t i(1);i!=sh.digest.size();++i)
-		print(out,char_view(','),hexupper(sh.digest[i]));
+	for(auto const & e : sh.digest)
+		print(out,width<8,false,'0'>(hex(e)));
 }
 
 }
