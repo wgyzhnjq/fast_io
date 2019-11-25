@@ -17,6 +17,9 @@ struct hmac
 		{
 			writes(hash_stream,cbegin,cend);
 			flush(hash_stream);
+			if constexpr(std::endian::native==std::endian::little)
+				for(auto & e : hash_stream.digest)
+					e=details::big_endian(e);
 			std::copy(static_cast<char_type const*>(static_cast<void const*>(hash_stream.digest.data())),
 				static_cast<char_type const*>(static_cast<void const*>(std::to_address(hash_stream.digest.end()))),
 				key.data());
@@ -62,6 +65,9 @@ inline void flush(hmac<T>& hm)
 	for(auto & e : outer)
 		e^=0x5c;
 	auto digest(hm.hash_stream.digest);
+	if constexpr(std::endian::native==std::endian::little)
+		for(auto & e : digest)
+			e=details::big_endian(e);
 	clear(hm.hash_stream);
 	writes(hm.hash_stream,outer.cbegin(),outer.cend());
 	writes(hm.hash_stream,digest.cbegin(),digest.cend());
