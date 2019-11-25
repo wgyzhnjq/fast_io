@@ -16,4 +16,4 @@ add_executable(stdio_hello_world "./stdio_hello_world.c")
 add_executable(iostream_hello_world "./iostream_hello_world.cc")
 add_executable(fast_io_hello_world "./fast_io_hello_world.cc")
 
-SET(CMAKE_EXE_LINKER_FLAGS "-static -s")
+SET(CMAKE_EXE_LINKER_FLAGS "-s")
