@@ -24,6 +24,7 @@
 #include<ranges>		//for ranges concepts
 #include<algorithm>		//std::fill std::fill_n std::copy std::copy_n
 #include<cstring>		//for memcpy
+#include<bit>			//for std::endian, std::rotl and std::bit_cast etc
 
 //fast_io core
 #include"fast_io_core_impl/concept.h"
