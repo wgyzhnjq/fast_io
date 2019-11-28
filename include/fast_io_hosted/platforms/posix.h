@@ -316,7 +316,7 @@ inline auto zero_copy_out_handle(posix_pipe& h)
 
 
 
-#ifndef __WINNT__
+
 using system_file = posix_file;
 using system_io_handle = posix_io_handle;
 using system_pipe_unique = posix_pipe_unique;
@@ -324,7 +324,6 @@ using system_pipe = posix_pipe;
 inline int constexpr native_stdin_number = 0;
 inline int constexpr native_stdout_number = 1;
 inline int constexpr native_stderr_number = 2;
-#endif
 #ifdef __linux__
 
 //zero copy IO for linux
