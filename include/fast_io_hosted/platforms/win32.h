@@ -184,13 +184,24 @@ public:
 		if(native_handle()==INVALID_HANDLE_VALUE)
 			throw win32_error();
 	}
-	template<std::size_t om,perms pm=static_cast<perms>(420)>
-	win32_file(std::string_view filename,open::interface_t<om>,perms_interface_t<pm> p={}):win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+	template<std::size_t om,perms pm>
+	win32_file(std::string_view filename,open::interface_t<om>,perms_interface_t<pm>):win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
 				details::win32_file_openmode<om,pm>::mode.dwDesiredAccess,
 				details::win32_file_openmode<om,pm>::mode.dwShareMode,
 				details::win32_file_openmode<om,pm>::mode.lpSecurityAttributes,
 				details::win32_file_openmode<om,pm>::mode.dwCreationDisposition,
 				details::win32_file_openmode<om,pm>::mode.dwFlagsAndAttributes,nullptr)
+	{
+		if constexpr (with_ate(open::mode(om)))
+			seek(*this,0,seekdir::end);
+	}
+	template<std::size_t om>
+	win32_file(std::string_view filename,open::interface_t<om>):win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+				details::win32_file_openmode_single<om>::mode.dwDesiredAccess,
+				details::win32_file_openmode_single<om>::mode.dwShareMode,
+				details::win32_file_openmode_single<om>::mode.lpSecurityAttributes,
+				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
+				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,nullptr)
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);

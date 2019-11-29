@@ -11,8 +11,10 @@ public:
 	using native_handle_type = typename T::native_handle_type;
 	template<typename ntinf,typename ...Args>
 	constexpr basic_file_wrapper(native_interface_t,Args&& ...args):T(native_interface,std::forward<Args>(args)...){}
-	template<std::size_t om,perms pm=static_cast<perms>(420)>
-	constexpr basic_file_wrapper(std::string_view file,open::interface_t<om>,perms_interface_t<pm> p={}):T(file,open::interface<fast_io::open::mode(om|interface_mode)>,perms_interface<pm>){}
+	template<std::size_t om,perms pm>
+	constexpr basic_file_wrapper(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):T(file,open::interface<fast_io::open::mode(om|interface_mode)>,perms_interface<pm>){}
+	template<std::size_t om>
+	constexpr basic_file_wrapper(std::string_view file,open::interface_t<om>):T(file,open::interface<fast_io::open::mode(om|interface_mode)>){}
 	template<perms pm>
 	constexpr basic_file_wrapper(std::string_view file,perms_interface_t<pm>):T(file,open::interface<fast_io::open::mode(interface_mode)>,perms_interface<pm>){}
 	constexpr basic_file_wrapper(std::string_view file):T(file,open::interface<fast_io::open::mode(interface_mode)>,perms_interface<static_cast<perms>(420)>){}

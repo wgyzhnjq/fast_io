@@ -201,8 +201,14 @@ public:
 		if(native_handle()==-1)
 			throw std::system_error(errno,std::generic_category());
 	}
-	template<std::size_t om,perms pm=static_cast<perms>(420)>
-	posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm> p={}):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	template<std::size_t om,perms pm>
+	posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	{
+		if constexpr (with_ate(open::mode(om)))
+			seek(*this,0,seekdir::end);
+	}
+	template<std::size_t om>
+	posix_file(std::string_view file,open::interface_t<om>):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
