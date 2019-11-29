@@ -21,24 +21,16 @@ try
 				fast_io::epoll::event::out|fast_io::epoll::event::hup);
 			break;
 			case fast_io::epoll::event::out:
-				for(auto it(clients.begin());it!=clients.end();++it)
-					if(*it==ele)
-					{
-						print(*it,"Hello World\n");
-						iter_swap(it,clients.end()-1);
-						clients.pop_back();
-						break;
-					}
-			break;
 			case fast_io::epoll::event::hup:
 				for(auto it(clients.begin());it!=clients.end();++it)
 					if(*it==ele)
 					{
+						if(get(ele)==fast_io::epoll::event::out)
+							print(*it,"Hello World\n");
 						iter_swap(it,clients.end()-1);
 						clients.pop_back();
 						break;
 					}
-			break;
 			};
 }
 catch(std::exception const & e)
