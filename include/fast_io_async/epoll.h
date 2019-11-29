@@ -26,14 +26,15 @@ class handle_pool
 	}
 public:
 	using native_handle_type = int;
-	explicit handle_pool(std::integral auto counts)
+	explicit handle_pool(std::integral auto counts):fd(::epoll_create(static_cast<int>(counts)))
 	{
-		if(::epoll_create(static_cast<int>(counts))==-1)
+		if(fd==-1)
 			throw std::system_error(errno,std::generic_category());
 	}
-	explicit handle_pool(std::integral auto counts,close_on_exec_function_invoked_t)
+	explicit handle_pool(std::integral auto counts,close_on_exec_function_invoked_t):
+		fd(::epoll_create1(static_cast<int>(counts)|EPOLL_CLOEXEC))
 	{
-		if(::epoll_create1(static_cast<int>(counts)|EPOLL_CLOEXEC)==-1)
+		if(fd==-1)
 			throw std::system_error(errno,std::generic_category());
 	}
 	handle_pool(handle_pool const& dp):fd(dup(dp.fd))
@@ -112,53 +113,93 @@ inline event& operator|=(event& x, event y) noexcept{return x=x|y;}
 
 inline event& operator^=(event& x, event y) noexcept{return x=x^y;}
 
+struct events:epoll_event{};
+
+inline constexpr event get(events const& e)
+{
+	return static_cast<event>((static_cast<epoll_event const&>(e)).events);
+}
+
+inline constexpr auto fd(events const& e)
+{
+	return (static_cast<epoll_event const&>(e)).data.fd;
+}
+
 template<typename T>
 concept epoll_stream = requires(T& t)
 {
 	{ultimate_native_handle(out)}->std::same_as<int>;
 };
 
-template<epoll_stream output>
-inline void add_control(handle_pool& pool,output& out,event e,std::integral auto value)
+template<epoll_stream sm>
+inline constexpr bool operator==(sm& s,events const& d)
 {
-	epoll_event evt{static_cast<std::uint32_t>(e),{.u64=static_cast<std::uint64_t>(value)}};
-	if(::epoll_ctl(pool.native_handle(),1,ultimate_native_handle(out),std::addressof(evt))==-1)
-		throw std::system_error(errno,std::generic_category());
+	return ultimate_native_handle(s)==fd(d);
+}
+
+template<epoll_stream sm>
+inline constexpr bool operator!=(sm& s,events const& d)
+{
+	return ultimate_native_handle(s)!=fd(d);
+}
+
+template<epoll_stream sm>
+inline constexpr bool operator==(events const& d,sm& s)
+{
+	return ultimate_native_handle(s)==fd(d);
+}
+
+template<epoll_stream sm>
+inline constexpr bool operator!=(events const& d,sm& s)
+{
+	return ultimate_native_handle(s)!=fd(d);
 }
 
 template<epoll_stream output>
-inline void delete_control(handle_pool& pool,output& out,std::integral auto value)
+inline output& add_control(handle_pool& pool,output& out,event e)
 {
-	epoll_event evt{1,{.u64=static_cast<std::uint64_t>(value)}};
-	if(::epoll_ctl(pool.native_handle(),2,ultimate_native_handle(out),std::addressof(evt))==-1)
+	auto const out_ultimate(ultimate_native_handle(out));
+	epoll_event evt{static_cast<std::uint32_t>(e),{.fd=out_ultimate}};
+	if(::epoll_ctl(pool.native_handle(),1,out_ultimate,std::addressof(evt))==-1)
 		throw std::system_error(errno,std::generic_category());
+	return out;
+}
+
+template<epoll_stream output>
+inline output& delete_control(handle_pool& pool,output& out)
+{
+	auto const out_ultimate(ultimate_native_handle(out));
+	epoll_event evt{1,{.fd=out_ultimate}};
+	if(::epoll_ctl(pool.native_handle(),2,out_ultimate,std::addressof(evt))==-1)
+		throw std::system_error(errno,std::generic_category());
+	return out;
 }
 template<epoll_stream output>
-inline void modify_control(handle_pool& pool,output& out,event e,std::integral auto value)
+inline output& modify_control(handle_pool& pool,output& out,event e)
 {
-	epoll_event evt{static_cast<std::uint32_t>(e),{.u64=static_cast<std::uint64_t>(value)}};
-	if(::epoll_ctl(pool.native_handle(),3,ultimate_native_handle(out),std::addressof(evt))==-1)
+	auto const out_ultimate(ultimate_native_handle(out));
+	epoll_event evt{static_cast<std::uint32_t>(e),{.fd=out_ultimate}};
+	if(::epoll_ctl(pool.native_handle(),3,out_ultimate,std::addressof(evt))==-1)
 		throw std::system_error(errno,std::generic_category());
+	return out;
 }
 
 template<typename Rep,typename Period>
-[[nodiscard]] inline std::size_t wait(handle_pool& pool,event e,std::integral auto value,std::integral auto max_events,std::chrono::duration<Rep,Period> const& timeout)
+inline std::span<events> wait(handle_pool& pool,std::span<events> evs,std::chrono::duration<Rep,Period> const& timeout)
 {
-	epoll_event evt{static_cast<std::uint32_t>(e),{.u64=static_cast<std::uint64_t>(value)}};
-	int ret(::epoll_wait(pool.native_handle(),std::addressof(evt),static_cast<int>(max_events),
+	int ret(::epoll_wait(pool.native_handle(),evs.data(),static_cast<int>(evs.size()),
 		static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(timeout).count())==1));
 	if(ret==-1)
 		throw std::system_error(errno,std::generic_category());
-	return ret;
+	return evs.first(static_cast<std::size_t>(ret));
 }
 
-[[nodiscard]] inline std::size_t wait(handle_pool& pool,event e,std::integral auto value,std::integral auto max_events)
+inline std::span<events> wait(handle_pool& pool,std::span<events> evs)
 {
-	epoll_event evt{static_cast<std::uint32_t>(e),{.u64=static_cast<std::uint64_t>(value)}};
-	int ret(::epoll_wait(pool.native_handle(),std::addressof(evt),static_cast<int>(max_events),-1));
+	int ret(::epoll_wait(pool.native_handle(),evs.data(),static_cast<int>(evs.size()),-1));
 	if(ret==-1)
 		throw std::system_error(errno,std::generic_category());
-	return ret;
+	return evs.first(static_cast<std::size_t>(ret));
 }
 
 
