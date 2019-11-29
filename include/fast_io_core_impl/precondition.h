@@ -19,7 +19,11 @@ inline constexpr auto seek_precondition(integr i)
 }
 
 
-template<stream stm>
+template<typename stm>
+requires requires(stm& s)
+{
+	s.native_handle();
+}
 inline constexpr decltype(auto) ultimate_native_handle(stm& s)
 {
 	if constexpr(requires(stm& s)

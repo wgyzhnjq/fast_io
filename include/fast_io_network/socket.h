@@ -111,7 +111,7 @@ public:
 	server(U u,Args&& ...args):server(ipv4{},u,std::forward<Args>(args)...)
 	{
 	}
-	constexpr auto& handle()
+	constexpr auto& native_handle()
 	{
 		return soc;
 	}
@@ -125,7 +125,7 @@ public:
 	using char_type = char;
 	acceptor(server& listener_socket)
 	{
-		protected_native_handle()=sock::details::accept(listener_socket.handle().native_handle(),cinfo.storage,cinfo.storage_size);
+		protected_native_handle()=sock::details::accept(listener_socket.native_handle().native_handle(),cinfo.storage,cinfo.storage_size);
 	}
 	constexpr auto& get()
 	{
