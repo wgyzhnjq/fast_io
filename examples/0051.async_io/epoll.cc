@@ -14,7 +14,6 @@ try
 	std::vector<fast_io::acceptor> clients;
 	for(;;)
 		for(auto const &ele : wait(pool,events_buffer))
-		{
 			switch(get(ele))
 			{
 			case fast_io::epoll::event::in:
@@ -41,7 +40,6 @@ try
 					}
 			break;
 			};
-		}
 }
 catch(std::exception const & e)
 {
