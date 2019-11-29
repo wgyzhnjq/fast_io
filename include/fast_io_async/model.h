@@ -3,12 +3,13 @@
 namespace fast_io
 {
 
-enum class async_model
+enum class async
 {
 	unknown = 0,
 	iocp = 1,
 	epoll = 2,
 	kqueue = 3,
+	posix = 4,
 	native =
 #if defined(__WINNT__) || defined(_MSC_VER)
 	iocp
@@ -17,8 +18,14 @@ enum class async_model
 #elif defined(__FreeBSD__)
 	kqueue
 #else
-	unknown
+	posix
 #endif
 };
 
 }
+
+#if defined(__WINNT__) || defined(_MSC_VER)
+#include"iocp.h"
+#elif defined(__linux__)
+#include"epoll.h"
+#endif
