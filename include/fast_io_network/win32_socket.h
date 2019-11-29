@@ -165,7 +165,7 @@ class gai_exception:public std::exception
 	int ec;
 public:
 	explicit gai_exception(int errorc):ec(errorc){}
-	auto get() const
+	auto get() const noexcept
 	{
 		return ec;
 	}

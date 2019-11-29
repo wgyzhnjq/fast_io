@@ -37,6 +37,7 @@
 #include"fast_io_core_impl/shared_base_table.h"
 #include"fast_io_core_impl/base.h"
 #include"fast_io_core_impl/mode.h"
+#include"fast_io_core_impl/perms.h"
 #include"fast_io_core_impl/istring_view.h"
 #include"fast_io_core_impl/ospan.h"
 // Provide template prototype for custom string types
