@@ -13,7 +13,6 @@ try
 	std::array<fast_io::epoll::events,1000> events_buffer;
 	std::vector<fast_io::acceptor> clients;
 	for(;;)
-	{
 		for(auto const &ele : wait(pool,events_buffer))
 		{
 			switch(get(ele))
@@ -43,7 +42,6 @@ try
 			break;
 			};
 		}
-	}
 }
 catch(std::exception const & e)
 {
