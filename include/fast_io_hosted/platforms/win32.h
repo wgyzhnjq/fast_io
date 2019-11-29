@@ -345,16 +345,6 @@ public:
 	{
 		return pipes.back();
 	}
-	template<std::contiguous_iterator Iter>
-	Iter reads(Iter begin,Iter end)
-	{
-		return reads(pipes.front(),begin,end);
-	}
-	template<std::contiguous_iterator Iter>
-	Iter writes(Iter begin,Iter end)
-	{
-		return writes(pipes.back(),begin,end);
-	}
 	void swap(win32_pipe& o) noexcept
 	{
 		using std::swap;
