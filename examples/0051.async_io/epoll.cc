@@ -25,7 +25,7 @@ try
 				for(auto it(clients.begin());it!=clients.end();++it)
 					if(*it==ele)
 					{
-						println(*it,"Hello World\n");
+						print(*it,"Hello World\n");
 						iter_swap(it,clients.end()-1);
 						clients.pop_back();
 						break;
