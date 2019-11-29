@@ -241,7 +241,7 @@ public:
 			seek(*this,0,seekdir::end);
 	}
 	win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):win32_file(file,fast_io::open::c_style(mode),pm){}
-
+/*
 	win32_file(win32_file const&)=delete;
 	win32_file& operator=(win32_file const&)=delete;
 	win32_file(win32_file&& b) noexcept:win32_io_handle(b.protected_native_handle())
@@ -257,7 +257,7 @@ public:
 			b.protected_native_handle()=nullptr;
 		}
 		return *this;
-	}
+	}*/
 	~win32_file()
 	{
 		win32_io_handle::close_impl();
@@ -280,7 +280,7 @@ public:
 		protected_native_handle() = nullptr;
 	}
 	win32_pipe_unique()=default;
-	win32_pipe_unique(win32_pipe_unique const&)=delete;
+/*	win32_pipe_unique(win32_pipe_unique const&)=delete;
 	win32_pipe_unique& operator=(win32_pipe_unique const&)=delete;
 	win32_pipe_unique(win32_pipe_unique&& b) noexcept:win32_io_handle(b.protected_native_handle())
 	{
@@ -295,7 +295,7 @@ public:
 			b.protected_native_handle()=nullptr;
 		}
 		return *this;
-	}
+	}*/
 	~win32_pipe_unique()
 	{
 		win32_io_handle::close_impl();
