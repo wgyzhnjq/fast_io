@@ -95,8 +95,21 @@ public:
 	win32_io_handle(native_handle_type handle):mhandle(handle){}
 	win32_io_handle(DWORD dw):mhandle(GetStdHandle(dw)){}
 
-	win32_io_handle(win32_io_handle const&)=delete;
-	win32_io_handle& operator=(win32_io_handle const&)=delete;
+	win32_io_handle(win32_io_handle const& other)
+	{
+		auto const current_process(GetCurrentProcess());
+		if(!DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(mhandle), 0, true, DUPLICATE_SAME_ACCESS))
+			throw win32_error();
+	}
+	win32_io_handle& operator=(win32_io_handle const& other)
+	{
+		auto const current_process(GetCurrentProcess());
+		HANDLE new_handle{};
+		if(!DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(new_handle), 0, true, DUPLICATE_SAME_ACCESS))
+			throw win32_error();
+		mhandle=new_handle;
+		return *this;
+	}
 	win32_io_handle(win32_io_handle&& b) noexcept:mhandle(b.mhandle)
 	{
 		b.mhandle=nullptr;
@@ -114,9 +127,6 @@ public:
 	native_handle_type native_handle()
 	{
 		return mhandle;
-	}
-	void flush()
-	{
 	}
 	inline void swap(win32_io_handle& o) noexcept
 	{
@@ -326,9 +336,6 @@ public:
 	auto& native_handle()
 	{
 		return pipes;
-	}
-	void flush()
-	{
 	}
 	auto& in()
 	{

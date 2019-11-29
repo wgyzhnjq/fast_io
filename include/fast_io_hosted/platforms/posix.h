@@ -279,9 +279,6 @@ public:
 	{
 		return pipes;
 	}
-	void flush()
-	{
-	}
 	auto& in()
 	{
 		return pipes.front();
