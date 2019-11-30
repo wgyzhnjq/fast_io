@@ -176,7 +176,7 @@ public:
 	acceptor(async_server& listener_socket)
 	{
 #if defined(__WINNT__) || defined(_MSC_VER)
-		protected_native_handle()=sock::details::accept_ex(listener_socket.native_handle().native_handle(),cinfo.storage,cinfo.storage_size);
+		protected_native_handle()=sock::details::accept(listener_socket.native_handle().native_handle(),cinfo.storage,cinfo.storage_size);
 #else
 		protected_native_handle()=sock::details::accept(listener_socket.native_handle().native_handle(),cinfo.storage,cinfo.storage_size);
 		unblock(*this);

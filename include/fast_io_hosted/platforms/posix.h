@@ -12,7 +12,7 @@ namespace details
 inline constexpr int calculate_posix_open_mode(open::mode const &om)
 {
 	using namespace open;
-	std::size_t value(remove_ate(om).value);
+	std::size_t value(remove_ate_overlapped(om).value);
 	int mode(0);
 	if(value&binary.value)
 	{
