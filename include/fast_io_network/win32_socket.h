@@ -70,7 +70,7 @@ inline auto get_proc_address(char const* proc)
 	return bit_cast<prototype>(address);
 }
 
-inline auto get_last_error(get_proc_address<int()>("WSAGetLastError"));
+inline auto get_last_error(get_proc_address<int(*)()>("WSAGetLastError"));
 
 template<typename prototype,typename ...Args>
 inline auto call_win32_ws2_32(char const *name,Args&& ...args)
@@ -162,6 +162,15 @@ inline auto listen(Args&& ...args)
 	return call_win32_ws2_32<decltype(::listen)*>("listen",std::forward<Args>(args)...);
 }
 
+
+template<typename ...Args>
+inline void getaddrinfo(Args&& ...args)
+{
+	auto ec(get_proc_address<decltype(::getaddrinfo)*>("getaddrinfo")(std::forward<Args>(args)...));
+	if(ec)
+		throw win32_error(get_last_error());
+}
+
 template<typename ...Args>
 inline void freeaddrinfo(Args&& ...args)
 {
@@ -189,58 +198,6 @@ public:
 
 inline win32_startup const startup;
 
-
-}
-}
-
-
-namespace fast_io
-{
-/*
-class gai_exception:public std::exception
-{
-	int ec;
-public:
-	explicit gai_exception(int errorc):ec(errorc){}
-	auto get() const noexcept
-	{
-		return ec;
-	}
-	char const* what() const noexcept
-	{
-		switch(ec)
-		{
-		case EAI_AGAIN:
-			return "A temporary failure in name resolution occurred.";
-		case EAI_BADFLAGS:
-			return "An invalid value was provided for the ai_flags member of the pHints parameter.";
-		case EAI_FAIL:
-			return "A nonrecoverable failure in name resolution occurred.";
-		case EAI_FAMILY:
-			return "The ai_family member of the pHints parameter is not supported.";
-		case EAI_MEMORY:
-			return "A memory allocation failure occurred.";
-		case EAI_NONAME:
-			return "The name does not resolve for the supplied parameters or the pNodeName and pServiceName parameters were not provided.";
-		case EAI_SERVICE:
-			return "The pServiceName parameter is not supported for the specified ai_socktype member of the pHints parameter.";
-		case EAI_SOCKTYPE:
-			return "The ai_socktype member of the pHints parameter is not supported.";
-		default:
-			return "unknown";
-		}
-	}
-};*/
-
-namespace sock::details
-{
-template<typename ...Args>
-inline void getaddrinfo(Args&& ...args)
-{
-	auto ec(get_proc_address<decltype(::getaddrinfo)*>("getaddrinfo")(std::forward<Args>(args)...));
-	if(ec)
-		throw win32_error(get_last_error());
-}
 }
 }
 

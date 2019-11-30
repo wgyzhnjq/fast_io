@@ -65,10 +65,10 @@ int __stdcall CreatePipe(void**,void**,security_attributes*,std::uint32_t);
 int __stdcall FreeLibrary(void*);
 
 int __stdcall TransmitFile(std::uintptr_t,void*,std::uint32_t,std::uint32_t,overlapped*,transmit_file_buffer*,std::uint32_t);
-/*
+
 using farproc = intptr_t(__stdcall*)();
 
-farproc __stdcall GetProcAddress(void*,char const*);*/
+farproc __stdcall GetProcAddress(void*,char const*);
 }
 
 }
