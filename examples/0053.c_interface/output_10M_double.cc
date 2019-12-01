@@ -71,13 +71,13 @@ try
 	{
 	cqw::timer t("fast_io c interface");
 	void *handle;
-	cxx_fast_io_acquire_bufferred_file(std::addressof(handle),"c_interface.txt","wb");
+	cxx_fast_io_bufferred_acquire_file(std::addressof(handle),"c_interface.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 	{
-		cxx_fast_io_print_double(handle,vec[i]);
-		cxx_fast_io_print_c_str(handle,"\n");
+		cxx_fast_io_bufferred_print_double(handle,vec[i]);
+		cxx_fast_io_bufferred_put(handle,'\n');
 	}
-	cxx_fast_io_release(handle);
+	cxx_fast_io_bufferred_release(handle);
 	}
 }
 catch(std::exception const& e)
