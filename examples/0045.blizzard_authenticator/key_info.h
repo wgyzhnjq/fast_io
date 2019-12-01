@@ -16,13 +16,18 @@ struct key_info
 	std::vector<std::uint8_t> secret_key;
 };
 
-inline std::string normalize_serial(key_info const& k)
+inline std::string normalize_serial(std::string_view serial)
 {
 	std::string ret;
-	for(auto const& e : k.serial)
+	for(auto const& e : serial)
 		if(e!='-')
 			ret.push_back(e);
 	return ret;
+}
+
+inline std::string normalize_serial(key_info const& k)
+{
+	return normalize_serial(k.serial);
 }
 
 inline constexpr std::byte char_to_byte(char c)
@@ -55,11 +60,25 @@ inline std::string restore_code(key_info const& k)
 	print(sha1,normalize_serial(k));
 	writes(sha1,k.secret_key.cbegin(),k.secret_key.cend());
 	flush(sha1);
-	auto byte_digest(std::as_bytes(std::span{sha1.digest}).last(10));
-	std::string result;
-	for(auto const& e : byte_digest)
-		result.push_back(byte_to_char(e));
-	return result;
+	if constexpr(std::endian::native==std::endian::little)
+	{
+		auto digest(sha1.digest);
+		for(auto & e : digest)
+			e=fast_io::details::big_endian(e);
+		auto byte_digest(std::as_bytes(std::span{digest}).last(10));
+		std::string result;
+		for(auto const& e : byte_digest)
+			result.push_back(byte_to_char(e));
+		return result;
+	}
+	else
+	{
+		auto byte_digest(std::as_bytes(std::span{sha1.digest}).last(10));
+		std::string result;
+		for(auto const& e : byte_digest)
+			result.push_back(byte_to_char(e));
+		return result;
+	}
 }
 
 inline auto to_time_difference(std::uint64_t t)
