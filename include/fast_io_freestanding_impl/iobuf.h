@@ -115,7 +115,7 @@ public:
 	using buffer_type = Buf;
 	using char_type = typename Buf::char_type;	
 	template<typename... Args>
-	requires std::constructible_from<Ihandler,Args...>
+//	requires std::constructible_from<Ihandler,Args...>
 	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){ibuffer.curr=ibuffer.end;}
 	inline constexpr auto& native_handle()
 	{
@@ -216,7 +216,7 @@ public:
 	using buffer_type = Buf;
 	using char_type = typename Buf::char_type;
 	template<typename... Args>
-	requires std::constructible_from<Ohandler,Args...>
+//	requires std::constructible_from<Ohandler,Args...>
 	basic_obuf(Args&&... args):oh(std::forward<Args>(args)...){obuffer.curr=obuffer.beg;}
 	~basic_obuf()
 	{
@@ -348,7 +348,7 @@ template<io_stream io_handler,typename Buf>
 struct fake_basic_ihandler:basic_obuf<io_handler,Buf>
 {
 template<typename... Args>
-requires std::constructible_from<io_handler,Args...>
+//requires std::constructible_from<io_handler,Args...>
 fake_basic_ihandler(Args&& ...args):basic_obuf<io_handler,Buf>(std::forward<Args>(args)...){}
 };
 
@@ -369,7 +369,7 @@ public:
 	using char_type = typename Buf::char_type;
 	basic_ibuf<details::fake_basic_ihandler<native_handle_type,Buf>> ibf;
 	template<typename... Args>
-	requires std::constructible_from<io_handler,Args...>
+//	requires std::constructible_from<basic_ibuf<details::fake_basic_ihandler<native_handle_type,Buf>>,Args...>
 	basic_iobuf(Args&& ...args):ibf(std::forward<Args>(args)...){}
 	inline constexpr auto& native_handle()
 	{

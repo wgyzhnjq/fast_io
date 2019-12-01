@@ -31,9 +31,10 @@ try
 	auto const region_array(battlenet::upper_case_region({serial.data(),2}));
 	std::string_view const region(region_array.data(),region_array.size());
 	auto const domain(battlenet::get_domain(region));
-	std::array<std::byte,32> challenge;
+	std::array<std::uint8_t,32> challenge;
+	auto dns_cache(fast_io::dns_once(domain));
 	{
-	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
+	fast_io::client_buf hd(dns_cache,80,fast_io::sock::type::stream);
 	print(hd,"POST ",battlenet::restore_path," HTTP/1.1\r\n",
 		"Host: ",domain,"\r\n"
 		"Content-Type: application/octet-stream\r\n"
@@ -44,7 +45,7 @@ try
 	}
 	fast_io::hmac_sha1 hmac_sha1(restore_str);
 	writes(hmac_sha1,serial.cbegin(),serial.cend());
-	write(hmac_sha1,challenge);
+	write(hmac_sha1,challenge.cbegin(),challenge.cend());
 	flush(hmac_sha1);
 	decltype(auto) hmac_digest{get_digest(hmac_sha1)};
 
@@ -73,7 +74,7 @@ try
 	std::memcpy(p.vec().data(),challenge_ostr.str().data(),challenge_ostr.str().size());
 	auto result(pow_mod(p,exponent,modules));
 	{
-	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
+	fast_io::client_buf hd(dns_cache,80,fast_io::sock::type::stream);
 	print(hd,"POST ",battlenet::restore_validate_path," HTTP/1.1\r\n",
 		"Host: ",domain,"\r\n"
 		"Content-Type: application/octet-stream\r\n"
