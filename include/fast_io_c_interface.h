@@ -48,6 +48,7 @@ errno_t cxx_fast_io_print_c_str(void* device,char const* c_str) CXX_FAST_IO_NOEX
 
 #ifdef __cplusplus
 }
+
 #endif
 
 #undef CXX_FAST_IO_NOEXCEPT

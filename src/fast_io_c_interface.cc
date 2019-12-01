@@ -1,5 +1,4 @@
 #include"../include/fast_io_device.h"
-#include"../include/fast_io.h"
 
 namespace
 {
@@ -186,7 +185,7 @@ errno_t cxx_fast_io_acquire_bufferred_file(void** out,char const* name,char cons
 {
 	try
 	{
-		fast_io::dynamic_base dyn(std::in_place_type<fast_io::system_file>,name,mode);
+		fast_io::dynamic_base dyn(std::in_place_type<fast_io::basic_iobuf<fast_io::system_file>>,name,mode);
 		*out=dyn.opaque_base_pointer();
 		return {};
 	}
