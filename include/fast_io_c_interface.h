@@ -1,6 +1,5 @@
 #pragma once
 #include<stddef.h>
-#include<errno.h>
 
 //This library is stil header only. Just need compile for C interface if you want to use C interface
 
