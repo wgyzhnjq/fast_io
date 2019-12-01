@@ -79,16 +79,16 @@ try
 	}
 	{
 	cqw::timer t("dynamic obuf");
-	fast_io::dynamic_output_stream dobuf(std::in_place_type<fast_io::obuf>,"dynamic_obuf.txt");
+	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obuf.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,i);
 	}
-/*	{
+	{
 	cqw::timer t("iobuf_dynamic system_file");
-	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::osystem_file>,"iobuf_dynamic_system_file.txt");
+	fast_io::dynamic_buf dobuf(std::in_place_type<fast_io::osystem_file>,"iobuf_dynamic_system_file.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,i);
-	}*/
+	}
 	{
 	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutex.txt");
