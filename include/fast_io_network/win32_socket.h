@@ -168,7 +168,7 @@ inline void getaddrinfo(Args&& ...args)
 {
 	auto ec(get_proc_address<decltype(::getaddrinfo)*>("getaddrinfo")(std::forward<Args>(args)...));
 	if(ec)
-		throw win32_error(get_last_error());
+		throw win32_error();
 }
 
 template<typename ...Args>

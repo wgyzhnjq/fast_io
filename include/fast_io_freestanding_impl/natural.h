@@ -923,7 +923,7 @@ inline constexpr void input_base_natural_number(input& in,natural& a)
 }
 }
 
-template<output_stream output>
+template<character_output_stream output>
 inline constexpr void print_define(output& out,natural const& a)
 {
 	details::output_base_natural_number<10,false>(out,a);

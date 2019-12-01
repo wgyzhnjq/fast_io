@@ -16,7 +16,7 @@ class win32_error : public std::runtime_error
 		{
 			std::array<wchar_t,32768> buffer;
 			auto const buffer_length(win32::FormatMessageW(
-			0x00000100 | 0x00000200 | 0x00001000,
+			0x00000200 | 0x00001000,
 			nullptr,
 			error,
 			(1 << 10),

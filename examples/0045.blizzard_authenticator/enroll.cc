@@ -1,7 +1,7 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_network.h"
-#include"../../include/fast_io_crypto.h"
+#include"../../include/fast_io_hash.h"
 #include"domain.h"
 #include<random>
 #include"key_info.h"
@@ -43,7 +43,8 @@ try
 			"19a250fa4cc1278d12855b5b25818d162c6e6ee2ab4a350d401d78f6ddb99711"
 			"e72626b48bd8b5b0b7f3acf9ea3c9e0005fee59e19136cdb7c83f2ab8b0a2a99");
 	scan(isv,fast_io::hex(modules));
-	} 
+	
+	}
 	fast_io::natural exponent("257");
 	fast_io::natural p;
 	p.vec().resize(5);
