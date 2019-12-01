@@ -20,7 +20,9 @@ inline std::string normalize_serial(std::string_view serial)
 {
 	std::string ret;
 	for(auto const& e : serial)
-		if(e!='-')
+		if('a'<=e&&'e'<='z')
+			ret.push_back(e-'a'+'A');
+		else if(e!='-')
 			ret.push_back(e);
 	return ret;
 }

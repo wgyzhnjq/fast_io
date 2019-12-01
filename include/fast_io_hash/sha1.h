@@ -230,7 +230,7 @@ inline constexpr void writes(sha1& sh,Iter cbegin,Iter cend)
 	sh.pos+=e-b;
 }
 
-[[deprecated("sha1 is no longer a secure algorithm, see wikipedia. The SHAppening: https://en.wikipedia.org/wiki/SHA-1#The_SHAppening")]] 
+//[[deprecated("sha1 is no longer a secure algorithm, see wikipedia. The SHAppening: https://en.wikipedia.org/wiki/SHA-1#The_SHAppening")]] 
 inline constexpr void flush(sha1& sh)
 {
 	std::uint64_t const total_count((sh.transforms*64+sh.pos)<<3);
@@ -261,6 +261,19 @@ inline constexpr void print_define(output& out,sha1 const& sh)
 {
 	for(auto const & e : sh.digest)
 		print(out,width<8,false,'0'>(hex(e)));
+}
+
+inline constexpr decltype(auto) get_digest(sha1& s)
+{
+	if constexpr(std::endian::native==std::endian::little)
+	{
+		auto digest(s.digest);
+		for(auto& e : digest)
+			e=details::big_endian(e);
+		return digest;
+	}
+	else
+		return s.digest;
 }
 
 }

@@ -87,4 +87,11 @@ inline void print_define(output& out,hmac<T> const& hm)
 	print(out,hm.hash_stream);
 }
 
+
+template<output_stream T>
+inline decltype(auto) get_digest(hmac<T>& hm)
+{
+	return get_digest(hm.hash_stream);
+}
+
 }

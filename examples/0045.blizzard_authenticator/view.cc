@@ -22,6 +22,6 @@ try
 }
 catch(std::exception const& e)
 {
-	println(fast_io::err,"error:",e);
+	println(fast_io::err,e);
 	return 1;
 }
