@@ -1,8 +1,10 @@
 #include"../include/fast_io_device.h"
+#include<cerrno>
 
 namespace
 {
-inline errno_t lippincott_function()
+
+inline int lippincott_function()
 {
 	try
 	{
@@ -29,7 +31,7 @@ void cxx_fast_io_release(void* d) noexcept
 	fast_io::dynamic_stream dyn(d);
 }
 
-errno_t cxx_fast_io_writes(void* d,char const* begin,char const* end) noexcept
+int cxx_fast_io_writes(void* d,char const* begin,char const* end) noexcept
 {
 	try
 	{
@@ -43,7 +45,7 @@ errno_t cxx_fast_io_writes(void* d,char const* begin,char const* end) noexcept
 	}
 }
 
-errno_t cxx_fast_io_reads(char** readed,void* d,char* begin,char* end) noexcept
+int cxx_fast_io_reads(char** readed,void* d,char* begin,char* end) noexcept
 {
 	try
 	{
@@ -57,7 +59,7 @@ errno_t cxx_fast_io_reads(char** readed,void* d,char* begin,char* end) noexcept
 	}
 }
 
-errno_t cxx_fast_io_flush(void* d) noexcept
+int cxx_fast_io_flush(void* d) noexcept
 {
 	try
 	{
@@ -71,7 +73,7 @@ errno_t cxx_fast_io_flush(void* d) noexcept
 	}
 }
 
-errno_t cxx_fast_io_print_size_t(void* d,std::size_t s) noexcept
+int cxx_fast_io_print_size_t(void* d,std::size_t s) noexcept
 {
 	try
 	{
@@ -85,7 +87,7 @@ errno_t cxx_fast_io_print_size_t(void* d,std::size_t s) noexcept
 	}
 }
 
-errno_t cxx_fast_io_print_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
+int cxx_fast_io_print_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
 {
 	try
 	{
@@ -99,7 +101,7 @@ errno_t cxx_fast_io_print_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
 	}
 }
 
-errno_t cxx_fast_io_print_double(void* d,double s) noexcept
+int cxx_fast_io_print_double(void* d,double s) noexcept
 {
 	try
 	{
@@ -113,7 +115,7 @@ errno_t cxx_fast_io_print_double(void* d,double s) noexcept
 	}
 }
 
-errno_t cxx_fast_io_print_c_str(void* d,char const* s) noexcept
+int cxx_fast_io_print_c_str(void* d,char const* s) noexcept
 {
 	try
 	{
@@ -127,7 +129,7 @@ errno_t cxx_fast_io_print_c_str(void* d,char const* s) noexcept
 	}
 }
 
-errno_t cxx_fast_io_acquire_stdout(void** out) noexcept
+int cxx_fast_io_acquire_stdout(void** out) noexcept
 {
 	try
 	{
@@ -140,7 +142,7 @@ errno_t cxx_fast_io_acquire_stdout(void** out) noexcept
 		return lippincott_function();
 	}
 }
-errno_t cxx_fast_io_acquire_stderr(void** out) noexcept
+int cxx_fast_io_acquire_stderr(void** out) noexcept
 {
 	try
 	{
@@ -153,7 +155,7 @@ errno_t cxx_fast_io_acquire_stderr(void** out) noexcept
 		return lippincott_function();
 	}
 }
-errno_t cxx_fast_io_acquire_stdin(void** out) noexcept
+int cxx_fast_io_acquire_stdin(void** out) noexcept
 {
 	try
 	{
@@ -167,7 +169,7 @@ errno_t cxx_fast_io_acquire_stdin(void** out) noexcept
 	}
 }
 
-errno_t cxx_fast_io_acquire_file(void** out,char const* name,char const* mode) noexcept
+int cxx_fast_io_acquire_file(void** out,char const* name,char const* mode) noexcept
 {
 	try
 	{
@@ -181,7 +183,7 @@ errno_t cxx_fast_io_acquire_file(void** out,char const* name,char const* mode) n
 	}
 }
 
-errno_t cxx_fast_io_acquire_bufferred_file(void** out,char const* name,char const* mode) noexcept
+int cxx_fast_io_acquire_bufferred_file(void** out,char const* name,char const* mode) noexcept
 {
 	try
 	{
