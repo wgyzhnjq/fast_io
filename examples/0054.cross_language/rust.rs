@@ -75,9 +75,11 @@ fn main()
 	let mut p=CxxFastIoBufferredHandle::new(
 		std::ffi::CString::new(b"rust_call_fast_io_c_interface.txt".to_vec()).expect("CString::new failed"),
 		std::ffi::CString::new(b"wb".to_vec()).expect("CString::new failed"));
-	for n in 0..9999999
+	let mut x:usize=0;
+	while x!=10000000
 	{
-	print_usize(&mut p,n);
-	put(&mut p,10);
+		print_usize(&mut p,x);
+		put(&mut p,10);
+		x=x+1;
 	}
 }
