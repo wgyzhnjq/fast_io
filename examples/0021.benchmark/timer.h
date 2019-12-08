@@ -2,7 +2,7 @@
 #define TIMER_H
 
 #include<chrono>
-#include<cstdio>
+#include"../../include/fast_io.h"
 #include<string>
 
 namespace cqw
@@ -10,7 +10,7 @@ namespace cqw
 
 class timer
 {
-	std::string s;
+	std::string_view s;
 	std::chrono::high_resolution_clock::time_point t0;
 public:
 	template<typename ...Args>
@@ -19,7 +19,14 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		fprintf(stderr,"%s:\t%.8fs\n",s.c_str(),std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()-t0).count());
+		try
+		{
+			println(fast_io::err,s,":\t",std::chrono::high_resolution_clock::now()-t0,fast_io::char_view('s'));
+		}
+		catch(...)
+		{
+
+		}
 	}
 };
 
