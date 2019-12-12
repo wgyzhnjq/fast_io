@@ -20,6 +20,13 @@ try
 		fprintf(fp.get(),"%zu\n",i);
 	}
 	{
+	cqw::timer t("std::FILE* unlocked");
+	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
+	_unlock_file(fp.get());
+	for(std::size_t i(0);i!=N;++i)
+		fprintf(fp.get(),"%zu\n",i);
+	}
+	{
 	cqw::timer t("std::ofstream");
 	std::ofstream fout("ofstream.txt",std::ofstream::binary);
 	for(std::size_t i(0);i!=N;++i)
