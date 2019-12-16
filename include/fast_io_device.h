@@ -28,5 +28,7 @@ using iobuf_mutex = basic_iomutex<iobuf>;
 using istring_view_mutex = basic_iomutex<istring_view>;
 using ostring_mutex = basic_iomutex<ostring>;
 
+
 using dynamic_buf = basic_iobuf<dynamic_stream>;
+
 }

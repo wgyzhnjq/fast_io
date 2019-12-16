@@ -18,6 +18,15 @@ inline constexpr bool isspace(T ch)
 
 }
 
+
+template<character_input_stream input>
+inline constexpr std::size_t skip_line(input& in)
+{
+	std::size_t skipped(0);
+	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!='\n';++skipped);
+	return skipped;
+}
+
 template<character_input_stream input>
 inline constexpr auto eat_space_get(input& in)
 {

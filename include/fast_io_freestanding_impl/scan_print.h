@@ -5,15 +5,15 @@ namespace fast_io
 inline namespace print_scan_details
 {
 template<typename output,typename T>
-concept weak_printable=output_stream<output>&&requires(basic_ostring<std::basic_string<typename output::char_type>>& ostr,T&& t)
+concept weak_printable=output_stream<output>&&requires(basic_ostring<std::basic_string<typename output::char_type>>& ostr,T const& t)
 {
-	print_define(ostr,std::forward<T>(t));
+	print_define(ostr,t);
 };
 
 template<typename output,typename T>
-concept weak_writeable=output_stream<output>&&requires(basic_ostring<std::basic_string<typename output::char_type>>& ostr,T&& t)
+concept weak_writeable=output_stream<output>&&requires(basic_ostring<std::basic_string<typename output::char_type>>& ostr,T const& t)
 {
-	write_define(ostr,std::forward<T>(t));
+	write_define(ostr,t);
 };
 
 template<output_stream output,typename ...Args>
