@@ -78,3 +78,22 @@ catch(std::exception const& e)
 {
 	println(fast_io::err,e);
 }
+
+/*
+D:\hg\fast_io\examples\0058.benchmarks_of_c++_stdlib>g++ -o vec_vs_deque_vs_linkedlist vec_vs_deque_vs_linkedlist.cc -Ofast -std=c++2a -s
+
+D:\hg\fast_io\examples\0058.benchmarks_of_c++_stdlib>vec_vs_deque_vs_linkedlist
+forward_list emplace_front:     0.35101000000000004s
+traversal:      10.515s
+destroy:        0.30000000000000004s
+forward_list total:     11.16601s
+vector emplace_back:    0.047s
+traversal:      0.488991s
+destroy:        0s
+vector total:   0.539989s
+deque emplace_back:     0.037000000000000005s
+traversal:      1.1480110000000001s
+destroy:        0.024s
+deque total:    1.209011s
+
+*/
