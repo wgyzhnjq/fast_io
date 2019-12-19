@@ -32,8 +32,9 @@ inline auto fileno(c_style_io_handle_unlocked& handle)
 }
 
 #if defined(__WINNT__) || defined(_MSC_VER)
-
+/*
 #ifdef _MSC_VER
+
 struct _iobuf
 {
 char *_ptr;
@@ -46,7 +47,7 @@ int _bufsiz;
 char *_tmpfname;
 };
 #endif
-
+*/
 template<std::contiguous_iterator Iter>
 inline Iter reads(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
@@ -127,10 +128,10 @@ inline void seek(c_style_io_handle_unlocked& cfhd,U i,seekdir s=seekdir::beg)
 	seek(cfhd,seek_type<char>,i,s);
 }
 
-
+#ifdef __MINGW32__
 inline char* oreserve(c_style_io_handle_unlocked& cfhd,std::size_t n)
 {
-	auto& h(*(_iobuf*)cfhd.native_handle());
+	auto& h(*cfhd.native_handle());
 	if((h._cnt-=n)<=0) [[unlikely]]
 	{
 		h._cnt+=n;
@@ -145,6 +146,7 @@ inline void orelease(c_style_io_handle_unlocked& cfhd,std::size_t n)
 	h._cnt+=n;
 	h._ptr-=n;
 }
+#endif
 
 template<typename... Args>
 requires requires(std::FILE* fp,Args&& ...args)
