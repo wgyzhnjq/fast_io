@@ -43,15 +43,22 @@ try
 	}
 	{
 	cqw::timer t("c_style_file");
-	fast_io::c_style_file cs("csf.txt","wb");
+	fast_io::c_style_file cs("csfdb.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
 	cqw::timer t("c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs("csf.txt","wb");
+	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
+	}
+	{
+	cqw::timer t("stream_view");
+	std::ofstream fout("smvdb.txt",std::ofstream::binary);
+	fast_io::stream_view stm_v(fout);
+	for(std::size_t i(0);i!=N;++i)
+		println(stm_v,vec[i]);
 	}
 #ifdef _MSC_VER
 	{
