@@ -95,8 +95,18 @@ template<character_output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
 inline constexpr void normal_println(output &out,Args&& ...args)
 {
-	(print_define(out,std::forward<Args>(args)),...);
-	put(out,'\n');
+	if constexpr((sizeof...(Args)==1)&&requires(output& out,Args&& ...arg)
+	{
+		(println_define(out,std::forward<Args>(args)),...);
+	})
+	{
+		(println_define(out,std::forward<Args>(args)),...);
+	}
+	else if constexpr(true)
+	{
+		(print_define(out,std::forward<Args>(args)),...);
+		put(out,'\n');
+	}
 }
 
 template<input_stream input,typename ...Args>
