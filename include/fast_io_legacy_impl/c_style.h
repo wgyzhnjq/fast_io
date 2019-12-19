@@ -427,7 +427,7 @@ requires requires(std::FILE* fp,Args&& ...args)
 {
 	std::fscanf(fp,std::forward<Args>(args)...);
 }
-inline auto fscanf(c_style_io_handle_unlocked& h,Args&& ...args)
+inline auto fscanf(c_style_io_handle& h,Args&& ...args)
 {
 	auto v(std::fscanf(h.native_handle(),std::forward<Args>(args)...));
 	if(v==EOF)
