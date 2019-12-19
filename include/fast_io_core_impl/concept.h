@@ -180,6 +180,12 @@ concept printable=output_stream<output>&&requires(output& out,T&& t)
 };
 
 template<typename output,typename T>
+concept printlnable=output_stream<output>&&requires(output& out,T&& t)
+{
+	println_define(out,std::forward<T>(t));
+};
+
+template<typename output,typename T>
 concept writeable=output_stream<output>&&requires(output& out,T&& t)
 {
 	write_define(out,std::forward<T>(t));

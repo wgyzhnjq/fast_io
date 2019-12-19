@@ -91,14 +91,11 @@ inline constexpr void normal_print(output &out,Args&& ...args)
 	(print_define(out,std::forward<Args>(args)),...);
 }
 
-template<character_output_stream output,typename ...Args>
-requires(printable<output,Args>&&...)
+template<output_stream output,typename ...Args>
+requires((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||(character_output_stream<output>&&(printable<output,Args>&&...)))
 inline constexpr void normal_println(output &out,Args&& ...args)
 {
-	if constexpr((sizeof...(Args)==1)&&requires(output& out,Args&& ...arg)
-	{
-		(println_define(out,std::forward<Args>(args)),...);
-	})
+	if constexpr((sizeof...(Args)==1)&&(printlnable<output,Args>&&...))
 	{
 		(println_define(out,std::forward<Args>(args)),...);
 	}
@@ -182,7 +179,7 @@ inline constexpr void println(output &out,Args&& ...args)
 		decltype(auto) uh(unlocked_handle(out));
 		println(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>||(sizeof...(Args)==1&&character_output_stream<output>)))
+	else if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>||(sizeof...(Args)==1&&(character_output_stream<output>||(printlnable<output,Args>&&...)))))
 		normal_println(out,std::forward<Args>(args)...);
 	else if constexpr(true)
 		buffer_println(out,std::forward<Args>(args)...);
