@@ -87,6 +87,20 @@ try
 		println(cs_file,i);
 	}
 	{
+	cqw::timer t("cpp_fout_view");
+	std::ofstream fout("cpp_fout_vw.txt",std::ofstream::binary);
+	fast_io::streambuf_view bfv(fout.rdbuf());
+	for(std::size_t i(0);i!=N;++i)
+		println(bfv,i);
+	}
+	{
+	cqw::timer t("cpp_fout");
+	std::ofstream fout("cpp_fout.txt",std::ofstream::binary);
+	fast_io::stream_view stm_vw(fout);
+	for(std::size_t i(0);i!=N;++i)
+		println(stm_vw,i);
+	}
+	{
 	cqw::timer t("obuf ucs_view");
 	fast_io::ucs<fast_io::obuf,char32_t> uv("obuf_ucsview.txt");
 	for(std::size_t i(0);i!=N;++i)

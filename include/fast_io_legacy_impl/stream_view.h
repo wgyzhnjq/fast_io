@@ -13,6 +13,7 @@ concept istream_concept_impl = requires(T& in)
 	{in.gcount};
 	{in.seekg};
 	{in.tellg};
+	{in.rdbuf};
 	{in.operator>>};
 };
 
@@ -23,21 +24,37 @@ concept ostream_concept_impl = requires(T& out)
 	{out.put};
 	{out.seekp};
 	{out.tellp};
+	{out.rdbuf};
 	{out.operator<<};
 };
+
+template<typename T>
+concept istream_or_ostream_concept_impl = istream_concept_impl<T>||ostream_concept_impl<T>;
+
+template<typename T>
+concept streambuf_concept_impl = !stream_view_details::istream_or_ostream_concept_impl<T>
+&&requires(T& in)
+{
+	{in.sbumpc};
+	{in.sgetn};
+	{in.sputc};
+	{in.sputn};
+	{in.in_avail};
+	{in.snextc};
+};
+
 }
 	
-template<typename T>
+template<stream_view_details::istream_or_ostream_concept_impl T>
 class stream_view
 {
-	T strm;
+	T* strm;
 public:
 	using char_type = typename T::char_type;
 	using traits_type = typename T::traits_type;
-	template<typename ...Args>
-	requires std::constructible_from<T,Args...>
-	stream_view(Args&& ...args):strm(std::forward<Args>(args)...){}
-	auto& native_handle() { return strm;}
+	template<typename stm>
+	stream_view(stm& sm):strm(std::addressof(sm)){}
+	auto& native_handle() { return *strm;}
 };
 
 template<fast_io::stream_view_details::istream_concept_impl T,std::contiguous_iterator Iter>
@@ -90,6 +107,7 @@ inline void flush(stream_view<T>& t)
 
 template<typename stream>
 requires (fast_io::stream_view_details::istream_concept_impl<stream>||fast_io::stream_view_details::ostream_concept_impl<stream>)
-stream_view(stream&&) noexcept -> stream_view<stream>;
+stream_view(stream&) noexcept -> stream_view<stream>;
+
 
 }
