@@ -33,7 +33,7 @@ concept mutex_stream_impl = requires(T& t)
 {
 	typename T::lock_guard_type;
 	mutex(t);
-	t.native_handle();
+	unlocked_handle(t);
 };
 
 template<typename T>

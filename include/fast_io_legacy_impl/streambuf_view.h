@@ -2,7 +2,7 @@
 
 namespace fast_io
 {
-	
+
 template<typename T>
 class streambuf_view
 {

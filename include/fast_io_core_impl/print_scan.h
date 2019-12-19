@@ -123,9 +123,10 @@ inline constexpr void scan(input &in,Args&& ...args)
 	if constexpr(mutex_input_stream<input>)
 	{
 		typename input::lock_guard_type lg{mutex(in)};
-		scan(in.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(in));
+		scan(uh,std::forward<Args>(args)...);
 	}
-	else
+	else if constexpr(true)
 		normal_scan(in,std::forward<Args>(args)...);
 }
 
@@ -137,9 +138,10 @@ inline constexpr void read(input &in,Args&& ...args)
 	if constexpr(mutex_input_stream<input>)
 	{
 		typename input::lock_guard_type lg{mutex(in)};
-		read(in.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(in));
+		read(uh,std::forward<Args>(args)...);
 	}
-	else
+	else if constexpr(true)
 		normal_read(in,std::forward<Args>(args)...);
 }
 
@@ -151,11 +153,12 @@ inline constexpr void print(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		print(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		print(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 		normal_print(out,std::forward<Args>(args)...);
-	else
+	else if constexpr(true)
 		buffer_print(out,std::forward<Args>(args)...);
 }
 
@@ -166,11 +169,12 @@ inline constexpr void println(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		println(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		println(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>||(sizeof...(Args)==1&&character_output_stream<output>)))
 		normal_println(out,std::forward<Args>(args)...);
-	else
+	else if constexpr(true)
 		buffer_println(out,std::forward<Args>(args)...);
 }
 
@@ -182,11 +186,12 @@ inline constexpr void write(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		write(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		write(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 		normal_write(out,std::forward<Args>(args)...);
-	else
+	else if constexpr(true)
 		buffer_write(out,std::forward<Args>(args)...);
 }
 
@@ -199,13 +204,14 @@ inline constexpr void print_flush(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		print_flush(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		print_flush(uh,std::forward<Args>(args)...);
 	}
 	else
 	{
 		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_print(out,std::forward<Args>(args)...);
-		else
+		else if constexpr(true)
 			buffer_print(out,std::forward<Args>(args)...);
 		flush(out);
 	}
@@ -218,13 +224,14 @@ inline constexpr void println_flush(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
+		decltype(auto) uh(unlocked_handle(out));
 		println_flush(out.native_handle(),std::forward<Args>(args)...);
 	}
 	else
 	{
 		if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>&&(sizeof...(Args)==1&&character_output_stream<output>)))
 			normal_println(out,std::forward<Args>(args)...);
-		else
+		else if constexpr(true)
 			buffer_println(out,std::forward<Args>(args)...);
 		flush(out);
 	}
@@ -238,13 +245,14 @@ inline constexpr void write_flush(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
+		decltype(auto) uh(unlocked_handle(out));
 		write_flush(out.native_handle(),std::forward<Args>(args)...);
 	}
 	else
 	{
 		if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_write(out,std::forward<Args>(args)...);
-		else
+		else if constexpr(true)
 			buffer_write(out,std::forward<Args>(args)...);
 		flush(out);
 	}
@@ -304,11 +312,12 @@ inline constexpr void fprint(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		fprint(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		fprint(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||(buffer_output_stream<output>&&character_output_stream<output>)))
 		normal_fprint(out,std::forward<Args>(args)...);
-	else
+	else if constexpr(true)
 		buffer_fprint(out,std::forward<Args>(args)...);
 }
 
@@ -320,13 +329,14 @@ inline constexpr void fprint_flush(output &out,Args&& ...args)
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
-		fprint_flush(out.native_handle(),std::forward<Args>(args)...);
+		decltype(auto) uh(unlocked_handle(out));
+		fprint_flush(uh,std::forward<Args>(args)...);
 	}
 	else
 	{
 		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 			normal_fprint(out,std::forward<Args>(args)...);
-		else
+		else if constexpr(true)
 			buffer_fprint(out,std::forward<Args>(args)...);
 		flush(out);
 	}

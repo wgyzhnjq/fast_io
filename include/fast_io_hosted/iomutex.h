@@ -38,6 +38,12 @@ inline auto& mutex(basic_iomutex<T>& t)
 	return t.mutex();
 }
 
+template<stream T>
+inline auto& unlocked_handle(basic_iomutex<T>& t)
+{
+	return t.native_handle();
+}
+
 template<output_stream T,std::contiguous_iterator Iter>
 inline auto writes(basic_iomutex<T>& t,Iter b,Iter e)
 {
