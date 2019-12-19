@@ -3,6 +3,7 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_crypto.h"
+#include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
 #include<memory>
@@ -16,13 +17,6 @@ try
 	{
 	cqw::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp.get(),"%zu\n",i);
-	}
-	{
-	cqw::timer t("std::FILE* unlocked");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
-	_unlock_file(fp.get());
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(fp.get(),"%zu\n",i);
 	}
@@ -77,6 +71,20 @@ try
 	fast_io::text_view<fast_io::obuf> view("obuf_text.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(view,i);
+	}
+	{
+	cqw::timer t("c_style_file");
+	fast_io::c_style_file cs_file("c_style.txt","wb");
+	
+	for(std::size_t i(0);i!=N;++i)
+		println(cs_file,i);
+	}
+	{
+	cqw::timer t("c_style_file_unlocked");
+	fast_io::c_style_file_unlocked cs_file("c_style_unlocked.txt","wb");
+	
+	for(std::size_t i(0);i!=N;++i)
+		println(cs_file,i);
 	}
 	{
 	cqw::timer t("obuf ucs_view");

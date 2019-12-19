@@ -3,6 +3,7 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_crypto.h"
+#include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
 #include<memory>
@@ -39,6 +40,18 @@ try
 	fast_io::obuf obuf("obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
+	}
+	{
+	cqw::timer t("c_style_file");
+	fast_io::c_style_file cs("csf.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		println(cs,vec[i]);
+	}
+	{
+	cqw::timer t("c_style_file_unlocked");
+	fast_io::c_style_file_unlocked cs("csf.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		println(cs,vec[i]);
 	}
 #ifdef _MSC_VER
 	{
