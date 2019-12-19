@@ -297,12 +297,14 @@ public:
 		}
 	}
 	~basic_octr()
-	try
 	{
-		write_remain();
-	}
-	catch (...)
-	{
+		try
+		{
+			write_remain();
+		}
+		catch (...)
+		{
+		}
 	}
 	void swap(basic_octr &other) noexcept
 	{
