@@ -101,6 +101,34 @@ int cxx_fast_io_print_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
 	}
 }
 
+int cxx_fast_io_println_size_t(void* d,std::size_t s) noexcept
+{
+	try
+	{
+		fast_io::dynamic_base dyn(d);
+		println(dyn,s);
+		return {};
+	}
+	catch(...)
+	{
+		return lippincott_function();
+	}
+}
+
+int cxx_fast_io_println_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
+{
+	try
+	{
+		fast_io::dynamic_base dyn(d);
+		println(dyn,s);
+		return {};
+	}
+	catch(...)
+	{
+		return lippincott_function();
+	}
+}
+
 int cxx_fast_io_print_double(void* d,double s) noexcept
 {
 	try
@@ -114,6 +142,7 @@ int cxx_fast_io_print_double(void* d,double s) noexcept
 		return lippincott_function();
 	}
 }
+
 
 int cxx_fast_io_print_c_str(void* d,char const* s) noexcept
 {
@@ -242,6 +271,33 @@ int cxx_fast_io_bufferred_print_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
 		return lippincott_function();
 	}
 }
+
+int cxx_fast_io_bufferred_println_size_t(void* d,std::size_t s) noexcept
+{
+	try
+	{
+		println(*fast_io::bit_cast<fast_io::dynamic_buf*>(d),s);
+		return {};
+	}
+	catch(...)
+	{
+		return lippincott_function();
+	}
+}
+
+int cxx_fast_io_bufferred_println_ptrdiff_t(void* d,std::ptrdiff_t s) noexcept
+{
+	try
+	{
+		println(*fast_io::bit_cast<fast_io::dynamic_buf*>(d),s);
+		return {};
+	}
+	catch(...)
+	{
+		return lippincott_function();
+	}
+}
+
 
 int cxx_fast_io_bufferred_print_double(void* d,double s) noexcept
 {

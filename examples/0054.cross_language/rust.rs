@@ -9,6 +9,8 @@ fn cxx_fast_io_bufferred_acquire_file(handle:*mut * mut std::os::raw::c_void,b:*
 fn cxx_fast_io_bufferred_print_double(handle:*mut std::os::raw::c_void,b:f64)->std::os::raw::c_int;
 fn cxx_fast_io_bufferred_print_size_t(handle:*mut std::os::raw::c_void,b:usize)->std::os::raw::c_int;
 fn cxx_fast_io_bufferred_print_ptrdiff_t(handle:*mut std::os::raw::c_void,b:isize)->std::os::raw::c_int;
+fn cxx_fast_io_bufferred_println_size_t(handle:*mut std::os::raw::c_void,b:usize)->std::os::raw::c_int;
+fn cxx_fast_io_bufferred_println_ptrdiff_t(handle:*mut std::os::raw::c_void,b:isize)->std::os::raw::c_int;
 fn cxx_fast_io_bufferred_put(handle:*mut std::os::raw::c_void,b:std::os::raw::c_char)->std::os::raw::c_int;
 }
 
@@ -52,6 +54,22 @@ unsafe
 	cxx_fast_io_bufferred_print_ptrdiff_t(h.handle,d);
 }
 }
+
+fn println_usize(h:&mut CxxFastIoBufferredHandle,d:usize)
+{
+unsafe
+{
+	cxx_fast_io_bufferred_println_size_t(h.handle,d);
+}
+}
+fn println_isize(h:&mut CxxFastIoBufferredHandle,d:isize)
+{
+unsafe
+{
+	cxx_fast_io_bufferred_println_ptrdiff_t(h.handle,d);
+}
+}
+
 fn put(h:&mut CxxFastIoBufferredHandle,d:std::os::raw::c_char)
 {
 unsafe
@@ -78,8 +96,7 @@ fn main()
 	let mut x:usize=0;
 	while x!=10000000
 	{
-		print_usize(&mut p,x);
-		put(&mut p,10);
+		println_usize(&mut p,x);
 		x=x+1;
 	}
 }
