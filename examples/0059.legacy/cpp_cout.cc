@@ -1,7 +1,5 @@
 #include"../../include/fast_io_legacy.h"
 
-//struct A{};
-
 int main()
 {
 	println(fast_io::cpp_cout,"Hello World");		// call fast_io's println
