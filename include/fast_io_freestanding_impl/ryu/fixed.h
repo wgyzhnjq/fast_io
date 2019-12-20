@@ -647,6 +647,7 @@ inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const&
 template<bool uppercase_e=false,std::size_t mode=0,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr Iter output_shortest(Iter result, F d)
 {
+	using char_type = std::remove_reference_t<decltype(*result)>;
 	using floating_trait = floating_traits<F>;
 	using mantissa_type = typename floating_trait::mantissa_type;
 	using exponent_type = typename floating_trait::exponent_type;
@@ -862,7 +863,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 				{
 					auto const rem(a%10);
 					a/=10;
-					*--iter=static_cast<char>(0x30+rem);
+					*--iter=static_cast<char_type>(0x30+rem);
 				}
 				*--iter=0x2E;
 			}
@@ -905,7 +906,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 				{
 					auto const rem(a%10);
 					a/=10;
-					*--iter=static_cast<char>(0x30+rem);
+					*--iter=static_cast<char_type>(0x30+rem);
 				}
 				*--iter=0x2E;
 			}

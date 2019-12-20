@@ -161,7 +161,7 @@ inline namespace
 
 struct sha1
 {
-	using char_type = char;
+	using char_type = char8_t;
 	std::array<std::uint32_t,5> digest{0x67452301,0xefcdab89,0x98badcfe,0x10325476,0xc3d2e1f0};
 	std::array<std::uint32_t,16> block{};
 	static inline constexpr std::size_t crypto_hash_block_size=64;

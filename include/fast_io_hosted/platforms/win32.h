@@ -95,7 +95,7 @@ protected:
 	native_handle_type& protected_native_handle()	{return mhandle;}
 	win32_io_handle() = default;
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	win32_io_handle(native_handle_type handle):mhandle(handle){}
 	win32_io_handle(std::uint32_t dw):mhandle(win32::GetStdHandle(dw)){}
 
@@ -181,7 +181,7 @@ inline constexpr void flush(win32_io_handle&){}
 class win32_file:public win32_io_handle
 {
 public:
-	using char_type = char;
+	using win32_io_handle::char_type;
 	using win32_io_handle::native_handle_type;
 	template<typename ...Args>
 	requires requires(Args&& ...args)
@@ -271,7 +271,7 @@ inline auto zero_copy_in_handle(win32_file& handle)
 class win32_pipe_unique:public win32_io_handle
 {
 public:
-	using char_type = char;
+	using win32_io_handle::char_type;
 	using win32_io_handle::native_handle_type;
 	void close()
 	{
@@ -304,7 +304,7 @@ public:
 class win32_pipe
 {
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	using native_handle_type = std::array<win32_pipe_unique,2>;
 private:
 	native_handle_type pipes;

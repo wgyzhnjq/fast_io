@@ -318,11 +318,11 @@ requires (send_receive_punned_constraints<basic_obuf<Ohandler,Buf>,Iter>)
 inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
 {
 	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
-/*	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
+	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
 		details::obuf_send(ob,cbegini,cendi);
-	else*/
+	else
 		details::obuf_send<true>(ob,reinterpret_cast<std::byte const*>(std::to_address(cbegini)),
-					reinterpret_cast<std::byte const*>(cendi));
+					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
 }
 
 template<output_stream Ohandler,typename Buf>

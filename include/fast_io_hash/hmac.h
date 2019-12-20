@@ -5,7 +5,7 @@ namespace fast_io
 template<output_stream T>
 struct hmac
 {
-	using char_type = char;
+	using char_type = char8_t;
 	using key_type = std::array<char_type,T::crypto_hash_block_size>;
 	using native_handle_t = T;
 	native_handle_t hash_stream;

@@ -91,7 +91,7 @@ protected:
 		return fd;
 	}
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	using native_handle_type = int;
 	native_handle_type native_handle()
 	{
@@ -235,7 +235,7 @@ public:
 class posix_pipe_unique:public posix_io_handle
 {
 public:
-	using char_type = char;
+	using posix_io_handle::char_type;
 	using native_handle_type = int;
 	void close()
 	{
@@ -251,7 +251,7 @@ public:
 class posix_pipe
 {
 public:
-	using char_type = char;
+	using posix_io_handle::char_type;
 	using native_handle_type = std::array<posix_pipe_unique,2>;
 private:
 	native_handle_type pipes;
