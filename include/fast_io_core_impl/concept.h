@@ -8,7 +8,6 @@ namespace fast_io
 namespace details
 {
 
-
 template<typename T>
 concept stream_char_type_requirement = requires(T&)
 {
@@ -16,13 +15,13 @@ concept stream_char_type_requirement = requires(T&)
 };
 
 template<typename T>
-concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,char* b,char* e)
+concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b,typename T::char_type* e)
 {
 	receive(in,b,e);
 };
 
 template<typename T>
-concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,char const* b,char const* e)
+concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b,typename T::char_type const* e)
 {
 	{send(out,b,e)};
 	{flush(out)};

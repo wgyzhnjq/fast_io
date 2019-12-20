@@ -15,15 +15,16 @@ struct io_aligned_allocator
 	using difference_type = std::ptrdiff_t;
 	[[nodiscard]] inline T* allocate(std::size_t n)
 	{
-		return static_cast<T*>(operator new(n,std::align_val_t{alignment}));
+		return static_cast<T*>(operator new(n*sizeof(T),std::align_val_t{alignment}));
 	}
 	inline void deallocate(T* p, std::size_t n) noexcept
 	{
-		operator delete(p,n,std::align_val_t{alignment});
+		operator delete(p,n*sizeof(T),std::align_val_t{alignment});
 	}
 };
 
-template<typename CharT,typename Allocator = io_aligned_allocator<CharT>,std::size_t buffer_size = 65536>
+template<typename CharT,typename Allocator = io_aligned_allocator<CharT>,
+		std::size_t buffer_size = ((65536<sizeof(CharT))?1:65536/sizeof(CharT))>
 class basic_buf_handler
 {
 	Allocator alloc;
@@ -34,26 +35,28 @@ public:
 	explicit basic_buf_handler():beg(alloc.allocate(buffer_size)),end(beg+buffer_size){}
 	basic_buf_handler& operator=(basic_buf_handler const&)=delete;
 	basic_buf_handler(basic_buf_handler const&)=delete;
-	static constexpr std::size_t size() {return buffer_size;}
+	static constexpr std::size_t size = buffer_size;
 	basic_buf_handler(basic_buf_handler&& m) noexcept:beg(m.beg),curr(m.curr),end(m.end)
 	{
-		m.beg=nullptr;
+		m.end=m.curr=m.beg=nullptr;
 	}
 	basic_buf_handler& operator=(basic_buf_handler&& m) noexcept
 	{
 		if(std::addressof(m)!=this)
 		{
-			alloc.deallocate(beg,buffer_size);
+			if(m.beg)
+				alloc.deallocate(beg,buffer_size);
 			beg=m.beg;
 			curr=m.curr;
 			end=m.end;
-			m.beg=nullptr;
+			m.end=m.curr=m.beg=nullptr;
 		}
 		return *this;
 	}
 	~basic_buf_handler()
 	{
-		alloc.deallocate(beg,buffer_size);
+		if(beg)
+			alloc.deallocate(beg,buffer_size);
 	}
 	Allocator get_allocator() const{	return alloc;}
 	void swap(basic_buf_handler& o) noexcept
@@ -70,38 +73,6 @@ template<typename CharT,typename Allocator,std::size_t buffer_size>
 inline void swap(basic_buf_handler<CharT,Allocator,buffer_size>& a,basic_buf_handler<CharT,Allocator,buffer_size>& b) noexcept
 {
 	a.swap(b);
-}
-
-namespace details::iobuf
-{
-template<typename T>
-inline constexpr typename T::char_type* internal_mreceive(T& ib,typename T::char_type *begin,typename T::char_type *end)
-{
-	using buffer_type = typename T::buffer_type;
-	std::size_t n(end-begin);
-	if(ib.ibuffer.end<n+ib.ibuffer.curr)			//cache miss
-	{
-		begin=std::uninitialized_copy(ib.ibuffer.curr,ib.ibuffer.end,begin);
-		if(begin+buffer_type::size()<end)
-		{
-			begin=receive(ib.native_handle(),begin,end);
-			if(begin!=end)
-			{
-				ib.ibuffer.end=ib.ibuffer.curr=ib.ibuffer.beg;
-				return begin;
-			}
-		}
-		ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size());
-		ib.ibuffer.curr=ib.ibuffer.beg;
-		n=end-begin;
-		std::size_t const sz(ib.ibuffer.end-ib.ibuffer.beg);
-		if(sz<n)
-			n=sz;
-	}
-	begin=std::uninitialized_copy_n(ib.ibuffer.curr,n,begin);
-	ib.ibuffer.curr+=n;
-	return begin;
-}
 }
 
 template<input_stream Ihandler,typename Buf=basic_buf_handler<typename Ihandler::char_type>>
@@ -144,21 +115,81 @@ inline constexpr void idump(output& out,basic_ibuf<Ihandler,Buf>& ib)
 	ib.ibuffer.curr=ib.ibuffer.end;
 }
 
-template<input_stream Ihandler,typename Buf,std::contiguous_iterator Iter>
+template<typename T,typename Iter>
+concept send_receive_punned_constraints = (std::contiguous_iterator<Iter>&&sizeof(typename T::char_type)==1) ||
+	(std::random_access_iterator<Iter>&&std::same_as<typename T::char_type,typename std::iterator_traits<Iter>::value_type>);
+
+namespace details
+{
+template<std::size_t buffer_size,bool punning=false,typename T,typename Iter>
+inline constexpr Iter ibuf_receive(T& ib,Iter begin,Iter end)
+{
+	std::size_t const buffer_remain(ib.ibuffer.end-ib.ibuffer.curr);
+
+	std::size_t n(end-begin);
+	if(buffer_remain<n)			//cache miss
+	{
+		if constexpr(punning)
+		{
+			std::memcpy(begin,ib.ibuffer.curr,buffer_remain);
+			begin+=buffer_remain;
+		}
+		else
+			begin=std::copy_n(ib.ibuffer.curr,buffer_remain,begin);
+		if(begin+buffer_size<end)
+		{
+//			if constexpr(std::contiguous_iterator<Iter>)
+				begin=receive(ib.native_handle(),begin,end);
+/*			else
+			{
+				
+			}*/
+			if(begin!=end)
+			{
+				ib.ibuffer.end=ib.ibuffer.curr=ib.ibuffer.beg;
+				return begin;
+			}
+		}
+		ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_size);
+		ib.ibuffer.curr=ib.ibuffer.beg;
+		n=end-begin;
+		std::size_t const sz(ib.ibuffer.end-ib.ibuffer.beg);
+		if(sz<n)
+			n=sz;
+	}
+	if constexpr(punning)
+	{
+		std::memcpy(begin,ib.ibuffer.curr,n);
+		begin+=n;
+	}
+	else
+		begin=std::copy_n(ib.ibuffer.curr,n,begin);
+	ib.ibuffer.curr+=n;
+	return begin;
+}
+}
+
+template<input_stream Ihandler,typename Buf,std::random_access_iterator Iter>
+requires (send_receive_punned_constraints<basic_ibuf<Ihandler,Buf>,Iter>)
 inline constexpr Iter receive(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
 	using char_type = typename basic_ibuf<Ihandler,Buf>::char_type;
-	auto b(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))));
-	return begin+(details::iobuf::internal_mreceive(ib,b,static_cast<char_type*>(static_cast<void*>(std::to_address(end))))-b)/sizeof(*begin);
+	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
+		return details::ibuf_receive<Buf::size>(ib,begin,end);
+	else
+	{
+		auto b(reinterpret_cast<std::byte*>(std::to_address(begin)));
+		return begin+(details::ibuf_receive<Buf::size,true>(ib,b,reinterpret_cast<std::byte*>(std::to_address(end)))-b)/sizeof(*b);
+	}
 }
 
 template<input_stream Ihandler,typename Buf>
 inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 {
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
-	if(ib.ibuffer.end==ib.ibuffer.curr)		//cache miss
+	if(ib.ibuffer.end==ib.ibuffer.curr)[[unlikely]]		//cache miss
 	{
-		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
+		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
 			throw eof();
@@ -172,9 +203,9 @@ template<input_stream Ihandler,typename Buf>
 inline constexpr std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool> try_get(basic_ibuf<Ihandler,Buf>& ib)
 {
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
-	if(ib.ibuffer.end==ib.ibuffer.curr)		//cache miss
+	if(ib.ibuffer.end==ib.ibuffer.curr)[[unlikely]]		//cache miss
 	{
-		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
+		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
 			return {0,true};
@@ -241,27 +272,57 @@ public:
 	}
 };
 
-template<output_stream Ohandler,typename Buf,std::contiguous_iterator Iter>
-inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
+namespace details
 {
-	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
-	auto cbegin(static_cast<char_type const*>(static_cast<void const*>(std::to_address(cbegini)))),cend(static_cast<char_type const*>(static_cast<void const*>(std::to_address(cendi))));
+template<bool punning=false,typename T,typename Iter>
+inline constexpr void obuf_send(T& ob,Iter cbegin,Iter cend)
+{
+	using char_type = typename T::char_type;
 	std::size_t const n(ob.obuffer.end-ob.obuffer.curr);
-	if(n<static_cast<std::size_t>(cend-cbegin))
+	std::size_t const diff(std::distance(cbegin,cend));
+	if(n<diff)[[unlikely]]
 	{
-		std::uninitialized_copy_n(cbegin,n,ob.obuffer.curr);
+		if constexpr(punning)
+			std::memcpy(ob.obuffer.curr,cbegin,n);
+		else
+			std::copy_n(cbegin,n,ob.obuffer.curr);		
 		cbegin+=n;
 		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
-		if(cbegin+Buf::size()<cend)
+		if(cbegin+(T::buffer_type::size)<cend)
 		{
 			send(ob.native_handle(),cbegin,cend);
 			ob.obuffer.curr=ob.obuffer.beg;
 		}
 		else
-			ob.obuffer.curr=std::uninitialized_copy(cbegin,cend,ob.obuffer.beg);
+		{
+			std::size_t const df(cend-cbegin);
+			if constexpr(punning)
+				std::memcpy(ob.obuffer.beg,cbegin,df);
+			else
+				std::copy_n(cbegin,df,ob.obuffer.beg);
+			ob.obuffer.curr=ob.obuffer.beg+df;
+		}
+		return;
 	}
+	if constexpr(punning)
+		std::memcpy(ob.obuffer.curr,cbegin,diff);
 	else
-		ob.obuffer.curr=std::uninitialized_copy(cbegin,cend,ob.obuffer.curr);
+		std::copy_n(cbegin,diff,ob.obuffer.curr);
+	ob.obuffer.curr+=diff;
+}
+
+}
+
+template<output_stream Ohandler,typename Buf,std::input_iterator Iter>
+requires (send_receive_punned_constraints<basic_obuf<Ohandler,Buf>,Iter>)
+inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
+{
+	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
+/*	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
+		details::obuf_send(ob,cbegini,cendi);
+	else*/
+		details::obuf_send<true>(ob,reinterpret_cast<std::byte const*>(std::to_address(cbegini)),
+					reinterpret_cast<std::byte const*>(cendi));
 }
 
 template<output_stream Ohandler,typename Buf>
@@ -273,7 +334,7 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 		std::fill(ob.obuffer.curr,ob.obuffer.end,ch);
 		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		count-=remain_space;
-		constexpr auto buffer_size(Buf::size());
+		constexpr auto buffer_size(Buf::size);
 		std::size_t const times(count/buffer_size),remain(count%buffer_size);
 		if(times)
 		{
@@ -297,10 +358,12 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 template<output_stream Ohandler,typename Buf>
 inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohandler,Buf>::char_type ch)
 {
-	if(ob.obuffer.curr==ob.obuffer.end)		//buffer full
+	if(ob.obuffer.curr==ob.obuffer.end)[[unlikely]]		//buffer full
 	{
 		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
-		ob.obuffer.curr=ob.obuffer.beg;
+		ob.obuffer.curr=ob.obuffer.beg+1;
+		*ob.obuffer.beg=ch;
+		return;//no flow dependency any more
 	}
 	*ob.obuffer.curr++=ch;
 }

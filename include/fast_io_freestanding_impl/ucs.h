@@ -105,10 +105,6 @@ public:
 	}
 };
 
-namespace ucs_details
-{
-}
-
 
 template<output_stream T,typename CharT>
 inline constexpr void flush(ucs<T,CharT>& uc)
@@ -121,12 +117,10 @@ inline constexpr void put(ucs<T,char_type>& uc,typename ucs<T,char_type>::char_t
 	uc.mmput(ch);
 }
 
-template<character_output_stream T,typename char_type,std::contiguous_iterator Iter>
+template<character_output_stream T,typename char_type,std::forward_iterator Iter>
 inline constexpr void send(ucs<T,char_type>& uc,Iter b,Iter e)
 {
-	auto pb(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))));
-	for(auto pi(pb),pe(pb+(e-b)*sizeof(*b)/sizeof(char_type));pi!=pe;++pi)
-		uc.mmput(*pi);
+	define_send_by_put(uc,b,e);
 }
 
 template<character_input_stream T,typename char_type>
@@ -141,16 +135,10 @@ inline constexpr auto try_get(ucs<T,char_type>& uc)
 	return uc.mmtry_get();
 }
 
-
-template<character_input_stream T,typename char_type,std::contiguous_iterator Iter>
-inline constexpr Iter receive(ucs<T,char_type>&uc,Iter b,Iter e)
+template<character_input_stream T,typename char_type,std::forward_iterator Iter>
+inline constexpr Iter receive(ucs<T,char_type>& uc,Iter b,Iter e)
 {
-	auto pb(static_cast<char_type*>(static_cast<void*>(std::to_address(b))));
-	auto pe(pb+(e-b)*sizeof(*b)/sizeof(char_type));
-	auto pi(pb);
-	for(;pi!=pe;++pi)
-		*pi=uc.mmget();
-	return b+(pi-pb)*sizeof(char_type)/sizeof(*b);
+	return define_receive_by_get(uc,b,e);
 }
 
 template<typename T>

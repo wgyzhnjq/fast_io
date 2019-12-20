@@ -3,39 +3,6 @@
 namespace fast_io
 {
 
-
-template<output_stream Ohandler>
-class immediately_flush:public Ohandler
-{
-public:
-	using char_type = typename Ohandler::char_type;
-	template<typename... Args>
-	requires std::constructible_from<Ohandler,Args...>
-	constexpr immediately_flush(Args&&... args):Ohandler(std::forward<Args>(args)...){}
-};
-
-template<output_stream Ohandler,std::contiguous_iterator Iter>
-inline constexpr void send(immediately_flush<Ohandler>& ob,Iter cbegin,Iter cend)
-{
-	send(static_cast<Ohandler&>(ob),cbegin,cend);
-	flush(ob);
-}
-
-template<output_stream Ohandler>
-inline constexpr void put(immediately_flush<Ohandler>& ob,typename Ohandler::char_type ch)
-{
-	auto const address(std::addressof(ch));
-	send(ob,address,address+1);
-}
-
-template<character_output_stream Ohandler>
-inline constexpr void put(immediately_flush<Ohandler>& ob,typename Ohandler::char_type ch)
-{
-	put(static_cast<Ohandler&>(ob),ch);
-	flush(ob);
-}
-
-
 template<output_stream Ohandler,typename Ohandler::char_type flush_character>
 class char_flush:public Ohandler
 {
@@ -70,6 +37,6 @@ inline constexpr void put(char_flush<Ohandler,flush_character>& ob,typename Ohan
 }
 
 template<typename T>
-using line_flush = char_flush<T,'\n'>;
+using line_flush = char_flush<T,0xA>;
 
 }
