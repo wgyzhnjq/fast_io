@@ -41,12 +41,12 @@ inline constexpr void irelease(basic_istring_view<T>& isv,std::size_t size)
 template<output_stream output, typename T>
 inline constexpr void idump(output& out,basic_istring_view<T>& isv)
 {
-	writes(out,isv.str().data(),isv.str().data()+isv.str().size());
+	send(out,isv.str().data(),isv.str().data()+isv.str().size());
 	isv.str()={};
 }
 
 template<typename T,std::contiguous_iterator Iter>
-inline constexpr Iter reads(basic_istring_view<T>& istrvw,Iter begin,Iter end)
+inline constexpr Iter receive(basic_istring_view<T>& istrvw,Iter begin,Iter end)
 {
 	auto pb(static_cast<typename T::value_type*>(static_cast<void*>(std::to_address(begin))));
 	auto pe(static_cast<typename T::value_type*>(static_cast<void*>(std::to_address(end))));

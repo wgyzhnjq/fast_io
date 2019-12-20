@@ -75,7 +75,7 @@ inline void swap(basic_buf_handler<CharT,Allocator,buffer_size>& a,basic_buf_han
 namespace details::iobuf
 {
 template<typename T>
-inline constexpr typename T::char_type* internal_mreads(T& ib,typename T::char_type *begin,typename T::char_type *end)
+inline constexpr typename T::char_type* internal_mreceive(T& ib,typename T::char_type *begin,typename T::char_type *end)
 {
 	using buffer_type = typename T::buffer_type;
 	std::size_t n(end-begin);
@@ -84,14 +84,14 @@ inline constexpr typename T::char_type* internal_mreads(T& ib,typename T::char_t
 		begin=std::uninitialized_copy(ib.ibuffer.curr,ib.ibuffer.end,begin);
 		if(begin+buffer_type::size()<end)
 		{
-			begin=reads(ib.native_handle(),begin,end);
+			begin=receive(ib.native_handle(),begin,end);
 			if(begin!=end)
 			{
 				ib.ibuffer.end=ib.ibuffer.curr=ib.ibuffer.beg;
 				return begin;
 			}
 		}
-		ib.ibuffer.end=reads(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size());
+		ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size());
 		ib.ibuffer.curr=ib.ibuffer.beg;
 		n=end-begin;
 		std::size_t const sz(ib.ibuffer.end-ib.ibuffer.beg);
@@ -140,16 +140,16 @@ inline constexpr void irelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
 template<output_stream output,input_stream Ihandler,typename Buf>
 inline constexpr void idump(output& out,basic_ibuf<Ihandler,Buf>& ib)
 {
-	writes(out,ib.ibuffer.curr,ib.ibuffer.end);
+	send(out,ib.ibuffer.curr,ib.ibuffer.end);
 	ib.ibuffer.curr=ib.ibuffer.end;
 }
 
 template<input_stream Ihandler,typename Buf,std::contiguous_iterator Iter>
-inline constexpr Iter reads(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
+inline constexpr Iter receive(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
 	using char_type = typename basic_ibuf<Ihandler,Buf>::char_type;
 	auto b(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))));
-	return begin+(details::iobuf::internal_mreads(ib,b,static_cast<char_type*>(static_cast<void*>(std::to_address(end))))-b)/sizeof(*begin);
+	return begin+(details::iobuf::internal_mreceive(ib,b,static_cast<char_type*>(static_cast<void*>(std::to_address(end))))-b)/sizeof(*begin);
 }
 
 template<input_stream Ihandler,typename Buf>
@@ -158,7 +158,7 @@ inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
 	if(ib.ibuffer.end==ib.ibuffer.curr)		//cache miss
 	{
-		if((ib.ibuffer.end=reads(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
+		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
 			throw eof();
@@ -174,7 +174,7 @@ inline constexpr std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool> tr
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
 	if(ib.ibuffer.end==ib.ibuffer.curr)		//cache miss
 	{
-		if((ib.ibuffer.end=reads(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
+		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size()))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
 			return {0,true};
@@ -208,7 +208,7 @@ public:
 	try
 	{
 		if(obuffer.beg)
-			writes(oh,obuffer.beg,obuffer.curr);
+			send(oh,obuffer.beg,obuffer.curr);
 	}
 	catch(...){}
 public:
@@ -242,7 +242,7 @@ public:
 };
 
 template<output_stream Ohandler,typename Buf,std::contiguous_iterator Iter>
-inline constexpr void writes(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
+inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
 {
 	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
 	auto cbegin(static_cast<char_type const*>(static_cast<void const*>(std::to_address(cbegini)))),cend(static_cast<char_type const*>(static_cast<void const*>(std::to_address(cendi))));
@@ -251,10 +251,10 @@ inline constexpr void writes(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cend
 	{
 		std::uninitialized_copy_n(cbegin,n,ob.obuffer.curr);
 		cbegin+=n;
-		writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		if(cbegin+Buf::size()<cend)
 		{
-			writes(ob.native_handle(),cbegin,cend);
+			send(ob.native_handle(),cbegin,cend);
 			ob.obuffer.curr=ob.obuffer.beg;
 		}
 		else
@@ -271,7 +271,7 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 	if(remain_space<=count)
 	{
 		std::fill(ob.obuffer.curr,ob.obuffer.end,ch);
-		writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		count-=remain_space;
 		constexpr auto buffer_size(Buf::size());
 		std::size_t const times(count/buffer_size),remain(count%buffer_size);
@@ -279,7 +279,7 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 		{
 			std::fill(ob.obuffer.beg,ob.obuffer.curr,ch);
 			for(std::size_t i(0);i!=times;++i)
-				writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+				send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		}
 		else
 		{
@@ -299,7 +299,7 @@ inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohand
 {
 	if(ob.obuffer.curr==ob.obuffer.end)		//buffer full
 	{
-		writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		ob.obuffer.curr=ob.obuffer.beg;
 	}
 	*ob.obuffer.curr++=ch;
@@ -307,7 +307,7 @@ inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohand
 template<output_stream Ohandler,typename Buf>
 inline constexpr void flush(basic_obuf<Ohandler,Buf>& ob)
 {
-	writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
+	send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
 	ob.obuffer.curr=ob.obuffer.beg;
 //	flush(oh.native_handle());
 }
@@ -317,7 +317,7 @@ template<output_stream Ohandler,typename Buf,typename... Args>
 requires random_access_stream<Ohandler>
 inline constexpr auto seek(basic_obuf<Ohandler,Buf>& ob,Args&& ...args)
 {
-	writes(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
+	send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
 	ob.obuffer.curr=ob.obuffer.beg;
 	return seek(ob.native_handle(),std::forward<Args>(args)...);
 }
@@ -353,9 +353,9 @@ fake_basic_ihandler(Args&& ...args):basic_obuf<io_handler,Buf>(std::forward<Args
 };
 
 template<io_stream io_handler,typename Buf,std::contiguous_iterator Iter>
-inline constexpr Iter reads(fake_basic_ihandler<io_handler,Buf>& iob,Iter begin,Iter end)
+inline constexpr Iter receive(fake_basic_ihandler<io_handler,Buf>& iob,Iter begin,Iter end)
 {
-	return reads(iob.native_handle(),begin,end);
+	return receive(iob.native_handle(),begin,end);
 }
 
 }
@@ -392,14 +392,14 @@ public:
 		put(iob.ibf.native_handle(),ch);
 	}
 	template<std::contiguous_iterator Iter>
-	friend inline constexpr void writes(basic_iobuf& iob,Iter begin,Iter end)
+	friend inline constexpr void send(basic_iobuf& iob,Iter begin,Iter end)
 	{
-		writes(iob.ibf.native_handle(),begin,end);
+		send(iob.ibf.native_handle(),begin,end);
 	}
 	template<std::contiguous_iterator Iter>
-	friend inline constexpr Iter reads(basic_iobuf& iob,Iter begin,Iter end)
+	friend inline constexpr Iter receive(basic_iobuf& iob,Iter begin,Iter end)
 	{
-		return reads(iob.ibf,begin,end);
+		return receive(iob.ibf,begin,end);
 	}
 	friend inline constexpr auto get(basic_iobuf& iob)
 	{

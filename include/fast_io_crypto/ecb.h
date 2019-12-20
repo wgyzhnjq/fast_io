@@ -48,7 +48,7 @@ private:
 
 		for (; pi != pe;)
 		{
-			cipher_buf_pos = reads(ib,cipher_buf_pos, cipher_buf.end());
+			cipher_buf_pos = receive(ib,cipher_buf_pos, cipher_buf.end());
 			if (cipher_buf_pos != cipher_buf.end())
 				return pi;
 
@@ -79,7 +79,7 @@ public:
 
 
 	template<std::contiguous_iterator Iter>
-	Iter reads(Iter begin, Iter end)
+	Iter receive(Iter begin, Iter end)
 	{
 		auto bgchadd(static_cast<unsigned_char_type *>(static_cast<void *>(std::to_address(begin))));
 		return begin + (mread(bgchadd, static_cast<unsigned_char_type *>(static_cast<void *>(std::to_address(end)))) - bgchadd) / sizeof(*begin);
@@ -154,7 +154,7 @@ private:
 			std::uninitialized_fill(plaintext_buf_pos, plaintext_buf.end(), 0);
 			
 			auto cipher(enc(plaintext_buf.data()));
-			writes(ob,cipher.cbegin(), cipher.cend());
+			send(ob,cipher.cbegin(), cipher.cend());
 			plaintext_buf_pos = plaintext_buf.begin();
 		}
 	}
@@ -172,7 +172,7 @@ public:
 	}
 
 	template<std::contiguous_iterator Iter>
-	void mmwrites(Iter b, Iter e)
+	void mmsend(Iter b, Iter e)
 	{
 		auto pb(static_cast<unsigned_char_type const *>(static_cast<void const *>(std::addressof(*b))));
 		auto pi(pb), pe(pb + (e - b) * sizeof(*b) / sizeof(unsigned_char_type));
@@ -190,7 +190,7 @@ public:
 				return;
 
 			auto cipher(enc(plaintext_buf.data()));
-			writes(ob,cipher.cbegin(), cipher.cend());
+			send(ob,cipher.cbegin(), cipher.cend());
 
 			plaintext_buf_pos = plaintext_buf.begin();
 		}
@@ -198,7 +198,7 @@ public:
 		for (; pi + cipher_type::block_size <= pe; pi += cipher_type::block_size)
 		{
 			auto cipher(enc(pi));
-			writes(ob,cipher.cbegin(), cipher.cend());
+			send(ob,cipher.cbegin(), cipher.cend());
 		}
 		plaintext_buf_pos = std::uninitialized_copy(pi, pe, plaintext_buf.begin());
 	}
@@ -207,7 +207,7 @@ public:
 		if (plaintext_buf_pos == plaintext_buf.end())
 		{
 			auto cipher(enc(plaintext_buf.data()));
-			writes(ob,cipher.cbegin(), cipher.cend());
+			send(ob,cipher.cbegin(), cipher.cend());
 			plaintext_buf_pos = plaintext_buf.begin();
 		}
 		*plaintext_buf_pos = static_cast<unsigned_char_type>(ch);
@@ -268,9 +268,9 @@ inline void swap(basic_oecb<T,Enc>& a,basic_oecb<T,Enc>& b) noexcept
 
 
 template <input_stream T, typename Enc,std::contiguous_iterator Iter>
-inline constexpr auto reads(basic_iecb<T,Enc>& ecb,Iter begin,Iter end)
+inline constexpr auto receive(basic_iecb<T,Enc>& ecb,Iter begin,Iter end)
 {
-	return ecb.mmreads(begin,end);
+	return ecb.mmreceive(begin,end);
 }
 
 
@@ -287,9 +287,9 @@ inline constexpr auto get(basic_iecb<T,Enc>& ecb)
 }
 
 template <output_stream T, typename Enc,std::contiguous_iterator Iter>
-inline constexpr void writes(basic_oecb<T,Enc>& ecb,Iter cbegin,Iter cend)
+inline constexpr void send(basic_oecb<T,Enc>& ecb,Iter cbegin,Iter cend)
 {
-	ecb.mmwrites(cbegin,cend);
+	ecb.mmsend(cbegin,cend);
 }
 
 template <output_stream T, typename Enc>

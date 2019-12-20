@@ -41,10 +41,10 @@ inline constexpr void put(tie<T,out>& t,typename T::char_type ch)
 }
 
 template<input_stream T,output_stream O,std::contiguous_iterator Iter>
-inline constexpr Iter reads(tie<T,O>& t,Iter begin,Iter end)
+inline constexpr Iter receive(tie<T,O>& t,Iter begin,Iter end)
 {
 	flush(t.to());
-	return reads(t.native_handle(),begin,end);
+	return receive(t.native_handle(),begin,end);
 }
 
 template<output_stream T,output_stream out>
@@ -55,10 +55,10 @@ inline constexpr void flush(tie<T,out>& t)
 }
 
 template<output_stream T,output_stream out,std::contiguous_iterator Iter>
-inline constexpr auto writes(tie<T,out>& t,Iter begin,Iter end)
+inline constexpr auto send(tie<T,out>& t,Iter begin,Iter end)
 {
 	flush(t.to());
-	return writes(t.native_handle(),begin,end);
+	return send(t.native_handle(),begin,end);
 }
 
 template<character_output_stream T,output_stream out>
@@ -118,17 +118,17 @@ inline constexpr auto put(self_tie<T>& t,typename T::char_type ch)
 }
 
 template<input_stream T,std::contiguous_iterator Iter>
-inline constexpr Iter reads(self_tie<T>& t,Iter begin,Iter end)
+inline constexpr Iter receive(self_tie<T>& t,Iter begin,Iter end)
 {
 	flush(t);
-	return reads(t.native_handle(),begin,end);
+	return receive(t.native_handle(),begin,end);
 }
 
 template<output_stream T,std::contiguous_iterator Iter>
-inline constexpr auto writes(self_tie<T>& t,Iter begin,Iter end)
+inline constexpr auto send(self_tie<T>& t,Iter begin,Iter end)
 {
 	flush(t);
-	return writes(t.native_handle(),begin,end);
+	return send(t.native_handle(),begin,end);
 }
 
 template<character_output_stream T>

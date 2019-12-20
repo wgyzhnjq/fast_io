@@ -78,7 +78,7 @@ public:
 		return ch;
 	}
 	template<std::contiguous_iterator Iter>
-	constexpr inline Iter mmreads(Iter b,Iter e)
+	constexpr inline Iter mmreceive(Iter b,Iter e)
 		requires character_input_stream<T>
 	{
 		auto pb(static_cast<char_type*>(static_cast<void*>(std::to_address(b))));
@@ -95,7 +95,7 @@ public:
 		put(ib,ch);
 	}
 	template<std::contiguous_iterator Iter>
-	constexpr inline void mmwrites(Iter b,Iter e)
+	constexpr inline void mmsend(Iter b,Iter e)
 		requires character_output_stream<T>
 	{
 		auto pb(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))));
@@ -105,12 +105,12 @@ public:
 			if(*pi=='\n')
 			{
 				if(last!=pi)
-					writes(ib,last,pi-1);
+					send(ib,last,pi-1);
 				put(ib,'\r');
 				put(ib,'\n');
 				last=pi+1;
 			}
-		writes(ib,last,pe);
+		send(ib,last,pe);
 	}
 };
 
@@ -130,9 +130,9 @@ constexpr inline auto try_get(text_view<T>& input)
 }
 
 template<character_input_stream T,std::contiguous_iterator Iter>
-constexpr inline Iter reads(text_view<T>& input,Iter b,Iter e)
+constexpr inline Iter receive(text_view<T>& input,Iter b,Iter e)
 {
-	return input.mmreads(b,e);
+	return input.mmreceive(b,e);
 }
 
 template<character_output_stream T>
@@ -142,9 +142,9 @@ constexpr inline void put(text_view<T>& output,typename text_view<T>::char_type 
 }
 
 template<character_output_stream T,std::contiguous_iterator Iter>
-constexpr inline void writes(text_view<T>& output,Iter b,Iter e)
+constexpr inline void send(text_view<T>& output,Iter b,Iter e)
 {
-	output.mmwrites(b,e);
+	output.mmsend(b,e);
 }
 
 template<character_output_stream T>

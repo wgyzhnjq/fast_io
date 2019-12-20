@@ -66,7 +66,7 @@ try
 		"Content-Type: application/octet-stream\r\n"
 		"Content-Length: ",result.vec().size()*8,"\r\n"
 		"Timeout: 10000\r\n\r\n");
-	writes(hd,result.vec().cbegin(),result.vec().cend());
+	send(hd,result.vec().cbegin(),result.vec().cend());
 	skip_http_header(hd);
 	std::array<std::uint8_t,8> time;
 	read(hd,time);

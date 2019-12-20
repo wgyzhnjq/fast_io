@@ -18,13 +18,13 @@ concept stream_char_type_requirement = requires(T&)
 template<typename T>
 concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,char* b,char* e)
 {
-	reads(in,b,e);
+	receive(in,b,e);
 };
 
 template<typename T>
 concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,char const* b,char const* e)
 {
-	{writes(out,b,e)};
+	{send(out,b,e)};
 	{flush(out)};
 };
 
@@ -63,7 +63,7 @@ namespace dummy
 	};
 	inline void flush(dummy_output_stream&){}
 	template<std::contiguous_iterator Iter>
-	inline void writes(dummy_output_stream&,Iter,Iter){}
+	inline void send(dummy_output_stream&,Iter,Iter){}
 }
 
 template<typename T>
@@ -94,6 +94,7 @@ concept zero_copy_output_stream_impl = requires(T& out)
 	zero_copy_out_handle(out);
 };
 }
+
 
 template<typename T>
 concept stream = std::movable<T>&&(details::input_stream_impl<T>||details::output_stream_impl<T>);
@@ -190,6 +191,5 @@ concept writeable=output_stream<output>&&requires(output& out,T&& t)
 {
 	write_define(out,std::forward<T>(t));
 };
-
 
 }

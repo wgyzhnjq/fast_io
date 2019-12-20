@@ -64,14 +64,14 @@ inline constexpr void print_define(output& out, T const& b)
 template<output_stream output>
 inline constexpr void print_define(output& out,std::basic_string_view<typename output::char_type> str)
 {
-	writes(out,str.data(),str.data()+str.size());
+	send(out,str.data(),str.data()+str.size());
 }
 #if defined(__cpp_lib_char8_t)
 template<output_stream output>
 requires (std::same_as<typename output::char_type,char>)
 inline constexpr void print_define(output& out,std::basic_string_view<char8_t> str)
 {
-	writes(out,str.data(),str.data()+str.size());
+	send(out,str.data(),str.data()+str.size());
 }
 #endif
 
@@ -275,12 +275,12 @@ inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> f
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
-		writes(out,format.cbegin(),format.cbegin()+percent_pos+1);
+		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 #ifdef __EXCEPTIONS
 	if(percent_pos!=std::string_view::npos)
 		throw std::runtime_error("fprint() format error");
 #endif
-	writes(out,format.cbegin(),format.cend());
+	send(out,format.cbegin(),format.cend());
 }
 
 template<output_stream os,typename T,typename ...Args>
@@ -288,15 +288,15 @@ inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> f
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
-		writes(out,format.cbegin(),format.cbegin()+percent_pos+1);
+		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos==std::string_view::npos)
 	{
-		writes(out,format.cbegin(),format.cend());
+		send(out,format.cbegin(),format.cend());
 		return;
 	}
 	else
 	{
-		writes(out,format.cbegin(),format.cbegin()+percent_pos);
+		send(out,format.cbegin(),format.cbegin()+percent_pos);
 		format.remove_prefix(percent_pos+1);
 	}
 	print(out,std::forward<T>(cr));

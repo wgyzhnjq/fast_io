@@ -863,7 +863,7 @@ inline void output_base_natural_number(output& out,natural a)
 		else
 			*--iter = static_cast<typename output::char_type>(rem+48);
 	}
-	writes(out,iter,v.data()+v.size());
+	send(out,iter,v.data()+v.size());
 }
 
 

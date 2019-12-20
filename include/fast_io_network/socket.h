@@ -47,12 +47,12 @@ public:
 };
 
 template<std::contiguous_iterator Iter>
-inline Iter reads(socket& soc,Iter begin,Iter end)
+inline Iter receive(socket& soc,Iter begin,Iter end)
 {
 	return begin+((sock::details::recv(soc.native_handle(),std::to_address(begin),static_cast<int>((end-begin)*sizeof(*begin)),0))/sizeof(*begin));
 }
 template<std::contiguous_iterator Iter>
-inline Iter writes(socket& soc,Iter begin,Iter end)
+inline Iter send(socket& soc,Iter begin,Iter end)
 {
 	return begin+(sock::details::send(soc.native_handle(),std::to_address(begin),static_cast<int>((end-begin)*sizeof(*begin)),0)/sizeof(*begin));
 }

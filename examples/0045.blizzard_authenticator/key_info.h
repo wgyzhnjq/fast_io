@@ -60,7 +60,7 @@ inline std::string restore_code(key_info const& k)
 {
 	fast_io::sha1 sha1;
 	print(sha1,normalize_serial(k));
-	writes(sha1,k.secret_key.cbegin(),k.secret_key.cend());
+	send(sha1,k.secret_key.cbegin(),k.secret_key.cend());
 	flush(sha1);
 	if constexpr(std::endian::native==std::endian::little)
 	{

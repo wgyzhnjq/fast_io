@@ -48,7 +48,7 @@ public:
 };
 
 template<typename T,std::contiguous_iterator Iter>
-inline Iter reads(streambuf_view<T>& t,Iter begin,Iter end)
+inline Iter receive(streambuf_view<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 	return begin+(t.native_handle()->sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
@@ -82,11 +82,11 @@ inline void put(streambuf_view<T>& t,typename T::char_type ch)
 }
 
 template<typename T,std::contiguous_iterator Iter>
-inline void writes(streambuf_view<T>& t,Iter begin,Iter end) 
+inline void send(streambuf_view<T>& t,Iter begin,Iter end) 
 {
 	using char_type = typename T::char_type;
 	if(!t.native_handle()->sputn(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))
-		throw std::runtime_error("writes failed for stream view");
+		throw std::runtime_error("send failed for stream view");
 }
 
 template<typename T>

@@ -235,13 +235,13 @@ inline constexpr void output_base_number(output& out,U a)
 		std::array<typename output::char_type,sizeof(a)*8+1> v;
 		v.back()='\n';
 		auto const e(v.data()+v.size());
-		writes(out,output_base_number_impl<base,uppercase>(e-1,a),e);
+		send(out,output_base_number_impl<base,uppercase>(e-1,a),e);
 	}
 	else
 	{
 		std::array<typename output::char_type,sizeof(a)*8> v;
 		auto const e(v.data()+v.size());
-		writes(out,output_base_number_impl<base,uppercase>(e,a),e);
+		send(out,output_base_number_impl<base,uppercase>(e,a),e);
 	}
 }
 
@@ -305,7 +305,7 @@ inline constexpr void output_base_number(output& out,T b)
 		auto iter(output_base_number_impl<base,uppercase>(e-1,a));
 		if(minus)
 			*--iter='-';
-		writes(out,iter,e);		
+		send(out,iter,e);		
 	}
 	else
 	{
@@ -314,7 +314,7 @@ inline constexpr void output_base_number(output& out,T b)
 		auto iter(output_base_number_impl<base,uppercase>(e,a));
 		if(minus)
 			*--iter='-';
-		writes(out,iter,e);
+		send(out,iter,e);
 	}
 }
 

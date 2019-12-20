@@ -49,7 +49,7 @@ char *_tmpfname;
 #endif
 */
 template<std::contiguous_iterator Iter>
-inline Iter reads(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline Iter receive(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(
@@ -66,7 +66,7 @@ inline Iter reads(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 }
 
 template<std::contiguous_iterator Iter>
-inline void writes(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline void send(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(
@@ -175,7 +175,7 @@ inline auto fscanf(c_style_io_handle_unlocked& h,Args&& ...args)
 }
 #else
 template<std::contiguous_iterator Iter>
-inline Iter reads(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline Iter receive(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(fread_unlock(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
@@ -185,7 +185,7 @@ inline Iter reads(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 }
 
 template<std::contiguous_iterator Iter>
-inline void writes(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline void send(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(fwrite_unlocked(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
@@ -348,7 +348,7 @@ public:
 
 
 template<std::contiguous_iterator Iter>
-inline Iter reads(c_style_io_handle& cfhd,Iter begin,Iter end)
+inline Iter receive(c_style_io_handle& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(std::fread(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
@@ -358,7 +358,7 @@ inline Iter reads(c_style_io_handle& cfhd,Iter begin,Iter end)
 }
 
 template<std::contiguous_iterator Iter>
-inline void writes(c_style_io_handle& cfhd,Iter begin,Iter end)
+inline void send(c_style_io_handle& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)

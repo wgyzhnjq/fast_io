@@ -691,7 +691,7 @@ inline void output_base_extension_number(output& out,basic_unsigned_extension<T>
 		else
 			*--iter = static_cast<typename output::char_type>(rem+48);
 	}
-	writes(out,iter,v.data()+v.size());
+	send(out,iter,v.data()+v.size());
 }
 }
 
@@ -782,13 +782,13 @@ inline constexpr void scan_define(input& in,basic_unsigned_extension<T>& a)
 template<character_output_stream output,typename T>
 inline constexpr void write_define(output& out,basic_unsigned_extension<T> const& n)
 {
-	writes(out,std::addressof(n),std::addressof(n)+1);
+	send(out,std::addressof(n),std::addressof(n)+1);
 }
 
 template<character_input_stream input,typename T>
 inline constexpr void read_define(input& in,basic_unsigned_extension<T>& n)
 {
-	reads(in,std::addressof(n),std::addressof(n)+1);
+	receive(in,std::addressof(n),std::addressof(n)+1);
 }
 #ifdef __SIZEOF_INT128__
 using uint128_t = __uint128_t;

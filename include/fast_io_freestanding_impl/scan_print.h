@@ -22,7 +22,7 @@ inline constexpr void buffer_print(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	(print_define(ostr,std::forward<Args>(args)),...);
-	writes(out,ostr.str().cbegin(),ostr.str().cend());
+	send(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
 template<output_stream output,typename ...Args>
@@ -32,7 +32,7 @@ inline constexpr void buffer_println(output &out,Args&& ...args)
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	(print_define(ostr,std::forward<Args>(args)),...);
 	put(ostr,'\n');
-	writes(out,ostr.str().cbegin(),ostr.str().cend());
+	send(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
 template<output_stream output,typename ...Args>
@@ -41,7 +41,7 @@ inline constexpr void buffer_fprint(output &out,std::basic_string_view<typename 
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	print_scan_details::fprint_impl(ostr,format,std::forward<Args>(args)...);
-	writes(out,ostr.str().cbegin(),ostr.str().cend());
+	send(out,ostr.str().cbegin(),ostr.str().cend());
 }
 
 template<output_stream output,typename ...Args>
@@ -50,7 +50,7 @@ inline constexpr void buffer_write(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	(write_define(ostr,std::forward<Args>(args)),...);
-	writes(out,ostr.str().cbegin(),ostr.str().cend());
+	send(out,ostr.str().cbegin(),ostr.str().cend());
 }
 }
 }

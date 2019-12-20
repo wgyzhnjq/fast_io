@@ -56,7 +56,7 @@ try
 	{
 		auto [p,ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),i);
 		*p='\n';
-		writes(obuf,buffer.data(),++p);
+		send(obuf,buffer.data(),++p);
 //		put(obuf,'\n');
 	}
 	}

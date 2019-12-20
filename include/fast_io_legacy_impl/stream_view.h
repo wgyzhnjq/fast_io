@@ -58,7 +58,7 @@ public:
 };
 
 template<fast_io::stream_view_details::istream_concept_impl T,std::contiguous_iterator Iter>
-inline Iter reads(stream_view<T>& t,Iter begin,Iter end)
+inline Iter receive(stream_view<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 	return begin+(t.native_handle().sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
@@ -92,11 +92,11 @@ inline void put(stream_view<T>& t,typename T::char_type ch)
 }
 
 template<fast_io::stream_view_details::ostream_concept_impl T,std::contiguous_iterator Iter>
-inline void writes(stream_view<T>& t,Iter begin,Iter end) 
+inline void send(stream_view<T>& t,Iter begin,Iter end) 
 {
 	using char_type = typename T::char_type;
 	if(!t.native_handle().write(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))
-		throw std::runtime_error("writes failed for stream view");
+		throw std::runtime_error("send failed for stream view");
 }
 
 template<fast_io::stream_view_details::ostream_concept_impl T>

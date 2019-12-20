@@ -7,7 +7,7 @@ template<character_input_stream input,Trivial_copyable T>
 inline constexpr void read(input& in,T& v)
 {
 	auto address(std::addressof(v));
-	if(reads(in,address,address+1)!=(address+1))
+	if(receive(in,address,address+1)!=(address+1))
 		throw std::runtime_error("cannot read data from input_stream&");
 }
 
@@ -15,7 +15,7 @@ template<output_stream output,Trivial_copyable T>
 inline constexpr void write_define(output& out,T const& v)
 {
 	auto address(std::addressof(v));
-	writes(out,address,address+1);
+	send(out,address,address+1);
 }
 
 template<character_input_stream input>
@@ -60,7 +60,7 @@ template<character_input_stream input,Contiguous_trivial_dynamic_size_container 
 inline constexpr void read_define(input& in,D& v)
 {
 	v.resize(read_size(in));
-	if(reads(in,v.begin(),v.end())!=v.end())
+	if(receive(in,v.begin(),v.end())!=v.end())
 		throw std::runtime_error("read contiguous trivial containers error");
 }
 
@@ -68,7 +68,7 @@ template<character_output_stream output,Contiguous_trivial_dynamic_size_containe
 inline constexpr void write_define(output& out,D const& v)
 {
 	write_size(out,v.size());
-	writes(out,v.begin(),v.end());
+	send(out,v.begin(),v.end());
 }
 
 template<character_output_stream output,Dynamic_size_container D>

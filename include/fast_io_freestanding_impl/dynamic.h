@@ -11,8 +11,8 @@ public:
 private:
 	struct base
 	{
-		virtual char_type* reads_impl(char_type*,char_type*) = 0;
-		virtual void writes_impl(char_type const*,char_type const*) = 0;
+		virtual char_type* receive_impl(char_type*,char_type*) = 0;
+		virtual void send_impl(char_type const*,char_type const*) = 0;
 		virtual void flush_impl() = 0;
 		virtual char_type* oreserve_impl(std::size_t) = 0;
 		virtual void orelease_impl(std::size_t) = 0;
@@ -25,17 +25,17 @@ private:
 		stm io;
 		template<typename ...Args>
 		derv(std::in_place_type_t<stm>,Args&& ...args):io(std::forward<Args>(args)...){}
-		char_type* reads_impl(char_type* b,char_type* e) override
+		char_type* receive_impl(char_type* b,char_type* e) override
 		{
 			if constexpr(input_stream<stm>)
-				return reads(io,b,e);
+				return receive(io,b,e);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
-		void writes_impl(char_type const* b,char_type const* e) override
+		void send_impl(char_type const* b,char_type const* e) override
 		{
 			if constexpr(output_stream<stm>)
-				writes(io,b,e);
+				send(io,b,e);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
@@ -133,17 +133,17 @@ public:
 	}
 };
 template<std::integral char_type,std::contiguous_iterator Iter>
-inline Iter reads(basic_dynamic_base<char_type>& io,Iter b,Iter e)
+inline Iter receive(basic_dynamic_base<char_type>& io,Iter b,Iter e)
 {
 	char_type *pb(static_cast<char_type*>(static_cast<void*>(std::to_address(b))));
 	char_type *pe(static_cast<char_type*>(static_cast<void*>(std::to_address(e))));
-	return b+(io.opaque_base_pointer()->reads_impl(pb,pe)-pb)*sizeof(*b)/sizeof(char_type);
+	return b+(io.opaque_base_pointer()->receive_impl(pb,pe)-pb)*sizeof(*b)/sizeof(char_type);
 }
 
 template<std::integral char_type,std::contiguous_iterator Iter>
-inline void writes(basic_dynamic_base<char_type>& io,Iter b,Iter e)
+inline void send(basic_dynamic_base<char_type>& io,Iter b,Iter e)
 {
-	io.opaque_base_pointer()->writes_impl(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))),
+	io.opaque_base_pointer()->send_impl(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))),
 			static_cast<char_type const*>(static_cast<void const*>(std::to_address(e))));
 }
 

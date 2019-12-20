@@ -31,12 +31,12 @@ void cxx_fast_io_release(void* d) noexcept
 	fast_io::dynamic_stream dyn(d);
 }
 
-int cxx_fast_io_writes(void* d,char const* begin,char const* end) noexcept
+int cxx_fast_io_send(void* d,char const* begin,char const* end) noexcept
 {
 	try
 	{
 		fast_io::dynamic_base dyn(d);
-		writes(dyn,begin,end);
+		send(dyn,begin,end);
 		return {};
 	}
 	catch(...)
@@ -45,12 +45,12 @@ int cxx_fast_io_writes(void* d,char const* begin,char const* end) noexcept
 	}
 }
 
-int cxx_fast_io_reads(char** readed,void* d,char* begin,char* end) noexcept
+int cxx_fast_io_receive(char** readed,void* d,char* begin,char* end) noexcept
 {
 	try
 	{
 		fast_io::dynamic_base dyn(d);
-		*readed=reads(dyn,begin,end);
+		*readed=receive(dyn,begin,end);
 		return {};
 	}
 	catch(...)

@@ -41,10 +41,10 @@ try
 		"Content-Length: 14\r\n"
 		"Timeout: 120\r\n\r\n");
 	skip_http_header(hd);
-	reads(hd,challenge.begin(),challenge.end());
+	receive(hd,challenge.begin(),challenge.end());
 	}
 	fast_io::hmac_sha1 hmac_sha1(restore_str);
-	writes(hmac_sha1,serial.cbegin(),serial.cend());
+	send(hmac_sha1,serial.cbegin(),serial.cend());
 	write(hmac_sha1,challenge.cbegin(),challenge.cend());
 	flush(hmac_sha1);
 	decltype(auto) hmac_digest{get_digest(hmac_sha1)};
@@ -80,8 +80,8 @@ try
 		"Content-Type: application/octet-stream\r\n"
 		"Content-Length: ",serial.size()+p.vec().size()*8,"\r\n"
 		"Timeout: 1000\r\n\r\n");
-	writes(hd,serial.cbegin(),serial.cend());
-	writes(hd,p.vec().cbegin(),p.vec().cend());
+	send(hd,serial.cbegin(),serial.cend());
+	send(hd,p.vec().cbegin(),p.vec().cend());
 /*	skip_http_header(hd);
 	std::array<std::uint8_t,20> ret;
 	read(hd,ret);

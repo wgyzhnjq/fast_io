@@ -45,10 +45,10 @@ inline auto& unlocked_handle(basic_iomutex<T>& t)
 }
 
 template<output_stream T,std::contiguous_iterator Iter>
-inline auto writes(basic_iomutex<T>& t,Iter b,Iter e)
+inline auto send(basic_iomutex<T>& t,Iter b,Iter e)
 {
 	std::lock_guard lg(t.mutex());
-	return writes(t.native_handle(),b,e);
+	return send(t.native_handle(),b,e);
 }
 
 template<output_stream T>
@@ -58,10 +58,10 @@ inline void flush(basic_iomutex<T>& t)
 	flush(t.native_handle());
 }
 template<input_stream T,std::contiguous_iterator Iter>
-inline Iter reads(basic_iomutex<T>& t,Iter begin,Iter end)
+inline Iter receive(basic_iomutex<T>& t,Iter begin,Iter end)
 {
 	std::lock_guard lg(t.mutex());
-	return reads(t.native_handle(),begin,end);
+	return receive(t.native_handle(),begin,end);
 }
 
 

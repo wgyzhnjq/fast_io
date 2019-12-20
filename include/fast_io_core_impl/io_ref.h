@@ -44,15 +44,15 @@ template<stream srm>
 io_ref(srm&) -> io_ref<srm>;
 
 template<input_stream input,std::contiguous_iterator Iter>
-inline constexpr Iter reads(io_ref<input>& in,Iter begin,Iter end)
+inline constexpr Iter receive(io_ref<input>& in,Iter begin,Iter end)
 {
-	return reads(*in,begin,end);
+	return receive(*in,begin,end);
 }
 
 template<output_stream output,std::contiguous_iterator Iter>
-inline constexpr auto writes(io_ref<output>& out,Iter begin,Iter end)
+inline constexpr auto send(io_ref<output>& out,Iter begin,Iter end)
 {
-	return writes(*out,begin,end);
+	return send(*out,begin,end);
 }
 
 template<output_stream output>

@@ -161,7 +161,7 @@ inline auto seek(win32_io_handle& handle,U i=0,seekdir s=seekdir::cur)
 }
 
 template<std::contiguous_iterator Iter>
-inline Iter reads(win32_io_handle& handle,Iter begin,Iter end)
+inline Iter receive(win32_io_handle& handle,Iter begin,Iter end)
 {
 	std::uint32_t numberOfBytesRead;
 	if(!win32::ReadFile(handle.native_handle(),std::to_address(begin),static_cast<std::uint32_t>((end-begin)*sizeof(*begin)),std::addressof(numberOfBytesRead),nullptr))
@@ -169,7 +169,7 @@ inline Iter reads(win32_io_handle& handle,Iter begin,Iter end)
 	return begin+numberOfBytesRead;
 }
 template<std::contiguous_iterator Iter>
-inline Iter writes(win32_io_handle& handle,Iter cbegin,Iter cend)
+inline Iter send(win32_io_handle& handle,Iter cbegin,Iter cend)
 {
 	auto nNumberOfBytesToWrite(static_cast<std::uint32_t>((cend-cbegin)*sizeof(*cbegin)));
 	std::uint32_t numberOfBytesWritten;
@@ -352,14 +352,14 @@ public:
 };
 
 template<std::contiguous_iterator Iter>
-inline Iter reads(win32_pipe& h,Iter begin,Iter end)
+inline Iter receive(win32_pipe& h,Iter begin,Iter end)
 {
-	return reads(h.in(),begin,end);
+	return receive(h.in(),begin,end);
 }
 template<std::contiguous_iterator Iter>
-inline Iter writes(win32_pipe& h,Iter begin,Iter end)
+inline Iter send(win32_pipe& h,Iter begin,Iter end)
 {
-	return writes(h.out(),begin,end);
+	return send(h.out(),begin,end);
 }
 
 inline constexpr void flush(win32_pipe&){}

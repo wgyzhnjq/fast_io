@@ -47,12 +47,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
-/*	{
+	{
 	cqw::timer t("dynamic obuf");
 	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obufdb.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,vec[i]);
-	}*/
+	}
 	{
 	cqw::timer t("c_style_file_unlocked");
 	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
@@ -75,7 +75,7 @@ try
 		{
 			auto [p,ec]=std::to_chars(arr.data(),arr.data()+arr.size(),vec[i]);
 			*p='\n';
-			writes(obuf,arr.data(),++p);
+			send(obuf,arr.data(),++p);
 		}
 	}
 #endif
