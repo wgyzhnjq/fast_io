@@ -1,7 +1,13 @@
-#include"timer.h"
-#include<windows.h>
+#include<cstdlib>
+#include<new>
 #include<exception>
-/*
+
+#include<windows.h>
+#undef interface
+#undef min
+#undef max
+
+
 [[nodiscard]] inline void* operator new(std::size_t bytes) noexcept
 {
 	auto allocated(HeapAlloc(GetProcessHeap(),0,bytes));
@@ -10,64 +16,66 @@
 	return allocated;
 }
 
-[[nodiscard]] inline void* operator new[](std::size_t bytes) noexcept
-{
-	return ::operator new(bytes);
-}
-
 [[nodiscard]] inline void* operator new(std::size_t bytes,std::nothrow_t const&) noexcept
 {
-	return HeapAlloc(GetProcessHeap(),0,bytes);
+	return operator new(bytes);
 }
 
-[[nodiscard]] inline void* operator new[](std::size_t bytes,std::nothrow_t const&) noexcept
+[[nodiscard]] inline void* operator new[](std::size_t bytes) noexcept
 {
-	return HeapAlloc(GetProcessHeap(),0,bytes);
+	return operator new[](bytes);
 }
 
-[[nodiscard]] inline void* operator new(std::size_t count, void* ptr) noexcept
+inline void operator delete(void* ptr) noexcept
 {
-	auto allocated(HeapReAlloc(GetProcessHeap(),0,ptr,count));
-	if(allocated==nullptr) [[unlikely]]
-		std::terminate();
-	return allocated;
+	if(ptr)
+	{
+		if(!HeapFree(GetProcessHeap(),0,ptr))
+		{
+			std::terminate();
+		}
+	}
 }
 
-[[nodiscard]] inline void* operator new[](std::size_t count, void* ptr) noexcept
+inline void operator delete(void* ptr,std::size_t) noexcept
 {
-	return ::operator new(count,ptr);
+	::operator delete(ptr);
 }
-*/
+
+inline void operator delete[](void* ptr) noexcept
+{
+	::operator delete(ptr);
+}
+
+
+#include"timer.h"
 
 int main()
 {
-	std::set_terminate([]()
-	{
-		ExitProcess(-1);
-	});
+
 	constexpr std::size_t bytes(10);
 	constexpr std::size_t loops(10000000);
 	std::size_t sm(0);
 	{
 	cqw::timer tm("HeapAlloc/HeapFree");
-//	auto hp(GetProcessHeap());
-//	HeapUnlock(hp);
+	auto hp(GetProcessHeap());
 	for(std::size_t i(0);i!=loops;++i)
 	{
 		auto v(HeapAlloc(GetProcessHeap(),0,bytes));
 		sm+=fast_io::bit_cast<std::size_t>(v);
 		HeapFree(GetProcessHeap(),0,v);
 	}
-//	HeapLock(hp);
 	}
 	{
-	cqw::timer tm("malloc/free");
+	cqw::timer tm("new/delete");
 	for(std::size_t i(0);i!=loops;++i)
 	{
-		auto v(malloc(bytes));
-		sm+=fast_io::bit_cast<std::size_t>(v);
-		free(v);
+		auto v(new char[bytes]);
+//		sm+=fast_io::bit_cast<std::size_t>(v);
+		delete[] v;
 	}
 	}
+
 	println(fast_io::out,sm);
+	return 0;
 }

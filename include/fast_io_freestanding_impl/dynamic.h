@@ -14,6 +14,8 @@ private:
 		virtual char_type* reads_impl(char_type*,char_type*) = 0;
 		virtual void writes_impl(char_type const*,char_type const*) = 0;
 		virtual void flush_impl() = 0;
+		virtual char_type* oreserve_impl(std::size_t) = 0;
+		virtual void orelease_impl(std::size_t) = 0;
 		virtual base* clone() = 0;
 		virtual ~base() = default;
 	};
@@ -23,28 +25,45 @@ private:
 		stm io;
 		template<typename ...Args>
 		derv(std::in_place_type_t<stm>,Args&& ...args):io(std::forward<Args>(args)...){}
-		char_type* reads_impl(char_type* b,char_type* e)
+		char_type* reads_impl(char_type* b,char_type* e) override
 		{
 			if constexpr(input_stream<stm>)
 				return reads(io,b,e);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
-		void writes_impl(char_type const* b,char_type const* e)
+		void writes_impl(char_type const* b,char_type const* e) override
 		{
 			if constexpr(output_stream<stm>)
 				writes(io,b,e);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
-		void flush_impl()
+		void flush_impl() override
 		{
 			if constexpr(output_stream<stm>)
 				flush(io);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
-		base* clone()
+		char_type* oreserve_impl(std::size_t sz) override
+		{
+			if constexpr(buffer_output_stream<stm>)
+			{
+				if constexpr(std::contiguous_iterator<std::remove_cvref_t<decltype(oreserve(io,sz))>>)
+					return std::to_address(oreserve(io,sz));
+				else
+					return nullptr;
+			}
+			else
+				return nullptr;
+		}
+		void orelease_impl(std::size_t sz) override
+		{
+			if constexpr(buffer_output_stream<stm>)
+				orelease(io,sz);
+		}
+		base* clone() override
 		{
 			if constexpr(std::copyable<stm>)
 				return new derv<stm>(std::in_place_type<stm>,io);
@@ -126,6 +145,18 @@ inline void writes(basic_dynamic_base<char_type>& io,Iter b,Iter e)
 {
 	io.opaque_base_pointer()->writes_impl(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))),
 			static_cast<char_type const*>(static_cast<void const*>(std::to_address(e))));
+}
+
+template<std::integral char_type>
+inline auto oreserve(basic_dynamic_base<char_type>& io,std::size_t sz)
+{
+	return io.opaque_base_pointer()->oreserve_impl(sz);
+}
+
+template<std::integral char_type>
+inline void orelease(basic_dynamic_base<char_type>& io,std::size_t sz)
+{
+	return io.opaque_base_pointer()->orelease_impl(sz);
 }
 
 template<std::integral char_type>

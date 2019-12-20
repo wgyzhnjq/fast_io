@@ -99,7 +99,7 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 	{
 		(println_define(out,std::forward<Args>(args)),...);
 	}
-	else if constexpr(true)
+	else
 	{
 		(print_define(out,std::forward<Args>(args)),...);
 		put(out,'\n');
@@ -179,7 +179,8 @@ inline constexpr void println(output &out,Args&& ...args)
 		decltype(auto) uh(unlocked_handle(out));
 		println(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>||(sizeof...(Args)==1&&(character_output_stream<output>||(printlnable<output,Args>&&...)))))
+	else if constexpr((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||
+	((printable<output,Args>&&...)&&buffer_output_stream<output>&&character_output_stream<output>))
 		normal_println(out,std::forward<Args>(args)...);
 	else if constexpr(true)
 		buffer_println(out,std::forward<Args>(args)...);
@@ -236,7 +237,8 @@ inline constexpr void println_flush(output &out,Args&& ...args)
 	}
 	else
 	{
-		if constexpr((printable<output,Args>&&...)&&(buffer_output_stream<output>&&(sizeof...(Args)==1&&character_output_stream<output>)))
+		if constexpr((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||
+			((printable<output,Args>&&...)&&buffer_output_stream<output>&&character_output_stream<output>))
 			normal_println(out,std::forward<Args>(args)...);
 		else if constexpr(true)
 			buffer_println(out,std::forward<Args>(args)...);
