@@ -23,7 +23,7 @@ template<character_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
 {
 	std::size_t skipped(0);
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!='\n';++skipped);
+	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xA;++skipped);
 	return skipped;
 }
 
@@ -48,7 +48,7 @@ requires std::same_as<T,bool>
 inline constexpr void scan_define(input& in, T& b)
 {
 	auto value(eat_space_get(in));
-	if(value=='0')
+	if(value==0x30)
 		b=0;
 	else
 		b=1;
@@ -58,7 +58,7 @@ template<character_output_stream output,std::integral T>
 requires std::same_as<T,bool>
 inline constexpr void print_define(output& out, T const& b)
 {
-	put(out,b+'0');
+	put(out,b+0x30);
 }
 
 template<output_stream output>
@@ -102,7 +102,7 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 	else
 	{
 		(print_define(out,std::forward<Args>(args)),...);
-		put(out,'\n');
+		put(out,0xA);
 	}
 }
 
@@ -274,7 +274,7 @@ template<output_stream os,typename ...Args>
 inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format)
 {
 	std::size_t percent_pos;
-	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
+	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 #ifdef __EXCEPTIONS
 	if(percent_pos!=std::string_view::npos)
@@ -287,7 +287,7 @@ template<output_stream os,typename T,typename ...Args>
 inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format,T&& cr,Args&& ...args)
 {
 	std::size_t percent_pos;
-	for(;(percent_pos=format.find('%'))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]=='%';format.remove_prefix(percent_pos+2))
+	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos==std::string_view::npos)
 	{

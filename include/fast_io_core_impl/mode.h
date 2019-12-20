@@ -186,7 +186,7 @@ inline auto constexpr c_style(std::string_view csm)
 	mode v{};
 	bool extended(false);
 	for(auto const& e : csm)
-		if(e=='+')
+		if(e==0x2b)
 			extended=true;
 	for(auto const& e : csm)
 		switch(e)
@@ -199,20 +199,20 @@ inline auto constexpr c_style(std::string_view csm)
 			case 'b':
 				v|=binary;
 			break;
-			case 'r':
+			case 0x72:
 				v|=in;
 				if(extended)
 					v|=out;
 			break;
-			case 'w':
+			case 0x77:
 				v|=out;
 				if(extended)
 					v|=in|trunc;
 			break;
-			case 'x':
+			case 0x78:
 				v|=excl;
 			break;
-			case '+':
+			case 0x2b:
 			break;
 			default:
 				static_assert(true,"unknown C-style open mode");

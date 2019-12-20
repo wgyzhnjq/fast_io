@@ -15,7 +15,7 @@ template<character_input_stream input>
 inline void getline(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!='\n';str.push_back(ch.first));
+	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xA;str.push_back(ch.first));
 }
 
 
@@ -23,7 +23,7 @@ template<character_input_stream input>
 inline void getcarriage(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!='\r';str.push_back(ch.first));
+	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xD;str.push_back(ch.first));
 }
 
 template<character_input_stream input>

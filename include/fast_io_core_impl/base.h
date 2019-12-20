@@ -38,7 +38,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			if constexpr(point)
 			{
 				*--iter=tm[1];
-				*--iter='.';
+				*--iter=0x2E;
 				*--iter=tm.front();
 			}
 			else
@@ -49,11 +49,11 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		else
 		{
 			if constexpr(point)
-				*--iter='.';
+				*--iter=0x2E;
 			if constexpr(10 < base)
 			{
 				if(a<10)
-					*--iter = a+'0';
+					*--iter = a+0x30;
 				else
 				{
 					if constexpr (uppercase)
@@ -63,7 +63,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 				}
 			}
 			else
-				*--iter=a+'0';
+				*--iter=a+0x30;
 		}
 	}
 	else
@@ -72,12 +72,12 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		{
 			auto const& tm(table[a]);
 			auto i(tm.data());
-			for(;*i=='0';++i);
+			for(;*i==0x30;++i);
 			auto const ed(tm.data()+chars);
 			if constexpr(point)
 			{
 				std::copy(i+1,ed,iter-=ed-(i+1));
-				*--iter='.';
+				*--iter=0x2E;
 				*--iter=*i;
 			}
 			else
@@ -86,11 +86,11 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		else
 		{
 			if constexpr(point)
-				*--iter='.';
+				*--iter=0x2E;
 			if constexpr(10 < base)
 			{
 				if(a<10)
-					*--iter = a+'0';
+					*--iter = a+0x30;
 				else
 				{
 					if constexpr (uppercase)
@@ -100,7 +100,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 				}
 			}
 			else
-				*--iter=a+'0';
+				*--iter=a+0x30;
 		}
 	}
 	return iter;
@@ -200,14 +200,14 @@ inline constexpr void output_base_number(output& out,U a)
 			{
 				if(reserved)
 				{
-					*--reserved='\n';
+					*--reserved=0xA;
 					output_base_number_impl<base,uppercase>(reserved,a);
 					return;
 				}
 			}
 			else
 			{
-				*--reserved='\n';
+				*--reserved=0xA;
 				output_base_number_impl<base,uppercase>(reserved,a);
 				return;
 			}
@@ -233,7 +233,7 @@ inline constexpr void output_base_number(output& out,U a)
 	if constexpr(ln)
 	{
 		std::array<typename output::char_type,sizeof(a)*8+1> v;
-		v.back()='\n';
+		v.back()=0xA;
 		auto const e(v.data()+v.size());
 		send(out,output_base_number_impl<base,uppercase>(e-1,a),e);
 	}
@@ -259,19 +259,19 @@ inline constexpr void output_base_number(output& out,T b)
 			{
 				if(reserved)
 				{
-					*--reserved='\n';
+					*--reserved=0xA;
 					auto p(output_base_number_impl<base,uppercase>(reserved,a));
 					if(minus)
-						*--p='-';
+						*--p=0x2d;
 					return;
 				}
 			}
 			else
 			{
-				*--reserved='\n';
+				*--reserved=0xA;
 				auto p(output_base_number_impl<base,uppercase>(reserved,a));
 				if(minus)
-					*--p='-';
+					*--p=0x2d;
 				return;
 			}
 		}
@@ -284,7 +284,7 @@ inline constexpr void output_base_number(output& out,T b)
 				{
 					auto p(output_base_number_impl<base,uppercase>(reserved,a));
 					if(minus)
-						*--p='-';
+						*--p=0x2d;
 					return;
 				}
 			}
@@ -292,7 +292,7 @@ inline constexpr void output_base_number(output& out,T b)
 			{
 				auto p(output_base_number_impl<base,uppercase>(reserved,a));
 				if(minus)
-					*--p='-';
+					*--p=0x2d;
 				return;
 			}
 		}
@@ -300,11 +300,11 @@ inline constexpr void output_base_number(output& out,T b)
 	if constexpr(ln)
 	{
 		std::array<typename output::char_type,sizeof(a)*8+2> v;
-		v.back()='\n';
+		v.back()=0xA;
 		auto const e(v.data()+v.size());
 		auto iter(output_base_number_impl<base,uppercase>(e-1,a));
 		if(minus)
-			*--iter='-';
+			*--iter=0x2d;
 		send(out,iter,e);		
 	}
 	else
@@ -313,7 +313,7 @@ inline constexpr void output_base_number(output& out,T b)
 		auto const e(v.data()+v.size());
 		auto iter(output_base_number_impl<base,uppercase>(e,a));
 		if(minus)
-			*--iter='-';
+			*--iter=0x2d;
 		send(out,iter,e);
 	}
 }

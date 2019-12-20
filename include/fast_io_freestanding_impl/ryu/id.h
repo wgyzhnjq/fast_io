@@ -15,8 +15,8 @@ inline constexpr F input_floating(input& in)
 	mantissa_type ipart{};
 	bool negative{};
 	std::uint8_t phase2{};
-	//'.'(46)-48: static_cast<unsigned_char_type>(-2)
-	//'-'(45)-48: static_cast<unsigned_char_type>(-3)
+	//.(46)-48: static_cast<unsigned_char_type>(-2)
+	//-(45)-48: static_cast<unsigned_char_type>(-3)
 	//'E'(69)-48: 21
 	//'e'(101)-48: 53
 	//We do not support Shit like EBCDIC. DEATH TO IBM

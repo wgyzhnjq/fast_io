@@ -1,9 +1,7 @@
 #pragma once
 
 //fast_io_core.h is required to be usable in freestanding environment with EVEN dynamic memory allocation and exceptions are disabled.
-#ifndef __cpp_concepts
-static_assert(false,"oh NO!!!");
-#endif
+
 #include<version>
 #include<cstddef>
 #include<limits>

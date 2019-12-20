@@ -21,6 +21,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		auto const ret(fscanf(fp.get(),"%zu",v.data()+i));
 	}
+	std::vector<std::size_t> v2(v);
 /*	{
 	cqw::timer t("std::FILE* with 1048576 buffer size + _IOFBF (Full buffering) tag");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","rb"),fclose);

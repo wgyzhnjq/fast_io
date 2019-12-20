@@ -260,7 +260,7 @@ template<buffer_output_stream output>
 inline constexpr void print_define(output& out,sha1 const& sh)
 {
 	for(auto const & e : sh.digest)
-		print(out,width<8,false,'0'>(hex(e)));
+		print(out,width<8,false,0x30>(hex(e)));
 }
 
 inline constexpr decltype(auto) get_digest(sha1& s)

@@ -23,7 +23,7 @@ try
 	std::uniform_real_distribution dis(-1000.0,1000.0);
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
-/*	{
+	{
 	cqw::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestardb.txt","wb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
@@ -34,7 +34,7 @@ try
 	std::ofstream fout("ofstreamdb.txt",std::ofstream::binary);
 	for(std::size_t i(0);i!=N;++i)
 		fout<<vec[i]<<'\n';
-	}*/
+	}
 	{
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obufdb.txt");

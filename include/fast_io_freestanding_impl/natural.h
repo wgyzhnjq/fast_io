@@ -840,7 +840,7 @@ inline void output_base_natural_number(output& out,natural a)
 //lower: 97 :a 102 :f
 	if(!a)
 	{
-		put(out,'0');
+		put(out,0x30);
 		return;
 	}
 	std::vector<typename output::char_type> v(a.vec().size()*512/base+3);

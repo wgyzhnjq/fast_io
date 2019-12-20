@@ -31,7 +31,7 @@ inline constexpr void buffer_println(output &out,Args&& ...args)
 {
 	basic_ostring<std::basic_string<typename output::char_type>> ostr;
 	(print_define(ostr,std::forward<Args>(args)),...);
-	put(ostr,'\n');
+	put(ostr,0xA);
 	send(out,ostr.str().cbegin(),ostr.str().cend());
 }
 

@@ -68,7 +68,7 @@ inline void output_fixed_floats(output& out,T e,std::size_t precision)
 		for(std::size_t i(bas.size());i--;put(out,bas[i]));
 		if(!precision)
 			return;
-		put(out,'.');
+		put(out,0x2E);
 		bas.clear();
 		do
 		{
@@ -121,16 +121,16 @@ inline void output_fixed_floats(output& out,T e,std::size_t precision)
 		}
 		while((u=temp));
 		if(bas2.empty())
-			put(out,'0');
+			put(out,0x30);
 		else
 			for(std::size_t i(bas2.size());i--;put(out,bas2[i]));
 		if(!precision)
 			return;
-		put(out,'.');
+		put(out,0x2E);
 		if(!hasone)
 			bas.clear();
 		for(std::size_t i(bas.size());i<precision;++i)
-			put(out,'0');
+			put(out,0x30);
 		for(std::size_t i(bas.size());i--;put(out,bas[i]));
 	}
 }
@@ -143,12 +143,12 @@ inline void print_define(output& out,manip::scientific<precision,T const> a)
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
 	{
-		put(out,'0');
+		put(out,0x30);
 		if(a.precision)
 		{
-			put(out,'.');
+			put(out,0x2E);
 			for(std::size_t i(0);i!=precision;++i)
-				put(out,'0');
+				put(out,0x30);
 		}
 		print(out,"e0");
 		return;
@@ -156,16 +156,16 @@ inline void print_define(output& out,manip::scientific<precision,T const> a)
 	if(e<0)
 	{
 		e=-e;
-		put(out,'-');
+		put(out,0x2d);
 	}
 	if(details::output_inf(out,e))
 		return;
 	auto x(std::floor(std::log10(e)));
 	details::output_fixed_floats(out,e*std::pow(10,-x),precision);
-	put(out,'e');
+	put(out,0x65);
 	if(x<0)
 	{
-		put(out,'-');
+		put(out,0x2d);
 		x=-x;
 	}
 	print(out,static_cast<std::uint64_t>(x));
@@ -177,13 +177,13 @@ inline void print_define(output& out,manip::shortest<std::size_t,T const> a)
 	auto e(a.reference);
 	if(e==0)	//if e==0 then log10 is UNDEFINED
 	{
-		put(out,'0');
+		put(out,0x30);
 		return;
 	}
 	if(e<0)
 	{
 		e=-e;
-		put(out,'-');
+		put(out,0x2d);
 	}
 	if(details::output_inf(out,e))
 		return;
@@ -196,10 +196,10 @@ inline void print_define(output& out,manip::shortest<std::size_t,T const> a)
 	else
 		details::output_fixed_floats(bas,e*std::pow(10,-x),precision);
 	auto& str(bas.str());
-	if(str.find('.')!=std::string::npos)
+	if(str.find(0x2E)!=std::string::npos)
 	{
-		for(;!str.empty()&&str.back()=='0';str.pop_back());
-		if(!str.empty()&&str.back()=='.')
+		for(;!str.empty()&&str.back()==0x30;str.pop_back());
+		if(!str.empty()&&str.back()==0x2E)
 			str.pop_back();
 		print(out,str);
 	}		
@@ -208,10 +208,10 @@ inline void print_define(output& out,manip::shortest<std::size_t,T const> a)
 	}
 	if(x==0)
 		return;
-	put(out,'e');
+	put(out,0x65);
 	if(x<0)
 	{
-		put(out,'-');
+		put(out,0x2d);
 		x=-x;
 	}
 	print(out,static_cast<std::uint64_t>(x));

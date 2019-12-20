@@ -668,7 +668,7 @@ inline void output_base_extension_number(output& out,basic_unsigned_extension<T>
 //lower: 97 :a 102 :f
 	if(!a)
 	{
-		put(out,'0');
+		put(out,0x30);
 		return;
 	}
 	std::array<typename output::char_type,sizeof(a)*512*8/base+3> v;
