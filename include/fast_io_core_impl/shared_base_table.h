@@ -52,7 +52,7 @@ inline constexpr auto cal_content()
 				else
 				{
 					if constexpr(upper)
-						e1+=0X61-10;
+						e1+=0x41-10;
 					else
 						e1+=0x61-10;
 				}
