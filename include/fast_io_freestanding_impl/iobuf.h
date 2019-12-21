@@ -179,7 +179,7 @@ inline constexpr Iter receive(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 	else
 	{
 		auto b(reinterpret_cast<std::byte*>(std::to_address(begin)));
-		return begin+(details::ibuf_receive<Buf::size,true>(ib,b,reinterpret_cast<std::byte*>(std::to_address(end)))-b)/sizeof(*b);
+		return begin+(details::ibuf_receive<Buf::size,true>(ib,b,reinterpret_cast<std::byte*>(std::to_address(end)))-b)/sizeof(*begin);
 	}
 }
 

@@ -25,13 +25,13 @@ inline constexpr Iter define_receive_by_get(T& stm,Iter b,Iter e)
 }
 
 template<fast_io::output_stream output,std::ranges::random_access_range range>
-inline void send(output const& out,range const& rg)
+inline void send(output& out,range const& rg)
 {
 	send(out,cbegin(rg),cend(rg));
 }
 
 template<fast_io::input_stream input,std::ranges::random_access_range range>
-inline void receive(input const& in,range& rg)
+inline void receive(input& in,range& rg)
 {
 	receive(in,begin(rg),end(rg));
 }
