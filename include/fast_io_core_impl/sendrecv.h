@@ -18,7 +18,7 @@ inline constexpr Iter define_receive_by_get(T& stm,Iter b,Iter e)
 	{
 		auto [ch,err](get<true>(stm));
 		if(err) [[unlikely]]
-			return {0,true};
+			return i;
 		*i=ch;
 	}
 	return e;
