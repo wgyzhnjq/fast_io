@@ -19,7 +19,7 @@ int main()
 	fast_io::ibuf_mutex in("binary_serialization.txt");
 	std::deque<std::vector<std::array<std::size_t,3>>> arr;
 	std::string str;
-	read(in,arr);
+	read(in,arr,str);
 	for(auto const& e : arr)
 		for(auto const& e1:e)
 			for(auto const & e2 : e1)
