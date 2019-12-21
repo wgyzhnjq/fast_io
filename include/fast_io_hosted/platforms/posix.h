@@ -91,7 +91,7 @@ protected:
 		return fd;
 	}
 public:
-	using char_type = char8_t;
+	using char_type = char;
 	using native_handle_type = int;
 	native_handle_type native_handle()
 	{

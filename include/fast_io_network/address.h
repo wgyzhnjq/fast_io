@@ -105,7 +105,7 @@ inline constexpr void scan_define(input& in,ipv6& v6)
 	{
 		std::string tempstr(1,0x20);
 		for(std::size_t i(9-colons);i--;)
-			tempstr.append("0 ",2);
+			tempstr.append(u8"0 ",2);
 		str.insert(position,tempstr);
 	}
 	fast_io::basic_istring_view<std::basic_string_view<typename input::char_type>> istrbuf(str);

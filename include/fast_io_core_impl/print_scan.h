@@ -68,10 +68,9 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 }
 
 template<output_stream output>
-requires (std::same_as<typename output::char_type,char8_t>)
-inline constexpr void print_define(output& out,std::basic_string_view<char> str)
+requires (std::same_as<typename output::char_type,char>)
+inline constexpr void print_define(output& out,std::basic_string_view<char8_t> str)
 {
-	static_assert('A'==u8'A',"probably ebcdic");
 	send(out,str.data(),str.data()+str.size());
 }
 
@@ -270,21 +269,19 @@ inline constexpr void write_flush(output &out,Args&& ...args)
 
 inline namespace print_scan_details
 {
-template<output_stream os,typename ...Args>
-inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format)
+template<output_stream os,typename ch_type,typename ...Args>
+inline void fprint_impl(os &out,std::basic_string_view<ch_type> format)
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
-#ifdef __EXCEPTIONS
 	if(percent_pos!=std::string_view::npos)
-		throw std::runtime_error("fprint() format error");
-#endif
+		std::terminate();
 	send(out,format.cbegin(),format.cend());
 }
 
-template<output_stream os,typename T,typename ...Args>
-inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> format,T&& cr,Args&& ...args)
+template<output_stream os,typename ch_type,typename T,typename ...Args>
+inline void fprint_impl(os &out,std::basic_string_view<ch_type> format,T&& cr,Args&& ...args)
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
@@ -303,14 +300,20 @@ inline void fprint_impl(os &out,std::basic_string_view<typename os::char_type> f
 	fprint_impl(out,format,std::forward<Args>(args)...);
 }
 
-template<output_stream output,typename ...Args>
-requires(printable<output,Args>&&...)
-inline constexpr void normal_fprint(output &out,Args&& ...args)
+template<output_stream output,typename ch_type,typename ...Args>
+requires((std::same_as<typename output::char_type,ch_type>||std::same_as<char8_t,ch_type>)&&(printable<output,Args>&&...))
+inline constexpr void normal_fprint(output &out,std::basic_string_view<ch_type> mv,Args&& ...args)
 {
-	fprint_impl(out,std::forward<Args>(args)...);
+	fprint_impl(out,mv,std::forward<Args>(args)...);
 }
-
-
+/*
+template<output_stream output,typename ...Args>
+requires((std::same_as<typename output::char_type,char>)&&(printable<output,Args>&&...))
+inline constexpr void normal_fprint(output &out,std::u8string_view mv,Args&& ...args)
+{
+	fprint_impl(out,mv.data(),std::forward<Args>(args)...);
+}
+*/
 }
 
 template<output_stream output,typename ...Args>

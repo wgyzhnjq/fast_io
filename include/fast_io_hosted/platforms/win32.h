@@ -95,7 +95,7 @@ protected:
 	native_handle_type& protected_native_handle()	{return mhandle;}
 	win32_io_handle() = default;
 public:
-	using char_type = char8_t;
+	using char_type = char;
 	win32_io_handle(native_handle_type handle):mhandle(handle){}
 	win32_io_handle(std::uint32_t dw):mhandle(win32::GetStdHandle(dw)){}
 
@@ -304,7 +304,7 @@ public:
 class win32_pipe
 {
 public:
-	using char_type = char8_t;
+	using char_type = char;
 	using native_handle_type = std::array<win32_pipe_unique,2>;
 private:
 	native_handle_type pipes;

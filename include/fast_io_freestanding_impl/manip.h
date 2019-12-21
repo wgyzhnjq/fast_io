@@ -62,13 +62,13 @@ inline constexpr void print_define(output& out,std::endian e)
 	switch(e)
 	{
 	case std::endian::little:
-		print(out,"little");
+		print(out,u8"little");
 	break;
 	case std::endian::big:
-		print(out,"big");
+		print(out,u8"big");
 	break;
 	default:
-		print(out,"unknown");
+		print(out,u8"unknown");
 	}
 }
 

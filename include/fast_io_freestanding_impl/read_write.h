@@ -3,15 +3,17 @@
 namespace fast_io
 {
 
-template<character_input_stream input,Trivial_copyable T>
-inline constexpr void read(input& in,T& v)
+template<input_stream input,typename T>
+requires (std::is_fundamental_v<T>)
+inline constexpr void read_define(input& in,T& v)
 {
 	auto address(std::addressof(v));
 	if(receive(in,address,address+1)!=(address+1))
 		throw std::runtime_error("cannot read data from input_stream&");
 }
 
-template<output_stream output,Trivial_copyable T>
+template<output_stream output,typename T>
+requires (std::is_fundamental_v<T>)
 inline constexpr void write_define(output& out,T const& v)
 {
 	auto address(std::addressof(v));

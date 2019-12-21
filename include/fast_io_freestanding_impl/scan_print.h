@@ -45,6 +45,15 @@ inline constexpr void buffer_fprint(output &out,std::basic_string_view<typename 
 }
 
 template<output_stream output,typename ...Args>
+requires(weak_printable<output,Args>||...)
+inline constexpr void buffer_fprint(output &out,std::basic_string_view<char8_t> format,Args&& ...args)
+{
+	basic_ostring<std::basic_string<typename output::char_type>> ostr;
+	print_scan_details::fprint_impl(ostr,format,std::forward<Args>(args)...);
+	send(out,ostr.str().cbegin(),ostr.str().cend());
+}
+
+template<output_stream output,typename ...Args>
 requires(weak_writeable<output,Args>||...)
 inline constexpr void buffer_write(output &out,Args&& ...args)
 {

@@ -191,12 +191,12 @@ inline auto constexpr c_style(std::string_view csm)
 	for(auto const& e : csm)
 		switch(e)
 		{
-			case 'a':
+			case u8'a':
 				v|=app;
 				if(extended)
 					v|=in|out;
 			break;
-			case 'b':
+			case u8'b':
 				v|=binary;
 			break;
 			case 0x72:
