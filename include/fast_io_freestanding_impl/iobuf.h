@@ -31,8 +31,8 @@ class basic_buf_handler
 public:
 	using char_type = CharT;
 	using allocator_type = Allocator;
-	char_type *beg,*curr,*end;
-	explicit basic_buf_handler():beg(alloc.allocate(buffer_size)),end(beg+buffer_size){}
+	char_type *beg{},*curr{},*end{};
+	basic_buf_handler()=default;
 	basic_buf_handler& operator=(basic_buf_handler const&)=delete;
 	basic_buf_handler(basic_buf_handler const&)=delete;
 	static constexpr std::size_t size = buffer_size;
@@ -52,6 +52,10 @@ public:
 			m.end=m.curr=m.beg=nullptr;
 		}
 		return *this;
+	}
+	inline void init_space()
+	{
+		beg=alloc.allocate(buffer_size);
 	}
 	~basic_buf_handler()
 	{
@@ -87,7 +91,7 @@ public:
 	using char_type = typename Buf::char_type;	
 	template<typename... Args>
 //	requires std::constructible_from<Ihandler,Args...>
-	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){ibuffer.curr=ibuffer.end;}
+	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){}
 	inline constexpr auto& native_handle()
 	{
 		return ih;
@@ -129,6 +133,15 @@ inline constexpr Iter ibuf_receive(T& ib,Iter begin,Iter end)
 	std::size_t n(end-begin);
 	if(buffer_remain<n)			//cache miss
 	{
+		if(ib.ibuffer.end==nullptr)
+		{
+			if(buffer_size<=n)
+			{
+				return receive(ib.native_handle(),begin,end);
+			}
+			ib.ibuffer.init_space();
+			ib.ibuffer.curr=ib.ibuffer.end=ib.ibuffer.beg;
+		}
 		if constexpr(punning)
 		{
 			std::memcpy(begin,ib.ibuffer.curr,buffer_remain);
@@ -189,6 +202,11 @@ inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
 	if(ib.ibuffer.end==ib.ibuffer.curr)[[unlikely]]		//cache miss
 	{
+		if(ib.ibuffer.end==nullptr)
+		{
+			ib.ibuffer.init_space();
+			ib.ibuffer.curr=ib.ibuffer.end=ib.ibuffer.beg;
+		}
 		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
@@ -205,6 +223,11 @@ inline constexpr std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool> tr
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
 	if(ib.ibuffer.end==ib.ibuffer.curr)[[unlikely]]		//cache miss
 	{
+		if(ib.ibuffer.end==nullptr)
+		{
+			ib.ibuffer.init_space();
+			ib.ibuffer.curr=ib.ibuffer.end=ib.ibuffer.beg;
+		}
 		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
@@ -248,7 +271,7 @@ public:
 	using char_type = typename Buf::char_type;
 	template<typename... Args>
 //	requires std::constructible_from<Ohandler,Args...>
-	basic_obuf(Args&&... args):oh(std::forward<Args>(args)...){obuffer.curr=obuffer.beg;}
+	basic_obuf(Args&&... args):oh(std::forward<Args>(args)...){}
 	~basic_obuf()
 	{
 		close_impl();
@@ -274,6 +297,7 @@ public:
 
 namespace details
 {
+
 template<bool punning=false,typename T,typename Iter>
 inline constexpr void obuf_send(T& ob,Iter cbegin,Iter cend)
 {
@@ -282,6 +306,22 @@ inline constexpr void obuf_send(T& ob,Iter cbegin,Iter cend)
 	std::size_t const diff(std::distance(cbegin,cend));
 	if(n<diff)[[unlikely]]
 	{
+		if(ob.obuffer.end==nullptr)		//cold buffer
+		{
+			if(T::buffer_type::size<=diff)
+			{
+				send(ob.native_handle(),cbegin,cend);
+				return;
+			}
+			ob.obuffer.init_space();
+			ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+T::buffer_type::size;
+			if constexpr(punning)
+				std::memcpy(ob.obuffer.curr,cbegin,diff);
+			else
+				std::copy_n(cbegin,diff,ob.obuffer.curr);
+			ob.obuffer.curr+=diff;
+			return;
+		}
 		if constexpr(punning)
 			std::memcpy(ob.obuffer.curr,cbegin,n);
 		else
@@ -331,6 +371,7 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 	std::size_t const remain_space(static_cast<std::size_t>(ob.obuffer.end-ob.obuffer.curr));
 	if(remain_space<=count)
 	{
+		obuf_deal_with_cold_buffer(ob);
 		std::fill(ob.obuffer.curr,ob.obuffer.end,ch);
 		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
 		count-=remain_space;
@@ -360,7 +401,13 @@ inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohand
 {
 	if(ob.obuffer.curr==ob.obuffer.end)[[unlikely]]		//buffer full
 	{
-		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		if(ob.obuffer.beg)	//cold buffer
+			send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		else
+		{
+			ob.obuffer.init_space();
+			ob.obuffer.end=ob.obuffer.beg+Buf::size;
+		}
 		ob.obuffer.curr=ob.obuffer.beg+1;
 		*ob.obuffer.beg=ch;
 		return;//no flow dependency any more
@@ -370,6 +417,8 @@ inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohand
 template<output_stream Ohandler,typename Buf>
 inline constexpr void flush(basic_obuf<Ohandler,Buf>& ob)
 {
+	if(ob.obuffer.beg==ob.obuffer.curr)
+		return;
 	send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
 	ob.obuffer.curr=ob.obuffer.beg;
 //	flush(oh.native_handle());
@@ -380,8 +429,11 @@ template<output_stream Ohandler,typename Buf,typename... Args>
 requires random_access_stream<Ohandler>
 inline constexpr auto seek(basic_obuf<Ohandler,Buf>& ob,Args&& ...args)
 {
-	send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
-	ob.obuffer.curr=ob.obuffer.beg;
+	if(ob.obuffer.beg!=ob.obuffer.curr)
+	{
+		send(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
+		ob.obuffer.curr=ob.obuffer.beg;
+	}
 	return seek(ob.native_handle(),std::forward<Args>(args)...);
 }
 

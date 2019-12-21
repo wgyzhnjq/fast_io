@@ -66,7 +66,7 @@ constexpr inline auto get(text_view<T,sys>& input)
 		if(internal.second)
 			return ch;
 		if(internal.first==0xA)
-			return 0xA;
+			return internal.first;
 		input.state.state=true;
 		input.state.internal_character=internal.first;
 	}
@@ -74,7 +74,7 @@ constexpr inline auto get(text_view<T,sys>& input)
 }
 
 template<character_input_stream T,bool sys>
-constexpr inline auto try_get(text_view<T,sys>& input)
+constexpr inline std::pair<typename T::char_type,bool> try_get(text_view<T,sys>& input)
 {
 	if(input.state.state)
 	{
