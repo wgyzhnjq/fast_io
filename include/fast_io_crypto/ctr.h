@@ -17,7 +17,7 @@ public:
 	using block_type = std::array<unsigned_char_type, cipher_type::block_size>;
 	using nonce_type = std::array<unsigned_char_type, cipher_type::block_size - sizeof(std::size_t)>;
 
-private:
+public:
 	using block_iterator = typename block_type::iterator;
 	block_type cipher_buf = {};
 	block_iterator cipher_buf_pos = cipher_buf.begin();
@@ -96,40 +96,6 @@ public:
 	{
 		auto bgchadd(static_cast<unsigned_char_type *>(static_cast<void *>(std::to_address(begin))));
 		return begin + (mread(bgchadd, static_cast<unsigned_char_type *>(static_cast<void *>(std::to_address(end)))) - bgchadd) / sizeof(*begin);
-	}
-
-	inline constexpr char_type mmget()
-	{
-		if (plaintext_buf_pos == plaintext_buf.end())
-		{
-			block_type tmp;
-			auto next_ch(tmp.data() + 1);
-			auto ret(mread(tmp.data(), std::to_address(next_ch)));
-			if (ret != next_ch)
-			{
-				plaintext_buf_pos = plaintext_buf.begin();
-				throw eof();
-			}
-			return static_cast<char_type>(*tmp.begin());
-		}
-		return static_cast<char_type>(*plaintext_buf_pos++);
-	}
-
-	inline constexpr std::pair<char_type, bool> mmtry_get()
-	{
-		if (plaintext_buf_pos == plaintext_buf.end())
-		{
-			block_type tmp;
-			auto next_ch(tmp.data() + 1);
-			auto ret(mread(tmp.data(), std::to_address(next_ch)));
-			if (ret != next_ch)
-			{
-				plaintext_buf_pos = plaintext_buf.begin(); // TODO: begin or end
-				return {0, true};
-			}
-			return {static_cast<char_type>(*tmp.begin()), false};
-		}
-		return {static_cast<char_type>(*plaintext_buf_pos++), false};
 	}
 public:
 	template<typename ...Args>
@@ -329,17 +295,33 @@ inline constexpr auto receive(basic_ictr<T,Enc>& ctr,Iter begin,Iter end)
 {
 	return ctr.mmreceive(begin,end);
 }
-
-template <input_stream T, typename Enc>
-inline constexpr auto try_get(basic_ictr<T,Enc>& ctr)
-{
-	return ctr.mmtry_get();
-}
-
-template <input_stream T, typename Enc>
+template <bool err=false,input_stream T, typename Enc>
 inline constexpr auto get(basic_ictr<T,Enc>& ctr)
 {
-	return ctr.mmget();
+	using block_type=basic_ictr<T,Enc>::block_type;
+	using char_type=basic_ictr<T,Enc>::char_type;
+	if (ctr.plaintext_buf_pos == ctr.plaintext_buf.end())
+	{
+		block_type tmp;
+		auto next_ch(tmp.data() + 1);
+		auto ret(ctr.mread(tmp.data(), std::to_address(next_ch)));
+		if (ret != next_ch)
+		{
+			ctr.plaintext_buf_pos = ctr.plaintext_buf.begin(); // TODO: begin or end
+			if constexpr(err)
+				return std::pair<char_type,bool>{0, true};
+			else
+				throw eof();
+		}
+		if constexpr(err)
+			return std::pair<char_type,bool>{static_cast<char_type>(*tmp.begin()), false};
+		else
+			return static_cast<char_type>(*tmp.begin());
+	}
+	if constexpr(err)
+		return std::pair<char_type,bool>{(*ctr.plaintext_buf_pos++), false};
+	else
+		return static_cast<char_type>(*ctr.plaintext_buf_pos++);
 }
 
 template <output_stream T, typename Enc,std::contiguous_iterator Iter>

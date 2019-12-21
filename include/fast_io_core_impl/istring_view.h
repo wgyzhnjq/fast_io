@@ -55,25 +55,28 @@ inline constexpr Iter receive(basic_istring_view<T>& istrvw,Iter begin,Iter end)
 	return begin+cped*sizeof(*begin)/sizeof(typename T::value_type);
 }
 
-template<typename T>
-inline constexpr typename T::value_type get(basic_istring_view<T>& istrvw)
+template<bool err=false,typename T>
+inline constexpr auto get(basic_istring_view<T>& istrvw)
 {
+	if(istrvw.empty())
+	{
+		if constexpr(err)
+			return std::pair<typename T::value_type,bool>{0,true};
+		else
+		{
 #ifdef __EXCEPTIONS
-	if(istrvw.empty())
 		throw eof();
+#else
+		std::terminate();
 #endif
+		}
+	}
 	auto ch(istrvw.str().front());
 	istrvw.str().remove_prefix(1);
-	return ch;
-}
-template<typename T>
-inline constexpr std::pair<typename T::value_type,bool> try_get(basic_istring_view<T>& istrvw)
-{
-	if(istrvw.empty())
-		return {0,true};
-	auto ch(istrvw.str().front());
-	istrvw.str().remove_prefix(1);
-	return {ch,false};
+	if constexpr(err)
+		return std::pair<typename T::value_type,bool>{ch,false};
+	else
+		return ch;
 }
 
 using istring_view = basic_istring_view<std::string_view>;

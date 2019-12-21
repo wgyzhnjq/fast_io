@@ -79,28 +79,25 @@ inline void send(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 		throw std::system_error(errno,std::generic_category());
 }
 
-inline std::pair<char,bool> try_get(c_style_io_handle_unlocked& cfhd)
+template<bool err=false>
+inline auto get(c_style_io_handle_unlocked& cfhd)
 {
 	auto ch(_fgetc_nolock(cfhd.native_handle()));
 	if(ch==EOF)
 	{
 		if(std::feof(cfhd.native_handle()))
-			return {0,true};
+		{
+			if constexpr(err)
+				return std::pair<char,bool>{0,true};
+			else
+				throw eof();
+		}
 		throw std::system_error(errno,std::system_category());
 	}
-	return {std::char_traits<char>::to_char_type(ch),false};
-}
-
-inline char get(c_style_io_handle_unlocked& cfhd)
-{
-	auto ch(_fgetc_nolock(cfhd.native_handle()));
-	if(ch==EOF)
-	{
-		if(std::feof(cfhd.native_handle()))
-			throw eof();
-		throw std::system_error(errno,std::system_category());
-	}
-	return ch;
+	if constexpr(err)
+		return std::pair<char,bool>{std::char_traits<char>::to_char_type(ch),false};
+	else
+		return std::char_traits<char>::to_char_type(ch);
 }
 
 inline void put(c_style_io_handle_unlocked& cfhd,char ch)
@@ -192,28 +189,25 @@ inline void send(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 		throw std::system_error(errno,std::generic_category());
 }
 
-inline std::pair<char,bool> try_get(c_style_io_handle_unlocked& cfhd)
+template<bool err=false>
+inline auto get(c_style_io_handle_unlocked& cfhd)
 {
 	auto ch(fgetc_unlocked(cfhd.native_handle()));
 	if(ch==EOF)
 	{
 		if(feof_unlocked(cfhd.native_handle()))
-			return {0,true};
+		{
+			if constexpr(err)
+				return std::pair<char,bool>{0,true};
+			else
+				throw fast_io::eof();
+		}
 		throw std::system_error(errno,std::system_category());
 	}
-	return {std::char_traits<char>::to_char_type(ch),false};
-}
-
-inline char get(c_style_io_handle_unlocked& cfhd)
-{
-	auto ch(fgetc_unlocked(cfhd.native_handle()));
-	if(ch==EOF)
-	{
-		if(feof_unlocked(cfhd.native_handle()))
-			throw eof();
-		throw std::system_error(errno,std::system_category());
-	}
-	return ch;
+	if constexpr(err)
+		return std::pair<char,bool>{std::char_traits<char>::to_char_type(ch),false};
+	else
+		return std::char_traits<char>::to_char_type(ch);
 }
 
 inline void put(c_style_io_handle_unlocked& cfhd,char ch)
@@ -365,28 +359,25 @@ inline void send(c_style_io_handle& cfhd,Iter begin,Iter end)
 		throw std::system_error(errno,std::generic_category());
 }
 
-inline std::pair<char,bool> try_get(c_style_io_handle& cfhd)
+template<bool err=false>
+inline auto get(c_style_io_handle& cfhd)
 {
 	auto ch(fgetc(cfhd.native_handle()));
 	if(ch==EOF)
 	{
 		if(feof(cfhd.native_handle()))
-			return {0,true};
+		{
+			if constexpr(err)
+				return std::pair<char,bool>{0,true};
+			else
+				throw eof();
+		}
 		throw std::system_error(errno,std::system_category());
 	}
-	return {std::char_traits<char>::to_char_type(ch),false};
-}
-
-inline char get(c_style_io_handle& cfhd)
-{
-	auto ch(fgetc(cfhd.native_handle()));
-	if(ch==EOF)
-	{
-		if(feof(cfhd.native_handle()))
-			throw eof();
-		throw std::system_error(errno,std::system_category());
-	}
-	return ch;
+	if constexpr(err)
+		return std::pair<char,bool>{std::char_traits<char>::to_char_type(ch),false};
+	else
+		return std::char_traits<char>::to_char_type(ch);
 }
 
 inline void put(c_style_io_handle& cfhd,char ch)

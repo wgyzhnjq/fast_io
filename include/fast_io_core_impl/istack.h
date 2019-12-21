@@ -84,7 +84,7 @@ inline constexpr Iter receive(istack<Ihandler,N>& ib,Iter begin,Iter end)
 	return begin+(details::istack::internal_mreceive(ib,b,static_cast<char_type*>(static_cast<void*>(std::to_address(end))))-b)/sizeof(*begin);
 }
 
-template<input_stream Ihandler,std::size_t N>
+template<bool err=false,input_stream Ihandler,std::size_t N>
 inline constexpr auto get(istack<Ihandler,N>& ib)
 {
 	if(ib.end==ib.curr)		//cache miss
@@ -92,26 +92,17 @@ inline constexpr auto get(istack<Ihandler,N>& ib)
 		if((ib.end=receive(ib.native_handle(),ib.array.data(),ib.array.data()+ib.array.size()))==ib.array.data())
 		{
 			ib.curr=ib.array.data();
-			throw eof();
+			if constexpr(err)
+				return std::pair<typename istack<Ihandler,N>::char_type,bool>{0,true};
+			else
+				throw eof();
 		}
 		ib.curr=ib.array.data();
 	}
-	return *ib.curr++;
-}
-
-template<input_stream Ihandler,std::size_t N>
-inline constexpr std::pair<typename istack<Ihandler,N>::char_type,bool> try_get(istack<Ihandler,N>& ib)
-{
-	if(ib.end==ib.curr)		//cache miss
-	{
-		if((ib.end=receive(ib.native_handle(),ib.array.data(),ib.array.data()+ib.array.size()))==ib.array.data())
-		{
-			ib.curr=ib.array.data();
-			return {0,true};
-		}
-		ib.curr=ib.array.data();
-	}
-	return {*ib.curr++,false};
+	if constexpr(err)
+		return std::pair<typename istack<Ihandler,N>::char_type,bool>{*ib.curr++,false}
+	else
+		return *ib.curr++;
 }
 
 template<input_stream Ihandler,std::size_t N,typename... Args>

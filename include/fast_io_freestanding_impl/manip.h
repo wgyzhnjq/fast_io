@@ -8,14 +8,14 @@ inline void scan_define(input& in,std::basic_string<typename input::char_type> &
 {
 	str.clear();
 	str.push_back(eat_space_get(in));
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&!details::isspace(ch.first);str.push_back(ch.first));
+	for(decltype(get<true>(in)) ch;!(ch=get<true>).second&&!details::isspace(ch.first);str.push_back(ch.first));
 }
 
 template<character_input_stream input>
 inline void getline(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xA;str.push_back(ch.first));
+	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&ch.first!=0xA;str.push_back(ch.first));
 }
 
 
@@ -23,14 +23,14 @@ template<character_input_stream input>
 inline void getcarriage(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xD;str.push_back(ch.first));
+	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&ch.first!=0xD;str.push_back(ch.first));
 }
 
 template<character_input_stream input>
 inline void getwhole(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second;str.push_back(ch.first));
+	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second;str.push_back(ch.first));
 }
 
 template<character_output_stream output,std::size_t indent_width,bool left,char ch,typename T>

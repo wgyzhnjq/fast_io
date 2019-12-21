@@ -54,24 +54,22 @@ inline Iter receive(streambuf_view<T>& t,Iter begin,Iter end)
 	return begin+(t.native_handle()->sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
 }
 
-template<typename T>
-inline typename T::char_type get(streambuf_view<T>& t)
+template<bool err=false,typename T>
+inline auto get(streambuf_view<T>& t)
 {
 	using traits_type = typename T::traits_type;
 	auto ch(t.native_handle()->sbumpc());
 	if(ch==traits_type::eof())
-		throw std::runtime_error("try to get() from EOF stream view");
-	return traits_type::to_char_type(ch);
-}
-
-template<typename T>
-inline std::pair<typename T::char_type,bool> try_get(streambuf_view<T>& t)
-{
-	using traits_type = typename T::traits_type;
-	auto ch(t.native_handle()->sbumpc());
-	if(ch==traits_type::eof())
-		return {0,true};
-	return {traits_type::to_char_type(ch),false};
+	{
+		if constexpr(err)
+			return std::pair<typename T::char_type,bool>{0,true};
+		else
+			throw fast_io::eof();
+	}
+	if constexpr(err)
+		return std::pair{traits_type::to_char_type(ch),false};
+	else
+		return traits_type::to_char_type(ch);
 }
 
 template<typename T>

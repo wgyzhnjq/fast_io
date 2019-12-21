@@ -20,17 +20,11 @@ public:
 	constexpr auto& native_handle() {return t;}
 };
 
-template<character_input_stream T,output_stream out>
+template<bool err=false,character_input_stream T,output_stream out>
 inline constexpr auto get(tie<T,out>& t)
 {
 	flush(t.to());
-	return get(t.native_handle());
-}
-template<character_input_stream T,output_stream out>
-inline constexpr auto try_get(tie<T,out>& t)
-{
-	flush(t.to());
-	return try_get(t.native_handle());
+	return get<err>(t.native_handle());
 }
 
 template<character_output_stream T,output_stream out>
@@ -96,18 +90,11 @@ inline constexpr void flush(self_tie<T>& t)
 	flush(t.native_handle());
 }
 
-template<character_input_stream T>
+template<bool err=false,character_input_stream T>
 inline constexpr auto get(self_tie<T>& t)
 {
 	flush(t);
-	return get(t.native_handle());
-}
-
-template<character_input_stream T>
-inline constexpr auto try_get(self_tie<T>& t)
-{
-	flush(t);
-	return try_get(t.native_handle());
+	return get<err>(t.native_handle());
 }
 
 template<character_output_stream T>

@@ -50,7 +50,7 @@ public:
 		return ib;
 	}
 };
-
+/*
 template<character_input_stream T,bool sys>
 constexpr inline auto get(text_view<T,sys>& input)
 {
@@ -72,27 +72,46 @@ constexpr inline auto get(text_view<T,sys>& input)
 	}
 	return ch;
 }
-
-template<character_input_stream T,bool sys>
-constexpr inline std::pair<typename T::char_type,bool> try_get(text_view<T,sys>& input)
+*/
+template<bool err=false,character_input_stream T,bool sys>
+constexpr inline auto get(text_view<T,sys>& input)
 {
 	if(input.state.state)
 	{
 		input.state.state=false;
-		return {input.state.internal_character,false};
+		if constexpr(err)
+			return std::pair<typename T::char_type,bool>{input.state.internal_character,false};
+		else
+			return input.state.internal_character;
 	}
-	auto ch(try_get(input.native_handle()));
-	if(ch.second)
-		return {0,true};
-	if(ch.first==0xD)
+	auto ch(get<err>(input.native_handle()));
+	if constexpr(err)
 	{
-		auto internal(try_get(input.native_handle()));
-		if(internal.second)
-			return ch;
-		if(internal.first==0xA)
-			return internal;
-		input.state.state=true;
-		input.state.internal_character=internal.first;
+		if(ch.second)
+			return std::pair<typename T::char_type,bool>{0,true};
+		if(ch.first==0xD)
+		{
+			auto internal(get<true>(input.native_handle()));
+			if(internal.second)
+				return ch;
+			if(internal.first==0xA)
+				return internal;
+			input.state.state=true;
+			input.state.internal_character=internal.first;
+		}
+	}
+	else
+	{
+		if(ch==0xD)
+		{
+			auto internal(get<true>(input.native_handle()));
+			if(internal.second)
+				return ch;
+			if(internal.first==0xA)
+				return internal.first;
+			input.state.state=true;
+			input.state.internal_character=internal.first;
+		}
 	}
 	return ch;
 }

@@ -64,24 +64,22 @@ inline Iter receive(stream_view<T>& t,Iter begin,Iter end)
 	return begin+(t.native_handle().sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
 }
 
-template<fast_io::stream_view_details::istream_concept_impl T>
-inline typename T::char_type get(stream_view<T>& t)
+template<bool err=false,fast_io::stream_view_details::istream_concept_impl T>
+inline auto get(stream_view<T>& t)
 {
 	using traits_type = typename T::traits_type;
 	auto ch(t.native_handle().get());
 	if(ch==traits_type::eof())
-		throw std::runtime_error("try to get() from EOF stream view");
-	return traits_type::to_char_type(ch);
-}
-
-template<fast_io::stream_view_details::istream_concept_impl T>
-inline std::pair<typename T::char_type,bool> try_get(stream_view<T>& t)
-{
-	using traits_type = typename T::traits_type;
-	auto ch(t.native_handle().get());
-	if(ch==traits_type::eof())
-		return {0,true};
-	return {traits_type::to_char_type(ch),false};
+	{
+		if constexpr(err)
+			return std::pair<typename T::char_type,bool>{0,true};
+		else
+			throw fast_io::eof();
+	}
+	if constexpr(err)
+		return std::pair<typename T::char_type,bool>{traits_type::to_char_type(ch),false};
+	else
+		return traits_type::to_char_type(ch);
 }
 
 template<fast_io::stream_view_details::ostream_concept_impl T>

@@ -196,7 +196,7 @@ inline constexpr Iter receive(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 	}
 }
 
-template<input_stream Ihandler,typename Buf>
+template<bool err=false,input_stream Ihandler,typename Buf>
 inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 {
 	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
@@ -210,32 +210,17 @@ inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
 		{
 			ib.ibuffer.curr=ib.ibuffer.beg;
-			throw eof();
+			if constexpr(err)
+				return std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool>{0,true};
+			else
+				throw eof();
 		}
 		ib.ibuffer.curr=ib.ibuffer.beg;
 	}
-	return *ib.ibuffer.curr++;
-}
-
-template<input_stream Ihandler,typename Buf>
-inline constexpr std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool> try_get(basic_ibuf<Ihandler,Buf>& ib)
-{
-	using buffer_type = typename basic_ibuf<Ihandler,Buf>::buffer_type;
-	if(ib.ibuffer.end==ib.ibuffer.curr)[[unlikely]]		//cache miss
-	{
-		if(ib.ibuffer.end==nullptr)
-		{
-			ib.ibuffer.init_space();
-			ib.ibuffer.curr=ib.ibuffer.end=ib.ibuffer.beg;
-		}
-		if((ib.ibuffer.end=receive(ib.native_handle(),ib.ibuffer.beg,ib.ibuffer.beg+buffer_type::size))==ib.ibuffer.beg)
-		{
-			ib.ibuffer.curr=ib.ibuffer.beg;
-			return {0,true};
-		}
-		ib.ibuffer.curr=ib.ibuffer.beg;
-	}
-	return {*ib.ibuffer.curr++,false};
+	if constexpr(err)
+		return std::pair<typename basic_ibuf<Ihandler,Buf>::char_type,bool>{*ib.ibuffer.curr++,false};
+	else
+		return *ib.ibuffer.curr++;
 }
 
 template<input_stream Ihandler,typename Buf,typename... Args>
@@ -516,9 +501,10 @@ public:
 	{
 		return receive(iob.ibf,begin,end);
 	}
+	template<bool err=false>
 	friend inline constexpr auto get(basic_iobuf& iob)
 	{
-		return get(iob.ibf);
+		return get<err>(iob.ibf);
 	}
 	friend inline constexpr auto& ibuffer(basic_iobuf& iob)
 	{
@@ -540,10 +526,6 @@ public:
 	friend inline constexpr auto& obuffer(basic_iobuf& iob)
 	{
 		return obuffer(iob.ibf.native_handle());
-	}
-	friend inline constexpr auto try_get(basic_iobuf& iob)
-	{
-		return try_get(iob.ibf);
 	}
 	friend inline constexpr void fill_nc(basic_iobuf& ob,std::size_t count,char_type const& ch)
 	{

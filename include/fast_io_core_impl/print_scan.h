@@ -23,7 +23,7 @@ template<character_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
 {
 	std::size_t skipped(0);
-	for(decltype(try_get(in)) ch;!(ch=try_get(in)).second&&ch.first!=0xA;++skipped);
+	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
 	return skipped;
 }
 
@@ -38,8 +38,8 @@ inline constexpr auto eat_space_get(input& in)
 template<character_input_stream input>
 inline constexpr auto try_eat_space_get(input& in)
 {
-	auto ch(try_get(in));
-	for(;details::isspace(ch.first);ch=try_get(in));
+	auto ch(get<true>(in));
+	for(;details::isspace(ch.first);ch=get<true>(in));
 	return ch;
 }
 
@@ -306,14 +306,7 @@ inline constexpr void normal_fprint(output &out,std::basic_string_view<ch_type> 
 {
 	fprint_impl(out,mv,std::forward<Args>(args)...);
 }
-/*
-template<output_stream output,typename ...Args>
-requires((std::same_as<typename output::char_type,char>)&&(printable<output,Args>&&...))
-inline constexpr void normal_fprint(output &out,std::u8string_view mv,Args&& ...args)
-{
-	fprint_impl(out,mv.data(),std::forward<Args>(args)...);
-}
-*/
+
 }
 
 template<output_stream output,typename ...Args>

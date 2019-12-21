@@ -130,16 +130,13 @@ public:
 	auto& key_istrview() {return istr;}
 };
 
-template<character_input_stream T,typename strT>
-inline constexpr auto try_get(ione_time_pad<T,strT>& oon)
-{
-	return oon.mmtry_get();
-}
-
-template<character_input_stream T,typename strT>
+template<bool err=false,character_input_stream T,typename strT>
 inline constexpr auto get(ione_time_pad<T,strT>& oon)
 {
-	return oon.mmget();
+	if constexpr(err)
+		return oon.mmtry_get();
+	else
+		return oon.mmget();
 }
 
 template<character_input_stream T,typename strT,std::contiguous_iterator Iter>

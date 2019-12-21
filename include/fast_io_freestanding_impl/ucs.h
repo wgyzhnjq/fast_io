@@ -71,7 +71,7 @@ public:
 	}
 	constexpr std::pair<char_type,bool> mmtry_get() requires character_input_stream<T>
 	{
-		auto ch(try_get(ib));
+		auto ch(get<true>(ib));
 		if(ch.second)
 			return {0,true};
 		return {get_impl(ch.first),false};
@@ -123,17 +123,15 @@ inline constexpr void send(ucs<T,char_type>& uc,Iter b,Iter e)
 	define_send_by_put(uc,b,e);
 }
 
-template<character_input_stream T,typename char_type>
+template<bool err=false,character_input_stream T,typename char_type>
 inline constexpr auto get(ucs<T,char_type>& uc)
 {
-	return uc.mmget();
+	if constexpr(err)
+		return uc.mmtry_get();
+	else
+		return uc.mmget();
 }
 
-template<character_input_stream T,typename char_type>
-inline constexpr auto try_get(ucs<T,char_type>& uc)
-{
-	return uc.mmtry_get();
-}
 
 template<character_input_stream T,typename char_type,std::forward_iterator Iter>
 inline constexpr Iter receive(ucs<T,char_type>& uc,Iter b,Iter e)

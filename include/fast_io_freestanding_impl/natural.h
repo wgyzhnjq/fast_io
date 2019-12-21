@@ -874,7 +874,7 @@ inline constexpr void input_base_number_phase2_natural(input& in,natural& a)
 	unsigned_char_type constexpr baseed(std::min(static_cast<unsigned_char_type>(base),static_cast<unsigned_char_type>(10)));
 	while(true)
 	{
-		unsigned_char_type ch(try_get(in).first);
+		unsigned_char_type ch(get<true>(in).first);
 		if((ch-=48)<baseed)
 		{
 			a*=base;

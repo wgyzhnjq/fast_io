@@ -38,8 +38,7 @@ concept mutex_stream_impl = requires(T& t)
 template<typename T>
 concept character_input_stream_impl = requires(T& in)
 {
-	{get(in)};
-	{try_get(in)};
+	get(in);
 };
 
 template<typename T>

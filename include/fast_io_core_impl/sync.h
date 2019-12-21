@@ -70,20 +70,12 @@ inline constexpr Iter receive(basic_sync<input,ostr>& sync,Iter begin,Iter end)
 	flush(sync);
 	return receive(sync.native_handle(),begin,end);
 }
-template<io_stream input,typename ostr>
+template<bool err=false,io_stream input,typename ostr>
 requires character_input_stream<input>
 inline constexpr auto get(basic_sync<input,ostr>& sync)
 {
 	flush(sync);
-	return get(sync.native_handle());
-}
-
-template<io_stream input,typename ostr>
-requires character_input_stream<input>
-inline constexpr auto try_get(basic_sync<input,ostr>& sync)
-{
-	flush(sync);
-	return try_get(sync.native_handle());
+	return get<err>(sync.native_handle());
 }
 
 template<output_stream output,typename ostr>

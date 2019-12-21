@@ -67,16 +67,10 @@ inline constexpr decltype(auto) mutex(io_ref<T>& t)
 	return mutex(*t);
 }
 
-template<character_input_stream input>
+template<bool err=false,character_input_stream input>
 inline constexpr auto get(io_ref<input>& in)
 {
-	return get(*in);
-}
-
-template<character_input_stream input>
-inline constexpr auto try_get(io_ref<input>& in)
-{
-	return try_get(*in);
+	return get<err>(*in);
 }
 
 template<character_output_stream output>
