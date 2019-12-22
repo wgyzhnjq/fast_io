@@ -251,7 +251,7 @@ public:
 class posix_pipe
 {
 public:
-	using posix_io_handle::char_type;
+	using char_type = char;
 	using native_handle_type = std::array<posix_pipe_unique,2>;
 private:
 	native_handle_type pipes;
