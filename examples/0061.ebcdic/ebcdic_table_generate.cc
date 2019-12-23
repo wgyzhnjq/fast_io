@@ -8,10 +8,10 @@ try
 	fast_io::obuf ob(u8"gen.txt");
 	for(std::size_t i{};i!=128;++i)
 	{
-		std::string line;
+		std::u8string line;
 		getline(ib,line);
-		fast_io::istring_view isv(line);
-		std::string a,b;
+		fast_io::u8istring_view isv(line);
+		std::u8string a,b;
 		scan(isv,a,b);
 		println(ob,u8"case 0x",a,u8":return 0x",b,u8";");
 	}
