@@ -204,7 +204,7 @@ requires std::same_as<T,std::int32_t>
 inline constexpr Iter output_exp(T exp,Iter result)
 {
 	if constexpr(uppercase_e)
-		*result=0X65;
+		*result=0x41;
 	else
 		*result=0x65;
 	++result;
