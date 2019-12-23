@@ -300,6 +300,13 @@ inline void fprint_impl(os &out,std::basic_string_view<ch_type> format,T&& cr,Ar
 	fprint_impl(out,format,std::forward<Args>(args)...);
 }
 
+template<output_stream output,typename ...Args>
+requires(printable<output,Args>&&...)
+inline constexpr void normal_fprint(output &out,std::basic_string_view<typename output::char_type> mv,Args&& ...args)
+{
+	fprint_impl(out,mv,std::forward<Args>(args)...);
+}
+
 }
 
 template<output_stream output,typename ...Args>

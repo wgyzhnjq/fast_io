@@ -5,7 +5,7 @@
 int main()
 {
 	using namespace fast_io;
-	fast_io::obuf ob("test_ucs.txt");
+	fast_io::obuf ob(u8"test_ucs.txt");
 	for(char32_t i(0);i!=1000000;++i)
 	{
 		std::u32string str(1,i);
