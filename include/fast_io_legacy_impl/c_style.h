@@ -161,9 +161,12 @@ inline auto get(c_style_io_handle_unlocked& cfhd)
 		throw std::system_error(errno,std::system_category());
 	}
 	if constexpr(err)
-		return std::pair<typename c_style_io_handle_unlocked::char_type,bool>{std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(static_cast<typename c_style_io_handle_unlocked::char_type>(ch))};
+		return std::pair<typename c_style_io_handle_unlocked::char_type,bool>
+		{
+			std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(ch),false
+		};
 	else
-		return std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(static_cast<typename c_style_io_handle_unlocked::char_type>(ch));
+		return std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(ch);
 }
 
 inline void put(c_style_io_handle_unlocked& cfhd,typename c_style_io_handle_unlocked::char_type ch)
@@ -259,7 +262,7 @@ class c_style_io_handle
 public:
 	using lock_guard_type = c_style_io_lock_guard;
 	c_style_io_handle(std::FILE* fpp):fp(fpp){}
-	using char_type = char8_t;
+	using char_type = char;
 	using native_handle_type = std::FILE*;
 	native_handle_type& native_handle()
 	{
@@ -352,9 +355,12 @@ inline auto get(c_style_io_handle& cfhd)
 		throw std::system_error(errno,std::system_category());
 	}
 	if constexpr(err)
-		return std::pair<typename c_style_io_handle_unlocked::char_type,bool>{std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(static_cast<typename c_style_io_handle_unlocked::char_type>(ch))};
+		return std::pair<typename c_style_io_handle::char_type,bool>
+		{
+			std::char_traits<typename c_style_io_handle::char_type>::to_char_type(ch),false
+		};
 	else
-		return std::char_traits<typename c_style_io_handle_unlocked::char_type>::to_char_type(static_cast<typename c_style_io_handle_unlocked::char_type>(ch));
+		return std::char_traits<typename c_style_io_handle::char_type>::to_char_type(ch);
 }
 
 inline void put(c_style_io_handle& cfhd,typename c_style_io_handle::char_type ch)
