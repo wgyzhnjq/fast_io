@@ -2,5 +2,5 @@
 
 int main()
 {
-	print(fast_io::out,"sdgsadgasdg\n");
+	print(fast_io::out,u8"sdgsadgasdg\n");
 }

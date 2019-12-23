@@ -48,8 +48,8 @@ try
 	{
 	cqw::timer t("speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
-		std::array<uint8_t, 16>{'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'},
-		std::array<uint8_t, 8>{'1','2','3','4','1','2','3','4'},"speckdb.txt");
+		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
+		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speckdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(enc_stream,fast_io::scientific<M>(vec[i]));
 	}

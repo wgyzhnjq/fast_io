@@ -6,9 +6,9 @@ try
 {
 	auto out_backup(fast_io::out);
 	fast_io::out=fast_io::osystem_file("file.txt");
-	println(fast_io::out,"Hello World");
+	println(fast_io::out,u8"Hello World");
 	fast_io::out=out_backup;
-	println(fast_io::out,"HA, I AM BACK HAHAHA. YOU FOOLISH STDIO.H AND IOSTREAM CANNOT EVEN RECOVER FROM FREOPEN");
+	println(fast_io::out,u8"HA, I AM BACK HAHAHA. YOU FOOLISH STDIO.H AND IOSTREAM CANNOT EVEN RECOVER FROM FREOPEN");
 }
 catch(std::exception const& e)
 {

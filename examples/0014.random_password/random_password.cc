@@ -27,6 +27,6 @@ int main()
 			else
 				put(ob,ch-36+'A');
 		}
-		put(ob,'\n');
+		put(ob,u8'\n');
 	}
 }

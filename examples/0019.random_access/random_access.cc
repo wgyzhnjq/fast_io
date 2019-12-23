@@ -8,10 +8,10 @@ int main()
 	char ch;
 	scan(ib,char_view(ch));
 	put(out,ch);
-	put(out,'\n');
+	put(out,u8'\n');
 	seek(ib,seek_type<std::uint32_t>,-1,seekdir::end);
 	scan(ib,char_view(ch));
 	put(out,ch);
-	put(out,'\n');
+	put(out,u8'\n');
 	seek(ib.std::size_t(-1));
 }

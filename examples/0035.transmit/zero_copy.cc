@@ -8,7 +8,7 @@ try
 {
 	if(argc!=3)
 	{
-		fprint(fast_io::err,"Usage: % <source> <dest>\n",*argv);
+		fprint(fast_io::err,u8"Usage: % <source> <dest>\n",*argv);
 		return 1;
 	}
 	std::string_view source_filename(argv[1]),dest_filename(argv[2]);
@@ -19,7 +19,7 @@ try
 		fast_io::system_file dest(dest_filename,fast_io::open::interface<fast_io::open::c_style("wbx")>);
 		transmitted_bytes=zero_copy_transmit(dest,source);
 	}
-	fprint(fast_io::out,"Zero Copy % --> % Done (% bytes)\nTime elasped: %s\n",
+	fprint(fast_io::out,u8"Zero Copy % --> % Done (% bytes)\nTime elasped: %s\n",
 				source_filename,dest_filename,transmitted_bytes,
 				std::chrono::high_resolution_clock::now()-t0);
 }

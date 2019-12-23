@@ -7,7 +7,7 @@ int main()
 try
 {
 	using namespace std::string_view_literals;
-	std::array<std::string_view,2> constexpr argv{"ps"sv,"-A"sv};
+	std::array<std::string_view,2> constexpr argv{"ps"sv,u8"-A"sv};
 	fast_io::obuf process_log("process_log.txt");
 	fast_io::native_stderr() = fast_io::system_file("process_error_log.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::binary>);
 	fast_io::pipe pipe;
@@ -41,7 +41,7 @@ try
 				pipe.in().close();
 				pipe_process_cat_map.in().close();
 				fast_io::native_stdout()=pipe_process_cat_map.out();
-				std::array<std::string_view,2> const cat_argv{"cat"sv,fast_io::concat<>("/proc/",process_id,"/maps")};
+				std::array<std::string_view,2> const cat_argv{"cat"sv,fast_io::concat<>("/proc/",process_id,u8"/maps")};
 				linux_apis::execve("/bin/cat",cat_argv);
 				return 0;
 			}

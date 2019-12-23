@@ -24,7 +24,8 @@ class win32_error : public std::runtime_error
 			buffer.size(),
 			nullptr));
 			if (buffer_length)
-				return ucs_to_utf8(std::wstring_view(buffer.data(),buffer_length));
+				return {};
+//				return ucs_to_utf8(std::wstring_view(buffer.data(),buffer_length));
 		}
 		return {};
 	}

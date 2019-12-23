@@ -2,5 +2,5 @@
 
 int main()
 {
-	fprint(fast_io::out,"Hello World\n");
+	fprint(fast_io::out,u8"Hello World\n");
 }

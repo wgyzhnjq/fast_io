@@ -7,7 +7,7 @@ int main()
 try
 {
 	fast_io::client_buf hd(fast_io::dns_once("www.jszg.edu.cn"),80,fast_io::sock::type::stream);
-	print(hd,"GET /portal/home/index HTTP/1.1\r\n"
+	print(hd,u8"GET /portal/home/index HTTP/1.1\r\n"
 		"Host:www.jszg.edu.cn\r\n"
 		"User-agent:whatever\r\n"
 		"Accept-Type:*/*\r\n"

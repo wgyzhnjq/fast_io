@@ -6,5 +6,5 @@ int main()
 	fast_io::ostring os;
 	print(os,sz);
 	std::string str(std::move(os.str()));			//YES. You can move string from ostring!
-	println(fast_io::out,"convert from std::size_t 23623643: ",str);
+	println(fast_io::out,u8"convert from std::size_t 23623643: ",str);
 }

@@ -8,13 +8,13 @@ int main()
 		cqw::timer tmr("fill_nc w");
 		fast_io::obuf ob("fill_nc.txt");
 		for(std::size_t i(0);i!=N;++i)
-			fill_nc(ob,s,'0');
+			fill_nc(ob,s,u8'0');
 	}
 	{
 		cqw::timer tmr("loop_put w");
 		fast_io::obuf ob("loop_put.txt");
 		for(std::size_t i(0);i!=N;++i)
 			for(std::size_t j(0);j!=s;++j)
-				put(ob,'0');
+				put(ob,u8'0');
 	}
 }

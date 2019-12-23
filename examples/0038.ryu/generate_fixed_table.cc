@@ -79,5 +79,5 @@ int main()
 {
 
 	for(auto const & e : split)
-		fprint(fast_io::out,"% % %\n",e[0],e[1],e[2]);
+		fprint(fast_io::out,u8"% % %\n",e[0],e[1],e[2]);
 }

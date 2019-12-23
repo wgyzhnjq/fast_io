@@ -256,7 +256,7 @@ public:
 	posix_pipe(open::interface_t<om>):posix_pipe()
 	{
 		auto constexpr omb(om&~open::binary.value);
-		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),"pipe open mode must be in or out");
+		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),u8"pipe open mode must be in or out");
 		if constexpr (!(om&~open::in.value)&&(om&~open::out.value))
 			pipes.front().close();
 		if constexpr ((om&~open::in.value)&&!(om&~open::out.value))

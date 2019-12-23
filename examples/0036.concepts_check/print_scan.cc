@@ -20,6 +20,6 @@ inline constexpr void printd(Args&& ...args)
 int main()
 {
 	printd();
-//	printd(5,"6");
-//	www(5,"asf");
+//	printd(5,u8"6");
+//	www(5,u8"asf");
 }

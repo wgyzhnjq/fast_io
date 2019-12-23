@@ -11,19 +11,19 @@ try
 {
 	if(argc!=3)
 	{
-		println(fast_io::err,"Usage: ",*argv," <serial> <restore code>");
+		println(fast_io::err,u8"Usage: ",*argv,u8" <serial> <restore code>");
 		return 1;
 	}
 	std::string serial(battlenet::normalize_serial(argv[1]));
 	if(serial.size()!=14)
 	{
-		println(fast_io::err,"Serial should be 14 bytes after normalize");
+		println(fast_io::err,u8"Serial should be 14 bytes after normalize");
 		return 1;
 	}
 	std::string restore_str(battlenet::normalize_serial(argv[2]));
 	if(restore_str.size()!=10)
 	{
-		println(fast_io::err,"Restore should be 10 bytes");
+		println(fast_io::err,u8"Restore should be 10 bytes");
 		return 1;
 	}
 	for(auto & e : restore_str)
@@ -35,8 +35,8 @@ try
 	auto dns_cache(fast_io::dns_once(domain));
 	{
 	fast_io::client_buf hd(dns_cache,80,fast_io::sock::type::stream);
-	print(hd,"POST ",battlenet::restore_path," HTTP/1.1\r\n",
-		"Host: ",domain,"\r\n"
+	print(hd,u8"POST ",battlenet::restore_path,u8" HTTP/1.1\r\n",
+		"Host: ",domain,u8"\r\n"
 		"Content-Type: application/octet-stream\r\n"
 		"Content-Length: 14\r\n"
 		"Timeout: 120\r\n\r\n");
@@ -75,10 +75,10 @@ try
 	auto result(pow_mod(p,exponent,modules));
 	{
 	fast_io::client_buf hd(dns_cache,80,fast_io::sock::type::stream);
-	print(hd,"POST ",battlenet::restore_validate_path," HTTP/1.1\r\n",
-		"Host: ",domain,"\r\n"
+	print(hd,u8"POST ",battlenet::restore_validate_path,u8" HTTP/1.1\r\n",
+		"Host: ",domain,u8"\r\n"
 		"Content-Type: application/octet-stream\r\n"
-		"Content-Length: ",serial.size()+p.vec().size()*8,"\r\n"
+		"Content-Length: ",serial.size()+p.vec().size()*8,u8"\r\n"
 		"Timeout: 1000\r\n\r\n");
 	send(hd,serial.cbegin(),serial.cend());
 	send(hd,p.vec().cbegin(),p.vec().cend());

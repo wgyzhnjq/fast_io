@@ -17,9 +17,9 @@ try
 	std::vector<double> v(N);
 	{
 	cqw::timer t("std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("obufdb.txt","rb"),fclose);
+	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("obufdb.txt",u8"rb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
-		fscanf(fp.get(),"%lf",v.data()+i);
+		fscanf(fp.get(),u8"%lf",v.data()+i);
 	}
 	{
 	cqw::timer t("std::ifstream");
@@ -66,21 +66,21 @@ try
 	}
 	{
 	cqw::timer t("dynamic standard input stream ibuf");
-	fast_io::dynamic_character_input_stream ibuf(std::in_place_type<fast_io::ibuf>,"cfilestardb.txt");
+	fast_io::dynamic_character_input_stream ibuf(std::in_place_type<fast_io::ibuf>,u8"cfilestardb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}
 	{
 	cqw::timer t("ibuf_dynamic isystem_file");
-	fast_io::ibuf_dynamic ibuf(std::in_place_type<fast_io::isystem_file>,"cfilestardb.txt");
+	fast_io::ibuf_dynamic ibuf(std::in_place_type<fast_io::isystem_file>,u8"cfilestardb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}
 	{
 	cqw::timer t("speck128/128");
 	fast_io::crypto::basic_ictr<fast_io::ibuf, fast_io::crypto::speck::speck_dec_128_128> enc_stream(
-		std::array<uint8_t, 16>{'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'},
-		std::array<uint8_t, 8>{'1','2','3','4','1','2','3','4'},"speckdb.txt");
+		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
+		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speckdb.txt");
 	for(auto & e : v)
 		scan(enc_stream,e);
 	}*/

@@ -7,10 +7,10 @@
 int main()
 try
 {
-	std::array<uint8_t, 32> key = {'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4','8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'};
+	std::array<uint8_t, 32> key = {'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4',u8'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'};
 	{
 		fast_io::crypto::basic_oecb<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_256> enc_stream(key, "ecb.out");
-		put(enc_stream,'a');
+		put(enc_stream,u8'a');
 		print(enc_stream, "bc");
 		print(enc_stream, "defghijklmnop12345678123456");
 		print(enc_stream, "78ponmlkjihgfedcba");

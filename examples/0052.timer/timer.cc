@@ -12,7 +12,7 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		fprint(fast_io::err,"%:\t%s\n",s,std::chrono::high_resolution_clock::now()-t0);
+		fprint(fast_io::err,u8"%:\t%s\n",s,std::chrono::high_resolution_clock::now()-t0);
 	}
 };
 
@@ -21,7 +21,7 @@ try
 {
 	if(argc<2)
 	{
-		println(fast_io::err,"Usage: ",*argv," <command>");
+		println(fast_io::err,u8"Usage: ",*argv,u8" <command>");
 		return 1;
 	}
 	timer t(argv[1]);

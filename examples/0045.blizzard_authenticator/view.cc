@@ -10,15 +10,15 @@ try
 {
 	if(argc<2)
 	{
-		println(fast_io::err,"Usage : ",*argv," <filepath>");
+		println(fast_io::err,u8"Usage : ",*argv,u8" <filepath>");
 		return 1;
 	}
 	fast_io::ibuf ib(argv[1]);
 	std::vector<battlenet::key_info> keys;
 	read(ib,keys);
-	println(fast_io::out,"Local Time:\t",std::chrono::system_clock::now());
-	println(fast_io::out,"Count:\t",keys.size());
-	println(fast_io::out,fast_io::dec_split(keys,'\n'));
+	println(fast_io::out,u8"Local Time:\t",std::chrono::system_clock::now());
+	println(fast_io::out,u8"Count:\t",keys.size());
+	println(fast_io::out,fast_io::dec_split(keys,u8'\n'));
 }
 catch(std::exception const& e)
 {

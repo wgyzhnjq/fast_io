@@ -273,7 +273,7 @@ template<output_stream os,typename ch_type,typename ...Args>
 inline void fprint_impl(os &out,std::basic_string_view<ch_type> format)
 {
 	std::size_t percent_pos;
-	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
+	for(;(percent_pos=format.find(0x25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos!=std::string_view::npos)
 		std::terminate();
@@ -284,7 +284,7 @@ template<output_stream os,typename ch_type,typename T,typename ...Args>
 inline void fprint_impl(os &out,std::basic_string_view<ch_type> format,T&& cr,Args&& ...args)
 {
 	std::size_t percent_pos;
-	for(;(percent_pos=format.find(0X25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
+	for(;(percent_pos=format.find(0x25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos==std::string_view::npos)
 	{
@@ -298,13 +298,6 @@ inline void fprint_impl(os &out,std::basic_string_view<ch_type> format,T&& cr,Ar
 	}
 	print(out,std::forward<T>(cr));
 	fprint_impl(out,format,std::forward<Args>(args)...);
-}
-
-template<output_stream output,typename ch_type,typename ...Args>
-requires((std::same_as<typename output::char_type,ch_type>||std::same_as<char8_t,ch_type>)&&(printable<output,Args>&&...))
-inline constexpr void normal_fprint(output &out,std::basic_string_view<ch_type> mv,Args&& ...args)
-{
-	fprint_impl(out,mv,std::forward<Args>(args)...);
 }
 
 }

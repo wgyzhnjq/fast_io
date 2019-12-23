@@ -8,8 +8,8 @@ try
 {
 	//use speck cbc mode to encrypt our communication
 	fast_io::server hd(2000,fast_io::sock::type::stream);
-	std::array<uint8_t, 16> constexpr key {'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'};
-	std::array<uint8_t, 16> constexpr iv {'1','2','3','4','1','2','3','4','1','2','3','4','1','2','3','4'};
+	std::array<uint8_t, 16> constexpr key {'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'};
+	std::array<uint8_t, 16> constexpr iv {'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'};
 	for(;;)
 	try
 	{
@@ -17,8 +17,8 @@ try
 		//fast_io::acceptor_buf accept(hd);
 		std::string const str("☭🚄😀我wubi😄😊😉😍😘😚😜😝😳😁😣😢😂😭😪😥😰😩㍿🀀🀁🀂🀃🀄🀅🀆🀇🀈🀉🀊🀋🀌🀍🀎🀏");
 		
-//		println(accept,"☭🚄😀我wubi😄😊😉😍😘😚😜😝😳😁😣😢😂😭😪😥😰😩㍿🀀🀁🀂🀃🀄🀅🀆🀇🀈🀉🀊🀋🀌🀍🀎🀏");
-		println(fast_io::err,"a client connect to this server");
+//		println(accept,u8"☭🚄😀我wubi😄😊😉😍😘😚😜😝😳😁😣😢😂😭😪😥😰😩㍿🀀🀁🀂🀃🀄🀅🀆🀇🀈🀉🀊🀋🀌🀍🀎🀏");
+		println(fast_io::err,u8"a client connect to this server");
 		print_flush(accept,str);
 	}
 	catch(std::exception const& e)

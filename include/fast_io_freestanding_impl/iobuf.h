@@ -115,6 +115,8 @@ inline constexpr void irelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
 template<output_stream output,input_stream Ihandler,typename Buf>
 inline constexpr void idump(output& out,basic_ibuf<Ihandler,Buf>& ib)
 {
+	if(ib.ibuffer==ib.ibuffer.end)
+		return;
 	send(out,ib.ibuffer.curr,ib.ibuffer.end);
 	ib.ibuffer.curr=ib.ibuffer.end;
 }
@@ -338,13 +340,13 @@ inline constexpr void obuf_send(T& ob,Iter cbegin,Iter cend)
 
 }
 
-template<output_stream Ohandler,typename Buf,std::input_iterator Iter>
+template<output_stream Ohandler,typename Buf,std::contiguous_iterator Iter>
 requires (send_receive_punned_constraints<basic_obuf<Ohandler,Buf>,Iter>)
 inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
 {
 	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
-		details::obuf_send(ob,cbegini,cendi);
+		details::obuf_send(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
 		details::obuf_send<true>(ob,reinterpret_cast<std::byte const*>(std::to_address(cbegini)),
 					reinterpret_cast<std::byte const*>(std::to_address(cendi)));

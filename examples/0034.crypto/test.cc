@@ -5,30 +5,30 @@ class XXX{
     std::string s;
     public:
     XXX(std::string x):s(std::move(x)){
-        println(fast_io::out,"XXX(std::string x)");
+        println(fast_io::out,u8"XXX(std::string x)");
     }
     XXX(XXX const& x):s(x.s){
 
-        println(fast_io::out,"XXX(XXX const& x)");
+        println(fast_io::out,u8"XXX(XXX const& x)");
     }
     XXX(XXX&& x) noexcept:s(std::move(x.s)) 
     {
         
-        println(fast_io::out,"XXX(XXX&& x)");
+        println(fast_io::out,u8"XXX(XXX&& x)");
     }
     XXX& operator=(XXX const& x) {
-        println(fast_io::out,"XXX& operator=(XXX const& x)");
+        println(fast_io::out,u8"XXX& operator=(XXX const& x)");
         return *this;
     }
     XXX& operator=(XXX&& x)noexcept {
-        println(fast_io::out,"XXX& operator=(XXX&& x)");
+        println(fast_io::out,u8"XXX& operator=(XXX&& x)");
         return *this;
     }
     ~XXX()
     {
         
         
-        println(fast_io::out,"~XXX");
+        println(fast_io::out,u8"~XXX");
     }
 };
 
@@ -59,6 +59,6 @@ struct UUU {
 int main() {
         
         
-        println(fast_io::out,"ZZZ");
+        println(fast_io::out,u8"ZZZ");
         UUU a{XXX(XXX("aaaa"))};
 }

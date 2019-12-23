@@ -5,7 +5,7 @@ int main()
 try
 {
 	fast_io::streambuf_view cout_view(std::cout.rdbuf());
-	println(cout_view,"Hello World\n");
+	println(cout_view,u8"Hello World\n");
 }
 catch(std::exception const & e)
 {

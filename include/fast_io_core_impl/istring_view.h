@@ -79,6 +79,6 @@ inline constexpr auto get(basic_istring_view<T>& istrvw)
 		return ch;
 }
 
-using istring_view = basic_istring_view<std::string_view>;
+using u8istring_view = basic_istring_view<std::u8string_view>;
 
 }

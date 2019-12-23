@@ -21,7 +21,7 @@ public:
 	{
 		try
 		{
-			println(fast_io::err,s,":\t",std::chrono::high_resolution_clock::now()-t0,fast_io::char_view('s'));
+			println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0,fast_io::char_view('s'));
 		}
 		catch(...)
 		{

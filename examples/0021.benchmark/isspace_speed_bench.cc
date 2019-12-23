@@ -73,7 +73,7 @@ inline constexpr bool fastisspacerev3(T ch)
 }
 int main()
 {
-	std::array<char,4> a={'a','e','f',105};
+	std::array<char,4> a={'a',u8'e',u8'f',105};
 	std::size_t constexpr N(100000000);
 	std::size_t v(0);
 /*	{
@@ -85,7 +85,7 @@ int main()
 		}
 	}*/
 	
-	static_assert(fastisspacerev2(' '),"false");
+	static_assert(fastisspacerev2(' '),u8"false");
 	{
 		cqw::timer t("misspace1");
 		for(std::size_t i(0);i!=N;++i)

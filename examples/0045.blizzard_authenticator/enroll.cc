@@ -11,7 +11,7 @@ try
 {
 	if(argc!=3)
 	{
-		println(fast_io::err,"Usage: ",*argv," <US/KR/EU/TW/CN> [stored file path]");
+		println(fast_io::err,u8"Usage: ",*argv,u8" <US/KR/EU/TW/CN> [stored file path]");
 		return 1;
 	}
 	auto const region_array(battlenet::upper_case_region(argv[1]));
@@ -62,10 +62,10 @@ try
 	}
 
 	fast_io::client_buf hd(fast_io::dns_once(domain),80,fast_io::sock::type::stream);
-	print(hd,"POST ",battlenet::enroll_path," HTTP/1.1\r\n",
-		"Host: ",domain,"\r\n"
+	print(hd,u8"POST ",battlenet::enroll_path,u8" HTTP/1.1\r\n",
+		"Host: ",domain,u8"\r\n"
 		"Content-Type: application/octet-stream\r\n"
-		"Content-Length: ",result.vec().size()*8,"\r\n"
+		"Content-Length: ",result.vec().size()*8,u8"\r\n"
 		"Timeout: 10000\r\n\r\n");
 	send(hd,result.vec());
 	skip_http_header(hd);

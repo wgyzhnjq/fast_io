@@ -15,7 +15,7 @@ try
 //THIS IS A WRONG BENCHMARK!!! You can basically manipulate the result by changing order
 	{
 	cqw::timer t("std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
+	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt",u8"wb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
 		fwrite(vec.data(),sizeof(decltype(vec)::value_type),vec.size(),fp.get());
 	}
@@ -61,13 +61,13 @@ try
 	}
 	{
 	cqw::timer t("dynamic obuf");
-	fast_io::dynamic_character_output_stream dobuf(std::in_place_type<fast_io::obuf>,"dynamic_obuf.txt");
+	fast_io::dynamic_character_output_stream dobuf(std::in_place_type<fast_io::obuf>,u8"dynamic_obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
 		send(dobuf,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("iobuf_dynamic system_file");
-	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::osystem_file>,"iobuf_dynamic_system_file.txt");
+	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::osystem_file>,u8"iobuf_dynamic_system_file.txt");
 	for(std::size_t i(0);i!=N;++i)
 		send(dobuf,vec.cbegin(),vec.cend());
 	}

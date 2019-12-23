@@ -1,9 +1,9 @@
 	.file	"linux_freestanding_number_output.cc"
 	.text
-	.section	.rodata._ZNK7fast_io3eof4whatEv.str1.1,"aMS",@progbits,1
+	.section	.rodata._ZNK7fast_io3eof4whatEv.str1.1,u8"aMS",@progbits,1
 .LC0:
 	.string	"EOF"
-	.section	.text._ZNK7fast_io3eof4whatEv,"axG",@progbits,_ZNK7fast_io3eof4whatEv,comdat
+	.section	.text._ZNK7fast_io3eof4whatEv,u8"axG",@progbits,_ZNK7fast_io3eof4whatEv,comdat
 	.align 2
 	.p2align 4
 	.weak	_ZNK7fast_io3eof4whatEv
@@ -16,7 +16,7 @@ _ZNK7fast_io3eof4whatEv:
 	.cfi_endproc
 .LFE4071:
 	.size	_ZNK7fast_io3eof4whatEv, .-_ZNK7fast_io3eof4whatEv
-	.section	.text._ZN7fast_io3eofD2Ev,"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
+	.section	.text._ZN7fast_io3eofD2Ev,u8"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
 	.align 2
 	.p2align 4
 	.weak	_ZN7fast_io3eofD2Ev
@@ -31,7 +31,7 @@ _ZN7fast_io3eofD2Ev:
 	.size	_ZN7fast_io3eofD2Ev, .-_ZN7fast_io3eofD2Ev
 	.weak	_ZN7fast_io3eofD1Ev
 	.set	_ZN7fast_io3eofD1Ev,_ZN7fast_io3eofD2Ev
-	.section	.text._ZN7fast_io3eofD0Ev,"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
+	.section	.text._ZN7fast_io3eofD0Ev,u8"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
 	.align 2
 	.p2align 4
 	.weak	_ZN7fast_io3eofD0Ev
@@ -53,7 +53,7 @@ _ZN7fast_io3eofD0Ev:
 	.cfi_endproc
 .LFE4786:
 	.size	_ZN7fast_io3eofD0Ev, .-_ZN7fast_io3eofD0Ev
-	.section	.text.unlikely,"ax",@progbits
+	.section	.text.unlikely,u8"ax",@progbits
 .LCOLDB2:
 	.text
 .LHOTB2:
@@ -122,7 +122,7 @@ _start:
 	jne	.L14
 	jmp	.L10
 	.globl	__gxx_personality_v0
-	.section	.gcc_except_table,"a",@progbits
+	.section	.gcc_except_table,u8"a",@progbits
 .LLSDA4339:
 	.byte	0xff
 	.byte	0xff
@@ -167,14 +167,14 @@ _start.cold:
 	.text
 .LHOTE2:
 	.weak	_ZTSN7fast_io3eofE
-	.section	.rodata._ZTSN7fast_io3eofE,"aG",@progbits,_ZTSN7fast_io3eofE,comdat
+	.section	.rodata._ZTSN7fast_io3eofE,u8"aG",@progbits,_ZTSN7fast_io3eofE,comdat
 	.align 8
 	.type	_ZTSN7fast_io3eofE, @object
 	.size	_ZTSN7fast_io3eofE, 15
 _ZTSN7fast_io3eofE:
 	.string	"N7fast_io3eofE"
 	.weak	_ZTIN7fast_io3eofE
-	.section	.rodata._ZTIN7fast_io3eofE,"aG",@progbits,_ZTIN7fast_io3eofE,comdat
+	.section	.rodata._ZTIN7fast_io3eofE,u8"aG",@progbits,_ZTIN7fast_io3eofE,comdat
 	.align 8
 	.type	_ZTIN7fast_io3eofE, @object
 	.size	_ZTIN7fast_io3eofE, 24
@@ -183,7 +183,7 @@ _ZTIN7fast_io3eofE:
 	.quad	_ZTSN7fast_io3eofE
 	.quad	_ZTISt9exception
 	.weak	_ZTVN7fast_io3eofE
-	.section	.rodata._ZTVN7fast_io3eofE,"aG",@progbits,_ZTVN7fast_io3eofE,comdat
+	.section	.rodata._ZTVN7fast_io3eofE,u8"aG",@progbits,_ZTVN7fast_io3eofE,comdat
 	.align 8
 	.type	_ZTVN7fast_io3eofE, @object
 	.size	_ZTVN7fast_io3eofE, 40
@@ -193,10 +193,10 @@ _ZTVN7fast_io3eofE:
 	.quad	_ZN7fast_io3eofD1Ev
 	.quad	_ZN7fast_io3eofD0Ev
 	.quad	_ZNK7fast_io3eof4whatEv
-	.section	.rodata.cst16,"aM",@progbits,16
+	.section	.rodata.cst16,u8"aM",@progbits,16
 	.align 16
 .LC1:
 	.quad	7522264139816006497
 	.quad	3560209233811170409
 	.ident	"GCC: (cqwrteur) 10.0.0 20191105 (experimental)"
-	.section	.note.GNU-stack,"",@progbits
+	.section	.note.GNU-stack,u8"",@progbits

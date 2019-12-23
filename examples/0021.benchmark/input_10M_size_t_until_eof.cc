@@ -14,7 +14,7 @@ try
 	std::ifstream fin("cfilestar.txt",std::ifstream::binary);
 	std::size_t count(0);
 	for(std::size_t v;fin>>v;++count);
-	println(fast_io::out,"ifstream: ",count);
+	println(fast_io::out,u8"ifstream: ",count);
 	}
 /*	{
 	cqw::timer t("streambuf_view for std::ifstream");
@@ -27,7 +27,7 @@ try
 		scan(view,temp);
 	}
 	catch(fast_io::eof const &){}
-	println(fast_io::out,"streambuf_view for ifstream: ",count);
+	println(fast_io::out,u8"streambuf_view for ifstream: ",count);
 	}*/
 	{
 	cqw::timer t("ibuf");
@@ -39,7 +39,7 @@ try
 		scan(ibuf,temp);
 	}
 	catch(fast_io::eof const &){}
-	println(fast_io::out,"ibuf: ",count);
+	println(fast_io::out,u8"ibuf: ",count);
 	}
 }
 catch(std::exception const& e)

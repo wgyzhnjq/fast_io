@@ -3,5 +3,5 @@
 int main()
 {
 	fast_io::obuf_mutex obuf("file_hello_world.txt");
-	println(obuf,"Hello World!");
+	println(obuf,u8"Hello World!");
 }

@@ -19,7 +19,7 @@ int main()
 				break;
 			value+=str.size();
 		}
-		println(fast_io::out,"ifstream:",value);
+		println(fast_io::out,u8"ifstream:",value);
 	}
 	{
 		cqw::timer t("ibuf");
@@ -35,6 +35,6 @@ int main()
 		}
 		}
 		catch(fast_io::eof const&){}
-		println(fast_io::out,"ibuf:",value);
+		println(fast_io::out,u8"ibuf:",value);
 	}
 }

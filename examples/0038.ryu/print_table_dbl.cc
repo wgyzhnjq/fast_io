@@ -713,31 +713,31 @@ template<bool controller>
 requires (controller)
 struct pow5<float,controller>
 {
-inline static constexpr std::array<std::uint64_t,)abcdef",std::size(FLOAT_POW5_INV_SPLIT),"> inv_split={");
+inline static constexpr std::array<std::uint64_t,)abcdef",std::size(FLOAT_POW5_INV_SPLIT),u8"> inv_split={");
 bool first{true};
 for(auto const & e : FLOAT_POW5_INV_SPLIT)
 {
 	if(first)
 		first=false;
 	else
-		put(ob,',');
+		put(ob,u8',u8');
 	if(e<1677216)
 		print(ob,e);
 	else
-		print(ob,"0x",fast_io::hexupper(e));
+		print(ob,u8"0x",fast_io::hexupper(e));
 }
 first=true;
-print(ob,"};\ninline static constexpr std::array<std::uint64_t,",std::size(FLOAT_POW5_SPLIT),"> split={");
+print(ob,u8"};\ninline static constexpr std::array<std::uint64_t,u8",std::size(FLOAT_POW5_SPLIT),u8"> split={");
 for(auto const & e : FLOAT_POW5_SPLIT)
 {
 	if(first)
 		first=false;
 	else
-		put(ob,',');
+		put(ob,u8',u8');
 	if(e<1677216)
 		print(ob,e);
 	else
-		print(ob,"0x",fast_io::hexupper(e));
+		print(ob,u8"0x",fast_io::hexupper(e));
 }
 
 print(ob,R"abcdef(};
@@ -747,49 +747,49 @@ template<bool controller>
 requires (controller)
 struct pow5<double,controller>
 {
-inline static constexpr std::array<std::array<std::uint64_t,2>,)abcdef",std::size(DOUBLE_POW5_INV_SPLIT),"> inv_split={{");
+inline static constexpr std::array<std::array<std::uint64_t,2>,)abcdef",std::size(DOUBLE_POW5_INV_SPLIT),u8"> inv_split={{");
 	first=true;
 	for(auto const & e : DOUBLE_POW5_INV_SPLIT)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
-	print(ob,"}};\ninline static constexpr std::array<std::array<std::uint64_t,2>,",std::size(DOUBLE_POW5_SPLIT),"> split={{");
+	print(ob,u8"}};\ninline static constexpr std::array<std::array<std::uint64_t,2>,u8",std::size(DOUBLE_POW5_SPLIT),u8"> split={{");
 	first=true;
 	for(auto const & e : DOUBLE_POW5_SPLIT)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
 print(ob,R"abcdef(}};
 };
@@ -798,78 +798,78 @@ template<bool controller>
 requires (controller)
 struct pow5<long double,controller>
 {
-inline static constexpr std::array<std::uint64_t,)abcdef",std::size(POW5_ERRORS),"> errors={");
+inline static constexpr std::array<std::uint64_t,)abcdef",std::size(POW5_ERRORS),u8"> errors={");
 	first=true;
 	for(auto const & e : POW5_ERRORS)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
+			put(ob,u8',u8');
 		if(e<1677216)
 			print(ob,e);
 		else
-			print(ob,"0x",fast_io::hexupper(e));
+			print(ob,u8"0x",fast_io::hexupper(e));
 	}
-	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,4>,",std::size(GENERIC_POW5_SPLIT),"> split={{");
+	print(ob,u8"};\ninline static constexpr std::array<std::array<std::uint64_t,4>,u8",std::size(GENERIC_POW5_SPLIT),u8"> split={{");
 	first=true;
 	for(auto const & e : GENERIC_POW5_SPLIT)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
-	print(ob,"}};\ninline static constexpr std::array<std::uint64_t,",std::size(POW5_INV_ERRORS),"> inv_errors={");
+	print(ob,u8"}};\ninline static constexpr std::array<std::uint64_t,u8",std::size(POW5_INV_ERRORS),u8"> inv_errors={");
 	first=true;
 	for(auto const & e : POW5_INV_ERRORS)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
+			put(ob,u8',u8');
 		if(e<1677216)
 			print(ob,e);
 		else
-			print(ob,"0x",fast_io::hexupper(e));
+			print(ob,u8"0x",fast_io::hexupper(e));
 	}
 print(ob,R"abcdef(};
-inline static constexpr std::array<std::array<std::uint64_t,4>,)abcdef",std::size(GENERIC_POW5_INV_SPLIT),"> inv_split={{");
+inline static constexpr std::array<std::array<std::uint64_t,4>,)abcdef",std::size(GENERIC_POW5_INV_SPLIT),u8"> inv_split={{");
 	first=true;
 	for(auto const & e : GENERIC_POW5_INV_SPLIT)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
-	print(ob,"}};\n};\n}");
+	print(ob,u8"}};\n};\n}");
 }
 
 

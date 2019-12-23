@@ -10,7 +10,7 @@ try
 	fast_io::text_view<fast_io::ibuf> text_file("text.txt");
 	std::string text_file_content;
 	getwhole(text_file,text_file_content);
-	println(fast_io::out,"same? ",binary_file_content==text_file_content);
+	println(fast_io::out,u8"same? ",binary_file_content==text_file_content);
 }
 catch(std::exception const & e)
 {

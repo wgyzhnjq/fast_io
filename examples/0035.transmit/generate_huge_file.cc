@@ -2,5 +2,5 @@
 
 int main()
 {
-	fill_nc(fast_io::obuf("generated_file.txt"),10000000000ull,'a');
+	fill_nc(fast_io::obuf("generated_file.txt"),10000000000ull,u8'a');
 }

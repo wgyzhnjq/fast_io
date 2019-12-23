@@ -6,7 +6,7 @@ int main()
 try
 {
 	fast_io::obuf ob("tied.txt");
-	fast_io::tie<fast_io::ibuf,fast_io::obuf> ib(ob,"not_existing_file.txt");
+	fast_io::tie<fast_io::ibuf,fast_io::obuf> ib(ob,u8"not_existing_file.txt");
 	ob<<"35\n";
 	std::size_t d;
 	ib>>d;

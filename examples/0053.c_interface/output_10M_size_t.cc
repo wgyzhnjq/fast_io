@@ -16,9 +16,9 @@ try
 	std::size_t constexpr N(10000000);
 	{
 	cqw::timer t("std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
+	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt",u8"wb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp.get(),"%zu\n",i);
+		fprintf(fp.get(),u8"%zu\n",i);
 	}
 	{
 	cqw::timer t("std::ofstream");
@@ -57,7 +57,7 @@ try
 		auto [p,ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),i);
 		*p='\n';
 		send(obuf,buffer.data(),++p);
-//		put(obuf,'\n');
+//		put(obuf,u8'\n');
 	}
 	}
 	{
@@ -69,22 +69,22 @@ try
 	{
 	cqw::timer t("fast_io c interface");
 	void *handle;
-	cxx_fast_io_acquire_buf(std::addressof(handle),"c_interface.txt","wb");
+	cxx_fast_io_acquire_buf(std::addressof(handle),u8"c_interface.txt",u8"wb");
 	for(std::size_t i(0);i!=N;++i)
 	{
 		cxx_fast_io_println_size_t(handle,i);
-//		cxx_fast_io_print_c_str(handle,"\n");
+//		cxx_fast_io_print_c_str(handle,u8"\n");
 	}
 	cxx_fast_io_release(handle);
 	}
 	{
 	cqw::timer t("fast_io c interface bufferred");
 	void *handle;
-	cxx_fast_io_bufferred_acquire_file(std::addressof(handle),"c_interfacebufferred.txt","wb");
+	cxx_fast_io_bufferred_acquire_file(std::addressof(handle),u8"c_interfacebufferred.txt",u8"wb");
 	for(std::size_t i(0);i!=N;++i)
 	{
 		cxx_fast_io_bufferred_println_size_t(handle,i);
-//		cxx_fast_io_bufferred_put(handle,'\n');
+//		cxx_fast_io_bufferred_put(handle,u8'\n');
 	}
 	cxx_fast_io_bufferred_release(handle);
 	}

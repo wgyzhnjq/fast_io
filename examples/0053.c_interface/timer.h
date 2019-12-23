@@ -19,7 +19,7 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		fprintf(stderr,"%s:\t%.8fs\n",s.c_str(),std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()-t0).count());
+		fprintf(stderr,u8"%s:\t%.8fs\n",s.c_str(),std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()-t0).count());
 	}
 };
 

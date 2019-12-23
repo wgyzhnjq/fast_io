@@ -38,7 +38,7 @@ int main()
 			sum-=std::pow(10.0,vec[i]);
 		else
 			sum+=std::pow(10.0,vec[i]);
-	fprintf(stderr,"%f\n",sum);
+	fprintf(stderr,u8"%f\n",sum);
 }
 
 {
@@ -49,7 +49,7 @@ int main()
 			sum-=mpow10(10.0,vec[i]);
 		else
 			sum+=mpow10(10.0,vec[i]);
-	fprintf(stderr,"%f\n",sum);
+	fprintf(stderr,u8"%f\n",sum);
 
 }
 

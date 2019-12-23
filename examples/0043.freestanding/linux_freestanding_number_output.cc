@@ -10,7 +10,7 @@ void _start() noexcept
 {
 	std::array<char,10000> arr;
 	fast_io::ospan out(arr);
-	println(out,"asdhasdhidasogh120asfas\n");
+	println(out,u8"asdhasdhidasogh120asfas\n");
 	auto isv(to_istring_view(out));
 	int value(5);
 	scan(isv,value);

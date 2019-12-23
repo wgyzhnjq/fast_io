@@ -12,14 +12,14 @@ fast_io::sync_mutex file_log("log.txt",fast_io::open::interface<fast_io::open::o
 void log_func(std::size_t thread_number)
 {
 	for(std::size_t i(0);i!=10000;++i)
-		println_flush(file_log,"Process",fast_io::width<5>(process_tag)," Thread",fast_io::width<5>(thread_number)," Loop",fast_io::width<5>(i));
+		println_flush(file_log,u8"Process",fast_io::width<5>(process_tag),u8" Thread",fast_io::width<5>(thread_number),u8" Loop",fast_io::width<5>(i));
 }
 
 int main(int argc,char **argv)
 {
 	if(argc!=2)
 	{
-		print(fast_io::err,"Usage: ",*argv," <process tag>\n");
+		print(fast_io::err,u8"Usage: ",*argv,u8" <process tag>\n");
 		return 1;
 	}
 	process_tag=argv[1];

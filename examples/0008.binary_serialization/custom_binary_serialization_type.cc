@@ -38,9 +38,9 @@ int main()
 	read(ib,f);
 
 //output content
-	print(fast_io::out,"str: ",f.str,"\nvec:");
+	print(fast_io::out,u8"str: ",f.str,u8"\nvec:");
 	for(auto const & e : f.vec)
-		print(fast_io::out,e,"\t");
+		print(fast_io::out,e,u8"\t");
 	println(fast_io::out);
 	}
 }

@@ -15,9 +15,9 @@ int main()
 
 	auto d1("12342352364363462436432624362358129402424248"_n), d2("12342352364363462436432624362358129402424248"_n), mod("11451419198103777777777777"_n);
 	mod *= mod;
-	//println(fast_io::out,"mod:",mod);
+	//println(fast_io::out,u8"mod:",mod);
 	auto ret = pow_mod(d1, d2, mod);
 	
-	println(fast_io::out,"ret:",ret);
+	println(fast_io::out,u8"ret:",ret);
 
 }

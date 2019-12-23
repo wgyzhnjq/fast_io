@@ -78,7 +78,7 @@ class client:public socket
 {
 	address_info cinfo;
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	template<typename T,std::integral U,typename ...Args>
 	client(T const& add,U u,Args&& ...args):socket(family(add),std::forward<Args>(args)...),cinfo{to_socket_address_storage(add,u),sizeof(socket_address_storage)}
 	{
@@ -168,7 +168,7 @@ class acceptor:public socket
 	address_info cinfo;
 public:
 	using native_handle_type = sock::details::socket_type;
-	using char_type = char;
+	using char_type = char8_t;
 	acceptor(server& listener_socket)
 	{
 		protected_native_handle()=sock::details::accept(listener_socket.native_handle().native_handle(),cinfo.storage,cinfo.storage_size);

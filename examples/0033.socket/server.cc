@@ -10,8 +10,8 @@ try
 	try
 	{
 		fast_io::acceptor_buf accept(hd);
-		println(fast_io::out,"a client connect to this server");
-		print_flush(accept,"hello world\n");
+		println(fast_io::out,u8"a client connect to this server");
+		print_flush(accept,u8"hello world\n");
 	}
 	catch(std::exception const & e)
 	{

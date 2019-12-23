@@ -21,7 +21,7 @@ int main()
 			sum-=std::floor(vec[i]);
 		else
 			sum+=std::floor(vec[i]);
-	fprintf(stderr,"%f\n",sum);
+	fprintf(stderr,u8"%f\n",sum);
 }
 
 {
@@ -32,7 +32,7 @@ int main()
 			sum-=std::trunc(vec[i]);
 		else
 			sum+=std::trunc(vec[i]);
-	fprintf(stderr,"%f\n",sum);
+	fprintf(stderr,u8"%f\n",sum);
 
 }
 

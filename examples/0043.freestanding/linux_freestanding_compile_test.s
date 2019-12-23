@@ -14,4 +14,4 @@ _start:
 .LFE4339:
 	.size	_start, .-_start
 	.ident	"GCC: (cqwrteur) 10.0.0 20191105 (experimental)"
-	.section	.note.GNU-stack,"",@progbits
+	.section	.note.GNU-stack,u8"",@progbits

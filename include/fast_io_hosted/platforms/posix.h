@@ -1,9 +1,13 @@
 #pragma once
-#include<unistd.h>
+
+#if defined(__WINNT__) || defined(_MSC_VER)
+#include<io.h>
+#endif
 #include<fcntl.h>
 #ifdef __linux__
 #include<sys/sendfile.h>
 #endif
+
 namespace fast_io
 {
 	
@@ -23,7 +27,7 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 	}
 	if(value&excl.value)
 	{
-		mode |= O_CREAT  | O_EXCL;
+		mode |= O_CREAT | O_EXCL;
 		value &= ~excl.value;
 	}
 	if(value&trunc.value)
@@ -67,7 +71,7 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 		return mode | O_RDWR | O_CREAT | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
-		throw std::runtime_error("unknown posix file openmode");
+		throw std::runtime_error(reinterpret_cast<char const*>(u8"unknown posix file openmode"));
 	}
 }
 template<std::size_t om>
@@ -86,19 +90,15 @@ protected:
 		if(fd!=-1)
 			close(fd);
 	}
-	auto& protected_native_handle()
-	{
-		return fd;
-	}
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	using native_handle_type = int;
-	native_handle_type native_handle()
+	native_handle_type& native_handle()
 	{
 		return fd;
 	}
-	posix_io_handle() = default;
-	posix_io_handle(int fdd):fd(fdd){}
+	constexpr posix_io_handle() = default;
+	constexpr posix_io_handle(int fdd):fd(fdd){}
 	posix_io_handle(posix_io_handle const& dp):fd(dup(dp.fd))
 	{
 		if(fd<0)
@@ -112,7 +112,7 @@ public:
 		fd=newfd;
 		return *this;
 	}
-	posix_io_handle(posix_io_handle&& b) noexcept : posix_io_handle(b.fd)
+	constexpr posix_io_handle(posix_io_handle&& b) noexcept : posix_io_handle(b.fd)
 	{
 		b.fd = -1;
 	}
@@ -126,7 +126,13 @@ public:
 		}
 		return *this;
 	}
-	void swap(posix_io_handle& o) noexcept
+#if defined(__WINNT__) || defined(_MSC_VER)
+	explicit operator win32_io_handle() const
+	{
+		return static_cast<win32_io_handle>(_get_osfhandle(fd));
+	}
+#endif
+	constexpr void swap(posix_io_handle& o) noexcept
 	{
 		using std::swap;
 		swap(fd,o.fd);
@@ -188,44 +194,47 @@ inline void swap(posix_io_handle& a,posix_io_handle& b) noexcept
 
 class posix_file:public posix_io_handle
 {
+#if defined(__WINNT__) || defined(_MSC_VER)
+	using mode_t = int;
+#endif
 public:
 	using char_type = posix_io_handle::char_type;
 	using native_handle_type = posix_io_handle::native_handle_type;
 	template<typename ...Args>
 	requires requires(Args&& ...args)
 	{
-		{::open(std::forward<Args>(args)...)}->std::same_as<int>;
+		{::_open(std::forward<Args>(args)...)}->std::same_as<int>;
 	}
-	posix_file(native_interface_t,Args&& ...args):posix_io_handle(::open(std::forward<Args>(args)...))
+	posix_file(native_interface_t,Args&& ...args):posix_io_handle(::_open(std::forward<Args>(args)...))
 	{
 		if(native_handle()==-1)
 			throw std::system_error(errno,std::generic_category());
 	}
 	template<std::size_t om,perms pm>
-	posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	posix_file(std::u8string_view file,open::interface_t<om>,perms_interface_t<pm>):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	posix_file(std::string_view file,open::interface_t<om>):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
+	posix_file(std::u8string_view file,open::interface_t<om>):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	posix_file(std::string_view file,open::interface_t<om>,perms pm):posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	posix_file(std::u8string_view file,open::interface_t<om>,perms pm):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	//potential support modification prv in the future
-	posix_file(std::string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):posix_file(native_interface,file.data(),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
+	posix_file(std::u8string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
 	{
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
-	posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):posix_file(file,fast_io::open::c_style(mode),pm){}
+	posix_file(std::u8string_view file,std::u8string_view mode,perms pm=static_cast<perms>(420)):posix_file(file,fast_io::open::c_style(mode),pm){}
 	~posix_file()
 	{
 		posix_io_handle::close_impl();
@@ -240,7 +249,7 @@ public:
 	void close()
 	{
 		posix_io_handle::close_impl();
-		protected_native_handle() = -1;
+		native_handle() = -1;
 	}
 	~posix_pipe_unique()
 	{
@@ -251,7 +260,7 @@ public:
 class posix_pipe
 {
 public:
-	using char_type = char;
+	using char_type = char8_t;
 	using native_handle_type = std::array<posix_pipe_unique,2>;
 private:
 	native_handle_type pipes;
@@ -269,7 +278,7 @@ public:
 	posix_pipe(open::interface_t<om>):posix_pipe()
 	{
 		auto constexpr omb(om&~open::binary.value);
-		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),"pipe open mode must be in or out");
+		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),u8"pipe open mode must be in or out");
 		if constexpr (!(om&~open::in.value)&&(om&~open::out.value))
 			pipes.front().close();
 		if constexpr ((om&~open::in.value)&&!(om&~open::out.value))
@@ -327,13 +336,9 @@ inline auto zero_copy_out_handle(posix_pipe& h)
 }
 #endif
 
-using system_file = posix_file;
-using system_io_handle = posix_io_handle;
-using system_pipe_unique = posix_pipe_unique;
-using system_pipe = posix_pipe;
-inline int constexpr native_stdin_number = 0;
-inline int constexpr native_stdout_number = 1;
-inline int constexpr native_stderr_number = 2;
+inline int constexpr posix_stdin_number = 0;
+inline int constexpr posix_stdout_number = 1;
+inline int constexpr posix_stderr_number = 2;
 #ifdef __linux__
 
 //zero copy IO for linux
@@ -382,5 +387,18 @@ inline std::size_t zero_copy_transmit(output& outp,input& inp)
 	}
 }
 #endif
+
+inline constexpr posix_io_handle posix_stdin()
+{
+	return posix_stdin_number;
+}
+inline constexpr posix_io_handle posix_stdout()
+{
+	return posix_stdout_number;
+} 
+inline constexpr posix_io_handle posix_stderr()
+{
+	return posix_stderr_number;
+}
 
 }

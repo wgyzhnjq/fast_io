@@ -11,16 +11,16 @@ inline constexpr void output_floating(double const dd)
 	std::uint64_t exponent((k.u<<static_cast<std::uint64_t>(1))>>static_cast<std::uint64_t>(53));
 	std::uint64_t constexpr fractionfield((static_cast<std::uint64_t>(1)<<static_cast<std::uint64_t>(52))-static_cast<std::uint64_t>(1));
 	std::uint64_t fraction(k.u&fractionfield);
-	println(fast_io::out,"u:",fast_io::setw(64,fast_io::bin(k.u),'0'));
-	println(fast_io::out,"sign:",sign);
-	println(fast_io::out,"exponent:",exponent," exponent:",fast_io::setw(11,fast_io::bin(exponent),'0'));
-	println(fast_io::out,"fraction:",fraction," bin:",fast_io::setw(52,fast_io::bin(fraction),'0'));
+	println(fast_io::out,u8"u:",fast_io::setw(64,fast_io::bin(k.u),u8'0'));
+	println(fast_io::out,u8"sign:",sign);
+	println(fast_io::out,u8"exponent:",exponent,u8" exponent:",fast_io::setw(11,fast_io::bin(exponent),u8'0'));
+	println(fast_io::out,u8"fraction:",fraction,u8" bin:",fast_io::setw(52,fast_io::bin(fraction),u8'0'));
 	if(1023<=exponent)
 	{
 		std::uint64_t ep(exponent-1023);
 		std::uint64_t intpart((fraction>>(52-ep))|(1<<ep));
-		println(fast_io::out,"real exponent:",ep);
-		println(fast_io::out,"intpart:",intpart);
+		println(fast_io::out,u8"real exponent:",ep);
+		println(fast_io::out,u8"intpart:",intpart);
 	}
 }
 

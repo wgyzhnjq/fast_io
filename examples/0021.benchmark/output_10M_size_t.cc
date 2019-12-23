@@ -15,19 +15,19 @@ try
 {
 	std::size_t constexpr N(10000000);
 	{
-	cqw::timer t("std::FILE*");
+	cqw::timer t(u8"std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(fp.get(),"%zu\n",i);
 	}
 	{
-	cqw::timer t("std::ofstream");
+	cqw::timer t(u8"std::ofstream");
 	std::ofstream fout("ofstream.txt",std::ofstream::binary);
 	for(std::size_t i(0);i!=N;++i)
 		fout<<i<<'\n';
 	}
 	{
-	cqw::timer t("std::ofstream with tricks");
+	cqw::timer t(u8"std::ofstream with tricks");
 	std::ofstream fout("ofstream_tricks.txt",std::ofstream::binary);
 	auto &rdbuf(*fout.rdbuf());
 	for(std::size_t i(0);i!=N;++i)
@@ -37,7 +37,7 @@ try
 	}
 	}
 	{
-	cqw::timer t("std::to_chars + ofstream rdbuf tricks");
+	cqw::timer t(u8"std::to_chars + ofstream rdbuf tricks");
 	std::ofstream fout("ofstream_to_chars_tricks.txt",std::ofstream::binary);
 	auto &rdbuf(*fout.rdbuf());
 	std::array<char, 50> buffer;
@@ -49,92 +49,91 @@ try
 	}
 	}
 	{
-	cqw::timer t("std::to_chars + obuf");
-	fast_io::obuf obuf("std_to_chars_obuf.txt");
+	cqw::timer t(u8"std::to_chars + obuf");
+	fast_io::obuf obuf(u8"std_to_chars_obuf.txt");
 	std::array<char, 50> buffer;
 	for(std::size_t i(0);i!=N;++i)
 	{
 		auto [p,ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),i);
 		*p='\n';
 		send(obuf,buffer.data(),++p);
-//		put(obuf,'\n');
 	}
 	}
 	{
-	cqw::timer t("obuf");
-	fast_io::obuf obuf("obuf.txt");
+	cqw::timer t(u8"obuf");
+	fast_io::obuf obuf(u8"obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
 	{
-	cqw::timer t("obuf text");
-	fast_io::text_view<fast_io::obuf> view("obuf_text.txt");
+	cqw::timer t(u8"obuf text");
+	fast_io::text_view<fast_io::obuf> view(u8"obuf_text.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(view,i);
 	}
 	{
-	cqw::timer t("c_style_file");
-	fast_io::c_style_file cs_file("c_style.txt","wb");
+	cqw::timer t(u8"c_style_file");
+	fast_io::c_style_file cs_file(u8"c_style.txt",u8"wb");
 	
 	for(std::size_t i(0);i!=N;++i)
 		println(cs_file,i);
 	}
 	{
-	cqw::timer t("c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs_file("c_style_unlocked.txt","wb");
+	cqw::timer t(u8"c_style_file_unlocked");
+	fast_io::c_style_file_unlocked cs_file(u8"c_style_unlocked.txt",u8"wb");
 	
 	for(std::size_t i(0);i!=N;++i)
 		println(cs_file,i);
 	}
 	{
-	cqw::timer t("cpp_fout_view");
+	cqw::timer t(u8"cpp_fout_view");
 	std::ofstream fout("cpp_fout_vw.txt",std::ofstream::binary);
 	fast_io::streambuf_view bfv(fout.rdbuf());
 	for(std::size_t i(0);i!=N;++i)
 		println(bfv,i);
 	}
 	{
-	cqw::timer t("cpp_fout");
+	cqw::timer t(u8"cpp_fout");
 	std::ofstream fout("cpp_fout.txt",std::ofstream::binary);
 	fast_io::stream_view stm_vw(fout);
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_vw,i);
 	}
 	{
-	cqw::timer t("obuf ucs_view");
-	fast_io::ucs<fast_io::obuf,char32_t> uv("obuf_ucsview.txt");
+	cqw::timer t(u8"obuf ucs_view");
+	fast_io::ucs<fast_io::obuf,char32_t> uv(u8"obuf_ucsview.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(uv,i);
 	}
 	{
-	cqw::timer t("dynamic obuf");
-	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obuf.txt"));
+	cqw::timer t(u8"dynamic obuf");
+	fast_io::dynamic_stream dobuf(fast_io::obuf(u8"dynamic_obuf.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,i);
 	}
 	{
-	cqw::timer t("iobuf_dynamic system_file");
-	fast_io::dynamic_buf dobuf(std::in_place_type<fast_io::osystem_file>,"iobuf_dynamic_system_file.txt");
+	cqw::timer t(u8"iobuf_dynamic system_file");
+	fast_io::dynamic_buf dobuf(std::in_place_type<fast_io::osystem_file>,u8"iobuf_dynamic_system_file.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,i);
 	}
 	{
-	cqw::timer t("obuf_mutex");
-	fast_io::obuf_mutex obuf("obuf_mutex.txt");
+	cqw::timer t(u8"obuf_mutex");
+	fast_io::obuf_mutex obuf(u8"obuf_mutex.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
 	{
-	cqw::timer t("fsync");
-	fast_io::fsync obuf("fsync.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::trunc>);
+	cqw::timer t(u8"fsync");
+	fast_io::fsync obuf(u8"fsync.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::trunc>);
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
 	{
-	cqw::timer t("speck128/128");
+	cqw::timer t(u8"speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
-		std::array<uint8_t, 16>{'8','3','3','4',';','2','3','4','a','2','c','4',']','0','3','4'},
-		std::array<uint8_t, 8>{'1','2','3','4','1','2','3','4'},"speck.txt");
+		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
+		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speck.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(enc_stream,i);
 	}

@@ -4418,76 +4418,76 @@ inline static constexpr std::array<std::uint16_t,64> offset={)abcdef");
 		if(first)
 			first=false;
 		else
-			put(ob,',');
+			put(ob,u8',u8');
 		print(ob,e);
 	}
-	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,",std::size(POW10_SPLIT),"> split={{");
+	print(ob,u8"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,u8",std::size(POW10_SPLIT),u8"> split={{");
 	first=true;
 	for(auto const & e : POW10_SPLIT)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
-	print(ob,"}};\ninline static constexpr std::array<std::uint8_t,",std::size(MIN_BLOCK_2),"> min_block_2={");
+	print(ob,u8"}};\ninline static constexpr std::array<std::uint8_t,u8",std::size(MIN_BLOCK_2),u8"> min_block_2={");
 	first=true;
 	for(auto const & e : MIN_BLOCK_2)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
+			put(ob,u8',u8');
 		print(ob,e);
 	}
 	first = false;
-	print(ob,"};\ninline static constexpr std::array<std::uint16_t,",std::size(POW10_OFFSET_2),"> offset_2={");
+	print(ob,u8"};\ninline static constexpr std::array<std::uint16_t,u8",std::size(POW10_OFFSET_2),u8"> offset_2={");
 	first=true;
 	for(auto const & e : POW10_OFFSET_2)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
+			put(ob,u8',u8');
 		print(ob,e);
 	}
 	first = true;
-	print(ob,"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,",std::size(POW10_SPLIT_2),"> split_2={{");
+	print(ob,u8"};\ninline static constexpr std::array<std::array<std::uint64_t,3>,u8",std::size(POW10_SPLIT_2),u8"> split_2={{");
 	first=true;
 	for(auto const & e : POW10_SPLIT_2)
 	{
 		if(first)
 			first=false;
 		else
-			put(ob,',');
-		print(ob,"{");
+			put(ob,u8',u8');
+		print(ob,u8"{");
 		std::size_t should_print(std::size(e));
 		for(;should_print-1<std::size(e)&&!e[should_print-1];--should_print);
 		for(std::size_t i(0);i!=should_print;++i)
 		{
 			if(i)
-				put(ob,',');
+				put(ob,u8',u8');
 			if(e[i]<1677216)
 				print(ob,e[i]);
 			else
-				print(ob,"0x",fast_io::hexupper(e[i]));
+				print(ob,u8"0x",fast_io::hexupper(e[i]));
 		}
-		print(ob,"}");
+		print(ob,u8"}");
 	}
-	print(ob,"}};\n};\n}");
+	print(ob,u8"}};\n};\n}");
 }
 
 

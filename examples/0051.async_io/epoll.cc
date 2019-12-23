@@ -26,7 +26,7 @@ try
 					if(*it==ele)
 					{
 						if(get(ele)==fast_io::epoll::event::out)
-							print(*it,"Hello World\n");
+							print(*it,u8"Hello World\n");
 						iter_swap(it,clients.end()-1);
 						clients.pop_back();
 						break;
