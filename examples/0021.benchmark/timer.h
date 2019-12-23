@@ -20,14 +20,7 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		try
-		{
-			println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0,fast_io::char_view(u8's'));
-		}
-		catch(...)
-		{
-
-		}
+		println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
 	}
 };
 

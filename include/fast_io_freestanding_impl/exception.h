@@ -9,7 +9,7 @@ template<character_output_stream output>
 requires (std::same_as<typename output::char_type,char8_t>||std::same_as<typename output::char_type,char>)
 inline void print_define(output& out,std::exception const &e)
 {
-	send(out,std::string_view(e.what()));
+	print(out,from_utf8_unchecked(e.what()));
 }
 
 template<character_output_stream output>
@@ -19,10 +19,7 @@ inline void print_define(output& out,std::system_error const &e)
 	auto const& code(e.code());
 	if constexpr(std::same_as<typename output::char_type,char8_t>)
 	{
-		print(out,u8"std::system_error, value:",code.value(),u8"\tmessage:");
-		send(out,std::string_view(code.message()));
-		print(out,u8"\twhat:");
-		send(out,std::string_view(e.what()));
+		print(out,u8"std::system_error, value:",code.value(),u8"\tmessage:",from_utf8_unchecked(code.message()),u8"\twhat:",from_utf8_unchecked(e.what()));
 	}
 	else if constexpr(std::same_as<typename output::char_type,char>)
 		print(out,"std::system_error, value:",code.value(),"\tmessage:",code.message(),"\twhat:",e.what());

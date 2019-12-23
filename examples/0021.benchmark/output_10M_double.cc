@@ -43,7 +43,7 @@ try
 	}
 	{
 	cqw::timer t(u8"c_style_file");
-	fast_io::c_style_file cs("csfdb.txt","wb");
+	fast_io::c_style_file cs(u8"csfdb.txt",u8"wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
@@ -55,7 +55,7 @@ try
 	}
 	{
 	cqw::timer t(u8"c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
+	fast_io::c_style_file_unlocked cs(u8"csfdb2.txt",u8"wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
@@ -89,7 +89,7 @@ try
 	cqw::timer t(u8"speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
 		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
-		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speckdb.txt");
+		std::array<uint8_t, 8>{u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speckdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(enc_stream,vec[i]);
 	}

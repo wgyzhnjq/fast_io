@@ -75,6 +75,8 @@ class basic_dns
 {
 	addrinfo *result;
 public:
+	template<std::size_t n>
+	basic_dns(char const (&arr)[n])=delete;
 	basic_dns(std::string_view host)
 	{
 		addrinfo hints{};

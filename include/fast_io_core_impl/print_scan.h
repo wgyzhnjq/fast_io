@@ -67,20 +67,6 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 	send(out,str.data(),str.data()+str.size());
 }
 
-template<output_stream output>
-requires (std::same_as<typename output::char_type,char8_t>)
-//due to legacy reasons. We have to treat char strings as utf-8, even on EBIDIC systems
-//(since we do not know whether they link other libraries use ASCII)
-//However, we forbid the char[] literals
-inline constexpr void print_define(output& out,std::basic_string_view<char> str)
-{
-	send(out,str.data(),str.data()+str.size());
-}
-
-template<output_stream output,std::size_t N>
-requires (std::same_as<typename output::char_type,char8_t>)
-inline constexpr void print_define(output& out,char const (&c_str)[N])=delete;
-
 inline namespace print_scan_details
 {
 template<input_stream input,typename ...Args>
