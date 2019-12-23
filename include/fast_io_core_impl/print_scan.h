@@ -68,8 +68,8 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 }
 
 template<output_stream output>
-requires (std::same_as<typename output::char_type,char>)
-inline constexpr void print_define(output& out,std::basic_string_view<char8_t> str)
+requires (std::same_as<typename output::char_type,char8_t>&&u8'Z'=='Z')
+inline constexpr void print_define(output& out,std::basic_string_view<char> str)
 {
 	send(out,str.data(),str.data()+str.size());
 }

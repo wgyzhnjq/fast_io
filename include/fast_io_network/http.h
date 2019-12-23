@@ -16,13 +16,13 @@ inline void get_http_header_split(input& in,std::basic_string<typename input::ch
 template<fast_io::character_input_stream input>
 inline constexpr auto scan_http_header(input& in)
 {
-	std::unordered_map<std::string,std::string> results;
-	for(std::string str,a,b;;)
+	std::unordered_map<std::u8string,std::u8string> results;
+	for(std::u8string str,a,b;;)
 	{
 		getline(in,str);
 		if(str.size()<2)
 			return results;
-		fast_io::istring_view isv(str);
+		fast_io::u8istring_view isv(str);
 		get_http_header_split(isv,a);
 		if(a.back()==0x3a)
 			a.pop_back();

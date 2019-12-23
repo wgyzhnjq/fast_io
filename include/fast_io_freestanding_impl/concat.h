@@ -2,7 +2,7 @@
 
 namespace fast_io
 {
-//potential constexpr in the future if std::string can be constexpr
+//potential constexpr in the future if std::u8string can be constexpr
 
 template<typename T=std::u8string,typename... Args>
 inline constexpr T concat(Args&& ...args)

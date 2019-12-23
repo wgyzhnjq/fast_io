@@ -55,7 +55,7 @@ namespace details
 			memcpy(ret.storage.data(), std::addressof(addr.sin6_addr), sizeof(ret.storage));
 			return address(ret);
 		}
-		throw std::runtime_error("unknown family");
+		throw std::runtime_error(reinterpret_cast<char const*>(u8"unknown family"));
 	}
 	inline constexpr dns_iterator& operator++(dns_iterator& a)
 	{
@@ -81,6 +81,8 @@ public:
 		hints.ai_family = static_cast<fast_io::sock::details::address_family>(fam);
 		fast_io::sock::details::getaddrinfo(host.data(), nullptr, std::addressof(hints), std::addressof(result));
 	}
+	basic_dns(std::u8string_view host):basic_dns({reinterpret_cast<char const*>(host.data()),host.size()})
+	{}
 	constexpr auto& get_result()
 	{
 		return result;
