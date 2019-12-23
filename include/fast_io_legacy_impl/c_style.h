@@ -33,6 +33,53 @@ public:
 #endif
 };
 
+
+
+template<typename... Args>
+requires requires(std::FILE* fp,Args&& ...args)
+{
+	std::fprintf(fp,std::forward<Args>(args)...);
+}
+inline auto fprintf(c_style_io_handle_unlocked& h,Args&& ...args)
+{
+	auto v(
+#if defined(__WINNT__) || defined(_MSC_VER)
+_fprintf_nolock
+#elif defined(_POSIX_SOURCE)
+	fprintf_unlocked
+#else
+	fprintf
+#endif
+(h.native_handle(),std::forward<Args>(args)...));
+// forgetting checking printf/fprintf return value is a common mistake and a huge source of security vulnerability
+	if(v<0)
+		throw std::system_error(errno,std::system_category());
+	return v;
+}
+
+
+template<typename... Args>
+requires requires(std::FILE* fp,Args&& ...args)
+{
+	std::fscanf(fp,std::forward<Args>(args)...);
+}
+inline auto fscanf(c_style_io_handle_unlocked& h,Args&& ...args)
+{
+	auto const v(
+#if defined(__WINNT__) || defined(_MSC_VER)
+_fscanf_nolock
+#elif defined(_POSIX_SOURCE)
+	fscanf_unlocked
+#else
+	fscanf
+#endif
+(h.native_handle(),std::forward<Args>(args)...));
+// forgetting checking scanf/fscanf return value is a common mistake and a huge source of security vulnerability
+	if(v<0)
+		throw std::system_error(errno,std::system_category());
+	return v;
+}
+
 /*
 #ifdef _MSC_VER
 
@@ -397,6 +444,36 @@ public:
 		close_impl();
 	}
 };
+
+template<typename... Args>
+requires requires(std::FILE* fp,Args&& ...args)
+{
+	std::fprintf(fp,std::forward<Args>(args)...);
+}
+inline auto fprintf(c_style_io_handle& h,Args&& ...args)
+{
+	auto v(std::fprintf(h.native_handle(),std::forward<Args>(args)...));
+// forgetting checking printf/fprintf return value is a common mistake and a huge source of security vulnerability
+	if(v<0)
+		throw std::system_error(errno,std::system_category());
+	return v;
+}
+
+
+template<typename... Args>
+requires requires(std::FILE* fp,Args&& ...args)
+{
+	std::fscanf(fp,std::forward<Args>(args)...);
+}
+inline auto fscanf(c_style_io_handle& h,Args&& ...args)
+{
+	auto v(std::fscanf(h.native_handle(),std::forward<Args>(args)...));
+// forgetting checking scanf/fscanf return value is a common mistake and a huge source of security vulnerability
+	if(v<0)
+		throw std::system_error(errno,std::system_category());
+	return v;
+}
+
 
 using c_style_file = basic_c_style_file<c_style_io_handle>;
 using c_style_file_unlocked = basic_c_style_file<c_style_io_handle_unlocked>;
