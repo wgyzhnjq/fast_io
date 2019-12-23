@@ -2,6 +2,6 @@
 
 int main()
 {
-	println(fast_io::cpp_cout,u8"Hello World");		// call fast_io's println
+	println(fast_io::cpp_cout,"Hello World");		// call fast_io's println
 	print(fast_io::cpp_cout,3.02443223634);
 }
