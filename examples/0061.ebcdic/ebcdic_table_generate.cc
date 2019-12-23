@@ -4,8 +4,8 @@
 int main()
 try
 {
-	fast_io::ibuf ib("tb.txt");
-	fast_io::obuf ob("gen.txt");
+	fast_io::ibuf ib(u8"tb.txt");
+	fast_io::obuf ob(u8"gen.txt");
 	for(std::size_t i{};i!=128;++i)
 	{
 		std::string line;
