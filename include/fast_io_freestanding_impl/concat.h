@@ -33,7 +33,7 @@ inline constexpr void in_place_to(T& t,Args&& ...args)
 {
 	basic_ostring<std::u8string> os;
 	print(os,std::forward<Args>(args)...);
-	basic_istring_view<std::string_view> is(os.str());
+	basic_istring_view<std::u8string_view> is(os.str());
 	scan(is,t);
 }
 

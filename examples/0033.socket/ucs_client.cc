@@ -6,7 +6,7 @@
 int main()
 try
 {
-	fast_io::ucs<fast_io::client_buf,char32_t> hd(fast_io::to<fast_io::ipv4>("127.0.0.1"),2000,fast_io::sock::type::stream);
+	fast_io::ucs<fast_io::client_buf,char32_t> hd(fast_io::to<fast_io::ipv4>(u8"127.0.0.1"),2000,fast_io::sock::type::stream);
 	std::u32string str;
 	getwhole(hd,str);
 	fast_io::ucs<fast_io::basic_iobuf<fast_io::system_io_handle>,char32_t> view(fast_io::out);
