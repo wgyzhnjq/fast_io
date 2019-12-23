@@ -14,8 +14,8 @@ class win32_error : public std::runtime_error
 	{
 		if (error)
 		{
-			std::array<wchar_t,32768> buffer;
-			auto const buffer_length(win32::FormatMessageW(
+			std::array<char,32768> buffer;
+			auto const buffer_length(win32::FormatMessageA(
 			0x00000200 | 0x00001000,
 			nullptr,
 			error,
@@ -24,11 +24,7 @@ class win32_error : public std::runtime_error
 			buffer.size(),
 			nullptr));
 			if (buffer_length)
-			{
-				ucs<basic_ostring<std::string>,wchar_t> uv;
-				send(uv,buffer.data(),buffer.data()+buffer_length);
-				return std::move(uv.native_handle().str());
-			}
+				return std::string(buffer.data(),buffer.data()+buffer_length);
 		}
 		return {};
 	}

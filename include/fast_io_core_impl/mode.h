@@ -92,7 +92,7 @@ inline constexpr mode remove_ate_binary_direct_sync(mode const& m)
 }
 
 
-inline auto constexpr c_style(mode const& m)
+inline auto constexpr u8c_style(mode const& m)
 {
 	using namespace std::string_view_literals;
 	switch(remove_ate_direct_sync(m))
@@ -180,8 +180,97 @@ inline auto constexpr c_style(mode const& m)
 		static_assert(true, u8"unknown open mode");
 	}
 }
+inline auto constexpr c_style(mode const& m)
+{
+	using namespace std::string_view_literals;
+	switch(remove_ate_direct_sync(m))
+	{
+//Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
+//Read from start;	Failure to open;	"r";	Open a file for reading
+	case in:
+		return "r"sv;
+//Destroy contents;	Create new;	"w";	Create a file for writing
+	case out:
+	case out|trunc:
+		return "w"sv;
+//Append to file;	Create new;	"a";	Append to a file
+	case app:
+	case out|app:
+		return "a"sv;
+//Read from start;	Error;	"r+";		Open a file for read/write
+	case out|in:
+		return "r+"sv;
+//Destroy contents;	Create new;	"w+";	Create a file for read/write
+	case out|in|trunc:
+		return "w+"sv;
+//Write to end;	Create new;	"a+";	Open a file for read/write
+	case out|in|app:
+	case in|app:
+		return "a+"sv;
+//Destroy contents;	Error;	"wx";	Create a file for writing
+	case out|excl:
+	case out|trunc|excl:
+		return "wx"sv;
+//Append to file;	Error;	"ax";	Append to a file
+	case app|excl:
+	case out|app|excl:
+		return "ax"sv;
+//Destroy contents;	Error;	"w+x";	Create a file for read/write
+	case out|in|trunc|excl:
+		return "w+x"sv;
+//Write to end;	Error;	"a+x";	Open a file for read/write
+	case out|in|app|excl:
+	case in|app|excl:
+		return "a+x"sv;
+	break;
+	
+//binary support
 
-inline auto constexpr c_style(std::u8string_view csm)
+//Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
+//Read from start;	Failure to open;	"rb";	Open a file for reading
+	case in|binary:
+		return "rb"sv;
+//Destroy contents;	Create new;	"wb";	Create a file for writing
+	case out|binary:
+	case out|trunc|binary:
+		return "wb"sv;
+//Append to file;	Create new;	"ab";	Append to a file
+	case app|binary:
+	case out|app|binary:
+		return "ab"sv;
+//Read from start;	Error;	"r+b";		Open a file for read/write
+	case out|in|binary:
+		return "r+b"sv;
+//Destroy contents;	Create new;	"w+b";	Create a file for read/write
+	case out|in|trunc|binary:
+		return "w+b"sv;
+//Write to end;	Create new;	"a+b";	Open a file for read/write
+	case out|in|app|binary:
+	case in|app|binary:
+		return "a+b"sv;
+//Destroy contents;	Error;	"wxb";	Create a file for writing
+	case out|excl|binary:
+	case out|trunc|excl|binary:
+		return "wxb"sv;
+//Append to file;	Error;	"axb";	Append to a file
+	case app|excl|binary:
+	case out|app|excl|binary:
+		return "axb"sv;
+//Destroy contents;	Error;	"w+xb";	Create a file for read/write
+	case out|in|trunc|excl|binary:
+		return "w+xb"sv;
+//Write to end;	Error;	"a+xb";	Open a file for read/write
+	case out|in|app|excl|binary:
+	case in|app|excl|binary:
+		return "a+xb"sv;
+	break;
+	default:
+		static_assert(true, u8"unknown open mode");
+	}
+}
+
+template<std::integral ch_type>
+inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
 {
 	mode v{};
 	bool extended(false);

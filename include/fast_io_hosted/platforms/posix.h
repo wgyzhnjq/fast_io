@@ -230,30 +230,30 @@ public:
 			throw std::system_error(errno,std::generic_category());
 	}
 	template<std::size_t om,perms pm>
-	basic_posix_file(std::u8string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	basic_posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_posix_file(std::u8string_view file,open::interface_t<om>):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
+	basic_posix_file(std::string_view file,open::interface_t<om>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_posix_file(std::u8string_view file,open::interface_t<om>,perms pm):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	basic_posix_file(std::string_view file,open::interface_t<om>,perms pm):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	//potential support modification prv in the future
-	basic_posix_file(std::u8string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
+	basic_posix_file(std::string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):basic_posix_file(native_interface,file.data(),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
 	{
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
-	basic_posix_file(std::u8string_view file,std::u8string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,fast_io::open::c_style(mode),pm){}
+	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,fast_io::open::c_style(mode),pm){}
 	~basic_posix_file()
 	{
 		this->close_impl();

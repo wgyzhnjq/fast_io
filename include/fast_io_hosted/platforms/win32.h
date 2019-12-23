@@ -193,48 +193,49 @@ public:
 	{
 		{win32::CreateFileW(std::forward<Args>(args)...)}->std::same_as<native_handle_type>;
 	}
-	basic_win32_file(fast_io::native_interface_t,Args&& ...args):basic_win32_io_handle<ch_type>(win32::CreateFileW(std::forward<Args>(args)...))
+	basic_win32_file(fast_io::native_interface_t,Args&& ...args):basic_win32_io_handle<char_type>(win32::CreateFileW(std::forward<Args>(args)...))
 	{
 		if(native_handle()==((void*) (std::intptr_t)-1))
 			throw win32_error();
 	}
+
 	template<std::size_t om,perms pm>
-	basic_win32_file(std::u8string_view filename,open::interface_t<om>,perms_interface_t<pm>):basic_win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+	basic_win32_file(std::string_view filename,open::interface_t<om>,perms_interface_t<pm>):basic_win32_io_handle<char_type>(win32::CreateFileA(filename.data(),
 				details::win32_file_openmode<om,pm>::mode.dwDesiredAccess,
 				details::win32_file_openmode<om,pm>::mode.dwShareMode,
 				details::win32_file_openmode<om,pm>::mode.lpSecurityAttributes,
 				details::win32_file_openmode<om,pm>::mode.dwCreationDisposition,
-				details::win32_file_openmode<om,pm>::mode.dwFlagsAndAttributes,nullptr)
+				details::win32_file_openmode<om,pm>::mode.dwFlagsAndAttributes,nullptr))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_win32_file(std::u8string_view filename,open::interface_t<om>):basic_win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+	basic_win32_file(std::string_view filename,open::interface_t<om>):basic_win32_io_handle<char_type>(win32::CreateFileA(filename.data(),
 				details::win32_file_openmode_single<om>::mode.dwDesiredAccess,
 				details::win32_file_openmode_single<om>::mode.dwShareMode,
 				details::win32_file_openmode_single<om>::mode.lpSecurityAttributes,
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
-				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,nullptr)
+				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,nullptr))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_win32_file(std::u8string_view filename,open::interface_t<om>,perms p):basic_win32_file(fast_io::native_interface,fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+	basic_win32_file(std::string_view filename,open::interface_t<om>,perms p):basic_win32_io_handle<char_type>(win32::CreateFileA(filename.data(),
 				details::win32_file_openmode_single<om>::mode.dwDesiredAccess,
 				details::win32_file_openmode_single<om>::mode.dwShareMode,
 				details::win32_file_openmode_single<om>::mode.lpSecurityAttributes,
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
-				details::dw_flag_attribute_with_perms(details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,p),nullptr)
+				details::dw_flag_attribute_with_perms(details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,p),nullptr))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
-	basic_win32_file(std::u8string_view filename,open::mode const& m,perms pm=static_cast<perms>(420)):basic_win32_io_handle<ch_type>(nullptr)
+	basic_win32_file(std::string_view filename,open::mode const& m,perms pm=static_cast<perms>(420)):basic_win32_io_handle<char_type>(nullptr)
 	{
 		auto const mode(details::calculate_win32_open_mode_with_perms(m,pm));
-		if((native_handle()=win32::CreateFileW(fast_io::utf8_to_ucs<std::wstring>(filename).c_str(),
+		if((native_handle()=win32::CreateFileA(filename.data(),
 					mode.dwDesiredAccess,
 					mode.dwShareMode,
 					mode.lpSecurityAttributes,
@@ -244,8 +245,7 @@ public:
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
-	basic_win32_file(std::u8string_view file,std::u8string_view mode,perms pm=static_cast<perms>(420)):basic_win32_file(file,fast_io::open::c_style(mode),pm){}
-
+	basic_win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_win32_file(file,fast_io::open::c_style(mode),pm){}
 	~basic_win32_file()
 	{
 		this->close_impl();
