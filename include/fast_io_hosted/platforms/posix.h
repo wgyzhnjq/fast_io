@@ -81,7 +81,8 @@ struct posix_file_openmode
 };
 }
 
-class posix_io_handle
+template<std::integral ch_type>
+class basic_posix_io_handle
 {
 	int fd;
 protected:
@@ -91,20 +92,20 @@ protected:
 			close(fd);
 	}
 public:
-	using char_type = char8_t;
+	using char_type = ch_type;
 	using native_handle_type = int;
 	native_handle_type& native_handle()
 	{
 		return fd;
 	}
-	constexpr posix_io_handle() = default;
-	constexpr posix_io_handle(int fdd):fd(fdd){}
-	posix_io_handle(posix_io_handle const& dp):fd(dup(dp.fd))
+	constexpr basic_posix_io_handle() = default;
+	constexpr basic_posix_io_handle(int fdd):fd(fdd){}
+	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(dup(dp.fd))
 	{
 		if(fd<0)
 			throw std::system_error(errno,std::generic_category());
 	}
-	posix_io_handle& operator=(posix_io_handle const& dp)
+	basic_posix_io_handle& operator=(basic_posix_io_handle const& dp)
 	{
 		auto newfd(dup2(dp.fd,fd));
 		if(newfd<0)
@@ -112,11 +113,11 @@ public:
 		fd=newfd;
 		return *this;
 	}
-	constexpr posix_io_handle(posix_io_handle&& b) noexcept : posix_io_handle(b.fd)
+	constexpr basic_posix_io_handle(basic_posix_io_handle&& b) noexcept : basic_posix_io_handle(b.fd)
 	{
 		b.fd = -1;
 	}
-	posix_io_handle& operator=(posix_io_handle&& b) noexcept
+	basic_posix_io_handle& operator=(basic_posix_io_handle&& b) noexcept
 	{
 		if(std::addressof(b)!=this)
 		{
@@ -132,23 +133,23 @@ public:
 		return static_cast<win32_io_handle>(_get_osfhandle(fd));
 	}
 #endif
-	constexpr void swap(posix_io_handle& o) noexcept
+	constexpr void swap(basic_posix_io_handle& o) noexcept
 	{
 		using std::swap;
 		swap(fd,o.fd);
 	}
 };
 
-template<std::contiguous_iterator Iter>
-inline Iter receive(posix_io_handle& h,Iter begin,Iter end)
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter receive(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto read_bytes(::read(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(read_bytes==-1)
 		throw std::system_error(errno,std::generic_category());
 	return begin+(read_bytes/sizeof(*begin));
 }
-template<std::contiguous_iterator Iter>
-inline Iter send(posix_io_handle& h,Iter begin,Iter end)
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter send(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto write_bytes(::write(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(write_bytes==-1)
@@ -156,20 +157,21 @@ inline Iter send(posix_io_handle& h,Iter begin,Iter end)
 	return begin+(write_bytes/sizeof(*begin));
 }
 
-template<typename T,std::integral R>
-inline std::common_type_t<off64_t, std::size_t> seek(posix_io_handle& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
+template<std::integral ch_type,typename T,std::integral R>
+inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
-	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,posix_io_handle::char_type>(i),static_cast<int>(s)));
+	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,basic_posix_io_handle<ch_type>::char_type>(i),static_cast<int>(s)));
 	if(ret==-1)
 		throw std::system_error(errno,std::generic_category());
 	return ret;
 }
-template<std::integral R>
-inline auto seek(posix_io_handle& h,R i=0,seekdir s=seekdir::cur)
+template<std::integral ch_type,std::integral R>
+inline auto seek(basic_posix_io_handle<ch_type>& h,R i=0,seekdir s=seekdir::cur)
 {
-	return seek(h,seek_type<posix_io_handle::char_type>,i,s);
+	return seek(h,seek_type<basic_posix_io_handle<ch_type>::char_type>,i,s);
 }
-inline void flush(posix_io_handle&)
+template<std::integral ch_type>
+inline void flush(basic_posix_io_handle<ch_type>&)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
@@ -177,95 +179,114 @@ inline void flush(posix_io_handle&)
 }
 
 #ifdef __linux__
-inline auto zero_copy_in_handle(posix_io_handle& h)
+template<std::integral ch_type>
+inline auto zero_copy_in_handle(basic_posix_io_handle<ch_type>& h)
 {
 	return h.native_handle();
 }
-inline auto zero_copy_out_handle(posix_io_handle& h)
+template<std::integral ch_type>
+inline auto zero_copy_out_handle(basic_posix_io_handle<ch_type>& h)
 {
 	return h.native_handle();
 }
 #endif
 
-inline void swap(posix_io_handle& a,posix_io_handle& b) noexcept
+template<std::integral ch_type>
+inline void swap(basic_posix_io_handle<ch_type>& a,basic_posix_io_handle<ch_type>& b) noexcept
 {
 	a.swap(b);
 }
 
-class posix_file:public posix_io_handle
+template<std::integral ch_type>
+class basic_posix_file:public basic_posix_io_handle<ch_type>
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	using mode_t = int;
 #endif
 public:
-	using char_type = posix_io_handle::char_type;
-	using native_handle_type = posix_io_handle::native_handle_type;
+	using char_type = ch_type;
+	using native_handle_type = basic_posix_io_handle<char_type>::native_handle_type;
+	using basic_posix_io_handle<ch_type>::native_handle;
 	template<typename ...Args>
 	requires requires(Args&& ...args)
 	{
-		{::_open(std::forward<Args>(args)...)}->std::same_as<int>;
+		{
+#if defined(__WINNT__) || defined(_MSC_VER)
+			::_open
+#else
+			::open
+#endif
+(std::forward<Args>(args)...)}->std::same_as<int>;
 	}
-	posix_file(native_interface_t,Args&& ...args):posix_io_handle(::_open(std::forward<Args>(args)...))
+	basic_posix_file(native_interface_t,Args&& ...args):basic_posix_io_handle<ch_type>(
+#if defined(__WINNT__) || defined(_MSC_VER)
+			::_open
+#else
+			::open
+#endif
+(std::forward<Args>(args)...))
 	{
 		if(native_handle()==-1)
 			throw std::system_error(errno,std::generic_category());
 	}
 	template<std::size_t om,perms pm>
-	posix_file(std::u8string_view file,open::interface_t<om>,perms_interface_t<pm>):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	basic_posix_file(std::u8string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	posix_file(std::u8string_view file,open::interface_t<om>):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
+	basic_posix_file(std::u8string_view file,open::interface_t<om>):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	posix_file(std::u8string_view file,open::interface_t<om>,perms pm):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	basic_posix_file(std::u8string_view file,open::interface_t<om>,perms pm):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
 	//potential support modification prv in the future
-	posix_file(std::u8string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
+	basic_posix_file(std::u8string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):basic_posix_file(native_interface,reinterpret_cast<char const*>(file.data()),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
 	{
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
-	posix_file(std::u8string_view file,std::u8string_view mode,perms pm=static_cast<perms>(420)):posix_file(file,fast_io::open::c_style(mode),pm){}
-	~posix_file()
+	basic_posix_file(std::u8string_view file,std::u8string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,fast_io::open::c_style(mode),pm){}
+	~basic_posix_file()
 	{
-		posix_io_handle::close_impl();
+		this->close_impl();
 	}
 };
-
-class posix_pipe_unique:public posix_io_handle
+template<std::integral ch_type>
+class basic_posix_pipe_unique:public basic_posix_io_handle<ch_type>
 {
 public:
-	using posix_io_handle::char_type;
+	using char_type=ch_type;
 	using native_handle_type = int;
+	using basic_posix_io_handle<ch_type>::native_handle;
 	void close()
 	{
-		posix_io_handle::close_impl();
+		this->close_impl();
 		native_handle() = -1;
 	}
-	~posix_pipe_unique()
+	~basic_posix_pipe_unique()
 	{
-		posix_io_handle::close_impl();
+		this->close_impl();
 	}
 };
 
-class posix_pipe
+template<std::integral ch_type>
+class basic_posix_pipe
 {
 public:
-	using char_type = char8_t;
-	using native_handle_type = std::array<posix_pipe_unique,2>;
+	using char_type = ch_type;
+	using native_handle_type = std::array<basic_posix_pipe_unique<ch_type>,2>;
 private:
 	native_handle_type pipes;
 public:
-	posix_pipe()
+	basic_posix_pipe()
 	{
 #ifdef _WIN32_WINNT
 		if(_pipe(static_cast<int*>(static_cast<void*>(pipes.data())),1048576,_O_BINARY)==-1)
@@ -275,7 +296,7 @@ public:
 			throw std::system_error(errno,std::generic_category());
 	}
 	template<std::size_t om>
-	posix_pipe(open::interface_t<om>):posix_pipe()
+	basic_posix_pipe(open::interface_t<om>):basic_posix_pipe()
 	{
 		auto constexpr omb(om&~open::binary.value);
 		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),u8"pipe open mode must be in or out");
@@ -296,29 +317,31 @@ public:
 	{
 		return pipes.back();
 	}
-	void swap(posix_pipe& o) noexcept
+	void swap(basic_posix_pipe& o) noexcept
 	{
 		using std::swap;
 		swap(pipes,o.pipes);
 	}
 };
-inline void swap(posix_pipe& a,posix_pipe& b) noexcept
+template<std::integral ch_type>
+inline void swap(basic_posix_pipe<ch_type>& a,basic_posix_pipe<ch_type>& b) noexcept
 {
 	a.swap(b);
 }
 
-template<std::contiguous_iterator Iter>
-inline Iter receive(posix_pipe& h,Iter begin,Iter end)
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter receive(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
 {
 	return receive(h.in(),begin,end);
 }
-template<std::contiguous_iterator Iter>
-inline Iter send(posix_pipe& h,Iter begin,Iter end)
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter send(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
 {
 	return send(h.out(),begin,end);
 }
 
-inline void flush(posix_pipe&)
+template<std::integral ch_type>
+inline void flush(basic_posix_pipe<ch_type>&)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
@@ -326,15 +349,22 @@ inline void flush(posix_pipe&)
 }
 
 #ifdef __linux__
-inline auto zero_copy_in_handle(posix_pipe& h)
+template<std::integral ch_type>
+inline auto zero_copy_in_handle(basic_posix_pipe<ch_type>& h)
 {
 	return h.in().native_handle();
 }
-inline auto zero_copy_out_handle(posix_pipe& h)
+template<std::integral ch_type>
+inline auto zero_copy_out_handle(basic_posix_pipe<ch_type>& h)
 {
 	return h.out().native_handle();
 }
 #endif
+
+using posix_io_handle=basic_posix_io_handle<char8_t>;
+using posix_file=basic_posix_file<char8_t>;
+using posix_pipe_unique=basic_posix_pipe_unique<char8_t>;
+using posix_pipe=basic_posix_pipe<char8_t>;
 
 inline int constexpr posix_stdin_number = 0;
 inline int constexpr posix_stdout_number = 1;
