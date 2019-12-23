@@ -411,25 +411,18 @@ public:
 		if(native_handle()==nullptr)
 			throw std::system_error(errno,std::generic_category());
 	}
-	basic_c_style_file(std::u8string_view name,std::u8string_view mode):T(
-#if defined(__WINNT__) || defined(_MSC_VER)
-		_wfopen(fast_io::utf8_to_ucs<std::wstring>(name).c_str(),fast_io::utf8_to_ucs<std::wstring>(mode).c_str())
-#else
-		std::fopen(reinterpret_cast<char const*>(name.data()),reinterpret_cast<char const*>(mode.data()))
-#endif
-	)
+	basic_c_style_file(std::string_view name,std::string_view mode):T(std::fopen(name.data(),mode.data()))
 	{
 		if(native_handle()==nullptr)
 			throw std::system_error(errno,std::generic_category());
 	}
-//:basic_c_style_file(native_interface,reinterpret_cast<char const*>(name.data()),mode.data()){}
-	basic_c_style_file(std::u8string_view file,open::mode const& m):basic_c_style_file(file,c_style(m))
+	basic_c_style_file(std::string_view file,open::mode const& m):basic_c_style_file(file,c_style(m))
 	{
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_c_style_file(std::u8string_view name,open::interface_t<om>):basic_c_style_file(name,open::interface_t<om>::c_style)
+	basic_c_style_file(std::string_view name,open::interface_t<om>):basic_c_style_file(name,open::interface_t<om>::c_style)
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
