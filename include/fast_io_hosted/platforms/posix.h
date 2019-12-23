@@ -128,9 +128,9 @@ public:
 		return *this;
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
-	explicit operator win32_io_handle() const
+	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<win32_io_handle>(_get_osfhandle(fd));
+		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(fd));
 	}
 #endif
 	constexpr void swap(basic_posix_io_handle& o) noexcept
@@ -361,10 +361,15 @@ inline auto zero_copy_out_handle(basic_posix_pipe<ch_type>& h)
 }
 #endif
 
-using posix_io_handle=basic_posix_io_handle<char8_t>;
-using posix_file=basic_posix_file<char8_t>;
-using posix_pipe_unique=basic_posix_pipe_unique<char8_t>;
-using posix_pipe=basic_posix_pipe<char8_t>;
+using posix_io_handle=basic_posix_io_handle<char>;
+using posix_file=basic_posix_file<char>;
+using posix_pipe_unique=basic_posix_pipe_unique<char>;
+using posix_pipe=basic_posix_pipe<char>;
+
+using u8posix_io_handle=basic_posix_io_handle<char8_t>;
+using u8posix_file=basic_posix_file<char8_t>;
+using u8posix_pipe_unique=basic_posix_pipe_unique<char8_t>;
+using u8posix_pipe=basic_posix_pipe<char8_t>;
 
 inline int constexpr posix_stdin_number = 0;
 inline int constexpr posix_stdout_number = 1;

@@ -358,10 +358,15 @@ inline Iter send(basic_win32_pipe<ch_type>& h,Iter begin,Iter end)
 template<std::integral ch_type>
 inline constexpr void flush(basic_win32_pipe<ch_type>&){}
 
-using win32_io_handle=basic_win32_io_handle<char8_t>;
-using win32_file=basic_win32_file<char8_t>;
-using win32_pipe_unique=basic_win32_pipe_unique<char8_t>;
-using win32_pipe=basic_win32_pipe<char8_t>;
+using win32_io_handle=basic_win32_io_handle<char>;
+using win32_file=basic_win32_file<char>;
+using win32_pipe_unique=basic_win32_pipe_unique<char>;
+using win32_pipe=basic_win32_pipe<char>;
+
+using u8win32_io_handle=basic_win32_io_handle<char8_t>;
+using u8win32_file=basic_win32_file<char8_t>;
+using u8win32_pipe_unique=basic_win32_pipe_unique<char8_t>;
+using u8win32_pipe=basic_win32_pipe<char8_t>;
 
 inline constexpr std::uint32_t win32_stdin_number(-10);
 inline constexpr std::uint32_t win32_stdout_number(-11);
@@ -371,7 +376,7 @@ inline constexpr std::uint32_t win32_stderr_number(-12);
 inline win32_io_handle win32_stdin()
 {
 	return win32_stdin_number;
-} 
+}
 
 inline win32_io_handle win32_stdout()
 {

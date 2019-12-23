@@ -203,4 +203,15 @@ inline void print_define(output& out,manip::from_utf8_unchecked a)
 	send(out,a.str_view);
 }
 
+template<output_stream output>
+requires (std::same_as<typename output::char_type,char>)
+inline void print_define(output& out,std::u8string_view u8vw)
+{
+	send(out,u8vw);
+}
+
+template<output_stream output,std::size_t n>
+requires (std::same_as<typename output::char_type,char>)
+inline void print_define(output& out,char const (&str)[n])=delete;
+
 }

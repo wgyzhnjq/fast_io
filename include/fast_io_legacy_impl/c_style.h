@@ -4,36 +4,38 @@
 namespace fast_io
 {
 
-class c_style_io_handle_unlocked
+template<std::integral ch_type>
+requires (std::same_as<ch_type,char>||std::same_as<ch_type,wchar_t>)
+class basic_c_style_io_handle_unlocked
 {
 	std::FILE *fp;
 public:
-	c_style_io_handle_unlocked(std::FILE* fpp):fp(fpp){}
-	using char_type = char;
+	basic_c_style_io_handle_unlocked(std::FILE* fpp):fp(fpp){}
+	using char_type = ch_type;
 	using native_handle_type = std::FILE*;
 	native_handle_type& native_handle()
 	{
 		return fp;
 	}
-	explicit operator posix_io_handle() const
+	explicit operator basic_posix_io_handle<char_type>() const
 	{
-		return static_cast<posix_io_handle>(
+		return static_cast<basic_posix_io_handle<char_type>>(
 #if defined(__WINNT__) || defined(_MSC_VER)
 	_fileno(fp)
 #else
-	::fileno(fp)
+	::fileno_unlocked(fp)
 #endif
 );
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
-	explicit operator win32_io_handle() const
+	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<win32_io_handle>(_get_osfhandle(_fileno(fp)));
+		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(_fileno(fp)));
 	}
 #endif
 };
 
-
+using c_style_io_handle_unlocked = basic_c_style_io_handle_unlocked<char>;
 
 template<typename... Args>
 requires requires(std::FILE* fp,Args&& ...args)
@@ -256,21 +258,22 @@ inline void orelease(c_style_io_handle_unlocked& cfhd,std::size_t n)
 
 class c_style_io_lock_guard;
 
-class c_style_io_handle
+template<std::integral ch_type>
+class basic_c_style_io_handle
 {
 	std::FILE *fp;
 public:
 	using lock_guard_type = c_style_io_lock_guard;
-	c_style_io_handle(std::FILE* fpp):fp(fpp){}
-	using char_type = char;
+	basic_c_style_io_handle(std::FILE* fpp):fp(fpp){}
+	using char_type = ch_type;
 	using native_handle_type = std::FILE*;
 	native_handle_type& native_handle()
 	{
 		return fp;
 	}
-	explicit operator posix_io_handle() const
+	explicit operator basic_posix_io_handle<char_type>() const
 	{
-		return static_cast<posix_io_handle>(
+		return static_cast<basic_posix_io_handle<char_type>>(
 #if defined(__WINNT__) || defined(_MSC_VER)
 	_fileno(fp)
 #else
@@ -279,12 +282,14 @@ public:
 );
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
-	explicit operator win32_io_handle() const
+	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<win32_io_handle>(_get_osfhandle(_fileno(fp)));
+		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(_fileno(fp)));
 	}
 #endif
 };
+
+using c_style_io_handle=basic_c_style_io_handle<char>;
 
 inline auto mutex(c_style_io_handle& h)
 {

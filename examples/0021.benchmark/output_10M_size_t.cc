@@ -66,6 +66,12 @@ try
 		println(obuf,i);
 	}
 	{
+	cqw::timer t(u8"u8obuf");
+	fast_io::u8obuf u8obuf(u8"u8obuf.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(u8obuf,i);
+	}
+	{
 	cqw::timer t(u8"obuf text");
 	fast_io::text_view<fast_io::obuf> view(u8"obuf_text.txt");
 	for(std::size_t i(0);i!=N;++i)
@@ -81,7 +87,6 @@ try
 	{
 	cqw::timer t(u8"c_style_file_unlocked");
 	fast_io::c_style_file_unlocked cs_file(u8"c_style_unlocked.txt",u8"wb");
-	
 	for(std::size_t i(0);i!=N;++i)
 		println(cs_file,i);
 	}

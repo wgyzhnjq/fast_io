@@ -162,9 +162,11 @@ inline void orelease(basic_dynamic_base<char_type>& io,std::size_t sz)
 template<std::integral char_type>
 inline void flush(basic_dynamic_base<char_type>& io) { return io.opaque_base_pointer()->flush_impl();}
 
-using dynamic_base = basic_dynamic_base<char8_t>;
+using dynamic_base = basic_dynamic_base<char>;
 
-using dynamic_stream = basic_dynamic_stream<char8_t>;
+using dynamic_stream = basic_dynamic_stream<char>;
 
+using u8dynamic_base = basic_dynamic_base<char8_t>;
 
+using u8dynamic_stream = basic_dynamic_stream<char8_t>;
 }
