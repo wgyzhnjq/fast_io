@@ -9,16 +9,16 @@
 int main()
 {
 	{
-	fast_io::obuf out("binary_serialization.txt");
+	fast_io::obuf out(u8"binary_serialization.txt");
 	std::vector<std::vector<std::array<std::size_t,3>>> arr{std::vector<std::array<std::size_t,3>>{std::array<std::size_t,3>{12142141,2,3},std::array<std::size_t,3>{4,5,6}}};
 	write(out,arr,u8"sdgsdg");
-	std::array<std::string,1> ar{"abcdef\n dsjfgoisdjgoisdjgdiso"};
+	std::array<std::u8string,1> ar{u8"abcdef\n dsjfgoisdjgoisdjgdiso"};
 	write(out,ar);
 	}
 	{
-	fast_io::ibuf_mutex in("binary_serialization.txt");
+	fast_io::ibuf_mutex in(u8"binary_serialization.txt");
 	std::deque<std::vector<std::array<std::size_t,3>>> arr;
-	std::string str;
+	std::u8string str;
 	read(in,arr,str);
 	for(auto const& e : arr)
 		for(auto const& e1:e)
