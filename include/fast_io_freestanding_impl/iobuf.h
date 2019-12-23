@@ -184,13 +184,13 @@ inline constexpr Iter ibuf_receive(T& ib,Iter begin,Iter end)
 }
 }
 
-template<input_stream Ihandler,typename Buf,std::random_access_iterator Iter>
+template<input_stream Ihandler,typename Buf,std::contiguous_iterator Iter>
 requires (send_receive_punned_constraints<basic_ibuf<Ihandler,Buf>,Iter>)
 inline constexpr Iter receive(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
 	using char_type = typename basic_ibuf<Ihandler,Buf>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
-		return details::ibuf_receive<Buf::size>(ib,begin,end);
+		return details::ibuf_receive<Buf::size>(ib,std::to_address(begin),std::to_address(end));
 	else
 	{
 		auto b(reinterpret_cast<std::byte*>(std::to_address(begin)));
