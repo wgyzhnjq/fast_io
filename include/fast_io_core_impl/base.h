@@ -27,7 +27,10 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 	{
 		auto const rem(a%pw);
 		a/=pw;
-		std::copy_n(table[rem].data(),chars,iter-=chars);
+		if constexpr(std::is_pointer_v<Iter>&&sizeof(*iter)==1)
+			memcpy(iter-=chars,table[rem].data(),chars);
+		else
+			std::copy_n(table[rem].data(),chars,iter-=chars);
 	}
 	if constexpr(chars==2)
 	{
@@ -43,7 +46,10 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			}
 			else
 			{
-				std::copy_n(tm.data(),chars,iter-=chars);
+				if constexpr(std::is_pointer_v<Iter>&&sizeof(*iter)==1)
+					memcpy(iter-=chars,tm.data(),chars);
+				else
+					std::copy_n(tm.data(),chars,iter-=chars);
 			}
 		}
 		else
@@ -76,12 +82,21 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			auto const ed(tm.data()+chars);
 			if constexpr(point)
 			{
-				std::copy(i+1,ed,iter-=ed-(i+1));
+//				std::copy(i+1,ed,iter-=ed-(i+1));
+				if constexpr(std::is_pointer_v<Iter>&&sizeof(*iter)==1)
+					memcpy(iter-=ed-i-1,i+1,ed-i-1);
+				else
+					std::copy(i+1,ed,iter-=ed-(i+1));
 				*--iter=0x2E;
 				*--iter=*i;
 			}
 			else
-				std::copy(i,ed,iter-=ed-i);
+			{
+				if constexpr(std::is_pointer_v<Iter>&&sizeof(*iter)==1)
+					memcpy(iter-=ed-i,i,ed-i);
+				else
+					std::copy(i,ed,iter-=ed-i);				
+			}
 		}
 		else
 		{
@@ -208,7 +223,7 @@ inline constexpr void output_base_number(output& out,U a)
 			else
 			{
 				*--reserved=0xA;
-				output_base_number_impl<base,uppercase>(reserved,a);
+				output_base_number_impl<base,uppercase>(std::to_address(reserved),a);
 				return;
 			}
 		}
@@ -225,7 +240,7 @@ inline constexpr void output_base_number(output& out,U a)
 			}
 			else
 			{
-				output_base_number_impl<base,uppercase>(reserved,a);
+				output_base_number_impl<base,uppercase>(std::to_address(reserved),a);
 				return;
 			}
 		}

@@ -23,41 +23,38 @@ try
 	std::uniform_real_distribution dis(-1000.0,1000.0);
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
-	{
-	cqw::timer t(u8"std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestardb.txt","wb"),fclose);
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp.get(),"%f\n",vec[i]);
-	}
-	{
-	cqw::timer t(u8"std::ofstream");
-	std::ofstream fout("ofstreamdb.txt",std::ofstream::binary);
-	for(std::size_t i(0);i!=N;++i)
-		fout<<vec[i]<<'\n';
-	}
-	{
-	cqw::timer t(u8"obuf");
-	fast_io::obuf obuf(u8"obufdb.txt");
-	for(std::size_t i(0);i!=N;++i)
-		println(obuf,vec[i]);
-	}
+
 	{
 	cqw::timer t(u8"c_style_file");
-	fast_io::c_style_file cs(u8"csfdb.txt",u8"wb");
+	fast_io::c_style_file cs("csfdb.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
 	cqw::timer t(u8"dynamic obuf");
-	fast_io::dynamic_stream dobuf(fast_io::obuf(u8"dynamic_obufdb.txt"));
+	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obufdb.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,vec[i]);
 	}
 	{
 	cqw::timer t(u8"c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs(u8"csfdb2.txt",u8"wb");
+	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
+	}
+
+	{
+	cqw::timer t(u8"obuf");
+	fast_io::obuf obuf("obufdb.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf,vec[i]);
+	}
+
+	{
+	cqw::timer t(u8"u8obuf");
+	fast_io::u8obuf obuf("obufdb.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf,vec[i]);
 	}
 	{
 	cqw::timer t(u8"stream_view");
@@ -68,7 +65,7 @@ try
 	}
 #ifdef _MSC_VER
 	{
-		cqw::timer t("charconv");
+		cqw::timer t(u8"charconv");
 		fast_io::obuf obuf("charconv.txt");
 		std::array<char,100> arr;
 		for(std::size_t i(0);i!=N;++i)
@@ -81,7 +78,7 @@ try
 #endif
 	{
 	cqw::timer t(u8"obuf_mutex");
-	fast_io::obuf_mutex obuf(u8"obuf_mutexdb.txt");
+	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
 	}
@@ -89,7 +86,7 @@ try
 	cqw::timer t(u8"speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
 		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
-		std::array<uint8_t, 8>{u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speckdb.txt");
+		std::array<uint8_t, 8>{u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},"speckdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(enc_stream,vec[i]);
 	}
