@@ -226,6 +226,7 @@ inline std::size_t size(omap& om)
 inline void reserve(omap& om,std::size_t trunc)
 {
 	om.map_handle()=win32_file_map(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
+//	om.map_handle().reopen(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
 	if(trunc<om.current_position)
 		om.current_position=trunc;
 }
