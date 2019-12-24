@@ -142,6 +142,12 @@ public:
 	}
 };
 
+template<std::integral ch_type>
+inline bool valid(basic_posix_io_handle<ch_type>& h)
+{
+	return h.native_handle()!=-1;
+}
+
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter receive(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
@@ -261,6 +267,19 @@ public:
 		this->close_impl();
 	}
 };
+
+template<std::integral ch_type>
+inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
+{
+#if defined(__WINNT__) || defined(_MSC_VER)
+	auto err(_chsize_s(h.native_handle(),size));
+	if(err)
+		throw std::runtime_error(err,std::generic_category());
+#else
+	if(::ftruncate(h.native_handle(),size)<0)
+		throw std::runtime_error(errno,std::generic_category());
+#endif
+}
 template<std::integral ch_type>
 class basic_posix_pipe_unique:public basic_posix_io_handle<ch_type>
 {
@@ -290,7 +309,7 @@ private:
 public:
 	basic_posix_pipe()
 	{
-#ifdef _WIN32_WINNT
+#if defined(__WINNT__) || defined(_MSC_VER)
 		if(_pipe(static_cast<int*>(static_cast<void*>(pipes.data())),1048576,_O_BINARY)==-1)
 #else
 		if(::pipe(static_cast<int*>(static_cast<void*>(pipes.data())))==-1)

@@ -4,7 +4,7 @@
 int main()
 try
 {
-	fast_io::iosystem_file sys_file("abc.txt");
+	fast_io::system_file sys_file("abc.txt","w+");
 	fast_io::win32_file_map win32_map(sys_file,fast_io::file_map_attribute::read_write,8192);
 	auto mem(win32_map.region());
 	for(auto& e : mem)

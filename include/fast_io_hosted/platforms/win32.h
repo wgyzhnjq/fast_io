@@ -140,6 +140,13 @@ public:
 };
 
 template<std::integral ch_type>
+inline bool valid(basic_win32_io_handle<ch_type>& hd)
+{
+	return hd.native_handle();
+}
+
+
+template<std::integral ch_type>
 inline void swap(basic_win32_io_handle<ch_type>& a,basic_win32_io_handle<ch_type>& b) noexcept
 {
 	a.swap(b);
@@ -256,6 +263,13 @@ template<std::integral ch_type>
 inline auto zero_copy_in_handle(basic_win32_io_handle<ch_type>& handle)
 {
 	return handle.native_handle();
+}
+
+template<std::integral ch_type>
+inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
+{
+	if(!win32::SetFileValidData(handle.native_handle(),static_cast<std::int64_t>(size)))
+		throw win32_error();
 }
 
 template<std::integral ch_type>

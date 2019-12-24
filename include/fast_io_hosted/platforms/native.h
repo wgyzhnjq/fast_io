@@ -21,7 +21,7 @@ using u8system_file = u8win32_file;
 using u8system_io_handle = u8win32_io_handle;
 using u8system_pipe_unique = u8win32_pipe_unique;
 using u8system_pipe = u8win32_pipe;
-
+using native_file_map = win32_file_map;
 
 #else
 inline constexpr std::uint32_t native_stdin_number(posix_stdin_number);
