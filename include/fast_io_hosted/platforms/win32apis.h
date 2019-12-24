@@ -48,6 +48,12 @@ void* Tail;
 std::uint32_t  TailLength;
 };
 
+void* __stdcall CreateFileMappingA(void*,security_attributes*,std::uint32_t,std::uint32_t,std::uint32_t,char const*);
+
+void* __stdcall MapViewOfFile(void*,std::uint32_t,std::uint32_t,std::uint32_t,std::size_t);
+
+int __stdcall UnmapViewOfFile(void const*);
+
 int __stdcall WriteFile(void*,void const*,std::uint32_t,std::uint32_t*,overlapped*);
 
 int __stdcall ReadFile(void*,void const*,std::uint32_t,std::uint32_t*,overlapped*);
