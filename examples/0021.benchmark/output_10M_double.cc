@@ -25,8 +25,62 @@ try
 		vec.emplace_back(dis(eng));
 
 	{
-	cqw::timer t(u8"c_style_file");
+	cqw::timer t(u8"fprintf");
 	fast_io::c_style_file cs("csfdb.txt","wb");
+	auto fp(cs.native_handle());
+	for(std::size_t i(0);i!=N;++i)
+		fprintf(fp,"%g\n",vec[i]);
+	}
+	{
+	cqw::timer t(u8"fprintf checked");
+	fast_io::c_style_file cs("csfdb_checked.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		fprintf(cs,"%g\n",vec[i]);
+	}
+	{
+	cqw::timer t(u8"FILE* unlocked");
+	fast_io::c_style_file_unlocked cs("filestarunlockeddb.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		fprintf(cs,"%g\n",vec[i]);
+	}
+	{
+	cqw::timer t(u8"FILE* unlocked checked");
+	fast_io::c_style_file_unlocked cs("filestarunlockeddb_checked.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		fprintf(cs,"%g\n",vec[i]);
+	}
+	{
+	cqw::timer t(u8"ofstream");
+	std::ofstream fout("ofs.txt");
+	for(std::size_t i(0);i!=N;++i)
+		fout<<vec[i]<<'\n';
+	}
+	{
+	cqw::timer t(u8"ofstream tricks");
+	std::ofstream fout("ofs_tricks.txt");
+	auto &rdbuf(*fout.rdbuf());
+	for(std::size_t i(0);i!=N;++i)
+	{
+		fout<<vec[i];
+		rdbuf.sputc('\n');
+	}
+	}
+	{
+	cqw::timer t(u8"ofstream");
+	std::ofstream fout("ofs.txt");
+	for(std::size_t i(0);i!=N;++i)
+		fout<<vec[i]<<'\n';
+	}
+
+	{
+	cqw::timer t(u8"cstyle file");
+	fast_io::c_style_file cs("csfdb1.txt","wb");
+	for(std::size_t i(0);i!=N;++i)
+		println(cs,vec[i]);
+	}
+	{
+	cqw::timer t(u8"cstyle file unlocked");
+	fast_io::c_style_file_unlocked cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
@@ -42,7 +96,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
-
+	{
+	cqw::timer t(u8"dynamic_buf");
+	fast_io::dynamic_buf dobuf(fast_io::obuf("dynamic_bufd.txt"));
+	for(std::size_t i(0);i!=N;++i)
+		println(dobuf,vec[i]);
+	}
 	{
 	cqw::timer t(u8"obuf");
 	fast_io::obuf obuf("obufdb.txt");
@@ -52,7 +111,7 @@ try
 
 	{
 	cqw::timer t(u8"u8obuf");
-	fast_io::u8obuf obuf("obufdb.txt");
+	fast_io::u8obuf obuf("u8obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
 	}
@@ -85,10 +144,7 @@ try
 	{
 	cqw::timer t(u8"speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
-		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'},
-		std::array<uint8_t, 8>{u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},"speckdb.txt");
-	for(std::size_t i(0);i!=N;++i)
-		println(enc_stream,vec[i]);
+		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'}, 
 	}
 }
 catch(std::exception const& e)

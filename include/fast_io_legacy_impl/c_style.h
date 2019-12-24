@@ -45,9 +45,7 @@ requires requires(std::FILE* fp,Args&& ...args)
 inline auto fprintf(c_style_io_handle_unlocked& h,Args&& ...args)
 {
 	auto v(
-#if defined(__WINNT__) || defined(_MSC_VER)
-_fprintf_nolock
-#elif defined(_POSIX_SOURCE)
+#if defined(_POSIX_SOURCE)
 	fprintf_unlocked
 #else
 	fprintf

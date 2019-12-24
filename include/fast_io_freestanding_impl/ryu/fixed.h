@@ -228,9 +228,7 @@ inline constexpr Iter output_exp(T exp,Iter result)
 		*result=static_cast<char_type>(quo+0x30);
 		++result;
 	}
-	auto exp_tb(shared_static_base_table<10,false>::table[unsigned_exp]);
-	constexpr auto sz(exp_tb.size()-2);
-	return my_copy_n(exp_tb.data()+sz,2,result);
+	return my_copy_n(shared_static_base_table<10,false>::table[unsigned_exp].data(),2,result);
 }
 
 template<std::size_t precision,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
