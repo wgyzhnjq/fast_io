@@ -184,10 +184,10 @@ template<std::random_access_iterator Iter,std::unsigned_integral mantissaType>
 inline constexpr auto easy_case(Iter result,bool sign, mantissaType const& mantissa)
 {
 	if (mantissa)
-		return std::copy_n(u8"nan",3,result);
+		return my_copy_n(u8"nan",3,result);
 	if (sign)
-		return std::copy_n(u8"-inf",4,result);
-	return std::copy_n(u8"inf",3,result);
+		return my_copy_n(u8"-inf",4,result);
+	return my_copy_n(u8"inf",3,result);
 }
 
 template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
@@ -230,7 +230,7 @@ inline constexpr Iter output_exp(T exp,Iter result)
 	}
 	auto exp_tb(shared_static_base_table<10,false>::table[unsigned_exp]);
 	constexpr auto sz(exp_tb.size()-2);
-	return std::copy_n(exp_tb.data()+sz,2,result);
+	return my_copy_n(exp_tb.data()+sz,2,result);
 }
 
 template<std::size_t precision,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
@@ -263,13 +263,13 @@ inline constexpr auto output_fixed(Iter result, F d)
 		{
 			*result=0x2E;
 			++result;
-			result=std::fill_n(result,precision,0x30);
+			result=my_fill_n(result,precision,0x30);
 			if constexpr(scientific)
 			{
 				if constexpr(uppercase_e)
-					return std::copy_n(u8"E+00",4,result);
+					return my_copy_n(u8"E+00",4,result);
 				else
-					return std::copy_n(u8"e+00",4,result);
+					return my_copy_n(u8"e+00",4,result);
 			}
 		}
 		return result;
@@ -306,7 +306,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 						available_digits=9;
 						break;
 					}
-					std::fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
+					my_fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
 					result+=9;
 					printed_digits+=9;
 				}
@@ -352,7 +352,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 						available_digits=9;
 						break;
 					}
-					std::fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
+					my_fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
 					result+=9;
 					printed_digits+=9;
 				}
@@ -400,17 +400,17 @@ inline constexpr auto output_fixed(Iter result, F d)
 		{
 			if(digits)
 			{
-				std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),0x30);
+				my_fill(result,output_base_number_impl<10,false>(result+maximum,digits),0x30);
 				result+=maximum;
 			}
 			else
-				result=std::fill_n(result,maximum,0x30);
+				result=my_fill_n(result,maximum,0x30);
 		}
 		else
 		{
 			if constexpr(precision!=0)
 			{
-				std::fill(result,output_base_number_impl<10,false,true>(result+maximum+1,digits),0x30);
+				my_fill(result,output_base_number_impl<10,false,true>(result+maximum+1,digits),0x30);
 				result+=maximum+1;
 			}
 			else
@@ -486,7 +486,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 				exponent_type digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split[fixed_pow10<>::offset[idx]+i],p10bitsmr2e));
 				if(nonzero)
 				{
-					std::fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
+					my_fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
 					result+=9;
 				}
 				else if(digits)
@@ -517,10 +517,10 @@ inline constexpr auto output_fixed(Iter result, F d)
 			if (blocks<=mb2_idx)
 			{
 				i=blocks;
-				result=std::fill_n(result,precision,0x30);
+				result=my_fill_n(result,precision,0x30);
 			}
 			else if(i<mb2_idx)
-				result=std::fill_n(result,9*(i=mb2_idx),0x30);
+				result=my_fill_n(result,9*(i=mb2_idx),0x30);
 			signed_exponent_type j(128+(abs_e2-(idx<<4)));
 			auto const of2i(fixed_pow10<>::offset_2[idx]);
 			for(;i<blocks;++i)
@@ -529,12 +529,12 @@ inline constexpr auto output_fixed(Iter result, F d)
 				exponent_type digits(mul_shift_mod_1e9(r2.m<<8,fixed_pow10<>::split_2[p],j));
 				if (fixed_pow10<>::offset_2[idx+1]<=p)
 				{
-					result=std::fill_n(result,precision-9*i,0x30);
+					result=my_fill_n(result,precision-9*i,0x30);
 					break;
 				}
 				if(i+1<blocks)
 				{
-					std::fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
+					my_fill(result,output_base_number_impl<10,false>(result+9,digits),0x30);
 					result+=9;
 				}
 				else
@@ -558,7 +558,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 					}
 					if(maximum)
 					{
-						std::fill(result,output_base_number_impl<10,false>(result+maximum,digits),0x30);
+						my_fill(result,output_base_number_impl<10,false>(result+maximum,digits),0x30);
 						result+=maximum;
 					}
 					break;
@@ -634,7 +634,7 @@ inline constexpr auto output_fixed(Iter result, F d)
 			}
 			return result;
 		}
-		return std::fill_n(result,precision,0x30);
+		return my_fill_n(result,precision,0x30);
 	}
 }
 template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
@@ -674,9 +674,9 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		if constexpr(mode==2)
 		{
 			if constexpr(uppercase_e)
-				return std::copy_n(u8"E+00",4,result);
+				return my_copy_n(u8"E+00",4,result);
 			else
-				return std::copy_n(u8"e+00",4,result);
+				return my_copy_n(u8"e+00",4,result);
 		}
 		return result;
 	}
@@ -842,7 +842,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		{
 		case 1:
 			output_base_number_impl<10,false>(result+=olength,v.front());
-			return std::fill_n(result,real_exp+1-olength,0x30);
+			return my_fill_n(result,real_exp+1-olength,0x30);
 		case 2:
 		{
 			constexpr auto &table(details::shared_static_base_table<10,uppercase_e>::table);
@@ -859,7 +859,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 				{
 					auto const rem(a%pw);
 					a/=pw;
-					std::copy_n(table[rem].data(),chars,iter-=chars);
+					my_copy_n(table[rem].data(),chars,iter-=chars);
 				}
 				if(iter==eposition+2)
 				{
@@ -873,8 +873,8 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			return result;
 		}
 		default:
-			result=std::copy_n(u8"0.",2,result);
-			result=std::fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
+			result=my_copy_n(u8"0.",2,result);
+			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			output_base_number_impl<10,false>(result+=olength,v.front());
 			return result;
 		}
@@ -884,7 +884,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		if(olength<=real_exp)
 		{
 			output_base_number_impl<10,false>(result+=olength,v.front());
-			return std::fill_n(result,real_exp+1-olength,0x30);	
+			return my_fill_n(result,real_exp+1-olength,0x30);	
 		}
 		else if(0<=real_exp&&real_exp<olength)
 		{
@@ -902,7 +902,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 				{
 					auto const rem(a%pw);
 					a/=pw;
-					std::copy_n(table[rem].data(),chars,iter-=chars);
+					my_copy_n(table[rem].data(),chars,iter-=chars);
 				}
 				if(iter==eposition+2)
 				{
@@ -917,8 +917,8 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		}
 		else
 		{
-			result=std::copy_n(u8"0.",2,result);
-			result=std::fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
+			result=my_copy_n(u8"0.",2,result);
+			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			output_base_number_impl<10,false>(result+=olength,v.front());
 			return result;
 		}
