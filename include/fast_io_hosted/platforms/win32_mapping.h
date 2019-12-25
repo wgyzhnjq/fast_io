@@ -131,15 +131,9 @@ public:
 		}
 		return *this;
 	}
-	auto& region()
+	auto region()
 	{
 		return rg;
-	}
-	void close() noexcept
-	{
-		if(rg.data())
-			win32::UnmapViewOfFile(rg.data());
-		rg={};
 	}
 	~win32_map_view_of_file()
 	{
@@ -156,16 +150,14 @@ class win32_file_map
 public:
 	template<std::integral ch_type>
 	win32_file_map(basic_win32_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
-		wfm(bf,attr,bytes),view(wfm,to_win32_file_map_attribute(attr),bytes,start_address){}
+		wfm(bf,attr,bytes),view(wfm,to_win32_file_map_attribute(attr),bytes,start_address)
+	{
+		printf("L162\n");
+	}
 	auto native_handle() const {return wfm.native_handle();}
-	auto& region()
+	auto region()
 	{
 		return view.region();
-	}
-	void close() noexcept
-	{
-		wfm.close();
-		view.close();
 	}
 };
 
@@ -184,7 +176,9 @@ public:
 	template<typename ...Args>
 	requires std::constructible_from<native_handle_type,Args...>
 	omap(Args&& ...args):hd(std::forward<Args>(args)...),fm(hd,fast_io::file_map_attribute::read_write,16384)
-	{}
+	{
+		printf("ufot\n");
+	}
 	auto& native_handle()
 	{
 		return hd;
@@ -206,13 +200,12 @@ public:
 		}
 		return *this;
 	}
-	auto& region()
+	auto region()
 	{
 		return fm.region();
 	}
 	~omap()
 	{
-		fm.close();
 //		if(valid(hd))
 //			truncate(hd,current_position);
 	}
@@ -225,7 +218,10 @@ inline std::size_t size(omap& om)
 
 inline void reserve(omap& om,std::size_t trunc)
 {
-	om.map_handle()=win32_file_map(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
+	printf("228 %zu\n",size(om));
+//	om.map_handle().close();
+	om.map_handle()=std::move(win32_file_map(om.native_handle(),fast_io::file_map_attribute::read_write,trunc));
+	printf("230 %zu\n",size(om));
 //	om.map_handle().reopen(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
 	if(trunc<om.current_position)
 		om.current_position=trunc;
@@ -249,10 +245,13 @@ inline void send(omap& om,Iter cbegin,Iter cend)
 //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1072r2.html
 //strict aliasing rule
 	std::size_t const bytes(sizeof(*cbegin)*(cend-cbegin));
-	auto& region(om.region());
+	auto region(om.region());
 	std::size_t after(om.current_position+bytes);
 	if(region.size()<=after)[[unlikely]]
+	{
 		details::grow_omap(om,region.size(),after);
+		region=om.region();
+	}
 	memcpy(region.data()+om.current_position,std::to_address(cbegin),bytes);
 	om.current_position=after;
 }
