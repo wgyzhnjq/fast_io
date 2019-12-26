@@ -112,7 +112,7 @@ inline constexpr void idump(output& out,io_ref<in>& t)
 template<buffer_output_stream out>
 inline constexpr decltype(auto) oreserve(io_ref<out>& t)
 {
-	return zero_copy_in_handle(*t);
+	return oreserve(*t);
 }
 
 template<buffer_output_stream out>
