@@ -66,6 +66,13 @@ try
 		println(obuf,i);
 	}
 	{
+	cqw::timer t(u8"om");
+	fast_io::omap om("omap.txt","w+");
+	reserve(om,108888960);
+	for(std::size_t i(0);i!=N;++i)
+		println(om,i);
+	}
+	{
 	cqw::timer t(u8"u8obuf");
 	fast_io::u8obuf u8obuf("u8obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
@@ -104,12 +111,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_vw,i);
 	}
-	{
+/*	{
 	cqw::timer t(u8"obuf ucs_view");
 	fast_io::ucs<fast_io::obuf,char32_t> uv("obuf_ucsview.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(uv,i);
-	}
+	}*/
 	{
 	cqw::timer t(u8"dynamic obuf");
 	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obuf.txt"));

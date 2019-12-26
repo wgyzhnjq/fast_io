@@ -300,7 +300,7 @@ inline char unsigned* oreserve(basic_omap<T,M>& om,std::size_t n)
 		om.current_position-=n;
 		return nullptr;
 	}
-	return static_cast<char unsigned*>(om.region().data()+om.current_position);
+	return static_cast<char unsigned*>(static_cast<void*>(om.region().data()+om.current_position));
 }
 
 template<typename T,typename M>
