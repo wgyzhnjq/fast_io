@@ -116,6 +116,12 @@ try
 		println(obuf,vec[i]);
 	}
 	{
+	cqw::timer t(u8"ommap");
+	fast_io::omap om("omapdb.txt","w+");
+	for(std::size_t i(0);i!=N;++i)
+		println(om,vec[i]);
+	}
+	{
 	cqw::timer t(u8"stream_view");
 	std::ofstream fout("smvdb.txt",std::ofstream::binary);
 	fast_io::stream_view stm_v(fout);
@@ -141,11 +147,11 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
 	}
-	{
+/*	{
 	cqw::timer t(u8"speck128/128");
 	fast_io::crypto::basic_octr<fast_io::obuf, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
-		std::array<uint8_t, 16>{'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'}, 
-	}
+		std::array<uint8_t, 16>{u8'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'}, "encdb.txt");
+	}*/
 }
 catch(std::exception const& e)
 {

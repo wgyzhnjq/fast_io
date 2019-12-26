@@ -5,7 +5,7 @@
 int main()
 try
 {
-	fast_io::omap sys_file("w.txt","w+");
+	fast_io::omap sys_file("w.txt");
 	for(std::size_t i(0);i!=100;++i)
 		println(sys_file,u8"Hello World");
 }

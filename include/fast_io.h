@@ -11,21 +11,21 @@ namespace fast_io
 inline namespace
 {
 
-using in_type = fast_io::basic_iomutex<fast_io::basic_ibuf<system_io_handle>>;
+using in_type = fast_io::basic_iomutex<fast_io::basic_ibuf<native_io_handle>>;
 
 in_type in(native_stdin_number);
-inline system_io_handle out(native_stdout_number);
-inline system_io_handle err(native_stderr_number);
+inline native_io_handle out(native_stdout_number);
+inline native_io_handle err(native_stderr_number);
 
 
 inline auto out_buf()
 {
-	return basic_obuf<system_io_handle>(native_stdout_number);
+	return basic_obuf<native_io_handle>(native_stdout_number);
 }
 
 inline auto log()
 {
-	return basic_obuf<system_io_handle>(native_stderr_number);
+	return basic_obuf<native_io_handle>(native_stderr_number);
 }
 
 }

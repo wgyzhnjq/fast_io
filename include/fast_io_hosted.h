@@ -10,5 +10,6 @@ For hosted implementations the set of standard library headers required by the C
 #include"fast_io_freestanding.h"
 #include"fast_io_hosted/mmap.h"
 #include"fast_io_hosted/platforms/native.h"
+#include"fast_io_hosted/omap.h"
 #include"fast_io_hosted/iomutex.h"
 #include"fast_io_hosted/chrono.h"

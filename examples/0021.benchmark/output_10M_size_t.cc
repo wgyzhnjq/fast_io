@@ -68,7 +68,6 @@ try
 	{
 	cqw::timer t(u8"om");
 	fast_io::omap om("omap.txt","w+");
-	reserve(om,108888960);
 	for(std::size_t i(0);i!=N;++i)
 		println(om,i);
 	}
