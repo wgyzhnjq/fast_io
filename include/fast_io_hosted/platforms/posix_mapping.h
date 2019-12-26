@@ -56,11 +56,14 @@ inline constexpr posix_file_map_attribute to_posix_file_map_attribute(file_map_a
 	};
 }
 
-
-
 class posix_file_map
 {
-    std::span<std::byte> rg;
+	std::span<std::byte> rg;
+	void close_impl() noexcept
+	{
+		if(rg.data())
+			munmap(rg.data(), rg.size());
+	}
 public:
 	template<std::integral ch_type>
 	posix_file_map(basic_posix_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
@@ -78,26 +81,27 @@ public:
 	posix_file_map& operator=(posix_file_map const&)=delete;
 	posix_file_map(posix_file_map&& pm) noexcept:rg(pm.rg)
 	{
-		rg={};
+		pm.rg={};
 	}
 	posix_file_map& operator=(posix_file_map&& pm) noexcept
 	{
-		if(std::addressof(pm)==this)
+		if(std::addressof(pm)!=this)
 		{
-			if(rg.data())
-				munmap(rg.data(), rg.size());
+			close_impl();
 			rg=pm.rg;
 			pm.rg={};
 		}
 		return *this;
 	}
+	void close() noexcept
+	{
+		close_impl();
+		rg={};
+	}
 	~posix_file_map()
 	{
-		if(rg.data())
-			munmap(rg.data(), rg.size());
+		close_impl();
 	}
 };
-
-
 
 }
