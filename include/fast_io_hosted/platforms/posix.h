@@ -168,7 +168,7 @@ inline Iter send(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 template<std::integral ch_type,typename T,std::integral R>
 inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
-	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,basic_posix_io_handle<ch_type>::char_type>(i),static_cast<int>(s)));
+	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,ch_type>(i),static_cast<int>(s)));
 	if(ret==-1)
 		throw std::system_error(errno,std::generic_category());
 	return ret;
@@ -176,7 +176,7 @@ inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_ty
 template<std::integral ch_type,std::integral R>
 inline auto seek(basic_posix_io_handle<ch_type>& h,R i=0,seekdir s=seekdir::cur)
 {
-	return seek(h,seek_type<basic_posix_io_handle<ch_type>::char_type>,i,s);
+	return seek(h,seek_type<ch_type>,i,s);
 }
 template<std::integral ch_type>
 inline void flush(basic_posix_io_handle<ch_type>&)

@@ -352,7 +352,7 @@ inline constexpr void send(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi)
 					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
 }
 
-template<output_stream Ohandler,typename Buf>
+/*template<output_stream Ohandler,typename Buf>
 inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typename basic_obuf<Ohandler,Buf>::char_type const& ch)
 {
 	std::size_t const remain_space(static_cast<std::size_t>(ob.obuffer.end-ob.obuffer.curr));
@@ -381,7 +381,7 @@ inline constexpr void fill_nc(basic_obuf<Ohandler,Buf>& ob,std::size_t count,typ
 		return;
 	}
 	ob.obuffer.curr=std::fill_n(ob.obuffer.curr,count,ch);
-}
+}*/
 
 template<output_stream Ohandler,typename Buf>
 inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohandler,Buf>::char_type ch)
