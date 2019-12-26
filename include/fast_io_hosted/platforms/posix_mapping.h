@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 namespace fast_io
 {
@@ -66,11 +67,25 @@ class posix_file_map
 	}
 public:
 	template<std::integral ch_type>
-	posix_file_map(basic_posix_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
-		rg(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)), bytes)
+	posix_file_map(basic_posix_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0)
 	{
-		if (rg.data() == MAP_FAILED)
+        struct stat file_stat;
+        auto fstat_ret(fstat(bf.native_handle(), std::addressof(file_stat)));
+        if (fstat_ret == -1)
+            throw std::system_error(errno,std::generic_category());
+        std::size_t file_size_in_bytes(file_stat.st_size);
+        if (bytes > file_size_in_bytes)
+        {
+            // allocate more space for this file
+            auto fallocate_ret(fallocate(bf.native_handle(), 0, file_size_in_bytes, bytes - file_size_in_bytes));
+            if (fallocate_ret == -1)
+                throw std::system_error(errno,std::generic_category());
+        }
+        auto ret(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)));
+        if (ret == MAP_FAILED)
 			throw std::system_error(errno,std::generic_category());
+        rg = {ret, bytes};
+		
 	}
 	//auto native_handle() const {return wfm.native_handle();}
 	auto& region()
