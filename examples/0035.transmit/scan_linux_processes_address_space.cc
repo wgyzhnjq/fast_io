@@ -16,13 +16,13 @@ try
 		println(process_log,u8"Process ID: ",string);
 		{
 		println(process_log,u8"\nStatus");
-		fast_io::isystem_file ib(fast_io::concat<>("/proc/",string,u8"/status"));
+		fast_io::inative_file ib(fast_io::concat<>("/proc/",string,u8"/status"));
 		transmit(process_log,ib);
 		println(process_log);
 		}
 		{
 		println(process_log,u8"Maps");
-		fast_io::isystem_file ib(fast_io::concat<>("/proc/",string,u8"/maps"));
+		fast_io::inative_file ib(fast_io::concat<>("/proc/",string,u8"/maps"));
 		transmit(process_log,ib);
 		}
 		println(process_log,u8"\n");

@@ -88,7 +88,7 @@ try
 	for(std::size_t i(0);i!=ret.size();++i)
 		ret[i]^=one_time_pad_key[i];*/
 	
-	fast_io::osystem_file osyshandle("restore_validate_temp.txt");
+	fast_io::onative_file osyshandle("restore_validate_temp.txt");
 	transmit(osyshandle,hd);	
 	}
 

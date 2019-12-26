@@ -110,7 +110,7 @@ obuf:	0.13401100s
 
 dynamic obuf:	0.13586300s
 
-iobuf_dynamic system_file:	0.13000100s
+iobuf_dynamic native_file:	0.13000100s
 
 obuf_mutex:	0.15303500s
 ```
@@ -135,7 +135,7 @@ ibuf:	0.07400200s
 
 dynamic standard input stream ibuf:	0.08899900s
 
-ibuf_dynamic isystem_file:	0.07600900s
+ibuf_dynamic inative_file:	0.07600900s
 ```
 
 

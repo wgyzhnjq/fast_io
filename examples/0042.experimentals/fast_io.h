@@ -48,20 +48,20 @@ namespace fast_io
 
 using pipe = immediately_flush<nobuf_reader<io_wrapper<system_pipe>>>;
 
-using isystem_file = input_file_wrapper<system_file>;
-using osystem_file = output_file_wrapper<system_file>;
-using iosystem_file = io_file_wrapper<system_file>;
+using inative_file = input_file_wrapper<native_file>;
+using onative_file = output_file_wrapper<native_file>;
+using ionative_file = io_file_wrapper<native_file>;
 
 
-using sync = basic_sync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>>;
-using fsync = basic_fsync<basic_file_wrapper<system_file,fast_io::open::app|fast_io::open::binary>>;
+using sync = basic_sync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>>;
+using fsync = basic_fsync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>>;
 
 using sync_mutex = basic_iomutex<sync>;
 using fsync_mutex = basic_iomutex<fsync>;
 
-using ibuf = basic_ibuf<isystem_file>;
-using obuf = basic_obuf<osystem_file>;
-using iobuf = basic_iobuf<iosystem_file>;
+using ibuf = basic_ibuf<inative_file>;
+using obuf = basic_obuf<onative_file>;
+using iobuf = basic_iobuf<ionative_file>;
 
 static_assert(buffer_output_stream<obuf>,u8"obuf is not a buffer output stream");
 

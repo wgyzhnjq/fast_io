@@ -4,7 +4,7 @@
 int main()
 try
 {
-	fast_io::system_file sys_file("abc.txt","w+");
+	fast_io::native_file sys_file("abc.txt","w+");
 	fast_io::win32_file_map win32_map(sys_file,fast_io::file_map_attribute::read_write,8192);
 	win32_map=fast_io::win32_file_map(sys_file,fast_io::file_map_attribute::read_write,16384);
 	win32_map=fast_io::win32_file_map(sys_file,fast_io::file_map_attribute::read_write,32768);

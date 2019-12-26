@@ -13,7 +13,7 @@ inline void* mymmap(Args&& ...args)
 int main()
 try
 {
-	fast_io::osystem_file osf("abc.txt");
+	fast_io::onative_file osf("abc.txt");
 	auto ptr(mymmap(nullptr,2,PROT_READ|PROT_WRITE,MAP_PRIVATE,osf.native_handle(),0));
 
 }

@@ -9,7 +9,7 @@ try
 	using namespace std::string_view_literals;
 	std::array<std::string_view,2> constexpr argv{"ps"sv,u8"-A"sv};
 	fast_io::obuf process_log("process_log.txt");
-	fast_io::native_stderr() = fast_io::system_file("process_error_log.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::binary>);
+	fast_io::native_stderr() = fast_io::native_file("process_error_log.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::binary>);
 	fast_io::pipe pipe;
 	auto child_process{linux_apis::fork()};
 	if(!child_process)		//this is child process

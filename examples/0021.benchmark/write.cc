@@ -66,8 +66,8 @@ try
 		send(dobuf,vec.cbegin(),vec.cend());
 	}
 	{
-	cqw::timer t("iobuf_dynamic system_file");
-	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::osystem_file>,u8"iobuf_dynamic_system_file.txt");
+	cqw::timer t("iobuf_dynamic native_file");
+	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::onative_file>,u8"iobuf_dynamic_native_file.txt");
 	for(std::size_t i(0);i!=N;++i)
 		send(dobuf,vec.cbegin(),vec.cend());
 	}

@@ -11,7 +11,7 @@ try
 	std::array<uint8_t, 16> constexpr iv {'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'};
 	fast_io::crypto::basic_icbc<fast_io::client_buf, fast_io::crypto::speck::speck_dec_128_128> hd(key,iv,fast_io::to<fast_io::ipv4>("127.0.0.1"),2000,fast_io::sock::type::stream);
 	std::string str;
-	fast_io::osystem_file ob("speck_decrypted.txt");
+	fast_io::onative_file ob("speck_decrypted.txt");
 	transmit(ob,hd);
 }
 catch(std::exception const & e)
