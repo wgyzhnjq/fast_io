@@ -202,7 +202,7 @@ int cxx_fast_io_acquire_file(void** out,char const* name,char const* mode) noexc
 {
 	try
 	{
-		fast_io::dynamic_base dyn(std::in_place_type<fast_io::system_file>,name,mode);
+		fast_io::dynamic_base dyn(std::in_place_type<fast_io::native_file>,name,mode);
 		*out=dyn.opaque_base_pointer();
 		return {};
 	}
@@ -217,7 +217,7 @@ int cxx_fast_io_acquire_buf(void** out,char const* name,char const* mode) noexce
 {
 	try
 	{
-		fast_io::dynamic_base dyn(std::in_place_type<fast_io::basic_iobuf<fast_io::system_file>>,name,mode);
+		fast_io::dynamic_base dyn(std::in_place_type<fast_io::basic_iobuf<fast_io::native_file>>,name,mode);
 		*out=dyn.opaque_base_pointer();
 		return {};
 	}
@@ -236,7 +236,7 @@ int cxx_fast_io_bufferred_acquire_file(void** out,char const* name,char const* m
 {
 	try
 	{
-		*out=new fast_io::dynamic_buf(std::in_place_type<fast_io::basic_iobuf<fast_io::system_file>>,name,mode);
+		*out=new fast_io::dynamic_buf(std::in_place_type<fast_io::basic_iobuf<fast_io::native_file>>,name,mode);
 		return {};
 	}
 	catch(...)

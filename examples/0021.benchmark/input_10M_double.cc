@@ -71,8 +71,8 @@ try
 		scan(ibuf,v[i]);
 	}
 	{
-	cqw::timer t("ibuf_dynamic isystem_file");
-	fast_io::ibuf_dynamic ibuf(std::in_place_type<fast_io::isystem_file>,"cfilestardb.txt");
+	cqw::timer t("ibuf_dynamic inative_file");
+	fast_io::ibuf_dynamic ibuf(std::in_place_type<fast_io::inative_file>,"cfilestardb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}

@@ -68,8 +68,8 @@ try
 		scan(view,v[i]);
 	}
 	{
-	cqw::timer t("dynamic_buf isystem_file");
-	fast_io::dynamic_buf ibuf(std::in_place_type<fast_io::isystem_file>,u8"cfilestar.txt");
+	cqw::timer t("dynamic_buf inative_file");
+	fast_io::dynamic_buf ibuf(std::in_place_type<fast_io::inative_file>,u8"cfilestar.txt");
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}

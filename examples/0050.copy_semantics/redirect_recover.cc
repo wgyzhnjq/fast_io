@@ -5,7 +5,7 @@ int main()
 try
 {
 	auto out_backup(fast_io::out);
-	fast_io::out=fast_io::osystem_file("file.txt");
+	fast_io::out=fast_io::onative_file("file.txt");
 	println(fast_io::out,u8"Hello World");
 	fast_io::out=out_backup;
 	println(fast_io::out,u8"HA, I AM BACK HAHAHA. YOU FOOLISH STDIO.H AND IOSTREAM CANNOT EVEN RECOVER FROM FREOPEN");

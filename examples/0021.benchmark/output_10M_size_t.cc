@@ -123,8 +123,8 @@ try
 		println(dobuf,i);
 	}
 	{
-	cqw::timer t(u8"iobuf_dynamic system_file");
-	fast_io::dynamic_buf dobuf(std::in_place_type<fast_io::osystem_file>,"iobuf_dynamic_system_file.txt");
+	cqw::timer t(u8"iobuf_dynamic native_file");
+	fast_io::dynamic_buf dobuf(std::in_place_type<fast_io::onative_file>,"iobuf_dynamic_native_file.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,i);
 	}

@@ -12,7 +12,7 @@ try
 	vec.emplace_back(std::in_place_type<fast_io::system_io_handle>,fast_io::native_stdout());
 	vec.emplace_back(std::in_place_type<fast_io::system_io_handle>,fast_io::native_stderr());
 	vec.emplace_back(std::in_place_type<fast_io::obuf_mutex>,u8"demo_to_file_mutex.txt");
-	vec.emplace_back(fast_io::osystem_file("ok.txt"));
+	vec.emplace_back(fast_io::onative_file("ok.txt"));
 	for(auto & e : vec)
 		println(e,u8"hello world",5,6,8);
 	fast_io::dynamic_stream dyn(fast_io::ibuf("temp.txt"));

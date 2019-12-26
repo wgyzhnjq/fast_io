@@ -73,7 +73,7 @@ public:
 			throw std::system_error(errno,std::generic_category());
 	}
 	//auto native_handle() const {return wfm.native_handle();}
-	auto region()
+	auto& region()
 	{
 		return rg;
 	}

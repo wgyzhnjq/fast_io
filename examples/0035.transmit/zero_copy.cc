@@ -15,8 +15,8 @@ try
 	auto t0(std::chrono::high_resolution_clock::now());
 	std::size_t transmitted_bytes(0);
 	{
-		fast_io::system_file source(source_filename,fast_io::open::interface<fast_io::open::c_style("rb")>);
-		fast_io::system_file dest(dest_filename,fast_io::open::interface<fast_io::open::c_style("wbx")>);
+		fast_io::native_file source(source_filename,fast_io::open::interface<fast_io::open::c_style("rb")>);
+		fast_io::native_file dest(dest_filename,fast_io::open::interface<fast_io::open::c_style("wbx")>);
 		transmitted_bytes=zero_copy_transmit(dest,source);
 	}
 	fprint(fast_io::out,u8"Zero Copy % --> % Done (% bytes)\nTime elasped: %s\n",

@@ -4,7 +4,7 @@
 int main()
 try
 {
-	fast_io::out=fast_io::osystem_file("file.txt");
+	fast_io::out=fast_io::onative_file("file.txt");
 	println(fast_io::out,u8"Hello World");
 }
 catch(std::exception const& e)

@@ -10,7 +10,7 @@ try
 		print(fast_io::err,u8"Usage: ",*argv,u8" <path>\n");
 		return 1;
 	}
-	fast_io::isystem_file ib(argv[1]);
+	fast_io::inative_file ib(argv[1]);
 	fast_io::sha1 sha1;
 	transmit(sha1,ib);
 	flush(sha1);

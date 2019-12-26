@@ -274,10 +274,10 @@ inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
 #if defined(__WINNT__) || defined(_MSC_VER)
 	auto err(_chsize_s(h.native_handle(),size));
 	if(err)
-		throw std::runtime_error(err,std::generic_category());
+		throw std::system_error(err,std::generic_category());
 #else
 	if(::ftruncate(h.native_handle(),size)<0)
-		throw std::runtime_error(errno,std::generic_category());
+		throw std::system_error(errno,std::generic_category());
 #endif
 }
 template<std::integral ch_type>
