@@ -52,7 +52,7 @@ void* __stdcall CreateFileMappingA(void*,security_attributes*,std::uint32_t,std:
 
 void* __stdcall MapViewOfFile(void*,std::uint32_t,std::uint32_t,std::uint32_t,std::size_t);
 
-int __stdcall SetFileValidData(void*,std::int64_t);
+int __stdcall SetEndOfFile(void*);
 
 int __stdcall UnmapViewOfFile(void const*);
 

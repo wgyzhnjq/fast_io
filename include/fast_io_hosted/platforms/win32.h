@@ -268,7 +268,8 @@ inline auto zero_copy_in_handle(basic_win32_io_handle<ch_type>& handle)
 template<std::integral ch_type>
 inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
 {
-	if(!win32::SetFileValidData(handle.native_handle(),static_cast<std::int64_t>(size)))
+	seek(handle,size,seekdir::beg);
+	if(!win32::SetEndOfFile(handle.native_handle()))
 		throw win32_error();
 }
 

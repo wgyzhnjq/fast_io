@@ -92,6 +92,11 @@ public:
 	{
 		return handle;
 	}
+	void close() noexcept
+	{
+		close_impl();
+		handle=nullptr;
+	}
 	~win32_file_mapping()
 	{
 		close_impl();
@@ -114,6 +119,12 @@ public:
 	win32_map_view_of_file(win32_map_view_of_file&& wm) noexcept:rg(wm.rg)
 	{
 		wm.rg={};
+	}
+	void close() noexcept
+	{
+		if(rg.data())
+			win32::UnmapViewOfFile(rg.data());
+		rg={};
 	}
 	win32_map_view_of_file& operator=(win32_map_view_of_file&& wm) noexcept
 	{
@@ -167,8 +178,12 @@ public:
 	{
 		return view.region();
 	}
+	void close()
+	{
+		wfm.close();
+		view.close();
+	}
 };
-
 
 template<typename T,typename M>
 class basic_omap
@@ -179,6 +194,17 @@ public:
 private:
 	native_handle_type hd;
 	map_handle_type fm;
+	void close_impl() noexcept
+	{
+		try
+		{
+			fm.close();
+			if(valid(hd))
+				truncate(hd,current_position);
+		}
+		catch(...)
+		{}
+	}
 public:
 	std::size_t current_position{};
 public:
@@ -206,13 +232,7 @@ public:
 	{
 		if(std::addressof(om)!=this)
 		{
-			try
-			{
-				if(valid(hd))
-					truncate(hd,current_position);
-			}
-			catch(...)
-			{}
+			close_impl();
 			hd=std::move(om.hd);
 			fm=std::move(om.fm);
 			current_position=om.current_position;
@@ -225,13 +245,7 @@ public:
 	}
 	~basic_omap()
 	{
-		try
-		{
-			if(valid(hd))
-				truncate(hd,current_position);
-		}
-		catch(...)
-		{}
+		close_impl();
 	}
 };
 
