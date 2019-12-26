@@ -57,6 +57,20 @@ inline constexpr void buffer_fprint(output &out,std::basic_string_view<typename 
 }
 
 template<output_stream output,typename ...Args>
+requires (std::same_as<typename output::char_type,char>)
+inline constexpr void buffer_fprint(output &out,std::basic_string_view<char8_t> format,Args&& ...args)
+{
+	if constexpr((weak_printable<output,Args>||...))
+	{
+		basic_ostring<std::basic_string<typename output::char_type>> ostr;
+		print_scan_details::fprint_impl(ostr,format,std::forward<Args>(args)...);
+		send(out,ostr.str().cbegin(),ostr.str().cend());
+	}
+	else if constexpr(output_stream<output>)
+		static_assert(!output_stream<output>,u8"unsupported type. consider define your own one with print_define");
+}
+
+template<output_stream output,typename ...Args>
 inline constexpr void buffer_write(output &out,Args&& ...args)
 {
 	if constexpr((weak_writeable<output,Args>||...))

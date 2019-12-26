@@ -15,11 +15,11 @@ try
 	auto t0(std::chrono::high_resolution_clock::now());
 	std::size_t transmitted_bytes(0);
 	{
-		fast_io::native_file source(source_filename,fast_io::open::interface<fast_io::open::c_style("rb")>);
-		fast_io::native_file dest(dest_filename,fast_io::open::interface<fast_io::open::c_style("wbx")>);
+		fast_io::native_file source(source_filename,fast_io::open::interface<fast_io::open::in|fast_io::open::binary>);
+		fast_io::native_file dest(dest_filename,fast_io::open::interface<fast_io::open::out|fast_io::open::excl|fast_io::open::binary>);
 		transmitted_bytes=transmit(dest,source);
 	}
-	fprint(fast_io::out,u8"Copy % --> % Done (% bytes)\nTime elasped: %s\n",
+	fprint(fast_io::out,u8"Copy % --> % Done (% bytes)\nTime elasped: %\n",
 				source_filename,dest_filename,transmitted_bytes,
 				std::chrono::high_resolution_clock::now()-t0);
 }
