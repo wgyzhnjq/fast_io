@@ -67,7 +67,7 @@ try
 	}
 	{
 	cqw::timer t(u8"om");
-	fast_io::omap om("omap.txt","w+");
+	fast_io::omap om("omap.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(om,i);
 	}
