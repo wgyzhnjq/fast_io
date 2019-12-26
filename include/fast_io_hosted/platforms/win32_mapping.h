@@ -80,18 +80,13 @@ public:
 	}
 	win32_file_mapping& operator=(win32_file_mapping&& bmv) noexcept
 	{
-		if(handle==bmv.handle)
+		if(handle!=bmv.handle)
 		{
 			close_impl();
 			handle=bmv.handle;
 			bmv.handle=nullptr;
 		}
 		return *this;
-	}
-	void close() noexcept
-	{
-		close_impl();
-		handle=nullptr;
 	}
 	auto native_handle() const
 	{
@@ -122,7 +117,7 @@ public:
 	}
 	win32_map_view_of_file& operator=(win32_map_view_of_file&& wm) noexcept
 	{
-		if(std::addressof(wm)==this)
+		if(std::addressof(wm)!=this)
 		{
 			if(rg.data())
 				win32::UnmapViewOfFile(rg.data());
@@ -152,7 +147,20 @@ public:
 	win32_file_map(basic_win32_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
 		wfm(bf,attr,bytes),view(wfm,to_win32_file_map_attribute(attr),bytes,start_address)
 	{
-		printf("L162\n");
+	}
+	win32_file_map(win32_file_map const&)=delete;
+	win32_file_map& operator=(win32_file_map const&)=delete;
+	win32_file_map(win32_file_map&& wm) noexcept:wfm(std::move(wm.wfm)),view(std::move(wm.view))
+	{
+	}
+	win32_file_map& operator=(win32_file_map&& wm) noexcept
+	{
+		if(std::addressof(wm)!=this)
+		{
+			wfm=std::move(wm.wfm);
+			view=std::move(wm.view);
+		}
+		return *this;
 	}
 	auto native_handle() const {return wfm.native_handle();}
 	auto region()
@@ -162,22 +170,23 @@ public:
 };
 
 
-class omap
+template<typename T,typename M>
+class basic_omap
 {
 public:
-	using native_handle_type = win32_file;
+	using native_handle_type = T;
+	using map_handle_type = M;
 private:
 	native_handle_type hd;
-	win32_file_map fm;
+	map_handle_type fm;
 public:
 	std::size_t current_position{};
 public:
 	using char_type = char;//only char is allowed for punning
 	template<typename ...Args>
 	requires std::constructible_from<native_handle_type,Args...>
-	omap(Args&& ...args):hd(std::forward<Args>(args)...),fm(hd,fast_io::file_map_attribute::read_write,16384)
+	basic_omap(Args&& ...args):hd(std::forward<Args>(args)...),fm(hd,fast_io::file_map_attribute::read_write,16384)
 	{
-		printf("ufot\n");
 	}
 	auto& native_handle()
 	{
@@ -187,13 +196,20 @@ public:
 	{
 		return fm;
 	}
-	omap(omap const&)=delete;
-	omap& operator=(omap const&)=delete;
-	omap(omap &&om) noexcept:hd(std::move(om.hd)),fm(std::move(om.fm)),current_position(om.current_position){}
-	omap& operator=(omap&& om) noexcept
+	basic_omap(basic_omap const&)=delete;
+	basic_omap& operator=(basic_omap const&)=delete;
+	basic_omap(basic_omap &&om) noexcept:hd(std::move(om.hd)),fm(std::move(om.fm)),current_position(om.current_position){}
+	basic_omap& operator=(basic_omap&& om) noexcept
 	{
 		if(std::addressof(om)!=this)
 		{
+			try
+			{
+				if(valid(hd))
+					truncate(hd,current_position);
+			}
+			catch(...)
+			{}
 			hd=std::move(om.hd);
 			fm=std::move(om.fm);
 			current_position=om.current_position;
@@ -204,32 +220,37 @@ public:
 	{
 		return fm.region();
 	}
-	~omap()
+	~basic_omap()
 	{
-//		if(valid(hd))
-//			truncate(hd,current_position);
+		try
+		{
+			if(valid(hd))
+				truncate(hd,current_position);
+		}
+		catch(...)
+		{}
 	}
 };
 
-inline std::size_t size(omap& om)
+
+template<typename T,typename M>
+inline std::size_t size(basic_omap<T,M>& om)
 {
 	return om.region().size();
 }
 
-inline void reserve(omap& om,std::size_t trunc)
+template<typename T,typename M>
+inline void reserve(basic_omap<T,M>& om,std::size_t trunc)
 {
-	printf("228 %zu\n",size(om));
-//	om.map_handle().close();
-	om.map_handle()=std::move(win32_file_map(om.native_handle(),fast_io::file_map_attribute::read_write,trunc));
-	printf("230 %zu\n",size(om));
-//	om.map_handle().reopen(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
+	om.map_handle()=M(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
 	if(trunc<om.current_position)
 		om.current_position=trunc;
 }
 
 namespace details
 {
-inline void grow_omap(omap& om,std::size_t sz,std::size_t n)
+template<typename T,typename M>
+inline void grow_omap(basic_omap<T,M>& om,std::size_t sz,std::size_t n)
 {
 	std::size_t const db(sz<<1);
 	if(db<n)
@@ -239,8 +260,8 @@ inline void grow_omap(omap& om,std::size_t sz,std::size_t n)
 }
 }
 
-template<std::contiguous_iterator Iter>
-inline void send(omap& om,Iter cbegin,Iter cend)
+template<typename T,typename M,std::contiguous_iterator Iter>
+inline void send(basic_omap<T,M>& om,Iter cbegin,Iter cend)
 {
 //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1072r2.html
 //strict aliasing rule
@@ -255,7 +276,9 @@ inline void send(omap& om,Iter cbegin,Iter cend)
 	memcpy(region.data()+om.current_position,std::to_address(cbegin),bytes);
 	om.current_position=after;
 }
+template<typename T,typename M>
+inline void flush(basic_omap<T,M>&){}
 
-inline void flush(omap&){}
+using omap = basic_omap<win32_file,win32_file_map>;
 
 }

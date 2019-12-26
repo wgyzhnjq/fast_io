@@ -288,7 +288,6 @@ namespace details
 template<bool punning=false,typename T,typename Iter>
 inline constexpr void obuf_send(T& ob,Iter cbegin,Iter cend)
 {
-	using char_type = typename T::char_type;
 	std::size_t const n(ob.obuffer.end-ob.obuffer.curr);
 	std::size_t const diff(std::distance(cbegin,cend));
 	if(n<diff)[[unlikely]]

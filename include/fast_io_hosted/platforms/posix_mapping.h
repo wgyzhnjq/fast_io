@@ -66,16 +66,15 @@ public:
 	posix_file_map(basic_posix_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
 		rg(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)), bytes)
 	{
-		//printf("L162\n");
-        if (rg.data() == MAP_FAILED)
-            throw std::system_error(errno,std::generic_category());
+		if (rg.data() == MAP_FAILED)
+			throw std::system_error(errno,std::generic_category());
 	}
 	//auto native_handle() const {return wfm.native_handle();}
 	auto region()
 	{
 		return rg;
 	}
-    posix_file_map(posix_file_map const&)=delete;
+	posix_file_map(posix_file_map const&)=delete;
 	posix_file_map& operator=(posix_file_map const&)=delete;
 	posix_file_map(posix_file_map&& pm) noexcept:rg(pm.rg)
 	{
@@ -92,7 +91,7 @@ public:
 		}
 		return *this;
 	}
-    ~posix_file_map()
+	~posix_file_map()
 	{
 		if(rg.data())
 			munmap(rg.data(), rg.size());
