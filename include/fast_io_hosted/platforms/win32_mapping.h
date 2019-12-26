@@ -126,7 +126,7 @@ public:
 		}
 		return *this;
 	}
-	auto region()
+	auto& region()
 	{
 		return rg;
 	}
@@ -163,7 +163,7 @@ public:
 		return *this;
 	}
 	auto native_handle() const {return wfm.native_handle();}
-	auto region()
+	auto& region()
 	{
 		return view.region();
 	}
@@ -198,7 +198,10 @@ public:
 	}
 	basic_omap(basic_omap const&)=delete;
 	basic_omap& operator=(basic_omap const&)=delete;
-	basic_omap(basic_omap &&om) noexcept:hd(std::move(om.hd)),fm(std::move(om.fm)),current_position(om.current_position){}
+	basic_omap(basic_omap &&om) noexcept:hd(std::move(om.hd)),fm(std::move(om.fm)),current_position(om.current_position)
+	{
+		om.current_position={};
+	}
 	basic_omap& operator=(basic_omap&& om) noexcept
 	{
 		if(std::addressof(om)!=this)
@@ -216,7 +219,7 @@ public:
 		}
 		return *this;
 	}
-	auto region()
+	auto& region()
 	{
 		return fm.region();
 	}
@@ -266,7 +269,7 @@ inline void send(basic_omap<T,M>& om,Iter cbegin,Iter cend)
 //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1072r2.html
 //strict aliasing rule
 	std::size_t const bytes(sizeof(*cbegin)*(cend-cbegin));
-	auto region(om.region());
+	auto& region(om.region());
 	std::size_t after(om.current_position+bytes);
 	if(region.size()<=after)[[unlikely]]
 	{
@@ -278,6 +281,33 @@ inline void send(basic_omap<T,M>& om,Iter cbegin,Iter cend)
 }
 template<typename T,typename M>
 inline void flush(basic_omap<T,M>&){}
+
+template<typename T,typename M>
+inline void put(basic_omap<T,M>& om,typename basic_omap<T,M>::char_type ch)
+{
+	auto& region(om.region());
+	if(region.size()==om.current_position)[[unlikely]]
+		details::grow_omap(om,region.size(),region.size()+1);
+	region[om.current_position]=static_cast<std::byte>(ch);
+	++om.current_position;
+}
+
+template<typename T,typename M>
+inline char unsigned* oreserve(basic_omap<T,M>& om,std::size_t n)
+{
+	if(om.region().size()<(om.current_position+=n))
+	{
+		om.current_position-=n;
+		return nullptr;
+	}
+	return static_cast<char unsigned*>(om.region().data()+om.current_position);
+}
+
+template<typename T,typename M>
+inline auto orelease(basic_omap<T,M>& om,std::size_t n)
+{
+	om.current_position-=n;
+}
 
 using omap = basic_omap<win32_file,win32_file_map>;
 
