@@ -74,12 +74,32 @@ struct unix
 {
 	T& reference;
 };
-
+template<typename T>
+struct local
+{
+	T& reference;
+};
 template<typename T>
 struct utc
 {
 	T& reference;
 };
+template<typename T>
+struct chinese
+{
+	T& reference;
+};
+template<typename T>
+struct utc_chinese
+{
+	T& reference;
+};
+template<typename T>
+struct local_chinese
+{
+	T& reference;
+};
+
 }
 template<typename T>
 requires (std::floating_point<T>||std::integral<T>)
@@ -169,11 +189,19 @@ template<typename T>
 inline constexpr manip::shortest_shortest<false,T const> shortest(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::shortest_shortest<true,T const> shortest_upper(T const &f){return {f};}
-
+template<typename T>
+inline constexpr manip::unix<T const> local(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::utc<T const> utc(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::unix<T const> unix(T const &f){return {f};}
+
+template<typename T>
+inline constexpr manip::chinese<T const> chinese(T const &f){return {f};}
+template<typename T>
+inline constexpr manip::local_chinese<T const> local_chinese(T const &f){return {f};}
+template<typename T>
+inline constexpr manip::utc_chinese<T const> utc_chinese(T const &f){return {f};}
 
 template<character_input_stream input,std::integral T>
 inline void scan_define(input& in,manip::char_view<T> a)
