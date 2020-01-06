@@ -90,7 +90,7 @@ inline void put(stream_view<T>& t,typename T::char_type ch)
 }
 
 template<fast_io::stream_view_details::ostream_concept_impl T,std::contiguous_iterator Iter>
-inline void send(stream_view<T>& t,Iter begin,Iter end) 
+inline void write(stream_view<T>& t,Iter begin,Iter end) 
 {
 	using char_type = typename T::char_type;
 	if(!t.native_handle().write(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))

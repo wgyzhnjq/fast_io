@@ -10,7 +10,7 @@ struct ipv4
 };
 
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline constexpr void scan_define(input& in,ipv4& v4)
 {
 	for(auto& e: v4.storage)
@@ -74,10 +74,10 @@ inline constexpr auto family(ipv6 const&)
 	return sock::family::ipv6;
 }
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline constexpr void scan_define(input& in,ipv6& v6)
 {
-	constexpr auto npos(static_cast<std::size_t>(-1));
+/*	constexpr auto npos(static_cast<std::size_t>(-1));
 	std::basic_string<typename input::char_type> str;
 	scan(in,str);
 	if(str.size()<2)
@@ -115,7 +115,7 @@ inline constexpr void scan_define(input& in,ipv6& v6)
 		fast_io::scan(istrbuf,fast_io::hex(temp));
 		*i=static_cast<std::byte>(temp>>8);
 		*++i=static_cast<std::byte>(temp&255);
-	}
+	}*/
 }
 
 template<std::integral U>

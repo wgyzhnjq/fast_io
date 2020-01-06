@@ -32,12 +32,12 @@ inline void print_define(output& out,manip::fixed<precision,T const> a)
 	if constexpr (precision<325)
 	{
 		std::array<typename output::char_type,reserved_size> array;
-		send(out,array.data(),details::ryu::output_fixed<precision>(array.data(),static_cast<double>(a.reference)));
+		write(out,array.data(),details::ryu::output_fixed<precision>(array.data(),static_cast<double>(a.reference)));
 	}
 	else
 	{
 		std::basic_string<typename output::char_type> str(reserved_size);
-		send(out,str.data(),details::ryu::output_fixed<precision>(str.data(),static_cast<double>(a.reference)));
+		write(out,str.data(),details::ryu::output_fixed<precision>(str.data(),static_cast<double>(a.reference)));
 	}
 }
 
@@ -69,12 +69,12 @@ inline void print_define(output& out,manip::scientific<precision,uppercase_e,T c
 	if constexpr (precision<325)
 	{
 		std::array<typename output::char_type,reserved_size> array;
-		send(out,array.data(),details::ryu::output_fixed<precision,true,uppercase_e>(array.data(),static_cast<double>(a.reference)));
+		write(out,array.data(),details::ryu::output_fixed<precision,true,uppercase_e>(array.data(),static_cast<double>(a.reference)));
 	}
 	else
 	{
 		std::basic_string<typename output::char_type> str(reserved_size);
-		send(out,str.data(),details::ryu::output_fixed<precision,true,uppercase_e>(str.data(),static_cast<double>(a.reference)));
+		write(out,str.data(),details::ryu::output_fixed<precision,true,uppercase_e>(str.data(),static_cast<double>(a.reference)));
 	}
 }
 
@@ -104,7 +104,7 @@ inline void print_define(output& out,manip::fixed_shortest<T const> a)
 		}
 	}
 	std::array<typename output::char_type,reserved_size> array;
-	send(out,array.data(),details::ryu::output_shortest<false,1>(array.data(),static_cast<double>(a.reference)));
+	write(out,array.data(),details::ryu::output_shortest<false,1>(array.data(),static_cast<double>(a.reference)));
 }
 
 template<output_stream output,bool uppercase_e,std::floating_point T>
@@ -133,7 +133,7 @@ inline void print_define(output& out,manip::scientific_shortest<uppercase_e,T co
 		}
 	}
 	std::array<typename output::char_type,reserved_size> array;
-	send(out,array.data(),details::ryu::output_shortest<uppercase_e,2>(array.data(),static_cast<double>(a.reference)));
+	write(out,array.data(),details::ryu::output_shortest<uppercase_e,2>(array.data(),static_cast<double>(a.reference)));
 }
 
 template<output_stream output,bool uppercase_e,std::floating_point T>
@@ -162,7 +162,7 @@ inline void print_define(output& out,manip::shortest_shortest<uppercase_e,T cons
 		}
 	}
 	std::array<typename output::char_type,reserved_size> array;
-	send(out,array.data(),details::ryu::output_shortest<uppercase_e>(array.data(),static_cast<double>(a.reference)));
+	write(out,array.data(),details::ryu::output_shortest<uppercase_e>(array.data(),static_cast<double>(a.reference)));
 }
 
 template<output_stream output,std::floating_point T>
@@ -190,13 +190,13 @@ inline void print_define(output& out,T a)
 		}
 	}
 	std::array<typename output::char_type,reserved_size> array;
-	send(out,array.data(),details::ryu::output_shortest<false>(array.data(),static_cast<double>(a)));
+	write(out,array.data(),details::ryu::output_shortest<false>(array.data(),static_cast<double>(a)));
 }
 
-template<character_input_stream input,std::floating_point T>
+template<buffer_input_stream input,std::floating_point T>
 inline constexpr void scan_define(input& in,T &t)
 {
-	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
+//	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
 }
 
 }

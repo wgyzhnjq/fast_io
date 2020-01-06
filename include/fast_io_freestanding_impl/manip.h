@@ -2,7 +2,7 @@
 
 namespace fast_io
 {
-
+/*
 template<character_input_stream input>
 inline void scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
@@ -32,7 +32,7 @@ inline void getwhole(input& in,std::basic_string<typename input::char_type> &str
 	str.clear();
 	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second;str.push_back(ch.first));
 }
-
+*/
 template<character_output_stream output,std::size_t indent_width,bool left,char8_t ch,typename T>
 inline constexpr void print_define(output& out,manip::width<indent_width,left,ch,T const> a)
 {

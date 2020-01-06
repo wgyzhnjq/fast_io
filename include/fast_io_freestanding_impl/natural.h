@@ -43,7 +43,7 @@ void fft(std::vector<std::complex<long double>>& a)
 
 class natural;
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline void scan_define(input&,natural&);
 
 class natural
@@ -56,11 +56,11 @@ public:
 		if(!value)
 			cont.pop_back();
 	}
-	explicit natural(std::u8string_view sv)
+/*	explicit natural(std::u8string_view sv)
 	{
 		u8istring_view is(sv);
 		scan_define(is,*this);
-	}
+	}*/
 	auto& vec() {return cont;}
 	auto& vec() const{return cont;}
 	inline natural& operator+=(natural const& other)
@@ -863,11 +863,11 @@ inline void output_base_natural_number(output& out,natural a)
 		else
 			*--iter = static_cast<typename output::char_type>(rem+48);
 	}
-	send(out,iter,v.data()+v.size());
+	write(out,iter,v.data()+v.size());
 }
 
-
-template<char8_t base,character_input_stream input>
+/*
+template<char8_t base,buffer_input_stream input>
 inline constexpr void input_base_number_phase2_natural(input& in,natural& a)
 {
 	using unsigned_char_type = std::make_unsigned_t<decltype(get(in))>;
@@ -921,6 +921,7 @@ inline constexpr void input_base_natural_number(input& in,natural& a)
 	}
 	input_base_number_phase2_natural<base>(in,a);
 }
+*/
 }
 
 template<character_output_stream output>
@@ -940,7 +941,7 @@ inline constexpr void print_define(output& out,manip::base_t<base,uppercase,natu
 	details::output_base_natural_number<base,uppercase>(out,v.reference);
 }
 
-
+/*
 template<std::size_t base,bool uppercase,character_input_stream input>
 inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,natural> v)
 {
@@ -952,13 +953,13 @@ inline void scan_define(input& in,natural& a)
 {
 	details::input_base_natural_number<10>(in,a);
 }
-
+*/
 template<character_output_stream output>
 inline void write(output& out,natural const& n)
 {
 	write(out,n.vec());
 }
-
+/*
 template<character_input_stream input>
 inline void read_define(input& in,natural& n)
 {
@@ -993,5 +994,5 @@ inline natural operator "" _nh(char8_t const* cstr, size_t n)
 	return nt;
 }
 }
-
+*/
 }

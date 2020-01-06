@@ -285,7 +285,7 @@ default:return 0x1A;
 }
 
 template<stream stm>
-requires (character_input_stream<stm>||character_output_stream<stm>)
+requires (buffer_input_stream<stm>||buffer_output_stream<stm>)
 class ebcdic
 {
 public:
@@ -311,11 +311,11 @@ inline constexpr void put(ebcdic<stm>& s,typename ebcdic<stm>::char_type ch)
 }
 
 template<character_output_stream stm,std::forward_iterator Iter>
-inline constexpr void send(ebcdic<stm>& s,Iter cbegin,Iter cend)
+inline constexpr void write(ebcdic<stm>& s,Iter cbegin,Iter cend)
 {
-	define_send_by_put(s,cbegin,cend);
+	define_write_by_put(s,cbegin,cend);
 }
-
+/*
 template<bool report_eof=false,character_input_stream stm>
 inline constexpr auto get(ebcdic<stm>& s)
 {
@@ -341,7 +341,7 @@ inline constexpr Iter receive(ebcdic<stm>& s,Iter cbegin,Iter cend)
 {
 	return define_receive_by_get(s,cbegin,cend);
 }
-
+*/
 template<character_output_stream stm,std::forward_iterator Iter>
 inline constexpr void flush(ebcdic<stm>& s)
 {

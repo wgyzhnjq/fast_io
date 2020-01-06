@@ -15,7 +15,7 @@ struct hmac
 	{
 		if(hash_stream.crypto_hash_block_size<static_cast<std::size_t>(cend-cbegin))
 		{
-			send(hash_stream,cbegin,cend);
+			write(hash_stream,cbegin,cend);
 			flush(hash_stream);
 			if constexpr(std::endian::native==std::endian::little)
 				for(auto & e : hash_stream.digest)
@@ -34,15 +34,15 @@ struct hmac
 		auto inner(key);
 		for(auto & e : inner)
 			e^=0x36;
-		send(hash_stream,inner.cbegin(),inner.cend());
+		write(hash_stream,inner.cbegin(),inner.cend());
 	}
 	hmac(std::string_view sv):hmac(sv.cbegin(),sv.cend()){}
 };
 
 template<output_stream T,std::contiguous_iterator Iter>
-inline void send(hmac<T>& hm,Iter cbegin,Iter cend)
+inline void write(hmac<T>& hm,Iter cbegin,Iter cend)
 {
-	send(hm.hash_stream,cbegin,cend);
+	write(hm.hash_stream,cbegin,cend);
 }
 
 template<buffer_output_stream T>
@@ -69,15 +69,15 @@ inline void flush(hmac<T>& hm)
 		for(auto & e : digest)
 			e=details::big_endian(e);
 	clear(hm.hash_stream);
-	send(hm.hash_stream,outer.cbegin(),outer.cend());
-	send(hm.hash_stream,digest.cbegin(),digest.cend());
+	write(hm.hash_stream,outer.cbegin(),outer.cend());
+	write(hm.hash_stream,digest.cbegin(),digest.cend());
 	flush(hm.hash_stream);
 }
 
 template<io_stream T,std::contiguous_iterator Iter>
-inline void receive(hmac<T>& hm,Iter begin,Iter end)
+inline void read(hmac<T>& hm,Iter begin,Iter end)
 {
-	receive(hm.hash_stream,begin,end);
+	read(hm.hash_stream,begin,end);
 }
 
 template<buffer_output_stream output,output_stream T>

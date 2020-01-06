@@ -235,13 +235,13 @@ inline constexpr void output_base_number(output& out,U a)
 		std::array<typename output::char_type,sizeof(a)*8+1> v;
 		v.back()=0xA;
 		auto const e(v.data()+v.size());
-		send(out,output_base_number_impl<base,uppercase>(e-1,a),e);
+		write(out,output_base_number_impl<base,uppercase>(e-1,a),e);
 	}
 	else
 	{
 		std::array<typename output::char_type,sizeof(a)*8> v;
 		auto const e(v.data()+v.size());
-		send(out,output_base_number_impl<base,uppercase>(e,a),e);
+		write(out,output_base_number_impl<base,uppercase>(e,a),e);
 	}
 }
 
@@ -305,7 +305,7 @@ inline constexpr void output_base_number(output& out,T b)
 		auto iter(output_base_number_impl<base,uppercase>(e-1,a));
 		if(minus)
 			*--iter=0x2d;
-		send(out,iter,e);		
+		write(out,iter,e);		
 	}
 	else
 	{
@@ -314,10 +314,10 @@ inline constexpr void output_base_number(output& out,T b)
 		auto iter(output_base_number_impl<base,uppercase>(e,a));
 		if(minus)
 			*--iter=0x2d;
-		send(out,iter,e);
+		write(out,iter,e);
 	}
 }
-
+/*
 template<char8_t base,character_input_stream input,std::integral U>
 inline constexpr void input_base_number_phase2(input& in,U& a)
 {
@@ -400,7 +400,7 @@ inline constexpr void input_base_number(input& in,T& a)
 	if(rev)
 		a=-a;
 }
-
+*/
 }
 
 namespace manip
@@ -476,17 +476,17 @@ inline constexpr void println_define(output& out,manip::base_t<base,uppercase,T>
 	details::output_base_number<base,uppercase,true>(out,v.reference);
 }
 
-template<std::size_t base,bool uppercase,character_input_stream input,std::integral T>
+template<std::size_t base,bool uppercase,buffer_input_stream input,std::integral T>
 inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
-	details::input_base_number<base>(in,v.reference);
+//	details::input_base_number<base>(in,v.reference);
 }
 
 
-template<character_input_stream input,std::integral T>
+template<buffer_input_stream input,std::integral T>
 inline constexpr void scan_define(input& in,T& a)
 {
-	details::input_base_number<10>(in,a);
+//	details::input_base_number<10>(in,a);
 }
 
 template<output_stream output,std::integral T>
@@ -508,22 +508,22 @@ inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v
 	details::output_base_number<base,uppercase>(out,std::to_integer<char8_t>(v.reference));
 }
 
-template<std::size_t base,bool uppercase,character_input_stream input,typename T>
+template<std::size_t base,bool uppercase,buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	char8_t u{};
-	details::input_base_number<base>(in,u);
+//	details::input_base_number<base>(in,u);
 	v.reference=static_cast<std::byte>(u);
 }
 
 
-template<character_input_stream input,typename T>
+template<buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr void scan_define(input& in,T& a)
 {
 	char8_t u{};
-	details::input_base_number<10>(in,u);
+//	details::input_base_number<10>(in,u);
 	a=static_cast<std::byte>(u);
 }
 

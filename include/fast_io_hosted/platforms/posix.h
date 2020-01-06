@@ -149,7 +149,7 @@ inline bool valid(basic_posix_io_handle<ch_type>& h)
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter receive(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
+inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto read_bytes(::read(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(read_bytes==-1)
@@ -157,7 +157,7 @@ inline Iter receive(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter send(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
+inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto write_bytes(::write(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(write_bytes==-1)
@@ -351,14 +351,14 @@ inline void swap(basic_posix_pipe<ch_type>& a,basic_posix_pipe<ch_type>& b) noex
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter receive(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
+inline Iter read(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
 {
-	return receive(h.in(),begin,end);
+	return read(h.in(),begin,end);
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter send(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
+inline Iter write(basic_posix_pipe<ch_type>& h,Iter begin,Iter end)
 {
-	return send(h.out(),begin,end);
+	return write(h.out(),begin,end);
 }
 
 template<std::integral ch_type>

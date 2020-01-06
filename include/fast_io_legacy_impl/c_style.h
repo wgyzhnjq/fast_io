@@ -116,7 +116,7 @@ inline Iter receive(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 }
 
 template<std::contiguous_iterator Iter>
-inline void send(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline void write(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(
@@ -335,7 +335,7 @@ inline Iter receive(c_style_io_handle& cfhd,Iter begin,Iter end)
 }
 
 template<std::contiguous_iterator Iter>
-inline void send(c_style_io_handle& cfhd,Iter begin,Iter end)
+inline void write(c_style_io_handle& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)

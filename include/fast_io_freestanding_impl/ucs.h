@@ -101,7 +101,7 @@ public:
 		}
 		unsigned_native_char_type constexpr max_native_char_type(-1);
 		*ed |= max_native_char_type>>(native_char_bits-v_elements-1)<<(native_char_bits-v_elements);
-		send(ib,ed,v.data()+v.size());
+		write(ib,ed,v.data()+v.size());
 	}
 };
 
@@ -118,7 +118,7 @@ inline constexpr void put(ucs<T,char_type>& uc,typename ucs<T,char_type>::char_t
 }
 
 template<character_output_stream T,typename char_type,std::forward_iterator Iter>
-inline constexpr void send(ucs<T,char_type>& uc,Iter b,Iter e)
+inline constexpr void write(ucs<T,char_type>& uc,Iter b,Iter e)
 {
 	define_send_by_put(uc,b,e);
 }
@@ -162,7 +162,7 @@ inline void in_place_ucs_to_utf8(std::u8string& v,std::basic_string_view<T> view
 {
 	v.clear();
 	ucs<basic_ostring<std::u8string>,T> uv(std::move(v));
-	send(uv,view.cbegin(),view.cend());
+	write(uv,view.cbegin(),view.cend());
 	v=std::move(uv.native_handle().str());
 }
 
@@ -170,7 +170,7 @@ template<typename T>
 inline std::u8string ucs_to_utf8(std::basic_string_view<T> view)
 {
 	ucs<basic_ostring<std::u8string>,T> uv;
-	send(uv,view.cbegin(),view.cend());
+	write(uv,view.cbegin(),view.cend());
 	return std::move(uv.native_handle().str());
 }
 }

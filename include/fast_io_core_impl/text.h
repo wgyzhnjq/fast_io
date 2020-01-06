@@ -130,11 +130,11 @@ constexpr inline void put(text_view<T,sys>& output,typename text_view<T,sys>::ch
 }
 
 template<character_output_stream T,bool sys,std::contiguous_iterator Iter>
-constexpr inline void send(text_view<T,sys>& output,Iter b,Iter e)
+constexpr inline void write(text_view<T,sys>& output,Iter b,Iter e)
 {
 	using char_type = T::char_type;
 	if constexpr(sys&&operating_system::win32!=operating_system::native)
-		send(output,b,e);
+		write(output,b,e);
 	else
 	{
 		auto pb(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))));
@@ -143,11 +143,11 @@ constexpr inline void send(text_view<T,sys>& output,Iter b,Iter e)
 		for(;pi!=pe;++pi)
 			if(*pi==0xA)
 			{
-				send(output.ib,last,pi);
+				write(output.ib,last,pi);
 				put(output.ib,0xD);
 				last=pi;
 			}
-		send(output.ib,last,pe);
+		write(output.ib,last,pe);
 	}
 }
 

@@ -19,14 +19,14 @@ public:
 	constexpr auto& to() {return *o;}
 	constexpr auto& native_handle() {return t;}
 };
-
+/*
 template<bool err=false,character_input_stream T,output_stream out>
 inline constexpr auto get(tie<T,out>& t)
 {
 	flush(t.to());
 	return get<err>(t.native_handle());
 }
-
+*/
 template<character_output_stream T,output_stream out>
 inline constexpr void put(tie<T,out>& t,typename T::char_type ch)
 {
@@ -89,14 +89,14 @@ inline constexpr void flush(self_tie<T>& t)
 {
 	flush(t.native_handle());
 }
-
+/*
 template<bool err=false,character_input_stream T>
 inline constexpr auto get(self_tie<T>& t)
 {
 	flush(t);
 	return get<err>(t.native_handle());
 }
-
+*/
 template<character_output_stream T>
 inline constexpr auto put(self_tie<T>& t,typename T::char_type ch)
 {

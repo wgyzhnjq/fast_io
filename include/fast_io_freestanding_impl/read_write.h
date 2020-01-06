@@ -4,8 +4,8 @@ namespace fast_io
 {
 
 
-template<character_input_stream input>
-inline constexpr std::size_t read_size(input& in)
+template<buffer_input_stream input>
+inline constexpr std::size_t receive_size(input& in)
 {
 	auto constexpr bytes(sizeof(get(in))*8);
 	auto constexpr lshift(bytes-1);
@@ -22,7 +22,7 @@ inline constexpr std::size_t read_size(input& in)
 }
 
 template<character_output_stream output>
-inline constexpr void write_size(output& out,std::size_t size)
+inline constexpr void send_size(output& out,std::size_t size)
 {
 	using ch_type = typename output::char_type;
 	auto constexpr bytes(sizeof(typename output::char_type)*8);
@@ -45,26 +45,26 @@ inline constexpr bool detect_std_array(T const&) {return false;}
 
 template<output_stream output,typename T>
 requires (std::is_trivially_copyable_v<T>||std::ranges::sized_range<T>)
-inline constexpr void write_define(output& out,T const& v)
+inline constexpr void send_define(output& out,T const& v)
 {
 	if constexpr(std::is_trivially_copyable_v<T>)
 	{
 		if constexpr(std::is_bounded_array_v<T>)
-			write_size(out,std::size(v));
+			send_size(out,std::size(v));
 		auto address(std::addressof(v));
-		send(out,address,address+1);
+		write(out,address,address+1);
 	}
 	else
 	{
 		if constexpr(!details::detect_std_array(v))
-			write_size(out,std::size(v));
+			send_size(out,std::size(v));
 		for(auto const& e : v)
 			write(out,e);
 	}
 }
 template<input_stream input,typename T>
 requires (std::is_trivially_copyable_v<T>||std::ranges::sized_range<T>)
-inline constexpr void read_define(input& in,T& v)
+inline constexpr void receive_define(input& in,T& v)
 {
 	if constexpr(std::is_trivially_copyable_v<T>)
 	{
@@ -74,9 +74,9 @@ inline constexpr void read_define(input& in,T& v)
 	else
 	{
 		if constexpr(!details::detect_std_array(v)&&!std::is_bounded_array_v<T>)
-			v.resize(read_size(in));
+			v.resize(receive_size(in));
 		for(auto& e : v)
-			read(in,e);
+			receive(in,e);
 	}
 }
 

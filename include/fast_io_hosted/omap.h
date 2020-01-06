@@ -95,7 +95,7 @@ inline void grow_omap(basic_omap<T,M>& om,std::size_t sz,std::size_t n)
 }
 
 template<typename T,typename M,std::contiguous_iterator Iter>
-inline void send(basic_omap<T,M>& om,Iter cbegin,Iter cend)
+inline void write(basic_omap<T,M>& om,Iter cbegin,Iter cend)
 {
 //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1072r2.html
 //strict aliasing rule

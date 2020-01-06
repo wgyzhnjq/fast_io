@@ -16,7 +16,7 @@ private:
 	void write_remain()
 	{
 		if(iter!=strvw.cend())
-			send(t,iter,strvw.cend());
+			write(t,iter,strvw.cend());
 	}
 public:
     template<typename T1, typename ...Args>
@@ -31,7 +31,7 @@ public:
 		++iter;
 	}
 	template<std::contiguous_iterator Iter>
-	inline constexpr void mmsend(Iter b,Iter e)
+	inline constexpr void mmwrite(Iter b,Iter e)
 	{
         auto pb(static_cast<char_type const*>(static_cast<void const*>(std::addressof(*b))));
 		auto pi(pb), pe(pb+(e-b)*sizeof(*b)/sizeof(char_type));
@@ -80,9 +80,9 @@ inline constexpr void put(oone_time_pad<T,strT>& oon,typename oone_time_pad<T,st
 	oon.mmput(ch);
 }
 template<character_output_stream T,typename strT,std::contiguous_iterator Iter>
-inline constexpr void send(oone_time_pad<T,strT>& oon,Iter cbegin,Iter cend)
+inline constexpr void write(oone_time_pad<T,strT>& oon,Iter cbegin,Iter cend)
 {
-	oon.mmsend(cbegin,cend);
+	oon.mmwrite(cbegin,cend);
 }
 template<character_output_stream T,typename strT>
 inline constexpr void flush(oone_time_pad<T,strT>& oon)

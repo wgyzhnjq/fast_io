@@ -41,14 +41,14 @@ inline constexpr void irelease(basic_istring_view<T>& isv,std::size_t size)
 template<output_stream output, typename T>
 inline constexpr void idump(output& out,basic_istring_view<T>& isv)
 {
-	send(out,isv.str().data(),isv.str().data()+isv.str().size());
+	write(out,isv.str().data(),isv.str().data()+isv.str().size());
 	isv.str()={};
 }
 
 template<typename T,std::contiguous_iterator Iter>
 requires (sizeof(typename T::value_type)==1||
 	std::same_as<typename T::value_type,typename std::iterator_traits<Iter>::value_type>)
-inline constexpr Iter receive(basic_istring_view<T>& istrvw,Iter begin,Iter end)
+inline constexpr Iter read(basic_istring_view<T>& istrvw,Iter begin,Iter end)
 {
 	using char_type = typename T::value_type;
 	using iter_value_type = typename std::iterator_traits<Iter>::value_type;
@@ -79,30 +79,6 @@ inline constexpr Iter receive(basic_istring_view<T>& istrvw,Iter begin,Iter end)
 		}
 	}
 
-}
-
-template<bool err=false,typename T>
-inline constexpr auto get(basic_istring_view<T>& istrvw)
-{
-	if(istrvw.empty())
-	{
-		if constexpr(err)
-			return std::pair<typename T::value_type,bool>{0,true};
-		else
-		{
-#ifdef __EXCEPTIONS
-		throw eof();
-#else
-		std::terminate();
-#endif
-		}
-	}
-	auto ch(istrvw.str().front());
-	istrvw.str().remove_prefix(1);
-	if constexpr(err)
-		return std::pair<typename T::value_type,bool>{ch,false};
-	else
-		return ch;
 }
 
 using u8istring_view = basic_istring_view<std::u8string_view>;

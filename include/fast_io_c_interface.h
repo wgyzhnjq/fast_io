@@ -16,7 +16,7 @@ extern "C"
 //no check for nullptr. precondition violation!
 void cxx_fast_io_release(void* deviceptr) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_send(void* device,char const* pointer_begin,char const* pointer_end) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
+int cxx_fast_io_write(void* device,char const* pointer_begin,char const* pointer_end) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
 
 int cxx_fast_io_flush(void* device) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
 /*
@@ -26,7 +26,7 @@ int cxx_fast_io_write_size(size_t* size,void* device) CXX_FAST_IO_NOEXCEPT;//[po
 int cxx_fast_io_read_size(size_t* size,void* device) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
 */
 
-int cxx_fast_io_receive(char** readed,void* device,char* pointer_begin,char* pointer_end) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
+int cxx_fast_io_read(char** readed,void* device,char* pointer_begin,char* pointer_end) CXX_FAST_IO_NOEXCEPT;//[pointer_begin,pointer_end)
 int cxx_fast_io_acquire_file(void** generated_device,char const* filename,char const* open_mode) CXX_FAST_IO_NOEXCEPT;
 int cxx_fast_io_acquire_buf(void** generated_device,char const* filename,char const* open_mode) CXX_FAST_IO_NOEXCEPT;
 int cxx_fast_io_acquire_stdin(void** generated_device) CXX_FAST_IO_NOEXCEPT;

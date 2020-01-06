@@ -12,7 +12,7 @@ inline std::size_t bufferred_transmit(output& outp,input& inp)
 		auto p(receive(inp,array.data(),array.data()+array.size()));
 		std::size_t transmitted_this_round(p-array.data());
 		transmitted_bytes+=transmitted_this_round;
-		send(outp,array.data(),p);
+		write(outp,array.data(),p);
 		if(!transmitted_this_round)
 			return transmitted_bytes;
 	}
@@ -29,7 +29,7 @@ inline std::size_t bufferred_transmit(output& outp,input& inp,std::size_t bytes)
 			b=bytes;
 		auto p(receive(inp,array.data(),array.data()+b));
 		std::size_t read_bytes(p-array.data());
-		send(outp,array.data(),p);
+		write(outp,array.data(),p);
 		transmitted_bytes+=read_bytes;
 		if(read_bytes!=b)
 			return transmitted_bytes;

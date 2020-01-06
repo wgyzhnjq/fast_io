@@ -202,25 +202,25 @@ template<typename T>
 inline constexpr manip::local_chinese<T const> local_chinese(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::utc_chinese<T const> utc_chinese(T const &f){return {f};}
-
+/*
 template<character_input_stream input,std::integral T>
 inline void scan_define(input& in,manip::char_view<T> a)
 {
 	a.reference = get(in);
 }
-/*
-template<character_output_stream output,std::integral T>
-inline void print_define(output& out,manip::char_view<T> a)
-{
-	put(out,static_cast<typename output::char_type>(a.reference));
-}
-*/
 template<character_input_stream input,std::floating_point T>
 inline void scan_define(input& in,manip::char_view<T> a)
 {
 	a.reference = get(in);
 }
 
+*/
+
+template<character_output_stream output,std::integral T>
+inline void print_define(output& out,manip::char_view<T> a)
+{
+	put(out,static_cast<typename output::char_type>(a.reference));
+}
 template<character_output_stream output,typename T>
 requires ((std::integral<T>||std::floating_point<T>)&&(std::same_as<typename output::char_type,char>||(!std::same_as<T,char>)))
 inline void print_define(output& out,manip::char_view<T> a)
@@ -245,18 +245,14 @@ template<output_stream output>
 requires (std::same_as<typename output::char_type,char8_t>)
 inline void print_define(output& out,manip::from_utf8_unchecked a)
 {
-	send(out,a.str_view);
+	write(out,a.str_view);
 }
 
 template<output_stream output>
 requires (std::same_as<typename output::char_type,char>)
 inline void print_define(output& out,std::u8string_view u8vw)
 {
-	send(out,u8vw);
+	write(out,u8vw);
 }
-
-template<output_stream output,std::size_t n>
-requires (std::same_as<typename output::char_type,char>)
-inline void print_define(output& out,char const (&str)[n])=delete;
 
 }

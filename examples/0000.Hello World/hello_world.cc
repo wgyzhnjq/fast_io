@@ -2,5 +2,5 @@
 
 int main()
 {
-	print(fast_io::out,u8"Hello World\n");
+	println("Hello World");
 }

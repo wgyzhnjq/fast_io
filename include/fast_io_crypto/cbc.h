@@ -152,7 +152,7 @@ private:
 				xored_text[i] ^= plaintext_buf[i];
 			
 			auto cipher(enc(xored_text.data()));
-			send(ob,cipher.cbegin(), cipher.cend());
+			write(ob,cipher.cbegin(), cipher.cend());
 			iv = cipher;
 			plaintext_buf_pos = plaintext_buf.begin();
 		}
@@ -172,7 +172,7 @@ public:
 	}
 
 	template<std::contiguous_iterator Iter>
-	inline constexpr void mmsend(Iter b, Iter e)
+	inline constexpr void mmwrite(Iter b, Iter e)
 	{
 		auto pb(static_cast<unsigned_char_type const *>(static_cast<void const *>(std::addressof(*b))));
 		auto pi(pb), pe(pb + (e - b) * sizeof(*b) / sizeof(unsigned_char_type));
@@ -194,7 +194,7 @@ public:
 				xored_text[i] ^= plaintext_buf[i];
 			
 			auto cipher(enc(xored_text.data()));
-			send(ob,cipher.cbegin(), cipher.cend());
+			write(ob,cipher.cbegin(), cipher.cend());
 			iv = cipher;
 
 			plaintext_buf_pos = plaintext_buf.begin();
@@ -206,7 +206,7 @@ public:
 			for (std::size_t i(0); i != iv.size(); ++i)
 				xored_text[i] ^= pi[i];
 			auto cipher(enc(xored_text.data()));
-			send(ob,cipher.cbegin(), cipher.cend());
+			write(ob,cipher.cbegin(), cipher.cend());
 			iv = cipher;
 		}
 		plaintext_buf_pos = std::uninitialized_copy(pi, pe, plaintext_buf.begin());
@@ -220,7 +220,7 @@ public:
 				xored_text[i] ^= plaintext_buf[i];
 			
 			auto cipher(enc(xored_text.data()));
-			send(ob,cipher.cbegin(), cipher.cend());
+			write(ob,cipher.cbegin(), cipher.cend());
 			iv = cipher;
 			plaintext_buf_pos = plaintext_buf.begin();
 		}
@@ -301,9 +301,9 @@ inline constexpr auto get(basic_icbc<T,Enc>& cbc)
 }
 
 template <output_stream T, typename Enc,std::contiguous_iterator Iter>
-inline constexpr void send(basic_ocbc<T,Enc>& cbc,Iter cbegin,Iter cend)
+inline constexpr void write(basic_ocbc<T,Enc>& cbc,Iter cbegin,Iter cend)
 {
-	cbc.mmsend(cbegin,cend);
+	cbc.mmwrite(cbegin,cend);
 }
 
 template <output_stream T, typename Enc>

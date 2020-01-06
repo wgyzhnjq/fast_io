@@ -4,7 +4,7 @@
 
 namespace fast_io
 {
-	
+
 namespace details
 {
 
@@ -17,13 +17,13 @@ concept stream_char_type_requirement = requires(T&)
 template<typename T>
 concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b,typename T::char_type* e)
 {
-	receive(in,b,e);
+	read(in,b,e);
 };
 
 template<typename T>
 concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b,typename T::char_type const* e)
 {
-	{send(out,b,e)};
+	{write(out,b,e)};
 	{flush(out)};
 };
 
@@ -34,13 +34,13 @@ concept mutex_stream_impl = requires(T& t)
 	mutex(t);
 	unlocked_handle(t);
 };
-
+/*
 template<typename T>
 concept character_input_stream_impl = requires(T& in)
 {
 	get(in);
 };
-
+*/
 template<typename T>
 concept character_output_stream_impl = requires(T& out,typename T::char_type ch)
 {
@@ -61,7 +61,7 @@ namespace dummy
 	};
 	inline constexpr void flush(dummy_output_stream&){}
 	template<std::contiguous_iterator Iter>
-	inline constexpr void send(dummy_output_stream&,Iter,Iter){}
+	inline constexpr void write(dummy_output_stream&,Iter,Iter){}
 }
 
 template<typename T>
@@ -117,16 +117,16 @@ concept random_access_stream = stream<T>&&details::random_access_stream_impl<T>;
 
 template<typename T>
 concept io_stream = input_stream<T>&&output_stream<T>;
-
+/*
 template<typename T>
 concept character_input_stream = input_stream<T>&&details::character_input_stream_impl<T>;
-
+*/
 template<typename T>
 concept character_output_stream = output_stream<T>&&details::character_output_stream_impl<T>;
-
+/*
 template<typename T>
 concept character_io_stream = character_input_stream<T>&&character_output_stream<T>;
-
+*/
 template<typename T>
 concept mutex_io_stream = mutex_input_stream<T>&&mutex_output_stream<T>;
 
@@ -166,9 +166,9 @@ concept scanable=input_stream<input>&&requires(input& in,T&& t)
 };
 
 template<typename input,typename T>
-concept readable=input_stream<input>&&requires(input& in,T&& t)
+concept receiveable=input_stream<input>&&requires(input& in,T&& t)
 {
-	read_define(in,std::forward<T>(t));
+	receive_define(in,std::forward<T>(t));
 };
 
 
@@ -185,9 +185,9 @@ concept printlnable=output_stream<output>&&requires(output& out,T&& t)
 };
 
 template<typename output,typename T>
-concept writeable=output_stream<output>&&requires(output& out,T&& t)
+concept sendable=output_stream<output>&&requires(output& out,T&& t)
 {
-	write_define(out,std::forward<T>(t));
+	send_define(out,std::forward<T>(t));
 };
 
 }

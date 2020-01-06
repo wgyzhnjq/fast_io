@@ -30,3 +30,51 @@ inline auto log()
 
 }
 }
+
+/*
+I know putting global would be a problem. However, I think put some special cases to global would reduce abusing of using namespace
+
+print is more nature and teachable for new C++ programmmers and most languages on the world (basic, lua, python) are all doing this
+
+Also, it allows you for copying some other languages' into C++
+*/
+
+template<typename T,typename... Args>
+requires (!fast_io::output_stream<T>)&&requires(T&& t,Args&& ...args)
+{
+	print(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+inline constexpr void print(T&& t,Args&& ...args)
+{
+	print(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+
+template<typename T,typename... Args>
+requires (!fast_io::output_stream<T>)&&requires(T&& t,Args&& ...args)
+{
+	println(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+inline constexpr void println(T&& t,Args&& ...args)
+{
+	println(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+requires requires(Args&& ...args)
+{
+	fprint(fast_io::out,std::forward<Args>(args)...);
+}
+inline constexpr void fprint(Args&& ...args)
+{
+	fprint(fast_io::out,std::forward<Args>(args)...);
+}
+
+template<typename T,typename... Args>
+requires (!fast_io::input_stream<T>)&&requires(T&& t,Args&& ...args)
+{
+	scan(fast_io::in,std::forward<T>(t),std::forward<Args>(args)...);
+}
+inline constexpr void scan(T&& t,Args&& ...args)
+{
+	scan(fast_io::in,std::forward<T>(t),std::forward<Args>(args)...);
+}

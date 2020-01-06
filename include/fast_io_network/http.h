@@ -5,7 +5,7 @@ namespace fast_io
 {
 
 // i think this should use coroutine. Let's wait until C++20
-
+/*
 template<character_input_stream input>
 inline void get_http_header_split(input& in,std::basic_string<typename input::char_type> &str)
 {
@@ -36,6 +36,6 @@ inline constexpr void skip_http_header(input& in)
 {
 	while(1<skip_line(in));
 }
-
+*/
 
 }

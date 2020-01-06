@@ -4,7 +4,7 @@ namespace fast_io::details::ryu
 {
 
 //FUCK CONSTEXPR NOT ALLOWING ME TO USE GOTO. FUCK WG21
-template<std::floating_point F,character_input_stream input>
+template<std::floating_point F,buffer_input_stream input>
 inline constexpr F input_floating(input& in)
 {
 	using floating_trait = floating_traits<F>;

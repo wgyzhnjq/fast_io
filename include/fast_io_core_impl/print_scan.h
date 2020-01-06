@@ -17,7 +17,7 @@ inline constexpr bool isspace(T ch)
 }
 
 }
-
+/*
 
 template<character_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
@@ -53,7 +53,7 @@ inline constexpr void scan_define(input& in, T& b)
 	else
 		b=1;
 }
-
+*/
 template<character_output_stream output,std::integral T>
 requires std::same_as<T,bool>
 inline constexpr void print_define(output& out, T const& b)
@@ -64,7 +64,7 @@ inline constexpr void print_define(output& out, T const& b)
 template<output_stream output>
 inline constexpr void print_define(output& out,std::basic_string_view<typename output::char_type> str)
 {
-	send(out,str.data(),str.data()+str.size());
+	write(out,str.data(),str.data()+str.size());
 }
 
 inline namespace print_scan_details
@@ -99,17 +99,17 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 }
 
 template<input_stream input,typename ...Args>
-requires(readable<input,Args>&&...)
-inline constexpr void normal_read(input &in,Args&& ...args)
+requires(receiveable<input,Args>&&...)
+inline constexpr void normal_receive(input &in,Args&& ...args)
 {
 	(read_define(in,std::forward<Args>(args)),...);
 }
 
 template<output_stream output,typename ...Args>
-requires(writeable<output,Args>&&...)
-inline constexpr void normal_write(output &out,Args&& ...args)
+requires(sendable<output,Args>&&...)
+inline constexpr void normal_send(output &out,Args&& ...args)
 {
-	(write_define(out,std::forward<Args>(args)),...);
+	(send_define(out,std::forward<Args>(args)),...);
 }
 
 }
@@ -131,17 +131,17 @@ inline constexpr void scan(input &in,Args&& ...args)
 
 template<input_stream input,typename ...Args>
 requires (sizeof...(Args)!=0)
-inline constexpr void read(input &in,Args&& ...args)
+inline constexpr void receive(input &in,Args&& ...args)
 {
 	using namespace print_scan_details;
 	if constexpr(mutex_input_stream<input>)
 	{
 		typename input::lock_guard_type lg{mutex(in)};
 		decltype(auto) uh(unlocked_handle(in));
-		read(uh,std::forward<Args>(args)...);
+		receive(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr(true)
-		normal_read(in,std::forward<Args>(args)...);
+		normal_receive(in,std::forward<Args>(args)...);
 }
 
 template<output_stream output,typename ...Args>
@@ -180,19 +180,19 @@ inline constexpr void println(output &out,Args&& ...args)
 
 template<output_stream output,typename ...Args>
 requires (sizeof...(Args)!=0)
-inline constexpr void write(output &out,Args&& ...args)
+inline constexpr void send(output &out,Args&& ...args)
 {
 	using namespace print_scan_details;
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
 		decltype(auto) uh(unlocked_handle(out));
-		write(uh,std::forward<Args>(args)...);
+		send(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-		normal_write(out,std::forward<Args>(args)...);
+	else if constexpr((sendable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
+		normal_send(out,std::forward<Args>(args)...);
 	else if constexpr(true)
-		buffer_write(out,std::forward<Args>(args)...);
+		buffer_send(out,std::forward<Args>(args)...);
 }
 
 
@@ -240,21 +240,21 @@ inline constexpr void println_flush(output &out,Args&& ...args)
 
 template<output_stream output,typename ...Args>
 requires (sizeof...(Args)!=0)
-inline constexpr void write_flush(output &out,Args&& ...args)
+inline constexpr void send_flush(output &out,Args&& ...args)
 {
 	using namespace print_scan_details;
 	if constexpr(mutex_output_stream<output>)
 	{
 		typename output::lock_guard_type lg{mutex(out)};
 		decltype(auto) uh(unlocked_handle(out));
-		write_flush(out.native_handle(),std::forward<Args>(args)...);
+		send_flush(out.native_handle(),std::forward<Args>(args)...);
 	}
 	else
 	{
-		if constexpr((writeable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-			normal_write(out,std::forward<Args>(args)...);
+		if constexpr((sendable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
+			normal_send(out,std::forward<Args>(args)...);
 		else if constexpr(true)
-			buffer_write(out,std::forward<Args>(args)...);
+			buffer_send(out,std::forward<Args>(args)...);
 		flush(out);
 	}
 }
@@ -267,10 +267,10 @@ inline void fprint_impl(os &out,std::basic_string_view<ch_type> format)
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find(0x25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
-		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
+		write(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos!=std::string_view::npos)
 		std::terminate();
-	send(out,format.cbegin(),format.cend());
+	write(out,format.cbegin(),format.cend());
 }
 
 template<output_stream os,typename ch_type,typename T,typename ...Args>
@@ -278,15 +278,15 @@ inline void fprint_impl(os &out,std::basic_string_view<ch_type> format,T&& cr,Ar
 {
 	std::size_t percent_pos;
 	for(;(percent_pos=format.find(0x25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0x25;format.remove_prefix(percent_pos+2))
-		send(out,format.cbegin(),format.cbegin()+percent_pos+1);
+		write(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos==std::string_view::npos)
 	{
-		send(out,format.cbegin(),format.cend());
+		write(out,format.cbegin(),format.cend());
 		return;
 	}
 	else
 	{
-		send(out,format.cbegin(),format.cbegin()+percent_pos);
+		write(out,format.cbegin(),format.cbegin()+percent_pos);
 		format.remove_prefix(percent_pos+1);
 	}
 	print(out,std::forward<T>(cr));

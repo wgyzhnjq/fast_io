@@ -212,7 +212,7 @@ inline constexpr void orelease(sha1& sh,std::size_t size)
 }
 
 template<std::contiguous_iterator Iter>
-inline constexpr void send(sha1& sh,Iter cbegin,Iter cend)
+inline constexpr void write(sha1& sh,Iter cbegin,Iter cend)
 {
 	auto b(static_cast<char const*>(static_cast<void const*>(std::to_address(cbegin))));
 	auto e(static_cast<char const*>(static_cast<void const*>(std::to_address(cend))));

@@ -14,18 +14,18 @@ public:
 };
 
 template<output_stream Ohandler,typename Ohandler::char_type flush_character,std::contiguous_iterator Iter>
-inline constexpr void send(char_flush<Ohandler,flush_character>& ob,Iter b,Iter e)
+inline constexpr void write(char_flush<Ohandler,flush_character>& ob,Iter b,Iter e)
 {
 	using char_type = typename Ohandler::char_type;
 	auto pb(std::to_address(b)),pe(pb+(e-b)*sizeof(*b)/sizeof(char_type));
 	for(auto pi(pb);pi!=pe;++pi)
 		if(*pi==flush_character)
 		{
-			send(static_cast<Ohandler&>(ob),pb,pi+1);
+			write(static_cast<Ohandler&>(ob),pb,pi+1);
 			flush(ob);
 			pb=pi+1;
 		}
-	send(static_cast<Ohandler&>(ob),pb,pe);
+	write(static_cast<Ohandler&>(ob),pb,pe);
 }
 
 template<character_output_stream Ohandler,typename Ohandler::char_type flush_character>

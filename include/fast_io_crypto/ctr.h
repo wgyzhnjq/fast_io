@@ -163,7 +163,7 @@ private:
 		auto cipher(enc(block.data()));
 		for (std::size_t i(0); i != cipher.size(); ++i)
 			cipher[i] ^= v[i];
-		send(ob,cipher.cbegin(), cipher.cend());
+		write(ob,cipher.cbegin(), cipher.cend());
 		return block_counter;
 	}
 
@@ -194,7 +194,7 @@ public:
 	}
 
 	template<std::contiguous_iterator Iter>
-	inline constexpr void mmsend(Iter b, Iter e)
+	inline constexpr void mmwrite(Iter b, Iter e)
 	{
 		auto pb(static_cast<unsigned_char_type const *>(static_cast<void const *>(std::to_address(b))));
 		auto pi(pb), pe(pb + (e - b) * sizeof(*b) / sizeof(unsigned_char_type));
@@ -325,9 +325,9 @@ inline constexpr auto get(basic_ictr<T,Enc>& ctr)
 }
 
 template <output_stream T, typename Enc,std::contiguous_iterator Iter>
-inline constexpr void send(basic_octr<T,Enc>& ctr,Iter cbegin,Iter cend)
+inline constexpr void write(basic_octr<T,Enc>& ctr,Iter cbegin,Iter cend)
 {
-	ctr.mmsend(cbegin,cend);
+	ctr.mmwrite(cbegin,cend);
 }
 
 template <output_stream T, typename Enc>

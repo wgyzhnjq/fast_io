@@ -44,7 +44,7 @@ inline constexpr void orelease(basic_ostring<T>& ob,std::size_t size)
 template<typename T,std::contiguous_iterator Iter>
 requires (sizeof(typename T::value_type)==1||
 	std::same_as<typename T::value_type,typename std::iterator_traits<Iter>::value_type>)
-inline void send(basic_ostring<T>& ostr,Iter cbegin,Iter cend)
+inline void write(basic_ostring<T>& ostr,Iter cbegin,Iter cend)
 {
 	using char_type = typename T::value_type;
 //http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1072r2.html
