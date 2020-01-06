@@ -23,8 +23,7 @@ struct io_aligned_allocator
 	}
 };
 
-template<typename CharT,typename Allocator = io_aligned_allocator<CharT>,
-		std::size_t buffer_size = ((65536<sizeof(CharT))?1:65536/sizeof(CharT))>
+template<typename CharT,std::size_t buffer_size = ((65536<sizeof(CharT))?1:65536/sizeof(CharT)),typename Allocator = io_aligned_allocator<CharT>>
 class basic_buf_handler
 {
 	Allocator alloc;
@@ -73,8 +72,8 @@ public:
 	}
 };
 
-template<typename CharT,typename Allocator,std::size_t buffer_size>
-inline void swap(basic_buf_handler<CharT,Allocator,buffer_size>& a,basic_buf_handler<CharT,Allocator,buffer_size>& b) noexcept
+template<typename CharT,std::size_t buffer_size,typename Allocator>
+inline void swap(basic_buf_handler<CharT,buffer_size,Allocator>& a,basic_buf_handler<CharT,buffer_size,Allocator>& b) noexcept
 {
 	a.swap(b);
 }
@@ -90,7 +89,7 @@ public:
 	using buffer_type = Buf;
 	using char_type = typename Buf::char_type;	
 	template<typename... Args>
-//	requires std::constructible_from<Ihandler,Args...>
+	requires std::constructible_from<Ihandler,Args...>
 	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){}
 	inline constexpr auto& native_handle()
 	{
@@ -214,7 +213,7 @@ inline constexpr Iter read(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 		return begin+(details::ibuf_read<Buf::size,true>(ib,b,reinterpret_cast<std::byte*>(std::to_address(end)))-b)/sizeof(*begin);
 	}
 }
-
+/*
 template<bool err=false,input_stream Ihandler,typename Buf>
 inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 {
@@ -241,7 +240,7 @@ inline constexpr auto get(basic_ibuf<Ihandler,Buf>& ib)
 	else
 		return *ib.ibuffer.curr++;
 }
-
+*/
 template<input_stream Ihandler,typename Buf,typename... Args>
 requires random_access_stream<Ihandler>
 inline constexpr auto seek(basic_ibuf<Ihandler,Buf>& ib,Args&& ...args)
