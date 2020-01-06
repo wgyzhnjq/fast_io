@@ -53,25 +53,13 @@ concept random_access_stream_impl = requires(T& t)
 	seek(t,5);
 };
 
-namespace dummy
-{
-	struct dummy_output_stream
-	{
-		using char_type = char8_t;
-	};
-	inline constexpr void flush(dummy_output_stream&){}
-	template<std::contiguous_iterator Iter>
-	inline constexpr void write(dummy_output_stream&,Iter,Iter){}
-}
-
 template<typename T>
 concept buffer_input_stream_impl = requires(T& in,std::size_t n)
 {
+	iflush(in);
+	ispan(in);
 	ireserve(in,n);
-	irelease(in,n);
-}&&requires(dummy::dummy_output_stream& dumout,T& in)
-{
-	idump(dumout,in);
+	icommit(in,n);
 };
 
 template<typename T>

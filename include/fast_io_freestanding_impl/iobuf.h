@@ -99,26 +99,43 @@ public:
 };
 
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto ireserve(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)->decltype(ib.ibuffer.curr)
+[[nodiscard]] inline constexpr bool iflush(basic_ibuf<Ihandler,Buf>& ib)
 {
-	if(ib.ibuffer.end<=ib.ibuffer.curr+size)
-		return nullptr;
-	return ib.ibuffer.curr+=size;
+	if(ib.ibuffer.end==nullptr)
+		ib.ibuffer.init_space();
+	return (ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr=ib.ibuffer.beg,ib.ibuffer.end))
+		==ib.ibuffer.beg+Buf::size;
 }
 
 template<input_stream Ihandler,typename Buf>
-inline constexpr void irelease(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
+inline constexpr std::span<typename basic_ibuf<Ihandler,Buf>::char_type>
+	ispan(basic_ibuf<Ihandler,Buf>& ib)
 {
-	ib.ibuffer.curr-=size;
+	return {ib.ibuffer.curr,ib.ibuffer.end};
 }
 
-template<output_stream output,input_stream Ihandler,typename Buf>
-inline constexpr void idump(output& out,basic_ibuf<Ihandler,Buf>& ib)
+template<input_stream Ihandler,typename Buf>
+[[nodiscard]] inline constexpr std::span<typename basic_ibuf<Ihandler,Buf>::char_type>
+	ireserve(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
 {
-	if(ib.ibuffer==ib.ibuffer.end)
-		return;
-	write(out,ib.ibuffer.curr,ib.ibuffer.end);
-	ib.ibuffer.curr=ib.ibuffer.end;
+	if(ib.ibuffer.end-ib.ibuffer.curr<size)
+	{
+		if(size<=Buf::size)
+			throw std::system_error(std::errc::operation_not_supported);
+		if(ib.ibuffer.end==nullptr)
+			ib.ibuffer.init_space();
+		else
+			std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
+		ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr,ib.ibuffer.beg+Buf::size);
+		ib.ibuffer.curr=ib.ibuffer.beg;
+	}
+	return {ib.ibuffer.curr,ib.ibuffer.end};
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr void icommit(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
+{
+	ib.ibuffer.curr+=n;
 }
 
 template<typename T,typename Iter>
@@ -246,12 +263,14 @@ class basic_obuf
 public:
 	Buf obuffer;
 	inline constexpr void close_impl() noexcept
-	try
 	{
-		if(obuffer.beg)
-			write(oh,obuffer.beg,obuffer.curr);
+		try
+		{
+			if(obuffer.beg)
+				write(oh,obuffer.beg,obuffer.curr);
+		}
+		catch(...){}
 	}
-	catch(...){}
 public:
 	using native_handle_type = Ohandler;
 	using buffer_type = Buf;
