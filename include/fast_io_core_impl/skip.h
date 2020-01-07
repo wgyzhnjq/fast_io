@@ -26,17 +26,27 @@ inline constexpr bool operator()(T ch)
 	std::make_unsigned_t<T> e(ch);
 	if constexpr(sign)
 	{
-		if constexpr(base<=10)
-			return (e==0x2d)|(e-0x30)<base;
+		if constexpr(base<=0xA)
+			return (e==0x2d)||static_cast<std::uint8_t>(e-0x30)<base;
 		else
-			return (e==0x2d)|((e-0x30)<0xA)|((e-0x37)<base)|((e-0x57)<base);
+		{
+			constexpr std::uint8_t basem10(base-0xa);
+			return (e==0x2d)||static_cast<std::uint8_t>((e-0x30)<0xA)||
+				(static_cast<std::uint8_t>(e-0x41)<basem10)||
+				(static_cast<std::uint8_t>(e-0x61)<basem10);
+		}
 	}
 	else
 	{
-		if constexpr(base<=10)
-			return (e-0x30)<base;
+		if constexpr(base<=0xA)
+			return static_cast<std::uint8_t>(e-0x30)<base;
 		else
-			return ((e-0x30)<0xA)|((e-0x37)<base)|((e-0x57)<base);
+		{
+			constexpr std::uint8_t basem10(base-0xa);
+			return (static_cast<std::uint8_t>(e-0x30)<0xA)||
+				(static_cast<std::uint8_t>(e-0x41)<basem10)||
+				(static_cast<std::uint8_t>(e-0x61)<basem10);
+		}
 	}
 }
 };
@@ -65,7 +75,7 @@ template<buffer_input_stream input>
 	return skip_until(in,details::is_none_space{});
 }
 
-template<bool sign=false,std::uint8_t base=10,buffer_input_stream input>
+template<bool sign=false,std::uint8_t base=0xA,buffer_input_stream input>
 [[nodiscard]] inline constexpr bool skip_none_numerical(input& in)
 {
 	return skip_until(in,details::is_numerical<sign,base>{});

@@ -401,6 +401,102 @@ inline constexpr void input_base_number(input& in,T& a)
 		a=-a;
 }
 */
+
+template<std::signed_integral T,std::integral T1>
+inline constexpr T mul_overflow(T a,T1 b)
+{
+	T t{};
+	if(__builtin_mul_overflow(a,b,std::addressof(t)))
+#ifdef __cpp_exceptions
+		throw std::overflow_error("mul overflow");
+#else
+		std::terminate();
+#endif
+	return t;
+}
+
+template<std::signed_integral T,std::integral T1>
+inline constexpr T add_overflow(T a,T1 b)
+{
+	T t{};
+	if(__builtin_add_overflow(a,b,std::addressof(t)))
+#ifdef __cpp_exceptions
+		throw std::overflow_error("add overflow");
+#else
+		std::terminate();
+#endif
+	return t;
+}
+
+
+template<char8_t base,buffer_input_stream input, std::integral T>
+inline constexpr bool input_base_number(input& in,T& a)
+{
+	if(!skip_none_numerical<std::signed_integral<T>,base>(in))
+		return false;
+	auto sp(ireserve(in,128));
+	auto i(sp.data()),e(sp.data()+sp.size());
+	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
+	T r{};
+	if constexpr(std::unsigned_integral<T>)
+	{
+		for(;i!=e;++i)
+		{
+			unsigned_char_type v(*i);
+			if constexpr(base<=0xA)
+			{
+				if((v-=0x30)<base)[[likely]]
+					r=r*base+v;
+				else
+					break;
+			}
+			else
+			{
+				constexpr unsigned_char_type bm10(base-10);
+				if((v-=0x30)<base)
+					r=r*base+v;
+				else if((v-=17)<bm10||(v-=32)<bm10)
+					r=r*base+(v+10);
+				else[[unlikely]]
+					break;
+			}
+		}
+
+	}
+	else
+	{
+		bool const sign(*i==0x2d);
+		if(sign)
+			++i;
+		for(;i!=e;++i)
+		{
+			unsigned_char_type v(*i);
+			if constexpr(base<=0xA)
+			{
+				if((v-=0x30)<base)[[likely]]
+					r=add_overflow(mul_overflow(r,base),v);
+				else
+					break;
+			}
+			else
+			{
+				unsigned_char_type constexpr bm10(base-10);
+				if((v-=0x30)<base)
+					r=add_overflow(mul_overflow(r,base),v);
+				else if((v-=17)<bm10||(v-=32)<bm10)
+					r=add_overflow(mul_overflow(r,base),v+10);
+				else[[unlikely]]
+					break;
+			}
+		}
+		if(sign)
+			r=-r;
+	}
+	icommit(in,i-sp.data());
+	a=r;
+	return true;
+}
+
 }
 
 namespace manip
@@ -479,14 +575,14 @@ inline constexpr void println_define(output& out,manip::base_t<base,uppercase,T>
 template<std::size_t base,bool uppercase,buffer_input_stream input,std::integral T>
 inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
-//	details::input_base_number<base>(in,v.reference);
+	return details::input_base_number<base>(in,v.reference);
 }
 
 
 template<buffer_input_stream input,std::integral T>
-inline constexpr void scan_define(input& in,T& a)
+inline constexpr bool scan_define(input& in,T& a)
 {
-//	details::input_base_number<10>(in,a);
+	return details::input_base_number<10>(in,a);
 }
 
 template<output_stream output,std::integral T>

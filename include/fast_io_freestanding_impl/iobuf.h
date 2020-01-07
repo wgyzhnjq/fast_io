@@ -119,13 +119,13 @@ template<input_stream Ihandler,typename Buf>
 {
 	if(ib.ibuffer.end-ib.ibuffer.curr<size)
 	{
-		if(size<=Buf::size)
-			throw std::system_error(std::errc::operation_not_supported);
+		if(Buf::size<=size)
+			throw std::system_error(EOPNOTSUPP,std::generic_category());
 		if(ib.ibuffer.end==nullptr)
 			ib.ibuffer.init_space();
 		else
 			std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
-		ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr,ib.ibuffer.beg+Buf::size);
+		ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg+(ib.ibuffer.end-ib.ibuffer.curr),ib.ibuffer.beg+Buf::size);
 		ib.ibuffer.curr=ib.ibuffer.beg;
 	}
 	return {ib.ibuffer.curr,ib.ibuffer.end};

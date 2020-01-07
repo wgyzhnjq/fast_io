@@ -3,8 +3,8 @@
 
 int main()
 {
-	print(fast_io::out,u8"Please input 2 numbers\n");
+	println("Please input 2 numbers");
 	std::size_t a,b;
 	scan(fast_io::in,a,b);
-	println(fast_io::out,u8"sum of a+b = ",a+b);
+	println("sum of a+b = ",a+b);
 }
