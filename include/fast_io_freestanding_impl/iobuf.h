@@ -125,7 +125,7 @@ template<input_stream Ihandler,typename Buf>
 			ib.ibuffer.init_space();
 		else
 			std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
-		ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg+(ib.ibuffer.end-ib.ibuffer.curr),ib.ibuffer.beg+Buf::size);
+		for(auto i(ib.ibuffer.beg+(ib.ibuffer.end-ib.ibuffer.curr));(ib.ibuffer.end=read(ib.ih,i,ib.ibuffer.beg+Buf::size))!=i;);
 		ib.ibuffer.curr=ib.ibuffer.beg;
 	}
 	return {ib.ibuffer.curr,ib.ibuffer.end};
