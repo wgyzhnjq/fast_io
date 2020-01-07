@@ -97,7 +97,7 @@ char *_tmpfname;
 #endif
 */
 template<std::contiguous_iterator Iter>
-inline Iter receive(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
+inline Iter read(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(
