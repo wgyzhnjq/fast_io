@@ -23,21 +23,21 @@ inline bool scan_define(input& in,std::basic_string<typename input::char_type> &
 	}
 	for(str.clear();;)
 	{
-		for(;i!=e&&dg(*i);++i);
-		str.append(sp.data(),i);
-		if(i!=e)
+		auto j(i);
+		for(;j!=e&&dg(*j);++j);
+		str.append(i,j);
+		if(j!=e)
 		{
-			icommit(in,i-sp.data());
-			break;
+			icommit(in,j-sp.data());
+			return true;
 		}
 		if(!iflush(in))
-			break;
+			return true;
 		str.reserve(str.capacity()<<1);
 		sp=ispan(in);
 		i=sp.data();
 		e=sp.data()+sp.size();
 	}
-	return true;
 }
 
 template<buffer_input_stream input>
@@ -75,6 +75,7 @@ inline void getwhole(input& in,std::basic_string<typename input::char_type> &str
 	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second;str.push_back(ch.first));
 }
 */
+
 template<character_output_stream output,std::size_t indent_width,bool left,char8_t ch,typename T>
 inline constexpr void print_define(output& out,manip::width<indent_width,left,ch,T const> a)
 {
