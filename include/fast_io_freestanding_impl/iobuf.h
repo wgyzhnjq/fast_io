@@ -102,8 +102,8 @@ template<input_stream Ihandler,typename Buf>
 {
 	if(ib.ibuffer.end==nullptr)
 		ib.ibuffer.init_space();
-	return (ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr=ib.ibuffer.beg,ib.ibuffer.end))
-		==ib.ibuffer.beg+Buf::size;
+	return (ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr=ib.ibuffer.beg,ib.ibuffer.beg+Buf::size))
+		!=ib.ibuffer.beg;
 }
 
 template<input_stream Ihandler,typename Buf>
@@ -206,7 +206,7 @@ inline constexpr Iter read(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 {
 	using char_type = typename basic_ibuf<Ihandler,Buf>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
-		return details::ibuf_read<Buf::size>(ib,std::to_address(begin),std::to_address(end));
+		return details::ibuf_read<Buf::size>(ib,begin,end);
 	else
 	{
 		auto b(reinterpret_cast<std::byte*>(std::to_address(begin)));

@@ -3,8 +3,7 @@
 
 int main()
 {
-	fast_io::ibuf ib("getline.txt");
 	std::string str;
-	scan(ib,str);
-	println(fast_io::out,str);
+	scan(fast_io::in,str);
+	println(str);
 }

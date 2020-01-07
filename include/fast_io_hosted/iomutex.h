@@ -58,10 +58,10 @@ inline void flush(basic_iomutex<T>& t)
 	flush(t.native_handle());
 }
 template<input_stream T,std::contiguous_iterator Iter>
-inline Iter receive(basic_iomutex<T>& t,Iter begin,Iter end)
+inline Iter read(basic_iomutex<T>& t,Iter begin,Iter end)
 {
 	std::lock_guard lg(t.mutex());
-	return receive(t.native_handle(),begin,end);
+	return read(t.native_handle(),begin,end);
 }
 
 

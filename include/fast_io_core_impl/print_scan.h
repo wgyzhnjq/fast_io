@@ -3,20 +3,7 @@
 namespace fast_io
 {
 
-namespace details
-{
 
-template<std::integral T>
-inline constexpr bool isspace(T ch)
-{
-	if(ch==0x20)
-		return true;
-	std::make_unsigned_t<T> e(ch);
-	e-=9;
-	return e<5;
-}
-
-}
 /*
 
 template<character_input_stream input>
@@ -69,11 +56,31 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 
 inline namespace print_scan_details
 {
-template<input_stream input,typename ...Args>
-requires(scanable<input,Args>&&...)
-inline constexpr void normal_scan(input &in,Args&& ...args)
+
+template<buffer_input_stream input,typename T>
+inline constexpr void scan_with_ex(input &in,T&& t)
 {
-	(scan_define(in,std::forward<Args>(args)),...);
+	if constexpr(std::same_as<decltype(scan_define(in,std::forward<T>(t))),void>)
+		scan_define(in,std::forward<T>(t));
+	else
+	{
+		if(!scan_define(in,t))
+#ifdef __cpp_exceptions
+			throw eof();
+#else
+			std::terminate();
+#endif
+	}
+}
+
+template<bool report_eof,buffer_input_stream input,typename ...Args>
+requires(scanable<input,Args>&&...)
+inline constexpr auto normal_scan(input &ip,Args&& ...args)
+{
+	if constexpr(report_eof)
+		return (static_cast<std::size_t>(scan_define(ip,std::forward<Args>(args)))+...);
+	else
+		(scan_with_ex(ip,std::forward<Args>(args)),...);
 }
 
 template<output_stream output,typename ...Args>
@@ -114,19 +121,19 @@ inline constexpr void normal_send(output &out,Args&& ...args)
 
 }
 
-template<input_stream input,typename ...Args>
+template<bool report_eof=false,input_stream input,typename ...Args>
 requires (sizeof...(Args)!=0)
-inline constexpr void scan(input &in,Args&& ...args)
+inline constexpr auto scan(input &in,Args&& ...args)
 {
 	using namespace print_scan_details;
 	if constexpr(mutex_input_stream<input>)
 	{
 		typename input::lock_guard_type lg{mutex(in)};
 		decltype(auto) uh(unlocked_handle(in));
-		scan(uh,std::forward<Args>(args)...);
+		return scan<report_eof>(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr(true)
-		normal_scan(in,std::forward<Args>(args)...);
+	else
+		return normal_scan<report_eof>(in,std::forward<Args>(args)...);
 }
 
 template<input_stream input,typename ...Args>

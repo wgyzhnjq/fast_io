@@ -68,13 +68,3 @@ inline constexpr void fprint(Args&& ...args)
 {
 	fprint(fast_io::out,std::forward<Args>(args)...);
 }
-
-template<typename T,typename... Args>
-requires (!fast_io::input_stream<T>)&&requires(T&& t,Args&& ...args)
-{
-	scan(fast_io::in,std::forward<T>(t),std::forward<Args>(args)...);
-}
-inline constexpr void scan(T&& t,Args&& ...args)
-{
-	scan(fast_io::in,std::forward<T>(t),std::forward<Args>(args)...);
-}

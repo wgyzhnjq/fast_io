@@ -2,16 +2,45 @@
 
 namespace fast_io
 {
-/*
-template<character_input_stream input>
-inline void scan_define(input& in,std::basic_string<typename input::char_type> &str)
+
+template<buffer_input_stream input>
+inline bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
-	str.clear();
-	str.push_back(eat_space_get(in));
-	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&!details::isspace(ch.first);str.push_back(ch.first));
+	if(!skip_space(in))
+		return false;
+	details::is_none_space dg;
+	for(str.clear();;)
+	{
+		auto sp(ispan(in));
+		auto i(sp.data()),e(sp.data()+sp.size());
+		for(;i!=e&&dg(*i);++i);
+		str.append(sp.data(),i);
+		if(i!=e)
+		{
+			icommit(in,i-sp.data());
+			break;
+		}
+		if(!iflush(in))
+			break;
+		str.reserve(str.capacity()<<1);
+	}
+	return true;
 }
 
-template<character_input_stream input>
+template<buffer_input_stream input>
+inline void getwhole(input& in,std::basic_string<typename input::char_type> &str)
+{
+	for(str.clear();;)
+	{
+		auto sp(ispan(in));
+		str.append(sp.data(),sp.data()+sp.size());
+		if(!iflush(in))
+			return;
+		str.reserve(str.capacity()<<1);
+	}
+}
+
+/*template<character_input_stream input>
 inline void getline(input& in,std::basic_string<typename input::char_type> &str)
 {
 	str.clear();

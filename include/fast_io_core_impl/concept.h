@@ -15,15 +15,15 @@ concept stream_char_type_requirement = requires(T&)
 };
 
 template<typename T>
-concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b,typename T::char_type* e)
+concept input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b)
 {
-	read(in,b,e);
+	read(in,b,b);
 };
 
 template<typename T>
-concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b,typename T::char_type const* e)
+concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b)
 {
-	{write(out,b,e)};
+	{write(out,b,b)};
 	{flush(out)};
 };
 
