@@ -16,40 +16,6 @@ inline constexpr bool operator()(T ch)
 }
 };
 
-template<bool sign,std::uint8_t base>
-requires (0x2<base&&base<=0x36)
-struct is_numerical
-{
-template<std::integral T>
-inline constexpr bool operator()(T ch)
-{
-	std::make_unsigned_t<T> e(ch);
-	if constexpr(sign)
-	{
-		if constexpr(base<=0xA)
-			return (e==0x2d)||static_cast<std::uint8_t>(e-0x30)<base;
-		else
-		{
-			constexpr std::uint8_t basem10(base-0xa);
-			return (e==0x2d)||static_cast<std::uint8_t>((e-0x30)<0xA)||
-				(static_cast<std::uint8_t>(e-0x41)<basem10)||
-				(static_cast<std::uint8_t>(e-0x61)<basem10);
-		}
-	}
-	else
-	{
-		if constexpr(base<=0xA)
-			return static_cast<std::uint8_t>(e-0x30)<base;
-		else
-		{
-			constexpr std::uint8_t basem10(base-0xa);
-			return (static_cast<std::uint8_t>(e-0x30)<0xA)||
-				(static_cast<std::uint8_t>(e-0x41)<basem10)||
-				(static_cast<std::uint8_t>(e-0x61)<basem10);
-		}
-	}
-}
-};
 }
 
 template<buffer_input_stream input,typename UnaryPredicate>

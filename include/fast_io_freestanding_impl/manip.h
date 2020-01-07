@@ -6,13 +6,23 @@ namespace fast_io
 template<buffer_input_stream input>
 inline bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
-	if(!skip_space(in))
-		return false;
 	details::is_none_space dg;
+	auto sp(ispan(in));
+	auto i(sp.data()),e(sp.data()+sp.size());
+	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
+	for(;;)
+	{
+		for(;i!=e&&!dg(*i);++i);
+		if(i!=e)
+			break;
+		if(!iflush(in))
+			return false;
+		sp=ispan(in);
+		i=sp.data();
+		e=sp.data()+sp.size();
+	}
 	for(str.clear();;)
 	{
-		auto sp(ispan(in));
-		auto i(sp.data()),e(sp.data()+sp.size());
 		for(;i!=e&&dg(*i);++i);
 		str.append(sp.data(),i);
 		if(i!=e)
@@ -23,6 +33,9 @@ inline bool scan_define(input& in,std::basic_string<typename input::char_type> &
 		if(!iflush(in))
 			break;
 		str.reserve(str.capacity()<<1);
+		sp=ispan(in);
+		i=sp.data();
+		e=sp.data()+sp.size();
 	}
 	return true;
 }

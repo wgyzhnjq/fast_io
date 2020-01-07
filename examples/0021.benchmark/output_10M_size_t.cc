@@ -2,8 +2,8 @@
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
-#include"../../include/fast_io_crypto.h"
-#include"../../include/fast_io_legacy.h"
+//#include"../../include/fast_io_crypto.h"
+//#include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
 #include<memory>
@@ -56,7 +56,7 @@ try
 	{
 		auto [p,ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),i);
 		*p='\n';
-		send(obuf,buffer.data(),++p);
+		write(obuf,buffer.data(),++p);
 	}
 	}
 	{
@@ -65,13 +65,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
-	{
-	cqw::timer t(u8"om");
-	fast_io::omap om("omap.txt");
-	for(std::size_t i(0);i!=N;++i)
-		println(om,i);
-	}
-	{
+/*	{
 	cqw::timer t(u8"u8obuf");
 	fast_io::u8obuf u8obuf("u8obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
@@ -110,12 +104,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_vw,i);
 	}
-/*	{
+	{
 	cqw::timer t(u8"obuf ucs_view");
 	fast_io::ucs<fast_io::obuf,char32_t> uv("obuf_ucsview.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(uv,i);
-	}*/
+	}
 	{
 	cqw::timer t(u8"dynamic obuf");
 	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obuf.txt"));
@@ -147,10 +141,10 @@ try
 		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},"speck.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(enc_stream,i);
-	}
+	}*/
 }
 catch(std::exception const& e)
 {
-	println(fast_io::err,e);
+//	println(fast_io::err,e);
 	return 1;
 }

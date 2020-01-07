@@ -4,7 +4,7 @@
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
-#include"../../include/fast_io_crypto.h"
+//#include"../../include/fast_io_crypto.h"
 #include<exception>
 #include<memory>
 #include<cstdio>
@@ -17,9 +17,9 @@ try
 	std::vector<std::size_t> v(N);
 	{
 	cqw::timer t("std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt",u8"rb"),fclose);
+	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","rb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
-		auto const ret(fscanf(fp.get(),u8"%zu",v.data()+i));
+		auto const ret(fscanf(fp.get(),"%zu",v.data()+i));
 	}
 	std::vector<std::size_t> v2(v);
 /*	{
@@ -61,7 +61,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}
-	{
+/*	{
 	cqw::timer t("ibuf text");
 	fast_io::text_view<fast_io::ibuf> view("obuf_text.txt");
 	for(std::size_t i(0);i!=N;++i)
@@ -80,7 +80,7 @@ try
 		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},u8"speck.txt");
 	for(auto & e : v)
 		scan(enc_stream,e);
-	}
+	}*/
 }
 catch(std::exception const& e)
 {

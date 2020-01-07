@@ -402,6 +402,41 @@ inline constexpr void input_base_number(input& in,T& a)
 }
 */
 
+template<bool sign,std::uint8_t base>
+requires (0x2<base&&base<=0x36)
+struct is_numerical
+{
+template<std::integral T>
+inline constexpr bool operator()(T ch)
+{
+	std::make_unsigned_t<T> e(ch);
+	if constexpr(sign)
+	{
+		if constexpr(base<=0xA)
+			return (e==0x2d)||static_cast<std::uint8_t>(e-0x30)<base;
+		else
+		{
+			constexpr std::uint8_t basem10(base-0xa);
+			return (e==0x2d)||static_cast<std::uint8_t>((e-0x30)<0xA)||
+				(static_cast<std::uint8_t>(e-0x41)<basem10)||
+				(static_cast<std::uint8_t>(e-0x61)<basem10);
+		}
+	}
+	else
+	{
+		if constexpr(base<=0xA)
+			return static_cast<std::uint8_t>(e-0x30)<base;
+		else
+		{
+			constexpr std::uint8_t basem10(base-0xa);
+			return (static_cast<std::uint8_t>(e-0x30)<0xA)||
+				(static_cast<std::uint8_t>(e-0x41)<basem10)||
+				(static_cast<std::uint8_t>(e-0x61)<basem10);
+		}
+	}
+}
+};
+
 template<std::signed_integral T,std::integral T1>
 inline constexpr T mul_overflow(T a,T1 b)
 {
@@ -432,13 +467,23 @@ inline constexpr T add_overflow(T a,T1 b)
 template<char8_t base,buffer_input_stream input, std::integral T>
 inline constexpr bool input_base_number(input& in,T& a)
 {
-	if(!skip_none_numerical<std::signed_integral<T>,base>(in))
-		return false;
+	is_numerical<std::signed_integral<T>,base> pred;
+	auto sp(ispan(in));
+	auto i(sp.data()),e(sp.data()+sp.size());
+	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
+	for(;;)
+	{
+		for(;i!=e&&!pred(*i);++i);
+		if(i!=e)
+			break;
+		if(!iflush(in))
+			return false;
+		sp=ispan(in);
+		i=sp.data();
+		e=sp.data()+sp.size();
+	}
 	for(T r{};;)
 	{
-		auto sp(ispan(in));
-		auto i(sp.data()),e(sp.data()+sp.size());
-		using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
 		if constexpr(std::unsigned_integral<T>)
 		{
 			for(;i!=e;++i)
@@ -513,6 +558,9 @@ inline constexpr bool input_base_number(input& in,T& a)
 		}
 		if(!iflush(in))
 			return true;
+		sp=ispan(in);
+		i=sp.data();
+		e=i+sp.size();
 	}
 }
 
