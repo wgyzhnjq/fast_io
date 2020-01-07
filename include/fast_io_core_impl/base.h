@@ -434,67 +434,86 @@ inline constexpr bool input_base_number(input& in,T& a)
 {
 	if(!skip_none_numerical<std::signed_integral<T>,base>(in))
 		return false;
-	auto sp(ireserve(in,128));
-	auto i(sp.data()),e(sp.data()+sp.size());
-	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
-	T r{};
-	if constexpr(std::unsigned_integral<T>)
+	for(T r{};;)
 	{
-		for(;i!=e;++i)
+		auto sp(ispan(in));
+		auto i(sp.data()),e(sp.data()+sp.size());
+		using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
+		if constexpr(std::unsigned_integral<T>)
 		{
-			unsigned_char_type v(*i);
-			if constexpr(base<=0xA)
+			for(;i!=e;++i)
 			{
-				if((v-=0x30)<base)[[likely]]
-					r=r*base+v;
+				unsigned_char_type v(*i);
+				if constexpr(base<=0xA)
+				{
+					if((v-=0x30)<base)[[likely]]
+						r=r*base+v;
+					else
+					{
+						icommit(in,i-sp.data());
+						a=r;
+						return true;
+					}
+				}
 				else
-					break;
+				{
+					constexpr unsigned_char_type bm10(base-10);
+					if((v-=0x30)<base)
+						r=r*base+v;
+					else if((v-=17)<bm10||(v-=32)<bm10)
+						r=r*base+(v+10);
+					else[[unlikely]]
+					{
+						icommit(in,i-sp.data());
+						a=r;
+						return true;
+					}
+				}
 			}
-			else
-			{
-				constexpr unsigned_char_type bm10(base-10);
-				if((v-=0x30)<base)
-					r=r*base+v;
-				else if((v-=17)<bm10||(v-=32)<bm10)
-					r=r*base+(v+10);
-				else[[unlikely]]
-					break;
-			}
-		}
 
-	}
-	else
-	{
-		bool const sign(*i==0x2d);
-		if(sign)
-			++i;
-		for(;i!=e;++i)
+		}
+		else
 		{
-			unsigned_char_type v(*i);
-			if constexpr(base<=0xA)
+			bool const sign(*i==0x2d);
+			if(sign)
+				++i;
+			for(;i!=e;++i)
 			{
-				if((v-=0x30)<base)[[likely]]
-					r=add_overflow(mul_overflow(r,base),v);
+				unsigned_char_type v(*i);
+				if constexpr(base<=0xA)
+				{
+					if((v-=0x30)<base)[[likely]]
+						r=add_overflow(mul_overflow(r,base),v);
+					else
+					{
+						if(sign)
+							r=-r;
+						icommit(in,i-sp.data());
+						a=r;
+						return true;
+					}
+				}
 				else
-					break;
-			}
-			else
-			{
-				unsigned_char_type constexpr bm10(base-10);
-				if((v-=0x30)<base)
-					r=add_overflow(mul_overflow(r,base),v);
-				else if((v-=17)<bm10||(v-=32)<bm10)
-					r=add_overflow(mul_overflow(r,base),v+10);
-				else[[unlikely]]
-					break;
+				{
+					unsigned_char_type constexpr bm10(base-10);
+					if((v-=0x30)<base)
+						r=add_overflow(mul_overflow(r,base),v);
+					else if((v-=17)<bm10||(v-=32)<bm10)
+						r=add_overflow(mul_overflow(r,base),v+10);
+					else[[unlikely]]
+					{
+						if(sign)
+							r=-r;
+						icommit(in,i-sp.data());
+						a=r;
+						return true;
+					}
+				}
 			}
 		}
-		if(sign)
-			r=-r;
+		if(!iflush(in))
+			return true;
 	}
-	icommit(in,i-sp.data());
-	a=r;
-	return true;
 }
 
 }
