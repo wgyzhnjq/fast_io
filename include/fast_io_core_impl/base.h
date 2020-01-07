@@ -317,90 +317,6 @@ inline constexpr void output_base_number(output& out,T b)
 		write(out,iter,e);
 	}
 }
-/*
-template<char8_t base,character_input_stream input,std::integral U>
-inline constexpr void input_base_number_phase2(input& in,U& a)
-{
-	using unsigned_char_type = std::make_unsigned_t<decltype(get(in))>;
-	unsigned_char_type constexpr baseed(std::min(static_cast<unsigned_char_type>(base),static_cast<unsigned_char_type>(10)));
-	while(true)
-	{
-		unsigned_char_type ch(get<true>(in).first);
-		if((ch-=48)<baseed)
-			a=a*base+ch;
-		else if constexpr (10 < base)
-		{
-			unsigned_char_type constexpr bm10(base-10);
-			if((ch-=17)<bm10||(ch-=32)<bm10)
-				a=a*base+(ch+10);
-			else
-				return;
-		}
-		else
-			return;
-	}
-}
-
-template<char8_t base,character_input_stream input,std::unsigned_integral U>
-inline constexpr void input_base_number(input& in,U& a)
-{
-	using unsigned_char_type = std::make_unsigned_t<decltype(get(in))>;
-	unsigned_char_type constexpr baseed(std::min(static_cast<unsigned_char_type>(base),static_cast<unsigned_char_type>(10)));
-	while(true)
-	{
-		unsigned_char_type ch(get(in));
-		if((ch-=48)<baseed)
-		{
-			a=ch;
-			break;
-		}
-		else if constexpr (10 < base)
-		{
-			unsigned_char_type constexpr bm10(base-10);
-			if((ch-=17)<bm10||(ch-=32)<bm10)
-			{
-				a=ch+10;
-				break;
-			}
-		}
-	}
-	input_base_number_phase2<base>(in,a);
-}
-template<char8_t base,character_input_stream input, std::signed_integral T>
-inline constexpr void input_base_number(input& in,T& a)
-{
-	using unsigned_char_type = std::make_unsigned_t<decltype(get(in))>;
-	unsigned_char_type constexpr baseed(std::min(static_cast<unsigned_char_type>(base),static_cast<unsigned_char_type>(10)));
-	bool rev(false);
-	while(true)
-	{
-		unsigned_char_type ch(get(in));
-		if(ch==45)
-		{
-			a=0;
-			rev=true;
-			break;
-		}
-		else if((ch-=48)<baseed)
-		{
-			a=ch;
-			break;
-		}
-		else if constexpr (10 < base)
-		{
-			unsigned_char_type constexpr bm10(base-10);
-			if((ch-=17)<bm10||(ch-=32)<bm10)
-			{
-				a=ch+10;
-				break;
-			}
-		}
-	}
-	input_base_number_phase2<base>(in,a);
-	if(rev)
-		a=-a;
-}
-*/
 
 template<bool sign,std::uint8_t base>
 requires (0x2<base&&base<=0x36)
@@ -437,7 +353,7 @@ inline constexpr bool operator()(T ch)
 }
 };
 
-template<std::signed_integral T,std::integral T1>
+template<std::integral T,std::integral T1>
 inline constexpr T mul_overflow(T a,T1 b)
 {
 	T t{};
@@ -450,7 +366,7 @@ inline constexpr T mul_overflow(T a,T1 b)
 	return t;
 }
 
-template<std::signed_integral T,std::integral T1>
+template<std::integral T,std::integral T1>
 inline constexpr T add_overflow(T a,T1 b)
 {
 	T t{};
@@ -482,7 +398,8 @@ inline constexpr bool input_base_number(input& in,T& a)
 		i=sp.data();
 		e=sp.data()+sp.size();
 	}
-	for(T r{};;)
+	using unsigned_t = std::make_unsigned_t<T>;
+	for(unsigned_t r{};;)
 	{
 		if constexpr(std::unsigned_integral<T>)
 		{
@@ -527,14 +444,20 @@ inline constexpr bool input_base_number(input& in,T& a)
 				unsigned_char_type v(*i);
 				if constexpr(base<=0xA)
 				{
-					if((v-=0x30)<base)[[likely]]
+					if((v-=0x30)<base)
 						r=add_overflow(mul_overflow(r,base),v);
 					else
 					{
+						if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<r)
+						#ifdef __cpp_exceptions
+							throw std::overflow_error("signed overflow");
+						#else
+							std::terminate();
+						#endif
+						a=static_cast<T>(r);
 						if(sign)
-							r=-r;
-						icommit(in,i-sp.data());
-						a=r;
+							a=-a;
+						icommit(in,i-sp.data());						
 						return true;
 					}
 				}
@@ -545,12 +468,18 @@ inline constexpr bool input_base_number(input& in,T& a)
 						r=add_overflow(mul_overflow(r,base),v);
 					else if((v-=17)<bm10||(v-=32)<bm10)
 						r=add_overflow(mul_overflow(r,base),v+10);
-					else[[unlikely]]
+					else
 					{
+						if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<r)
+						#ifdef __cpp_exceptions
+							throw std::overflow_error("signed overflow");
+						#else
+							std::terminate();
+						#endif
+						a=static_cast<T>(r);
 						if(sign)
-							r=-r;
+							a=-a;
 						icommit(in,i-sp.data());
-						a=r;
 						return true;
 					}
 				}
@@ -673,21 +602,25 @@ inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v
 
 template<std::size_t base,bool uppercase,buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
-inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
+inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	char8_t u{};
-//	details::input_base_number<base>(in,u);
+	if(!details::input_base_number<base>(in,u))
+		return false;
 	v.reference=static_cast<std::byte>(u);
+	return true;
 }
 
 
 template<buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
-inline constexpr void scan_define(input& in,T& a)
+inline constexpr bool scan_define(input& in,T& a)
 {
 	char8_t u{};
-//	details::input_base_number<10>(in,u);
+	if(!details::input_base_number<10>(in,u))
+		return false;
 	a=static_cast<std::byte>(u);
+	return true;
 }
 
 template<output_stream output,typename T>
