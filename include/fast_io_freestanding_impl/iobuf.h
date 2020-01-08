@@ -107,16 +107,29 @@ template<input_stream Ihandler,typename Buf>
 }
 
 template<input_stream Ihandler,typename Buf>
-inline constexpr std::basic_string_view<typename basic_ibuf<Ihandler,Buf>::char_type>
-	iview(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr auto& begin(basic_ibuf<Ihandler,Buf>& ib)
 {
-	return {ib.ibuffer.curr,ib.ibuffer.end-ib.ibuffer.curr};
+	return ib.ibuffer.curr;
 }
 
 template<input_stream Ihandler,typename Buf>
-inline constexpr void icommit(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
+inline constexpr auto end(basic_ibuf<Ihandler,Buf>& ib)
+{
+	return ib.ibuffer.end;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr basic_ibuf<Ihandler,Buf>& operator++(basic_ibuf<Ihandler,Buf>& ib)
+{
+	++ib.ibuffer.curr;
+	return ib;
+}
+
+template<input_stream Ihandler,typename Buf,std::integral I>
+inline constexpr basic_ibuf<Ihandler,Buf>& operator+=(basic_ibuf<Ihandler,Buf>& ib,I n)
 {
 	ib.ibuffer.curr+=n;
+	return ib;
 }
 
 template<typename T,typename Iter>
