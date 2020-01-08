@@ -54,12 +54,11 @@ concept random_access_stream_impl = requires(T& t)
 };
 
 template<typename T>
-concept buffer_input_stream_impl = requires(T& in,std::size_t n)
+concept buffer_input_stream_impl = std::ranges::contiguous_range<T>&&requires(T& in,std::size_t n)
 {
-	iflush(in);
-	ispan(in);
-	ireserve(in,n);
-	icommit(in,n);
+	{iflush(in)}->std::same_as<bool>;
+	in+=n;
+	++in;
 };
 
 template<typename T>
