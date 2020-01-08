@@ -7,36 +7,30 @@ template<buffer_input_stream input>
 inline bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
 	details::is_none_space dg;
-	auto sp(ispan(in));
-	auto i(sp.data()),e(sp.data()+sp.size());
-	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
+	auto i(begin(in));
 	for(;;)
 	{
-		for(;i!=e&&!dg(*i);++i);
-		if(i!=e)
+		for(auto e(end(in));i!=e&&!dg(*i);++i);
+		if(i!=end(in))
 			break;
 		if(!iflush(in))
 			return false;
-		sp=ispan(in);
-		i=sp.data();
-		e=sp.data()+sp.size();
+		i=begin(in);
 	}
 	for(str.clear();;)
 	{
 		auto j(i);
-		for(;j!=e&&dg(*j);++j);
+		for(auto e(end(in));j!=e&&dg(*j);++j);
 		str.append(i,j);
-		if(j!=e)
+		if(j!=end(in))
 		{
-			icommit(in,j-sp.data());
+			in+=j-begin(in);
 			return true;
 		}
 		if(!iflush(in))
 			return true;
 		str.reserve(str.capacity()<<1);
-		sp=ispan(in);
-		i=sp.data();
-		e=sp.data()+sp.size();
+		i=begin(in);
 	}
 }
 
@@ -45,8 +39,7 @@ inline void getwhole(input& in,std::basic_string<typename input::char_type> &str
 {
 	for(str.clear();;)
 	{
-		auto sp(ispan(in));
-		str.append(sp.data(),sp.data()+sp.size());
+		str.append(begin(in),end(in));
 		if(!iflush(in))
 			return;
 		str.reserve(str.capacity()<<1);
