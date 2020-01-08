@@ -35,14 +35,14 @@ inline bool scan_define(input& in,std::basic_string<typename input::char_type> &
 }
 
 template<buffer_input_stream input>
-inline void getwhole(input& in,std::basic_string<typename input::char_type> &str)
+inline void scan_define(input& in,manip::whole<std::basic_string<typename input::char_type>> r)
 {
-	for(str.clear();;)
+	for(r.reference.clear();;)
 	{
-		str.append(begin(in),end(in));
+		r.reference.append(begin(in),end(in));
 		if(!iflush(in))
 			return;
-		str.reserve(str.capacity()<<1);
+		r.reference.reserve(r.reference.capacity()<<1);
 	}
 }
 
