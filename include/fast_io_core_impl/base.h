@@ -406,7 +406,7 @@ inline constexpr T input_base_number(input& in)
 			++in;
 			fr=front(in);
 		}
-		if constexpr(base<=0xA)
+		if constexpr(base<=10)
 		{
 			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
 			#ifdef __cpp_exceptions
@@ -430,7 +430,7 @@ inline constexpr T input_base_number(input& in)
 			T t{};
 			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
 				t=fr;
-			else if((fr-=17)<bm10||(fr-=32)<bm10)
+			else if(static_cast<unsigned_char_type>(fr-=0x17)<bm10||static_cast<unsigned_char_type>(fr-=0x32)<bm10)
 				t=fr+10;
 			else[[unlikely]]
 			#ifdef __cpp_exceptions
@@ -441,10 +441,9 @@ inline constexpr T input_base_number(input& in)
 			for(++in;;++in)
 			{
 				auto f(front<true>(in).first);
-				T t{};
 				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=t*base+f;
-				else if((f-=17)<bm10||(f-=32)<bm10)
+				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
 					t=t*base+(f+10);
 				else[[unlikely]]
 					break;
@@ -466,7 +465,7 @@ inline constexpr T input_base_number(input& in)
 			++in;
 			fr=front(in);
 		}
-		if constexpr(base<=0xA)
+		if constexpr(base<=10)
 		{
 			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
 			#ifdef __cpp_exceptions
@@ -474,7 +473,7 @@ inline constexpr T input_base_number(input& in)
 			#else
 				std::terminate();
 			#endif
-			T t(fr);
+			unsigned_t t(fr);
 			for(++in;;++in)
 			{
 				auto f(front<true>(in).first);
@@ -499,10 +498,10 @@ inline constexpr T input_base_number(input& in)
 		else
 		{
 			constexpr unsigned_char_type bm10(base-10);
-			T t{};
-			if(tatic_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
+			unsigned_t t{};
+			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
 				t=fr;
-			else if((fr-=17)<bm10||(fr-=32)<bm10)
+			else if(static_cast<unsigned_char_type>(fr-=0x17)<bm10||static_cast<unsigned_char_type>(fr-=0x32)<bm10)
 				t=fr+10;
 			else[[unlikely]]
 			#ifdef __cpp_exceptions
@@ -513,10 +512,9 @@ inline constexpr T input_base_number(input& in)
 			for(++in;;++in)
 			{
 				auto f(front<true>(in).first);
-				T t{};
-				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
+				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=add_overflow(mul_overflow(t,base),f);
-				else if((f-=17)<bm10||(f-=32)<bm10)
+				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
 					t=add_overflow(mul_overflow(t,base),f+10);
 				else[[unlikely]]
 					break;
