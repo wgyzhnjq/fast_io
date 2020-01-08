@@ -100,6 +100,12 @@ struct local_chinese
 	T& reference;
 };
 
+template<typename T>
+struct whole
+{
+	T& reference;
+};
+
 }
 template<typename T>
 requires (std::floating_point<T>||std::integral<T>)
@@ -215,6 +221,9 @@ inline void scan_define(input& in,manip::char_view<T> a)
 }
 
 */
+
+template<typename T>
+inline constexpr manip::whole<T> whole(T &f){return {f};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)
