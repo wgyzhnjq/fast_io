@@ -653,10 +653,9 @@ template<std::size_t base,bool uppercase,buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
-	char8_t u{};
-	if(!details::input_base_number<base>(in,u))
+	if(!skip_space(in))
 		return false;
-	v.reference=static_cast<std::byte>(u);
+	v.reference=static_cast<std::byte>(details::input_base_number<base,char8_t>(in));
 	return true;
 }
 
@@ -665,10 +664,9 @@ template<buffer_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr bool scan_define(input& in,T& a)
 {
-	char8_t u{};
-	if(!details::input_base_number<10>(in,u))
+	if(!skip_space(in))
 		return false;
-	a=static_cast<std::byte>(u);
+	a=static_cast<std::byte>(details::input_base_number<base,char8_t>(in));
 	return true;
 }
 
