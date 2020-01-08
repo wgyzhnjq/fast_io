@@ -107,28 +107,10 @@ template<input_stream Ihandler,typename Buf>
 }
 
 template<input_stream Ihandler,typename Buf>
-inline constexpr std::span<typename basic_ibuf<Ihandler,Buf>::char_type>
-	ispan(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr std::basic_string_view<typename basic_ibuf<Ihandler,Buf>::char_type>
+	iview(basic_ibuf<Ihandler,Buf>& ib)
 {
-	return {ib.ibuffer.curr,ib.ibuffer.end};
-}
-
-template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr std::span<typename basic_ibuf<Ihandler,Buf>::char_type>
-	ireserve(basic_ibuf<Ihandler,Buf>& ib,std::size_t size)
-{
-	if(ib.ibuffer.end-ib.ibuffer.curr<size)
-	{
-		if(Buf::size<=size)
-			throw std::system_error(EOPNOTSUPP,std::generic_category());
-		if(ib.ibuffer.end==nullptr)
-			ib.ibuffer.init_space();
-		else
-			std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
-		for(auto i(ib.ibuffer.beg+(ib.ibuffer.end-ib.ibuffer.curr));(ib.ibuffer.end=read(ib.ih,i,ib.ibuffer.beg+Buf::size))!=i;);
-		ib.ibuffer.curr=ib.ibuffer.beg;
-	}
-	return {ib.ibuffer.curr,ib.ibuffer.end};
+	return {ib.ibuffer.curr,ib.ibuffer.end-ib.ibuffer.curr};
 }
 
 template<input_stream Ihandler,typename Buf>

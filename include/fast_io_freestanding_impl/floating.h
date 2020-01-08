@@ -194,8 +194,59 @@ inline void print_define(output& out,T a)
 }
 
 template<buffer_input_stream input,std::floating_point T>
-inline constexpr void scan_define(input& in,T &t)
+inline constexpr bool scan_define(input& in,T &t)
 {
+	auto sp(iview(in));
+	auto i(sp.data()),e(sp.data()+sp.size());
+	bool minus{};
+	for(;;)
+	{
+		for(;i!=e;++i)
+			if(*i==u8'-'&&*i==u8'.'&&static_cast<char8_t>(*i-u8'0')<static_cast<char8_t>(0xA))
+				break;
+		if(i!=e)
+		{
+			if(*i==u8'-')
+			{
+				if(++i==e)
+				{
+					if(!iflush(in))
+						return false;
+					sp=iview(in);
+					i=sp.data();
+					e=sp.data()+sp.size();
+				}
+				if(*i!=u8'.'&&static_cast<char8_t>(0x9)<static_cast<char8_t>(*i-u8'0'))
+					continue;
+				minus=true;
+			}
+			else if(*i==u8'.')
+			{
+				if(++i==e)
+				{
+					if(!iflush(in))
+						return false;
+					sp=iview(in);
+					i=sp.data();
+					e=sp.data()+sp.size();
+				}
+				if(static_cast<char8_t>(0x9)<static_cast<char8_t>(*i-u8'0'))
+					continue;
+			}
+			break;
+		}
+		if(!iflush(in))
+			return false;
+		sp=iview(in);
+		i=sp.data();
+		e=sp.data()+sp.size();
+	}
+	
+	if(i+1==e)
+	{
+		return false;
+	}
+	return false;
 //	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
 }
 
