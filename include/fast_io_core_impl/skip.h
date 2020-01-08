@@ -23,11 +23,10 @@ template<buffer_input_stream input,typename UnaryPredicate>
 {
 	for(;;)
 	{
-		auto sp(ispan(in));
-		for(auto i(sp.data()),e(sp.data()+sp.size());i!=e;++i)
+		for(auto i(begin(in)),e(end(in));i!=e;++i)
 			if(pred(*i))
 			{
-				icommit(in,i-sp.data());
+				in+=i-begin(in);
 				return true;
 			}
 		if(!iflush(in))
@@ -47,6 +46,54 @@ template<bool sign=false,std::uint8_t base=0xA,buffer_input_stream input>
 	return skip_until(in,details::is_numerical<sign,base>{});
 }
 
+template<bool report_eof=false,buffer_input_stream bip>
+[[nodiscard]] inline constexpr auto front(bip& input)->std::conditional_t<report_eof,std::pair<typename bip::char_type,bool>,typename bip::char_type>
+{
+	if(begin(input)==end(input))
+	{
+		if(!iflush(input))
+		{
+			if constexpr(report_eof)
+				return {0,false};
+			else
+			{
+#ifdef __cpp_exceptions
+				throw eof();
+#else
+				std::terminate();
+#endif
+			}
+		}
+	}
+	if constexpr(report_eof)
+		return {*begin(input),true};
+	else
+		return *begin(input);
+}
 
-
+template<bool report_eof=false,buffer_input_stream bip>
+[[nodiscard]] inline constexpr auto get(bip& input)->std::conditional_t<report_eof,std::pair<typename bip::char_type,bool>,typename bip::char_type>
+{
+	if(begin(input)==end(input))
+	{
+		if(!iflush(input))
+		{
+			if constexpr(report_eof)
+				return {0,false};
+			else
+			{
+#ifdef __cpp_exceptions
+				throw eof();
+#else
+				std::terminate();
+#endif
+			}
+		}
+	}
+	++input;
+	if constexpr(report_eof)
+		return {*begin(input),true};
+	else
+		return *begin(input);
+}
 }
