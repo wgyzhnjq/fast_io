@@ -379,117 +379,162 @@ inline constexpr T add_overflow(T a,T1 b)
 	return t;
 }
 
-
-template<char8_t base,buffer_input_stream input, std::integral T>
-inline constexpr bool input_base_number(input& in,T& a)
+template<std::integral T>
+inline constexpr bool is_space(T const u)
 {
-	is_numerical<std::signed_integral<T>,base> pred;
-	auto sp(ispan(in));
-	auto i(sp.data()),e(sp.data()+sp.size());
-	using unsigned_char_type = std::make_unsigned_t<std::remove_cvref_t<decltype(*i)>>;
-	for(;;)
+	if constexpr(std::unsigned_integral<std::remove_cvref_t<T>>)
 	{
-		for(;i!=e&&!pred(*i);++i);
-		if(i!=e)
-			break;
-		if(!iflush(in))
-			return false;
-		sp=ispan(in);
-		i=sp.data();
-		e=sp.data()+sp.size();
+		return u==0x20||(u-0x9)<0x4;
 	}
-	using unsigned_t = std::make_unsigned_t<T>;
-	for(unsigned_t r{};;)
+	else
 	{
-		if constexpr(std::unsigned_integral<T>)
-		{
-			for(;i!=e;++i)
-			{
-				unsigned_char_type v(*i);
-				if constexpr(base<=0xA)
-				{
-					if((v-=0x30)<base)[[likely]]
-						r=r*base+v;
-					else
-					{
-						icommit(in,i-sp.data());
-						a=r;
-						return true;
-					}
-				}
-				else
-				{
-					constexpr unsigned_char_type bm10(base-10);
-					if((v-=0x30)<base)
-						r=r*base+v;
-					else if((v-=17)<bm10||(v-=32)<bm10)
-						r=r*base+(v+10);
-					else[[unlikely]]
-					{
-						icommit(in,i-sp.data());
-						a=r;
-						return true;
-					}
-				}
-			}
+		std::make_unsigned_t<T> const e(u);
+		return e==0x20||(e-0x9)<0x4;
+	}
+}
 
+template<std::integral T,char8_t base,buffer_input_stream input>
+inline constexpr T input_base_number(input& in)
+{
+	using unsigned_char_type = std::make_unsigned_t<typename input::char_type>;
+	using unsigned_t = std::make_unsigned_t<T>;
+	if constexpr(std::unsigned_integral<T>)
+	{
+		unsigned_char_type fr(front(in));
+		if(fr==0x2b)[[unlikely]]
+		{
+			++in;
+			fr=front(in);
+		}
+		if constexpr(base<=0xA)
+		{
+			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
+			#ifdef __cpp_exceptions
+				throw std::runtime_error("illegal input");
+			#else
+				std::terminate();
+			#endif
+			T t(fr);
+			for(++in;;++in)
+			{
+				auto f(front<true>(in).first);
+				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
+					break;
+				t=t*base+f;
+			}
+			return t;
 		}
 		else
 		{
-			bool const sign(*i==0x2d);
-			if(sign)
-				++i;
-			for(;i!=e;++i)
+			constexpr unsigned_char_type bm10(base-10);
+			T t{};
+			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
+				t=fr;
+			else if((fr-=17)<bm10||(fr-=32)<bm10)
+				t=fr+10;
+			else[[unlikely]]
+			#ifdef __cpp_exceptions
+				throw std::runtime_error("illegal input");
+			#else
+				std::terminate();
+			#endif
+			for(++in;;++in)
 			{
-				unsigned_char_type v(*i);
-				if constexpr(base<=0xA)
-				{
-					if((v-=0x30)<base)
-						r=add_overflow(mul_overflow(r,base),v);
-					else
-					{
-						if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<r)
-						#ifdef __cpp_exceptions
-							throw std::overflow_error("signed overflow");
-						#else
-							std::terminate();
-						#endif
-						a=static_cast<T>(r);
-						if(sign)
-							a=-a;
-						icommit(in,i-sp.data());						
-						return true;
-					}
-				}
-				else
-				{
-					unsigned_char_type constexpr bm10(base-10);
-					if((v-=0x30)<base)
-						r=add_overflow(mul_overflow(r,base),v);
-					else if((v-=17)<bm10||(v-=32)<bm10)
-						r=add_overflow(mul_overflow(r,base),v+10);
-					else
-					{
-						if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<r)
-						#ifdef __cpp_exceptions
-							throw std::overflow_error("signed overflow");
-						#else
-							std::terminate();
-						#endif
-						a=static_cast<T>(r);
-						if(sign)
-							a=-a;
-						icommit(in,i-sp.data());
-						return true;
-					}
-				}
+				auto f(front<true>(in).first);
+				T t{};
+				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
+					t=t*base+f;
+				else if((f-=17)<bm10||(f-=32)<bm10)
+					t=t*base+(f+10);
+				else[[unlikely]]
+					break;
 			}
+			return t;	
 		}
-		if(!iflush(in))
-			return true;
-		sp=ispan(in);
-		i=sp.data();
-		e=i+sp.size();
+	}
+	else
+	{
+		unsigned_char_type fr(front(in));
+		bool const sign(fr==0x2d);
+		if(fr==0x2b)[[unlikely]]
+		{
+			++in;
+			fr=front(in);
+		}
+		else if(sign)
+		{
+			++in;
+			fr=front(in);
+		}
+		if constexpr(base<=0xA)
+		{
+			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
+			#ifdef __cpp_exceptions
+				throw std::runtime_error("illegal input");
+			#else
+				std::terminate();
+			#endif
+			T t(fr);
+			for(++in;;++in)
+			{
+				auto f(front<true>(in).first);
+				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
+					break;
+				t=t*base+f;
+			}
+			if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<t)
+			#ifdef __cpp_exceptions
+				throw std::overflow_error("signed overflow");
+			#else
+				std::terminate();
+			#endif
+			if(sign)
+			{
+				if(t==0x1+static_cast<unsigned_t>(std::numeric_limits<T>::max()))
+					return std::numeric_limits<T>::min();
+				return -static_cast<T>(t);
+			}
+			return t;
+		}
+		else
+		{
+			constexpr unsigned_char_type bm10(base-10);
+			T t{};
+			if(tatic_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
+				t=fr;
+			else if((fr-=17)<bm10||(fr-=32)<bm10)
+				t=fr+10;
+			else[[unlikely]]
+			#ifdef __cpp_exceptions
+				throw std::runtime_error("illegal input");
+			#else
+				std::terminate();
+			#endif
+			for(++in;;++in)
+			{
+				auto f(front<true>(in).first);
+				T t{};
+				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
+					t=add_overflow(mul_overflow(t,base),f);
+				else if((f-=17)<bm10||(f-=32)<bm10)
+					t=add_overflow(mul_overflow(t,base),f+10);
+				else[[unlikely]]
+					break;
+			}
+			if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<t)
+			#ifdef __cpp_exceptions
+				throw std::overflow_error("signed overflow");
+			#else
+				std::terminate();
+			#endif
+			if(sign)
+			{
+				if(t==0x1+static_cast<unsigned_t>(std::numeric_limits<T>::max()))
+					return std::numeric_limits<T>::min();
+				return -static_cast<T>(t);
+			}
+			return t;
+		}
 	}
 }
 
@@ -569,16 +614,22 @@ inline constexpr void println_define(output& out,manip::base_t<base,uppercase,T>
 }
 
 template<std::size_t base,bool uppercase,buffer_input_stream input,std::integral T>
-inline constexpr void scan_define(input& in,manip::base_t<base,uppercase,T> v)
+inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
-	return details::input_base_number<base>(in,v.reference);
+	if(!skip_space(in))
+		return false;
+	v.reference=details::input_base_number<std::remove_cvref_t<T>,base>(in);
+	return true;
 }
 
 
 template<buffer_input_stream input,std::integral T>
 inline constexpr bool scan_define(input& in,T& a)
 {
-	return details::input_base_number<10>(in,a);
+	if(!skip_space(in))
+		return false;
+	a=details::input_base_number<std::remove_cvref_t<T>,10>(in);
+	return true;
 }
 
 template<output_stream output,std::integral T>
