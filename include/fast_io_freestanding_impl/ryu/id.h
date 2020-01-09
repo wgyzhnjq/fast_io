@@ -62,7 +62,7 @@ inline constexpr F input_floating(input& in)
 		}
 		if(m10digits==floating_trait::digits10)
 		{
-			unsigned_char_type ch(next_unsigned<2>(in)-u8'0');
+			unsigned_char_type ch(front_unsigned<2>(in)-u8'0');
 			if(ch==5)
 			{
 				if(mantissa&1)
