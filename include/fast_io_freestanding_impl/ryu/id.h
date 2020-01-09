@@ -188,7 +188,7 @@ inline constexpr F input_floating(input& in)
 					throw std::runtime_error("invalid input");
 			}
 		}
-		if(!decimal_zero_point_phase)
+		if(!decimal_zero_point_phase)[[likely]]
 		{
 			for(;m10digits!=floating_trait::digits10;++m10digits,--m10e)
 			{

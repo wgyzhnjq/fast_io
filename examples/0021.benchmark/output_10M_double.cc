@@ -2,7 +2,7 @@
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
-#include"../../include/fast_io_crypto.h"
+//#include"../../include/fast_io_crypto.h"
 #include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
@@ -25,38 +25,26 @@ try
 		vec.emplace_back(dis(eng));
 
 	{
-	cqw::timer t(u8"fprintf");
+	cqw::timer t("fprintf");
 	fast_io::c_style_file cs("csfdb.txt","wb");
 	auto fp(cs.native_handle());
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(fp,"%g\n",vec[i]);
 	}
 	{
-	cqw::timer t(u8"fprintf checked");
+	cqw::timer t("fprintf checked");
 	fast_io::c_style_file cs("csfdb_checked.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(cs,"%g\n",vec[i]);
 	}
 	{
-	cqw::timer t(u8"FILE* unlocked");
-	fast_io::c_style_file_unlocked cs("filestarunlockeddb.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(cs,"%g\n",vec[i]);
-	}
-	{
-	cqw::timer t(u8"FILE* unlocked checked");
-	fast_io::c_style_file_unlocked cs("filestarunlockeddb_checked.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(cs,"%g\n",vec[i]);
-	}
-	{
-	cqw::timer t(u8"ofstream");
+	cqw::timer t("ofstream");
 	std::ofstream fout("ofs.txt");
 	for(std::size_t i(0);i!=N;++i)
 		fout<<vec[i]<<'\n';
 	}
 	{
-	cqw::timer t(u8"ofstream tricks");
+	cqw::timer t("ofstream tricks");
 	std::ofstream fout("ofs_tricks.txt");
 	auto &rdbuf(*fout.rdbuf());
 	for(std::size_t i(0);i!=N;++i)
@@ -66,63 +54,57 @@ try
 	}
 	}
 	{
-	cqw::timer t(u8"ofstream");
+	cqw::timer t("ofstream");
 	std::ofstream fout("ofs.txt");
 	for(std::size_t i(0);i!=N;++i)
 		fout<<vec[i]<<'\n';
 	}
 
 	{
-	cqw::timer t(u8"cstyle file");
+	cqw::timer t("cstyle file");
 	fast_io::c_style_file cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
-	cqw::timer t(u8"cstyle file unlocked");
+	cqw::timer t("cstyle file unlocked");
 	fast_io::c_style_file_unlocked cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
-	cqw::timer t(u8"dynamic obuf");
+	cqw::timer t("dynamic obuf");
 	fast_io::dynamic_stream dobuf(fast_io::obuf("dynamic_obufdb.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,vec[i]);
 	}
 	{
-	cqw::timer t(u8"c_style_file_unlocked");
+	cqw::timer t("c_style_file_unlocked");
 	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
-	cqw::timer t(u8"dynamic_buf");
+	cqw::timer t("dynamic_buf");
 	fast_io::dynamic_buf dobuf(fast_io::obuf("dynamic_bufd.txt"));
 	for(std::size_t i(0);i!=N;++i)
 		println(dobuf,vec[i]);
 	}
 	{
-	cqw::timer t(u8"obuf");
+	cqw::timer t("obuf");
 	fast_io::obuf obuf("obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
 	}
 
 	{
-	cqw::timer t(u8"u8obuf");
+	cqw::timer t("u8obuf");
 	fast_io::u8obuf obuf("u8obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);
 	}
 	{
-	cqw::timer t(u8"ommap");
-	fast_io::omap om("omapdb.txt","w+");
-	for(std::size_t i(0);i!=N;++i)
-		println(om,vec[i]);
-	}
-	{
-	cqw::timer t(u8"stream_view");
+	cqw::timer t("stream_view");
 	std::ofstream fout("smvdb.txt",std::ofstream::binary);
 	fast_io::stream_view stm_v(fout);
 	for(std::size_t i(0);i!=N;++i)
@@ -130,7 +112,7 @@ try
 	}
 #ifdef _MSC_VER
 	{
-		cqw::timer t(u8"charconv");
+		cqw::timer t("charconv");
 		fast_io::obuf obuf("charconv.txt");
 		std::array<char,100> arr;
 		for(std::size_t i(0);i!=N;++i)
@@ -142,7 +124,7 @@ try
 	}
 #endif
 	{
-	cqw::timer t(u8"obuf_mutex");
+	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,vec[i]);

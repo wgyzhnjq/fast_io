@@ -2,7 +2,7 @@
 #define TIMER_H
 
 #include<chrono>
-//#include"../../include/fast_io.h"
+#include"../../include/fast_io.h"
 #include<cstdio>
 #include<string>
 
@@ -21,8 +21,7 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		fprintf(stderr,"%g\n",std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()-t0).count());
-	//	println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
+		println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
 	}
 };
 

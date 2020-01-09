@@ -402,10 +402,7 @@ inline constexpr T input_base_number(input& in)
 	{
 		unsigned_char_type fr(front(in));
 		if(fr==0x2b)[[unlikely]]
-		{
-			++in;
-			fr=front(in);
-		}
+			fr=next_unsigned(in);
 		if constexpr(base<=10)
 		{
 			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
@@ -415,9 +412,9 @@ inline constexpr T input_base_number(input& in)
 				std::terminate();
 			#endif
 			T t(fr);
-			for(++in;;++in)
+			for(;;)
 			{
-				auto f(front_unsigned<2>(in));
+				auto f(next_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
 					break;
 				t=t*base+f;
@@ -438,9 +435,9 @@ inline constexpr T input_base_number(input& in)
 			#else
 				std::terminate();
 			#endif
-			for(++in;;++in)
+			for(;;)
 			{
-				auto f(front_unsigned<2>(in));
+				auto f(next_unsigned<2>(in));
 				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=t*base+f;
 				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
@@ -455,16 +452,8 @@ inline constexpr T input_base_number(input& in)
 	{
 		unsigned_char_type fr(front(in));
 		bool const sign(fr==0x2d);
-		if(fr==0x2b)[[unlikely]]
-		{
-			++in;
-			fr=front(in);
-		}
-		else if(sign)
-		{
-			++in;
-			fr=front(in);
-		}
+		if(sign||fr==0x2b)
+			fr=next_unsigned(in);
 		if constexpr(base<=10)
 		{
 			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
@@ -474,9 +463,9 @@ inline constexpr T input_base_number(input& in)
 				std::terminate();
 			#endif
 			unsigned_t t(fr);
-			for(++in;;++in)
+			for(;;)
 			{
-				auto f(front_unsigned<2>(in));
+				auto f(next_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
 					break;
 				t=t*base+f;
@@ -509,9 +498,9 @@ inline constexpr T input_base_number(input& in)
 			#else
 				std::terminate();
 			#endif
-			for(++in;;++in)
+			for(;;)
 			{
-				auto f(front_unsigned<2>(in));
+				auto f(next_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=add_overflow(mul_overflow(t,base),f);
 				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)

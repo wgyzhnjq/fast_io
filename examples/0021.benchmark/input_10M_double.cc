@@ -4,7 +4,6 @@
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
-#include"../../include/fast_io_crypto.h"
 #include<exception>
 #include<memory>
 #include<cstdio>
@@ -15,7 +14,7 @@ try
 {
 	std::size_t constexpr N(10000000);
 	std::vector<double> v(N);
-	{
+/*	{
 	cqw::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("obufdb.txt","rb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
@@ -27,7 +26,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		fin>>v[i];
 	}
-/*	{
+	{
 	cqw::timer t("stream_view for std::ifstream");
 	fast_io::stream_view<std::ifstream> view("cfilestardb.txt",std::ifstream::binary);
 	for(std::size_t i(0);i!=N;++i)
@@ -43,16 +42,14 @@ try
 	{
 	cqw::timer t("ibuf");
 	fast_io::ibuf ibuf("obufdb.txt");
+	fast_io::obuf obuf("od2.txt");
 	for(std::size_t i(0);i!=N;++i)
+	{
 		scan(ibuf,v[i]);
+		println(obuf,v[i]);
 	}
-	{
-	cqw::timer t("ibuf ryu");
-	fast_io::ibuf ibuf("obufdb.txt");
-	for(std::size_t i(0);i!=N;++i)
-		v[i]=fast_io::details::ryu::input_floating<double>(ibuf);
 	}
-	{
+/*	{
 	cqw::timer t("ibuf_mutex ryu");
 	fast_io::ibuf_mutex ibuf("obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
@@ -83,7 +80,7 @@ try
 		std::array<uint8_t, 8>{'1',u8'2',u8'3',u8'4',u8'1',u8'2',u8'3',u8'4'},"speckdb.txt");
 	for(auto & e : v)
 		scan(enc_stream,e);
-	}
+	}*/
 }
 catch(std::exception const& e)
 {
