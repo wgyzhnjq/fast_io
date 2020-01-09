@@ -62,7 +62,7 @@ inline void print_define(output& out,manip::scientific<precision,uppercase_e,T c
 		else
 		{
 			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(static_cast<double>(a.reference)));
+			orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
 			return;
 		}
 	}
