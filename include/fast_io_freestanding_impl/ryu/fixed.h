@@ -190,11 +190,14 @@ inline constexpr auto easy_case(Iter result,bool sign, mantissaType const& manti
 	return my_copy_n(u8"inf",3,result);
 }
 
-template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
+template<std::floating_point floating,bool ignore_exp0=false,std::unsigned_integral mantissaType,std::signed_integral exponentType>
 inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& mantissa,exponentType const& exponent)
 {
-	if(!exponent)
-		return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::exponent_bits)};
+	if constexpr(!ignore_exp0)
+	{
+		if(!exponent)
+			return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::exponent_bits)};
+	}
 	return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
@@ -644,7 +647,7 @@ inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const&
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits+2))};
 }
 
-template<bool uppercase_e=false,std::size_t mode=0,std::random_access_iterator Iter,std::floating_point F>
+template<bool uppercase_e=false,std::size_t mode=0,bool int_hint=false,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr Iter output_shortest(Iter result, F d)
 {
 	using char_type = std::remove_reference_t<decltype(*result)>;
@@ -678,6 +681,18 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		}
 		return result;
 	}
+/*	if constexpr(int_hint)
+	{
+		auto const r2(init_rep<F,false>(mantissa,static_cast<signed_exponent_type>(exponent)));
+		if(-52<=r2.e&&r2.e<=0)
+		{
+		if constexpr(mode==0||mode==1)
+		{
+		}
+		//TODO: exp int hint
+
+		}
+	}*/
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
 	auto const mv(r2.m<<2);
@@ -685,7 +700,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	std::array<mantissa_type,3> v{};
 	//vr,vp,vm
 	signed_exponent_type e10{};
-	bool vm_is_trailing_zeros(false),vr_is_trailing_zeros(false);
+	bool vm_is_trailing_zeros{},vr_is_trailing_zeros{};
 	if(0<=r2.e)
 	{
 		exponent_type const q(log10_pow2(r2.e)-(3<r2.e));

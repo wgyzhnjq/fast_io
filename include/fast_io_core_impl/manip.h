@@ -69,6 +69,12 @@ struct from_utf8_unchecked
 	std::string_view str_view;
 };
 
+template<std::integral T>
+struct integer_hint
+{
+	T& reference;
+};
+
 template<typename T>
 struct unix
 {
@@ -190,7 +196,6 @@ inline constexpr manip::scientific_shortest<true,T const> scientific_upper(T con
 template<typename T>
 inline constexpr manip::fixed_shortest<T const> fixed(T const &f){return {f};}
 
-
 template<typename T>
 inline constexpr manip::shortest_shortest<false,T const> shortest(T const &f){return {f};}
 template<typename T>
@@ -224,6 +229,9 @@ inline void scan_define(input& in,manip::char_view<T> a)
 
 template<typename T>
 inline constexpr manip::whole<T> whole(T &f){return {f};}
+
+template<typename T>
+inline constexpr manip::integer_hint<T> integer_hint(T &f){return {f};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)
