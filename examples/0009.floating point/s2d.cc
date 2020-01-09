@@ -3,6 +3,7 @@
 
 int main()
 {
-	print(fast_io::out,fast_io::details::ryu::input_floating<double>(fast_io::in));
-//	print(fast_io::out,999999999999999.0);
+	double df,df1;
+	scan(fast_io::in,df,df1);
+	println(df," ",df1);
 }

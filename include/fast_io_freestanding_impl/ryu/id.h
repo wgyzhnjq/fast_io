@@ -172,24 +172,20 @@ inline constexpr F input_floating(input& in)
 		{
 			unsigned_char_type ch(next_unsigned(in));
 			if(ch==u8'0')
-				--m10e;
-			else if(static_cast<unsigned_char_type>(ch-u8'1')<static_cast<unsigned_char_type>(9))
 			{
-				++m10digits;
-				--m10e;
+				for(--m10e;(ch=next_unsigned<2>(in))==u8'0';--m10e);
+				if(static_cast<unsigned_char_type>(ch-u8'1')<static_cast<unsigned_char_type>(9))
+					decimal_zero_point_phase=false;
+				else
+					return bit_cast<F>(static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)));
+
 			}
+			else if(static_cast<unsigned_char_type>(ch-u8'1')<static_cast<unsigned_char_type>(9))
+				decimal_zero_point_phase=false;
 			else
 			{
 				if(!zero)
 					throw std::runtime_error("invalid input");
-			}
-			if(ch==u8'0')
-			{
-				for(;(ch=next_unsigned<2>(in))==u8'0';--m10e);
-				if(ch-u8'1'<9)
-					decimal_zero_point_phase=false;
-				else
-					return bit_cast<F>(static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)));
 			}
 		}
 		if(!decimal_zero_point_phase)
