@@ -65,6 +65,21 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
+	{
+	constexpr double dbN(N);
+	cqw::timer t("obuf floating");
+	fast_io::obuf obuf("obuf_floating_int.txt");
+	for(double i(0);i!=dbN;++i)
+		println(obuf,i);
+	}
+	{
+	constexpr double dbN(N);
+	cqw::timer t("obuf int hint");
+	fast_io::obuf obuf("obuf_floating_int_hint.txt");
+	for(double i(0);i!=dbN;++i)
+		println(obuf,fast_io::int_hint(i));
+	}
+
 /*	{
 	cqw::timer t(u8"u8obuf");
 	fast_io::u8obuf u8obuf("u8obuf.txt");
