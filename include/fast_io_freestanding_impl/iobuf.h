@@ -121,8 +121,7 @@ inline constexpr auto end(basic_ibuf<Ihandler,Buf>& ib)
 template<input_stream Ihandler,typename Buf>
 inline constexpr basic_ibuf<Ihandler,Buf>& operator++(basic_ibuf<Ihandler,Buf>& ib)
 {
-	if(ib.ibuffer.end<++ib.ibuffer.curr)
-		throw std::logic_error("fuck you");
+	++ib.ibuffer.curr;
 	return ib;
 }
 

@@ -85,12 +85,6 @@ try
 		println(cs,vec[i]);
 	}
 	{
-	cqw::timer t("dynamic_buf");
-	fast_io::dynamic_buf dobuf(fast_io::obuf("dynamic_bufd.txt"));
-	for(std::size_t i(0);i!=N;++i)
-		println(dobuf,vec[i]);
-	}
-	{
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obufdb.txt");
 	for(std::size_t i(0);i!=N;++i)
