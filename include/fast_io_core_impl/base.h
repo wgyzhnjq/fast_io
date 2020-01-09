@@ -417,7 +417,7 @@ inline constexpr T input_base_number(input& in)
 			T t(fr);
 			for(++in;;++in)
 			{
-				auto f(front<true>(in).first);
+				auto f(front_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
 					break;
 				t=t*base+f;
@@ -440,7 +440,7 @@ inline constexpr T input_base_number(input& in)
 			#endif
 			for(++in;;++in)
 			{
-				auto f(front<true>(in).first);
+				auto f(front_unsigned<2>(in));
 				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=t*base+f;
 				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
@@ -476,7 +476,7 @@ inline constexpr T input_base_number(input& in)
 			unsigned_t t(fr);
 			for(++in;;++in)
 			{
-				auto f(front<true>(in).first);
+				auto f(front_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
 					break;
 				t=t*base+f;
@@ -511,7 +511,7 @@ inline constexpr T input_base_number(input& in)
 			#endif
 			for(++in;;++in)
 			{
-				auto f(front<true>(in).first);
+				auto f(front_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=add_overflow(mul_overflow(t,base),f);
 				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)

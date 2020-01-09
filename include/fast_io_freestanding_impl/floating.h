@@ -196,7 +196,7 @@ inline void print_define(output& out,T a)
 template<buffer_input_stream input,std::floating_point T>
 inline constexpr bool scan_define(input& in,T &t)
 {
-	auto sp(iview(in));
+/*	auto sp(iview(in));
 	auto i(sp.data()),e(sp.data()+sp.size());
 	bool minus{};
 	for(;;)
@@ -245,8 +245,11 @@ inline constexpr bool scan_define(input& in,T &t)
 	if(i+1==e)
 	{
 		return false;
-	}
-	return false;
+	}*/
+	if(!skip_space(in))
+		return false;
+	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
+	return true;
 //	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
 }
 

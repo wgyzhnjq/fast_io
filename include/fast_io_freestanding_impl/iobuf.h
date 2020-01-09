@@ -107,7 +107,7 @@ template<input_stream Ihandler,typename Buf>
 }
 
 template<input_stream Ihandler,typename Buf>
-inline constexpr auto& begin(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr auto begin(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.curr;
 }
@@ -121,7 +121,8 @@ inline constexpr auto end(basic_ibuf<Ihandler,Buf>& ib)
 template<input_stream Ihandler,typename Buf>
 inline constexpr basic_ibuf<Ihandler,Buf>& operator++(basic_ibuf<Ihandler,Buf>& ib)
 {
-	++ib.ibuffer.curr;
+	if(ib.ibuffer.end<++ib.ibuffer.curr)
+		throw std::logic_error("fuck you");
 	return ib;
 }
 
