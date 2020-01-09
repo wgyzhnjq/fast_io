@@ -681,7 +681,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		}
 		return result;
 	}
-	if constexpr(int_hint&&(mode==0||mode==1))//scientific integer hint?? Is that useless?
+	if constexpr(int_hint)//scientific integer hint?? Is that useless?
 	{
 		auto const r2(init_rep<F,false>(mantissa,static_cast<signed_exponent_type>(exponent)));
 		if(-52<=r2.e&&r2.e<=0)[[likely]]
@@ -689,13 +689,86 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			mantissa_type const mask = (static_cast<mantissa_type>(1) << -r2.e) - 1;
 			if (!(r2.m & mask))[[likely]]
 			{
-				auto const v2(r2.m>>-r2.e);
+				auto v2(r2.m>>-r2.e);
 				if(sign)
 				{
 					*result=0x2d;
 					++result;
 				}
-				output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+				if constexpr(mode==0)
+				{
+					if(v2)[[likely]]
+					{
+						mantissa_type m1(v2%static_cast<mantissa_type>(10000));
+						mantissa_type v3(v2/static_cast<mantissa_type>(10000));
+						if(m1)[[likely]]//This must be fixed form
+							output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+						else
+						{
+							for(;;)
+							{
+								auto const m(v3%10),d(v3/10);
+								if(m)
+									break;
+								v3=d;
+							}
+							auto const v2_len(chars_len<10,true>(v2));
+							auto const v3_len(chars_len<10,true>(v3));
+							auto const v3_smaller_than10(v3<10);
+							if(v3_len+(v3_smaller_than10?4:5)<v2_len)[[unlikely]]//scientific decision
+							{
+								if(v3_smaller_than10)
+								{
+									*result=static_cast<char_type>(v3+u8'0');
+									++result;
+								}
+								else
+									output_base_number_impl<10,false,true>(result+=v3_len+1,v3);
+								if constexpr(uppercase_e)
+									my_copy_n(u8"E+",2,result);
+								else
+									my_copy_n(u8"e+",2,result);
+								result+=2;
+								my_copy_n(shared_static_base_table<10,false>::table[v2_len-1].data(),2,result);
+								result+=2;
+							}
+							else
+								output_base_number_impl<10,false>(result+=v2_len,v2);
+						}
+					}
+					else
+					{
+						*result=0x30;
+						++result;
+					}
+				}
+				else if constexpr(mode==1)		//fixed
+					output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+				else	//scientific
+				{
+					auto const v2_len(chars_len<10,true>(v2));
+					for(;;)
+					{
+						auto const m(v2%10),d(v2/10);
+						if(m)
+							break;
+						v2=d;
+					}
+					if(v2<10)
+					{
+						*result=static_cast<char_type>(v2+u8'0');
+						++result;
+					}
+					else
+						output_base_number_impl<10,false,true>(result+=chars_len<10,true>(v2)+1,v2);
+					if constexpr(uppercase_e)
+						my_copy_n(u8"E+",2,result);
+					else
+						my_copy_n(u8"e+",2,result);
+					result+=2;
+					my_copy_n(shared_static_base_table<10,false>::table[v2_len-1].data(),2,result);
+					result+=2;
+				}
 				return result;
 			}
 		}
