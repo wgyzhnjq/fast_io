@@ -5,5 +5,5 @@ int main()
 {
 	double df;
 	scan(fast_io::in,df);
-	println(df);
+	println(fast_io::int_hint(df));
 }

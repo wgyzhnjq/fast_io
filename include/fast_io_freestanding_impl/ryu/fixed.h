@@ -681,18 +681,25 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		}
 		return result;
 	}
-/*	if constexpr(int_hint)
+	if constexpr(int_hint&&(mode==0||mode==1))//scientific integer hint?? Is that useless?
 	{
 		auto const r2(init_rep<F,false>(mantissa,static_cast<signed_exponent_type>(exponent)));
-		if(-52<=r2.e&&r2.e<=0)
+		if(-52<=r2.e&&r2.e<=0)[[likely]]
 		{
-		if constexpr(mode==0||mode==1)
-		{
+			mantissa_type const mask = (static_cast<mantissa_type>(1) << -r2.e) - 1;
+			if (!(r2.m & mask))[[likely]]
+			{
+				auto const v2(r2.m>>-r2.e);
+				if(sign)
+				{
+					*result=0x2d;
+					++result;
+				}
+				output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+				return result;
+			}
 		}
-		//TODO: exp int hint
-
-		}
-	}*/
+	}
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
 	auto const mv(r2.m<<2);

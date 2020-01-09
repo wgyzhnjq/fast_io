@@ -193,64 +193,42 @@ inline void print_define(output& out,T a)
 	write(out,array.data(),details::ryu::output_shortest<false>(array.data(),static_cast<double>(a)));
 }
 
+template<output_stream output,std::floating_point T>
+inline void print_define(output& out,manip::int_hint<T> a)
+{
+	std::size_t constexpr reserved_size(30);
+	if constexpr(buffer_output_stream<output>)
+	{
+
+		auto reserved(oreserve(out,reserved_size));
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		{
+			if(reserved)
+			{
+				auto start(reserved-reserved_size);
+				orelease(out,reserved-details::ryu::output_shortest<false,0,true>(start,static_cast<double>(a.reference)));
+				return;
+			}
+		}
+		else
+		{
+			auto start(reserved-reserved_size);
+			orelease(out,reserved-details::ryu::output_shortest<false,0,true>(start,static_cast<double>(a.reference)));
+			return;
+		}
+	}
+	std::array<typename output::char_type,reserved_size> array;
+	write(out,array.data(),details::ryu::output_shortest<false,0,true>(array.data(),static_cast<double>(a.reference)));
+}
+
+
 template<buffer_input_stream input,std::floating_point T>
 inline constexpr bool scan_define(input& in,T &t)
 {
-/*	auto sp(iview(in));
-	auto i(sp.data()),e(sp.data()+sp.size());
-	bool minus{};
-	for(;;)
-	{
-		for(;i!=e;++i)
-			if(*i==u8'-'&&*i==u8'.'&&static_cast<char8_t>(*i-u8'0')<static_cast<char8_t>(0xA))
-				break;
-		if(i!=e)
-		{
-			if(*i==u8'-')
-			{
-				if(++i==e)
-				{
-					if(!iflush(in))
-						return false;
-					sp=iview(in);
-					i=sp.data();
-					e=sp.data()+sp.size();
-				}
-				if(*i!=u8'.'&&static_cast<char8_t>(0x9)<static_cast<char8_t>(*i-u8'0'))
-					continue;
-				minus=true;
-			}
-			else if(*i==u8'.')
-			{
-				if(++i==e)
-				{
-					if(!iflush(in))
-						return false;
-					sp=iview(in);
-					i=sp.data();
-					e=sp.data()+sp.size();
-				}
-				if(static_cast<char8_t>(0x9)<static_cast<char8_t>(*i-u8'0'))
-					continue;
-			}
-			break;
-		}
-		if(!iflush(in))
-			return false;
-		sp=iview(in);
-		i=sp.data();
-		e=sp.data()+sp.size();
-	}
-	
-	if(i+1==e)
-	{
-		return false;
-	}*/
 	if(!skip_space(in))
 		return false;
 	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
 	return true;
-//	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(in));
 }
 
 }

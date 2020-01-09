@@ -69,8 +69,8 @@ struct from_utf8_unchecked
 	std::string_view str_view;
 };
 
-template<std::integral T>
-struct integer_hint
+template<typename T>
+struct int_hint
 {
 	T& reference;
 };
@@ -157,15 +157,9 @@ inline constexpr decltype(auto) floating_view(F const& p)
 }
 
 template<std::floating_point F>
-inline constexpr decltype(auto) unsigned_view(F const& f)
+inline constexpr decltype(auto) int_hint(F const& f)
 {
-	return static_cast<std::uintmax_t>(f);
-}
-
-template<std::floating_point F>
-inline constexpr decltype(auto) signed_view(F const& f)
-{
-	return static_cast<std::intmax_t>(f);
+	return manip::int_hint{f};
 }
 
 template<std::integral T>
@@ -231,7 +225,7 @@ template<typename T>
 inline constexpr manip::whole<T> whole(T &f){return {f};}
 
 template<typename T>
-inline constexpr manip::integer_hint<T> integer_hint(T &f){return {f};}
+inline constexpr manip::int_hint<T> integer_hint(T &f){return {f};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)

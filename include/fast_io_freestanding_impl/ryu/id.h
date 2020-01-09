@@ -20,7 +20,11 @@ inline constexpr F input_floating(input& in)
 	unsigned_char_type first(front_unsigned(in));
 	bool const negative{first==u8'-'};
 	if(negative||first==u8'+')
+	{
 		first=next_unsigned(in);
+		if(first!=u8'.'&&9<static_cast<unsigned_char_type>(first-u8'0'))
+			throw std::runtime_error("invalid input");
+	}
 	bool const zero{first==u8'0'};
 	if(zero)
 		while((first=next_unsigned(in))==u8'0');
