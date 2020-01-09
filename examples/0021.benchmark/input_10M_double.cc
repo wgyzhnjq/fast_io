@@ -42,12 +42,8 @@ try
 	{
 	cqw::timer t("ibuf");
 	fast_io::ibuf ibuf("obufdb.txt");
-	fast_io::obuf obuf("od2.txt");
 	for(std::size_t i(0);i!=N;++i)
-	{
 		scan(ibuf,v[i]);
-		println(obuf,v[i]);
-	}
 	}
 /*	{
 	cqw::timer t("ibuf_mutex ryu");

@@ -50,8 +50,6 @@ inline constexpr F input_floating(input& in)
 			}
 			else[[unlikely]]
 			{
-//				if(!m10digits)
-//					return bit_cast<F>(static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)));
 				if(negative)
 					return -static_cast<F>(mantissa);
 				return static_cast<F>(mantissa);
@@ -208,7 +206,7 @@ inline constexpr F input_floating(input& in)
 
 			if(m10digits==floating_trait::digits10)
 			{
-				unsigned_char_type const ch(next_unsigned<2>(in)-u8'0');
+				unsigned_char_type const ch(front_unsigned<2>(in)-u8'0');
 	//rounding. 4 discard. 6 carry. 5 is complex
 				if(ch==5)
 				{
@@ -366,10 +364,19 @@ inline constexpr F input_floating(input& in)
 	exponent_type ieee_e2(e2 + (floating_trait::bias-1) + log2p1(m2));
 	if(ieee_e2<0)
 		ieee_e2=0;
+	if(0x7fe<ieee_e2)[[unlikely]]
+	{
+		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)))
+				|static_cast<mantissa_type>(static_cast<mantissa_type>(0x7ffull) << floating_trait::mantissa_bits));
+	}
 	signed_exponent_type shift((!ieee_e2?1:ieee_e2)-e2-(floating_trait::bias+floating_trait::mantissa_bits));
 	trailing_zeros &= !(m2 & ((1L << (shift - 1)) - 1));
 	bool last_removed_bit((m2>>(shift-1))&1);
 	bool round_up((last_removed_bit) && (!trailing_zeros || ((m2 >> shift) & 1)));
+	mantissa_type ieee_m2((m2 >> shift) + round_up);
+	if(ieee_m2 == (static_cast<mantissa_type>(1) << (floating_trait::mantissa_bits + 1)))
+		++ieee_e2;
+	ieee_m2&=((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
 	return bit_cast<F>(((((static_cast<mantissa_type>(negative)) << floating_trait::exponent_bits) | static_cast<mantissa_type>(ieee_e2)) << 
 	floating_trait::mantissa_bits)|(((m2 >> shift) + round_up) & ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1)));
 }

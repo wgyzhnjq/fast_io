@@ -15,19 +15,19 @@ try
 {
 	std::size_t constexpr N(10000000);
 	{
-	cqw::timer t(u8"std::FILE*");
+	cqw::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(fp.get(),"%zu\n",i);
 	}
 	{
-	cqw::timer t(u8"std::ofstream");
+	cqw::timer t("std::ofstream");
 	std::ofstream fout("ofstream.txt",std::ofstream::binary);
 	for(std::size_t i(0);i!=N;++i)
 		fout<<i<<'\n';
 	}
 	{
-	cqw::timer t(u8"std::ofstream with tricks");
+	cqw::timer t("std::ofstream with tricks");
 	std::ofstream fout("ofstream_tricks.txt",std::ofstream::binary);
 	auto &rdbuf(*fout.rdbuf());
 	for(std::size_t i(0);i!=N;++i)
@@ -37,7 +37,7 @@ try
 	}
 	}
 	{
-	cqw::timer t(u8"std::to_chars + ofstream rdbuf tricks");
+	cqw::timer t("std::to_chars + ofstream rdbuf tricks");
 	std::ofstream fout("ofstream_to_chars_tricks.txt",std::ofstream::binary);
 	auto &rdbuf(*fout.rdbuf());
 	std::array<char, 50> buffer;
@@ -49,7 +49,7 @@ try
 	}
 	}
 	{
-	cqw::timer t(u8"std::to_chars + obuf");
+	cqw::timer t("std::to_chars + obuf");
 	fast_io::obuf obuf("std_to_chars_obuf.txt");
 	std::array<char, 50> buffer;
 	for(std::size_t i(0);i!=N;++i)
@@ -60,7 +60,7 @@ try
 	}
 	}
 	{
-	cqw::timer t(u8"obuf");
+	cqw::timer t("obuf");
 	fast_io::obuf obuf("obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
