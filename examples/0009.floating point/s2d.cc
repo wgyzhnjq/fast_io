@@ -6,3 +6,4 @@ int main()
 	scan(fast_io::in,df);
 	println(df);
 }
+//124712489724198247
