@@ -57,3 +57,4 @@
 #include"fast_io_core_impl/unsigned_extension.h"
 #include"fast_io_core_impl/wrapper.h"
 #include"fast_io_core_impl/flush.h"
+#include"fast_io_core_impl/transform.h"

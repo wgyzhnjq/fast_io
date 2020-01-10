@@ -425,9 +425,9 @@ inline constexpr basic_obuf<Ohandler,Buf>& operator+=(basic_obuf<Ohandler,Buf>& 
 }
 
 template<zero_copy_input_stream Ohandler,typename Buf>
-inline constexpr decltype(auto) zero_copy_out_handle(basic_obuf<Ohandler,Buf>& out)
+inline constexpr decltype(auto) zero_copy_in_handle(basic_obuf<Ohandler,Buf>& out)
 {
-	return zero_copy_out_handle(out.native_handle());
+	return zero_copy_in_handle(out.native_handle());
 }
 
 template<output_stream Ohandler,typename Buf>
