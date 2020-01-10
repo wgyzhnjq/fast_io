@@ -18,7 +18,7 @@ template<bool sys=false>
 class binary_to_text
 {
 public:
-	template<buffer_output_stream output,std::contiguous_iterator Iter>
+	template<output_stream output,std::contiguous_iterator Iter>
 	inline constexpr void operator()(output& out,Iter begin,Iter end)
 	{
 		if constexpr(!sys||operating_system::native==operating_system::win32)
@@ -33,7 +33,7 @@ public:
 	}
 };
 
-template<buffer_output_stream T,bool sys=false>
+template<output_stream T,bool sys=false>
 using obinary_to_text=otransform_function_default_construct<T,binary_to_text<sys>>;
 
 }
