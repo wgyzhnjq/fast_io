@@ -21,7 +21,7 @@ inline constexpr F input_floating(input& in)
 	bool const negative{first==u8'-'};
 	if(negative||first==u8'+')
 	{
-		first=next_unsigned(in);
+		first=next_unsigned<2>(in);
 		if(first!=u8'.'&&9<static_cast<unsigned_char_type>(first-u8'0'))
 			throw std::runtime_error("invalid input");
 	}

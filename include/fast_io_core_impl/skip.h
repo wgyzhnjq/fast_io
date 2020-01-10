@@ -192,7 +192,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 	->std::conditional_t<report_eof==1,std::pair<std::make_unsigned_t<typename bip::char_type>,bool>,std::make_unsigned_t<typename bip::char_type>>
 {
 	using unsigned_char_type = std::make_unsigned_t<typename bip::char_type>;
-	if(begin(input)==end(input))
+	if(begin(++input)==end(input))
 	{
 		if(!iflush(input))
 		{
@@ -210,8 +210,6 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 			}
 		}
 	}
-	else [[likely]]
-		++input;
 	if constexpr(report_eof==1)
 		return {static_cast<unsigned_char_type>(*begin(input)),true};
 	else
