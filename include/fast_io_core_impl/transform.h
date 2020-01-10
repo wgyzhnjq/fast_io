@@ -3,20 +3,24 @@
 namespace fast_io
 {
 
+
 template<output_stream output,typename func>
 class otransform
 {
 public:
 	using native_handle_type = output; 
 	using transform_function_type = func;
-	using char_type = typename func::char_type;
-	native_handle_type handle;
-	transform_function_type transform_function;
+	using char_type = typename native_handle_type::char_type;
+	std::pair<native_handle_type,transform_function_type> handle;
 	std::size_t position{};
 	alignas(4096*sizeof(char_type)) std::array<char_type,4096> buffer;
 	auto& native_handle()
 	{
-		return handle;
+		return handle.first;
+	}
+	auto& transform_function()
+	{
+		return handle.second;
 	}
 private:
 	void close()
@@ -24,15 +28,18 @@ private:
 		try
 		{
 			if(position!=buffer.size())
-				transform_function(handle,buffer.data(),buffer.data()+buffer.size());
+				handle.second(handle.first,buffer.data(),buffer.data()+position);
 		}
 		catch(...){}
 	}
 public:
+	template<typename... Args>
+	requires std::constructible_from<std::pair<native_handle_type,transform_function_type>,Args...>
+	constexpr otransform(Args&& ...args):handle(std::forward<Args>(args)...){}
+	otransform()=default;
 	otransform(otransform const&) = default;
 	otransform& operator=(otransform const&) = default;
 	otransform(otransform&& other) noexcept:handle(std::move(other.handle)),
-			transform_function(std::move(other.transform_function)),
 			position(std::move(other.position)),
 			buffer(std::move(other.buffer))
 	{
@@ -44,7 +51,6 @@ public:
 		{
 			close();
 			handle=std::move(other.handle);
-			transform_function=std::move(other.transform_function);
 			position=std::move(other.position);
 			buffer=std::move(other.buffer);
 			other.position=buffer.size();
@@ -56,19 +62,36 @@ public:
 		close();
 	}
 };
+
+
+template<output_stream output,typename func>
+requires std::is_default_constructible_v<func>
+class otransform_function_default_construct:public otransform<output,func>
+{
+public:
+	using native_handle_type = output; 
+	using transform_function_type = func;
+	using char_type = typename native_handle_type::char_type;
+	template<typename... Args>
+	requires std::constructible_from<native_handle_type,Args...>
+	otransform_function_default_construct(Args&& ...args):otransform<output,func>(std::piecewise_construct,
+				std::forward_as_tuple(std::forward<Args>(args)...),std::forward_as_tuple()){}
+};
 namespace details
 {
 
 template<typename T,std::contiguous_iterator Iter>
 inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 {
-	std::size_t const diff(cend-cbegin);
+	std::size_t diff(cend-cbegin);
 	if(ob.buffer.size()<=ob.position+diff)[[unlikely]]
 	{
-		cbegin=std::copy_n(cbegin,ob.size()-ob.position,ob.buffer.data()+ob.position);
-		for(ob.transform_function(ob.handle,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
-			std::copy(cbegin,cend,ob.buffer.data(),ob.buffer.size())==ob.buffer.data()+ob.buffer.size();
-			ob.transform_function(ob.handle,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));
+		cbegin=std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
+		for(ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+			(cbegin=std::copy_n(cbegin,ob.buffer.size(),ob.buffer.data()))!=cend;
+			ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));
+
+		return;
 	}
 	std::copy_n(cbegin,diff,ob.buffer.data()+ob.position);
 	ob.position+=diff;
@@ -90,7 +113,7 @@ inline constexpr void write(otransform<Ohandler,func>& ob,Iter cbegini,Iter cend
 template<output_stream Ohandler,typename func>
 inline constexpr void flush(otransform<Ohandler,func>& ob)
 {
-	ob.transform_function(ob.handle,ob.buffer.data(),ob.buffer.data()+ob.position);
+	ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
 template<buffer_input_stream Ohandler,typename func>
@@ -144,12 +167,12 @@ inline constexpr void put(otransform<Ohandler,func>& ob,typename otransform<Ohan
 {
 	if(ob.position==ob.buffer.size())[[unlikely]]		//buffer full
 	{
-		ob.transform_function(ob.handle,ob.buffer.data(),ob.buffer.data()+ob.position);
+		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 		ob.position=1;
 		ob.buffer.front()=ch;
 		return;//no flow dependency any more
 	}
-	*ob.position=ch;
+	ob.buffer[ob.position]=ch;
 	++ob.position;
 }
 

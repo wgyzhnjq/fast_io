@@ -51,10 +51,12 @@
 #include"fast_io_core_impl/print_scan.h"
 #include"fast_io_core_impl/seek.h"
 #include"fast_io_core_impl/sync.h"
-//#include"fast_io_core_impl/text.h"
 #include"fast_io_core_impl/tie.h"
 #include"fast_io_core_impl/transmit.h"
 #include"fast_io_core_impl/unsigned_extension.h"
 #include"fast_io_core_impl/wrapper.h"
 #include"fast_io_core_impl/flush.h"
 #include"fast_io_core_impl/transform.h"
+
+// Transformers
+#include"fast_io_core_impl/transformers/text.h"
