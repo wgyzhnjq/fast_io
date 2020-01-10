@@ -153,7 +153,7 @@ template<output_stream Ohandler,typename func,std::integral I>
 {
 	if(ob.buffer.size()<=ob.position+size)
 		return nullptr;
-	return ob.position+=size;
+	return ob.buffer.data()+(ob.position+=size);
 }
 
 template<output_stream Ohandler,typename func,std::integral I>
