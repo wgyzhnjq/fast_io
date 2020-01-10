@@ -13,7 +13,7 @@ public:
 	using char_type = typename native_handle_type::char_type;
 	std::pair<native_handle_type,transform_function_type> handle;
 	std::size_t position{};
-	alignas(4096*sizeof(char_type)) std::array<char_type,4096> buffer;
+	std::array<char_type,4096> buffer;
 	auto& native_handle()
 	{
 		return handle.first;
@@ -36,7 +36,6 @@ public:
 	template<typename... Args>
 	requires std::constructible_from<std::pair<native_handle_type,transform_function_type>,Args...>
 	constexpr otransform(Args&& ...args):handle(std::forward<Args>(args)...){}
-	otransform()=default;
 	otransform(otransform const&) = default;
 	otransform& operator=(otransform const&) = default;
 	otransform(otransform&& other) noexcept:handle(std::move(other.handle)),
@@ -149,17 +148,17 @@ inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func>
 }
 
 template<output_stream Ohandler,typename func,std::integral I>
-[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func>& ob,I size) -> decltype(ob.buffer.data())
+[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func>& ob,I sz) -> decltype(ob.buffer.data())
 {
-	if(ob.buffer.size()<=ob.position+size)
+	if(ob.buffer.size()<=ob.position+sz)
 		return nullptr;
-	return ob.buffer.data()+(ob.position+=size);
+	return ob.buffer.data()+(ob.position+=sz);
 }
 
 template<output_stream Ohandler,typename func,std::integral I>
-inline constexpr void orelease(otransform<Ohandler,func>& ob,I size)
+inline constexpr void orelease(otransform<Ohandler,func>& ob,I sz)
 {
-	ob.position-=size;
+	ob.position-=sz;
 }
 
 template<output_stream Ohandler,typename func>

@@ -4,5 +4,6 @@
 int main()
 {
 	fast_io::obinary_to_text<fast_io::obuf> text_obuf("a.txt");
-	println(text_obuf,"sdgsdg",523523);
+	std::size_t val(0);
+	println(text_obuf,val);
 }

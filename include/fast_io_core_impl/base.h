@@ -200,14 +200,14 @@ inline constexpr void output_base_number(output& out,U a)
 			{
 				if(reserved)
 				{
-					*--reserved=0xA;
+					*--reserved=u8'\n';
 					output_base_number_impl<base,uppercase>(reserved,a);
 					return;
 				}
 			}
 			else
 			{
-				*--reserved=0xA;
+				*--reserved=u8'\n';
 				output_base_number_impl<base,uppercase>(std::to_address(reserved),a);
 				return;
 			}
