@@ -55,6 +55,39 @@ inline constexpr auto write(io_ref<output>& out,Iter begin,Iter end)
 	return write(*out,begin,end);
 }
 
+template<buffer_input_stream input>
+inline constexpr decltype(auto) iflush(io_ref<input>& out)
+{
+	return iflush(*out);
+}
+
+template<buffer_input_stream input>
+inline constexpr decltype(auto) begin(io_ref<input>& out)
+{
+	return begin(*out);
+}
+
+template<buffer_input_stream input>
+inline constexpr decltype(auto) end(io_ref<input>& out)
+{
+	return end(*out);
+}
+
+template<buffer_input_stream input>
+inline constexpr io_ref<input>& operator++(io_ref<input>& out)
+{
+	operator++(*out);
+	return out;
+}
+
+
+template<buffer_input_stream input,std::integral I>
+inline constexpr io_ref<input>& operator+=(io_ref<input>& out,I i)
+{
+	operator+=(*out,i);
+	return out;
+}
+
 template<output_stream output>
 inline constexpr void flush(io_ref<output>& out)
 {
@@ -67,41 +100,16 @@ inline constexpr decltype(auto) mutex(io_ref<T>& t)
 	return mutex(*t);
 }
 
+template<character_output_stream output>
+inline constexpr void put(io_ref<output>& out,typename output::char_type ch)
+{
+	put(*out,ch);
+}
 
 template<zero_copy_input_stream in>
 inline constexpr decltype(auto) zero_copy_in_handle(io_ref<in>& t)
 {
 	return zero_copy_in_handle(*t);
-}
-
-template<buffer_input_stream in>
-inline constexpr decltype(auto) begin(io_ref<in>& t)
-{
-	return begin(*t);
-}
-
-template<buffer_input_stream in>
-inline constexpr decltype(auto) end(io_ref<in>& t)
-{
-	return end(*t);
-}
-
-template<buffer_input_stream in>
-inline constexpr decltype(auto) operator++(io_ref<in>& t)
-{
-	return operator++(*t);
-}
-
-template<buffer_input_stream in>
-inline constexpr decltype(auto) iflush(io_ref<in>& t)
-{
-	return iflush(*t);
-}
-
-template<character_output_stream output>
-inline constexpr void put(io_ref<output>& out,typename output::char_type ch)
-{
-	put(*out,ch);
 }
 
 template<zero_copy_output_stream out>
@@ -110,6 +118,11 @@ inline constexpr decltype(auto) zero_copy_out_handle(io_ref<out>& t)
 	return zero_copy_out_handle(*t);
 }
 
+template<buffer_input_stream in>
+inline constexpr decltype(auto) ireserve(io_ref<in>& t)
+{
+	return ireserve(*t);
+}
 
 template<buffer_output_stream out>
 inline constexpr decltype(auto) oreserve(io_ref<out>& t)
@@ -122,6 +135,8 @@ inline constexpr decltype(auto) orelease(io_ref<out>& t)
 {
 	orelease(*t);
 }
+
+
 
 
 }
