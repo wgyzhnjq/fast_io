@@ -27,7 +27,7 @@ private:
 	{
 		try
 		{
-			if(position!=buffer.size())
+			if(position!=static_cast<std::size_t>(-1))
 				handle.second(handle.first,buffer.data(),buffer.data()+position);
 		}
 		catch(...){}
@@ -42,7 +42,7 @@ public:
 			position(std::move(other.position)),
 			buffer(std::move(other.buffer))
 	{
-		other.position=buffer.size();
+		other.position=static_cast<std::size_t>(-1);
 	}
 	otransform& operator=(otransform&& other) noexcept
 	{
@@ -52,7 +52,7 @@ public:
 			handle=std::move(other.handle);
 			position=std::move(other.position);
 			buffer=std::move(other.buffer);
-			other.position=buffer.size();
+			other.position=static_cast<std::size_t>(-1);
 		}
 		return *this;
 	}
@@ -112,7 +112,8 @@ inline constexpr void write(otransform<Ohandler,func>& ob,Iter cbegini,Iter cend
 template<output_stream Ohandler,typename func>
 inline constexpr void flush(otransform<Ohandler,func>& ob)
 {
-	ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
+	if(ob.position!=static_cast<std::size_t>(-1))
+		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
 template<buffer_input_stream Ohandler,typename func>
@@ -150,9 +151,10 @@ inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func>
 template<output_stream Ohandler,typename func,std::integral I>
 [[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func>& ob,I sz) -> decltype(ob.buffer.data())
 {
-	if(ob.buffer.size()<=ob.position+sz)
+	if(ob.buffer.size()<=ob.position+sz)[[unlikely]]
 		return nullptr;
-	return ob.buffer.data()+(ob.position+=sz);
+	ob.position+=sz;
+	return ob.buffer.data()+ob.position;
 }
 
 template<output_stream Ohandler,typename func,std::integral I>
