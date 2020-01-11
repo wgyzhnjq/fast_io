@@ -24,14 +24,39 @@ public:
 		}
 	}
 	template<output_stream output,std::contiguous_iterator Iter>
-	requires (std::same_as<typename std::iterator_traits<Iter>::value_type,typename output::char_type>)&&
+	requires (sizeof(typename std::iterator_traits<Iter>::value_type)==sizeof(typename output::char_type))&&
 		requires(Iter it)
 		{
 			*it=endian_reverse(*it);
 		}
-	constexpr auto write_proxy(output& out,Iter begin,Iter end)
+	inline static constexpr auto write_proxy(output& out,Iter begin,Iter end)
 	{
-		for(Iter iter;iter!=end;++iter)
+		if constexpr (buffer_output_stream<output>)
+		{
+			auto p(oreserve(end-begin));
+			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(p)>>)
+			{
+				if(p)
+				{
+					for(Iter iter(begin);iter!=end;++iter)
+					{
+						*p=endian_reverse(*iter);
+						++p;
+					}
+					return end;
+				}
+			}
+			else
+			{
+				for(Iter iter(begin);iter!=end;++iter)
+				{
+					*p=endian_reverse(*iter);
+					++p;
+				}
+				return end;
+			}
+		}
+		for(Iter iter(begin);iter!=end;++iter)
 			*iter=endian_reverse(*iter);
 		return write(out,begin,end);
 	}
