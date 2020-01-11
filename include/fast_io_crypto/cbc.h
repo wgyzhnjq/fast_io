@@ -286,7 +286,7 @@ inline void swap(basic_ocbc<T,Enc>& a,basic_ocbc<T,Enc>& b) noexcept
 }
 
 template <input_stream T, typename Enc,std::contiguous_iterator Iter>
-inline constexpr auto receive(basic_icbc<T,Enc>& cbc,Iter begin,Iter end)
+inline constexpr auto read(basic_icbc<T,Enc>& cbc,Iter begin,Iter end)
 {
 	return cbc.mmreceive(begin,end);
 }

@@ -62,9 +62,9 @@ inline constexpr void operator()(output& out,Iter begin,Iter end)
 }
 };
 */
-template<buffer_output_stream T,std::integral ch_type=typename T::char_type>
-using obinary_to_text=otransform_function_default_construct<T,binary_to_text<false>,ch_type>;
-template<buffer_output_stream T,std::integral ch_type=typename T::char_type>
-using obinary_to_native_text=otransform_function_default_construct<T,binary_to_text<true>,ch_type>;
+template<buffer_output_stream T,std::integral ch_type=typename T::char_type,std::size_t sz=4096>
+using obinary_to_text=otransform_function_default_construct<T,binary_to_text<false>,ch_type,sz>;
+template<buffer_output_stream T,std::integral ch_type=typename T::char_type,std::size_t sz=4096>
+using obinary_to_native_text=otransform_function_default_construct<T,binary_to_text<true>,ch_type,sz>;
 
 }

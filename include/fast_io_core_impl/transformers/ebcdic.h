@@ -326,10 +326,10 @@ In this example, a message flow is created that interprets the input message as 
 };
 
 
-template<buffer_output_stream T,std::integral ch_type=typename T::char_type>
-using oascii_to_ebcdic=otransform_function_default_construct<T,ascii_to_ebcdic,ch_type>;
+template<buffer_output_stream T,std::integral ch_type=typename T::char_type,std::size_t sz=4096>
+using oascii_to_ebcdic=otransform_function_default_construct<T,ascii_to_ebcdic,ch_type,sz>;
 
-template<buffer_output_stream T,std::integral ch_type=char>
-using oebcdic_to_ascii=otransform_function_default_construct<T,ebcdic_to_ascii,ch_type>;
+template<buffer_output_stream T,std::integral ch_type=char,std::size_t sz=4096>
+using oebcdic_to_ascii=otransform_function_default_construct<T,ebcdic_to_ascii,ch_type,sz>;
 
 }

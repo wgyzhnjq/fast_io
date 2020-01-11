@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 
-template<output_stream output,typename func,std::integral ch_type = typename output::char_type>
+template<output_stream output,typename func,std::integral ch_type = typename output::char_type,std::size_t buffer_size=4096,bool randomaccess=false>
 class otransform
 {
 public:
@@ -13,7 +13,7 @@ public:
 	using char_type = ch_type;
 	std::pair<native_handle_type,transform_function_type> handle;
 	std::size_t position{};
-	std::array<char_type,4096> buffer;
+	std::array<char_type,buffer_size> buffer;
 	auto& native_handle()
 	{
 		return handle.first;
@@ -63,9 +63,9 @@ public:
 };
 
 
-template<output_stream output,typename func,std::integral ch_type = typename output::char_type>
+template<output_stream output,typename func,std::integral ch_type = typename output::char_type,std::size_t sz=4096,bool rac=false>
 requires std::is_default_constructible_v<func>
-class otransform_function_default_construct:public otransform<output,func,ch_type>
+class otransform_function_default_construct:public otransform<output,func,ch_type,sz,rac>
 {
 public:
 	using native_handle_type = output; 
@@ -98,10 +98,10 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 
 }
 
-template<output_stream Ohandler,typename func,std::integral ch_type,std::contiguous_iterator Iter>
-inline constexpr void write(otransform<Ohandler,func,ch_type>& ob,Iter cbegini,Iter cendi)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::contiguous_iterator Iter,std::size_t sz,bool rac>
+inline constexpr void write(otransform<Ohandler,func,ch_type,sz,rac>& ob,Iter cbegini,Iter cendi)
 {
-	using char_type = typename otransform<Ohandler,func,ch_type>::char_type;
+	using char_type = typename otransform<Ohandler,func,ch_type,sz,rac>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
 		details::otransform_write(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
@@ -109,66 +109,66 @@ inline constexpr void write(otransform<Ohandler,func,ch_type>& ob,Iter cbegini,I
 					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
 }
 
-template<output_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr void flush(otransform<Ohandler,func,ch_type>& ob)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr void flush(otransform<Ohandler,func,ch_type,sz,rac>& ob)
 {
 	if(ob.position!=static_cast<std::size_t>(-1))
 		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr decltype(auto) iflush(otransform<Ohandler,func,ch_type>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr decltype(auto) iflush(otransform<Ohandler,func,ch_type,sz,rac>& out)
 {
 	return iflush(*out);
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr decltype(auto) begin(otransform<Ohandler,func,ch_type>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr decltype(auto) begin(otransform<Ohandler,func,ch_type,sz,rac>& out)
 {
 	return begin(out.native_handle());
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr decltype(auto) end(otransform<Ohandler,func,ch_type>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr decltype(auto) end(otransform<Ohandler,func,ch_type,sz,rac>& out)
 {
 	return end(out.native_handle());
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr otransform<Ohandler,func>& operator++(otransform<Ohandler,func,ch_type>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr otransform<Ohandler,func>& operator++(otransform<Ohandler,func,ch_type,sz,rac>& out)
 {
 	operator++(out.native_handle());
 	return out;
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::integral I>
-inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func,ch_type>& out,I i)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac,std::integral I>
+inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func,ch_type,sz,rac>& out,I i)
 {
 	operator+=(out.native_handle(),i);
 	return out;
 }
 
-template<output_stream Ohandler,typename func,std::integral ch_type,std::integral I>
-[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func,ch_type>& ob,I sz) -> decltype(ob.buffer.data())
+template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac,std::integral I>
+[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func,ch_type,sz,rac>& ob,I i) -> decltype(ob.buffer.data())
 {
-	if(ob.buffer.size()<=ob.position+sz)[[unlikely]]
+	if(ob.buffer.size()<=ob.position+i)[[unlikely]]
 		return nullptr;
-	ob.position+=sz;
+	ob.position+=i;
 	return ob.buffer.data()+ob.position;
 }
 
-template<output_stream Ohandler,typename func,std::integral ch_type,std::integral I>
-inline constexpr void orelease(otransform<Ohandler,func,ch_type>& ob,I sz)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac,std::integral I>
+inline constexpr void orelease(otransform<Ohandler,func,ch_type,sz,rac>& ob,I i)
 {
-	ob.position-=sz;
+	ob.position-=i;
 }
 
-template<output_stream Ohandler,typename func,std::integral ch_type>
-inline constexpr void put(otransform<Ohandler,func,ch_type>& ob,typename otransform<Ohandler,func,ch_type>::char_type ch)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr void put(otransform<Ohandler,func,ch_type,sz,rac>& ob,typename otransform<Ohandler,func,ch_type,sz,rac>::char_type ch)
 {
 	if(ob.position==ob.buffer.size())[[unlikely]]		//buffer full
 	{
-		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
+		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 		ob.position=1;
 		ob.buffer.front()=ch;
 		return;//no flow dependency any more
