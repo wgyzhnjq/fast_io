@@ -24,7 +24,11 @@ public:
 	win32_library(wchar_t const* name):plib(::LoadLibraryW(name))
 	{
 		if(plib==nullptr)
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			fast_terminate();
+#endif
 	}
 	win32_library(win32_library const&)=delete;
 	win32_library& operator=(win32_library const&)=delete;
@@ -66,7 +70,11 @@ inline auto get_proc_address(char const* proc)
 {
 	auto address(::GetProcAddress(ws2_32_dll.get(),proc));
 	if(address==nullptr)
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		fast_terminate();
+#endif
 	return bit_cast<prototype>(address);
 }
 
@@ -77,7 +85,11 @@ inline auto call_win32_ws2_32(char const *name,Args&& ...args)
 {
 	auto ret(get_proc_address<prototype>(name)(std::forward<Args>(args)...));
 	if(ret==-1)
+#ifdef __cpp_exceptions
 		throw win32_error(get_last_error());
+#else
+		fast_terminate();
+#endif
 	return ret;
 }
 
@@ -86,7 +98,11 @@ inline auto call_win32_ws2_32_invalid_socket(char const *name,Args&& ...args)
 {
 	auto ret(get_proc_address<prototype>(name)(std::forward<Args>(args)...));
 	if(ret==invalid_socket)
+#ifdef __cpp_exceptions
 		throw win32_error(get_last_error());
+#else
+		fast_terminate();
+#endif
 	return ret;
 }
 
@@ -95,7 +111,11 @@ inline auto call_win32_ws2_32_minus_one(char const *name,Args&& ...args)
 {
 	auto ret(get_proc_address<prototype>(name)(std::forward<Args>(args)...));
 	if(ret==-1)
+#ifdef __cpp_exceptions
 		throw win32_error(get_last_error());
+#else
+		fast_terminate();
+#endif
 	return ret;
 }
 
@@ -104,7 +124,11 @@ inline auto call_win32_ws2_32_nullptr(char const *name,Args&& ...args)
 {
 	auto ret(get_proc_address<prototype>(name)(std::forward<Args>(args)...));
 	if(ret==nullptr)
+#ifdef __cpp_exceptions
 		throw win32_error(get_last_error());
+#else
+		fast_terminate();
+#endif
 	return ret;
 }
 
@@ -168,7 +192,11 @@ inline void getaddrinfo(Args&& ...args)
 {
 	auto ec(get_proc_address<decltype(::getaddrinfo)*>("getaddrinfo")(std::forward<Args>(args)...));
 	if(ec)
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		fast_terminate();
+#endif
 }
 
 template<typename ...Args>
@@ -185,7 +213,11 @@ public:
 		auto WSAStartup(reinterpret_cast<decltype(::WSAStartup)*>(reinterpret_cast<void(*)()>(::GetProcAddress(ws2_32_dll.get(),"WSAStartup"))));
 		WSADATA data;
 		if(auto error_code=WSAStartup(2<<8|2,std::addressof(data)))
+#ifdef __cpp_exceptions
 			throw win32_error(error_code);
+#else
+			fast_terminate();
+#endif
 	}
 	win32_startup(win32_startup const&) = delete;
 	win32_startup& operator=(win32_startup const&) = delete;
@@ -210,7 +242,11 @@ template<zero_copy_output_stream output,zero_copy_input_stream input>
 inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
 {
 	if(!fast_io::win32::TransmitFile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,nullptr,nullptr,0/*TF_USE_DEFAULT_WORKER*/))
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
 	return bytes;
 }
 }

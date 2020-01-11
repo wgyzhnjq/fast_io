@@ -232,12 +232,6 @@ inline void print_define(output& out,manip::char_view<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
 }
-template<character_output_stream output,typename T>
-requires ((std::integral<T>||std::floating_point<T>)&&(std::same_as<typename output::char_type,char>||(!std::same_as<T,char>)))
-inline void print_define(output& out,manip::char_view<T> a)
-{
-	put(out,static_cast<typename output::char_type>(a.reference));
-}
 
 template<std::size_t indent_w,bool left=false,char8_t fill_ch=0x20,typename T>
 inline constexpr manip::width<indent_w,left,fill_ch,T const> width(T const& t)
