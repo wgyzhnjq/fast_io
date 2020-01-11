@@ -2,6 +2,6 @@
 
 int main()
 {
-	fast_io::obuf ob("hw.txt");
-	print(ob,"Hello World\n");
+	fast_io::obuf_file obf("hw.txt");
+	print(obf,"Hello World\n");
 }
