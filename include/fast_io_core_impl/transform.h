@@ -25,12 +25,16 @@ public:
 private:
 	void close()
 	{
+#ifdef __cpp_exceptions
 		try
 		{
+#endif
 			if(position)
 				handle.second.write_proxy(handle.first,buffer.data(),buffer.data()+position);
+#ifdef __cpp_exceptions
 		}
 		catch(...){}
+#endif
 	}
 public:
 	template<typename... Args>

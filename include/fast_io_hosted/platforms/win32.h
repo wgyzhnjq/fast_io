@@ -31,7 +31,11 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open::mode const &om)
 	{
 		mode.dwCreationDisposition=1;//	CREATE_NEW
 		if(value&open::trunc.value)
+#ifdef __cpp_exceptions
 			throw std::runtime_error("cannot create new while truncating existed file");
+#else
+			std::terminate();
+#endif
 	}
 	else if (value&open::trunc.value)
 		mode.dwCreationDisposition=2;//CREATE_ALWAYS
@@ -103,14 +107,22 @@ public:
 	{
 		auto const current_process(win32::GetCurrentProcess());
 		if(!win32::DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(mhandle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			std::terminate();
+#endif
 	}
 	basic_win32_io_handle& operator=(basic_win32_io_handle const& other)
 	{
 		auto const current_process(win32::GetCurrentProcess());
 		void* new_handle{};
 		if(!win32::DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			std::terminate();
+#endif
 		mhandle=new_handle;
 		return *this;
 	}
@@ -158,7 +170,11 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_handle<
 	std::int64_t distance_to_move_high{};
 	std::int64_t seekposition{seek_precondition<std::int64_t,T,ch_type>(i)};
 	if(!win32::SetFilePointerEx(handle.native_handle(),seekposition,std::addressof(distance_to_move_high),static_cast<std::uint32_t>(s)))
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		std::terminate();
+#endif
 	return distance_to_move_high;
 }
 
@@ -173,7 +189,11 @@ inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 {
 	std::uint32_t numberOfBytesRead;
 	if(!win32::ReadFile(handle.native_handle(),std::to_address(begin),static_cast<std::uint32_t>((end-begin)*sizeof(*begin)),std::addressof(numberOfBytesRead),nullptr))
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		std::terminate();
+#endif
 	return begin+numberOfBytesRead;
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
@@ -182,7 +202,11 @@ inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 	auto nNumberOfBytesToWrite(static_cast<std::uint32_t>((cend-cbegin)*sizeof(*cbegin)));
 	std::uint32_t numberOfBytesWritten;
 	if(!win32::WriteFile(handle.native_handle(),std::to_address(cbegin),nNumberOfBytesToWrite,std::addressof(numberOfBytesWritten),nullptr))
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		std::terminate();
+#endif
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
 template<std::integral ch_type>
@@ -248,7 +272,11 @@ public:
 					mode.lpSecurityAttributes,
 					mode.dwCreationDisposition,
 					mode.dwFlagsAndAttributes,nullptr))==((void*) (std::intptr_t)-1))
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			std::terminate();
+#endif
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
 	}
@@ -270,7 +298,11 @@ inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
 {
 	seek(handle,size,seekdir::beg);
 	if(!win32::SetEndOfFile(handle.native_handle()))
+#ifdef __cpp_exceptions
 		throw win32_error();
+#else
+		std::terminate();
+#endif
 }
 
 template<std::integral ch_type>
@@ -325,7 +357,11 @@ public:
 	basic_win32_pipe(fast_io::native_interface_t, Args&& ...args)
 	{
 		if(!win32::CreatePipe(static_cast<void**>(static_cast<void*>(pipes.data())),static_cast<void**>(static_cast<void*>(pipes.data()+1)),std::forward<Args>(args)...))
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			std::terminate();
+#endif
 	}
 	basic_win32_pipe():basic_win32_pipe(fast_io::native_interface,nullptr,0)
 	{
