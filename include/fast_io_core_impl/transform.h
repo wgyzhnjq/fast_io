@@ -27,7 +27,7 @@ private:
 	{
 		try
 		{
-			if(position!=static_cast<std::size_t>(-1))
+			if(position)
 				handle.second.write_proxy(handle.first,buffer.data(),buffer.data()+position);
 		}
 		catch(...){}
@@ -42,7 +42,7 @@ public:
 			position(std::move(other.position)),
 			buffer(std::move(other.buffer))
 	{
-		other.position=static_cast<std::size_t>(-1);
+		other.position={};
 	}
 	otransform& operator=(otransform&& other) noexcept
 	{
@@ -52,7 +52,7 @@ public:
 			handle=std::move(other.handle);
 			position=std::move(other.position);
 			buffer=std::move(other.buffer);
-			other.position=static_cast<std::size_t>(-1);
+			other.position={};
 		}
 		return *this;
 	}
@@ -128,7 +128,7 @@ inline constexpr void write(otransform<Ohandler,func,ch_type,sz,rac>& ob,Iter cb
 template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr void flush(otransform<Ohandler,func,ch_type,sz,rac>& ob)
 {
-	if(ob.position!=static_cast<std::size_t>(-1))
+	if(ob.position)
 		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
