@@ -37,7 +37,7 @@ I know putting global would be a problem. However, I think put some special case
 
 print is more nature and teachable for new C++ programmmers and most languages on the world (basic, lua, python) are all doing this
 
-Also, it allows you for copying some other languages' into C++
+Also, it allows you for copying some other languages' code into C++
 */
 
 template<typename T,typename... Args>
