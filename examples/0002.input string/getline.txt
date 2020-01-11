@@ -1,2 +1,0 @@
-getline success
-getwhole success
