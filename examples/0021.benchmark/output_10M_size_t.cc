@@ -85,6 +85,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
+	{
+	cqw::timer t("transform_ebcdic");
+	fast_io::oascii_to_ebcdic<fast_io::obuf> obuf("transform_ebcdic.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf,i);
+	}
 /*	{
 	cqw::timer t(u8"u8obuf");
 	fast_io::u8obuf u8obuf("u8obuf.txt");

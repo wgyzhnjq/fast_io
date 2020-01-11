@@ -168,8 +168,10 @@ template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t 
 [[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func,ch_type,sz,rac>& ob,I i) -> decltype(ob.buffer.data())
 {
 	if(ob.buffer.size()<=(ob.position+=i))[[unlikely]]
+	{
+		ob.position-=i;
 		return nullptr;
-	ob.position+=i;
+	}
 	return ob.buffer.data()+ob.position;
 }
 
