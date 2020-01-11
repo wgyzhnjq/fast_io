@@ -86,9 +86,25 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 	if(ob.buffer.size()<=ob.position+diff)[[unlikely]]
 	{
 		cbegin=std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
-		for(ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		std::size_t remain_length(diff - (ob.buffer.size()-ob.position));
+		
+		while (remain_length)
+		{
+			std::size_t out_length(std::min(ob.buffer.size(), remain_length));
+			cbegin=std::copy_n(cbegin,out_length,ob.buffer.data());
+			if (out_length == ob.buffer.size())[[unlikely]]
+			{
+				ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+				remain_length -= out_length;
+			}
+			else
+				break;
+		}
+		ob.position=remain_length;
+		/*for(ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 			(cbegin=std::copy_n(cbegin,ob.buffer.size(),ob.buffer.data()))!=cend;
-			ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));
+			ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));*/
 
 		return;
 	}
