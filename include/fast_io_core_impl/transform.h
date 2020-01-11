@@ -121,8 +121,8 @@ inline constexpr void write(otransform<Ohandler,func,ch_type,sz,rac>& ob,Iter cb
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
 		details::otransform_write(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
-		details::otransform_write(ob,reinterpret_cast<std::byte const*>(std::to_address(cbegini)),
-					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
+		details::otransform_write(ob,reinterpret_cast<char unsigned const*>(std::to_address(cbegini)),
+					reinterpret_cast<char unsigned const*>(std::to_address(cendi)));
 }
 
 template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
