@@ -163,7 +163,13 @@ inline bool valid(basic_posix_io_handle<ch_type>& h)
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
-	auto read_bytes(::read(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
+	auto read_bytes(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<0,std::ptrdiff_t>
+#else
+		::read
+#endif
+	(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(read_bytes==-1)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
