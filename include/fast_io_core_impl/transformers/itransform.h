@@ -85,7 +85,7 @@ inline constexpr void flush(itransform<input,func,ch_type,sz,rac>& ob)
 
 
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
-inline constexpr decltype(auto) iflush(itransform<input,func,ch_type,sz,rac>& in)
+inline constexpr bool iflush(itransform<input,func,ch_type,sz,rac>& in)
 {
 	in.position_end=in.handle.second.read_proxy(in.handle.second,in.buffer.data(),in.buffer.data()+in.buffer.size())-in.buffer.size();
 	in.position={};
