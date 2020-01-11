@@ -438,7 +438,7 @@ inline constexpr T input_base_number(input& in)
 			for(;;)
 			{
 				auto f(next_unsigned<2>(in));
-				if(tatic_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
+				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=t*base+f;
 				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
 					t=t*base+(f+10);
