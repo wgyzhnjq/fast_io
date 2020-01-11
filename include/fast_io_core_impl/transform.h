@@ -85,14 +85,16 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 	std::size_t diff(cend-cbegin);
 	if(ob.buffer.size()<=ob.position+diff)[[unlikely]]
 	{
-		cbegin=std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
+		std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
+		cbegin+=ob.buffer.size()-ob.position;
 		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 		std::size_t remain_length(diff - (ob.buffer.size()-ob.position));
 		
 		while (remain_length)
 		{
 			std::size_t out_length(std::min(ob.buffer.size(), remain_length));
-			cbegin=std::copy_n(cbegin,out_length,ob.buffer.data());
+			std::copy_n(cbegin,out_length,ob.buffer.data());
+			cbegin+=out_length;
 			if (out_length == ob.buffer.size())[[unlikely]]
 			{
 				ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
