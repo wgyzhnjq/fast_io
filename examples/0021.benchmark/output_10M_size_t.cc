@@ -11,7 +11,9 @@
 #include<charconv>
 
 int main()
+#ifdef __cpp_exceptions
 try
+#endif
 {
 	std::size_t constexpr N(10000000);
 	{
@@ -169,8 +171,10 @@ try
 		println(enc_stream,i);
 	}*/
 }
+#ifdef __cpp_exceptions
 catch(std::exception const& e)
 {
-//	println(fast_io::err,e);
+	println(fast_io::err,e);
 	return 1;
 }
+#endif

@@ -73,7 +73,11 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 		return mode | O_RDWR | O_CREAT | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
-		throw std::runtime_error(reinterpret_cast<char const*>(u8"unknown posix file openmode"));
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown posix file openmode");
+#else
+		std::terminate();
+#endif
 	}
 }
 template<std::size_t om>
@@ -105,13 +109,21 @@ public:
 	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(dup(dp.fd))
 	{
 		if(fd<0)
+#ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
+#else
+			std::terminate();
+#endif
 	}
 	basic_posix_io_handle& operator=(basic_posix_io_handle const& dp)
 	{
 		auto newfd(dup2(dp.fd,fd));
 		if(newfd<0)
+#ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
+#else
+			std::terminate();
+#endif
 		fd=newfd;
 		return *this;
 	}
@@ -153,7 +165,11 @@ inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto read_bytes(::read(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(read_bytes==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		std::terminate();
+#endif
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
@@ -161,7 +177,11 @@ inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
 	auto write_bytes(::write(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
 	if(write_bytes==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		std::terminate();
+#endif
 	return begin+(write_bytes/sizeof(*begin));
 }
 
@@ -170,7 +190,11 @@ inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_ty
 {
 	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,ch_type>(i),static_cast<int>(s)));
 	if(ret==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		std::terminate();
+#endif
 	return ret;
 }
 template<std::integral ch_type,std::integral R>
@@ -235,7 +259,11 @@ public:
 (std::forward<Args>(args)...))
 	{
 		if(native_handle()==-1)
+#ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
+#else
+			std::terminate();
+#endif
 	}
 	template<std::size_t om,perms pm>
 	basic_posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
@@ -274,11 +302,20 @@ inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
 #if defined(__WINNT__) || defined(_MSC_VER)
 	auto err(_chsize_s(h.native_handle(),size));
 	if(err)
+#ifdef __cpp_exceptions
 		throw std::system_error(err,std::generic_category());
 #else
-	if(::ftruncate(h.native_handle(),size)<0)
-		throw std::system_error(errno,std::generic_category());
+		std::terminate();
 #endif
+#else
+	if(::ftruncate(h.native_handle(),size)<0)
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::generic_category());
+#else
+		std::terminate();
+#endif
+#endif
+
 }
 template<std::integral ch_type>
 class basic_posix_pipe_unique:public basic_posix_io_handle<ch_type>
@@ -314,7 +351,11 @@ public:
 #else
 		if(::pipe(static_cast<int*>(static_cast<void*>(pipes.data())))==-1)
 #endif
+#ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
+#else
+			std::terminate();
+#endif
 	}
 	template<std::size_t om>
 	basic_posix_pipe(open::interface_t<om>):basic_posix_pipe()
@@ -405,7 +446,11 @@ inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t b
 {
 	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),nullptr,bytes));
 	if(transmitted_bytes==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		std::terminate();
+#endif
 	return transmitted_bytes;
 }
 }

@@ -23,7 +23,11 @@ inline constexpr F input_floating(input& in)
 	{
 		first=next_unsigned(in);
 		if(first!=u8'.'&&9<static_cast<unsigned_char_type>(first-u8'0'))
+#ifdef __cpp_exceptions
 			throw std::runtime_error("invalid input");
+#else
+			std::terminate();
+#endif
 	}
 	bool const zero{first==u8'0'};
 	if(zero)
@@ -187,7 +191,11 @@ inline constexpr F input_floating(input& in)
 			else
 			{
 				if(!zero)
+#ifdef __cpp_exceptions
 					throw std::runtime_error("invalid input");
+#else
+					std::terminate();
+#endif
 			}
 		}
 		if(!decimal_zero_point_phase)[[likely]]

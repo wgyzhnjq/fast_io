@@ -252,12 +252,16 @@ public:
 	Buf obuffer;
 	inline constexpr void close_impl() noexcept
 	{
+#ifdef __cpp_exceptions
 		try
 		{
+#endif
 			if(obuffer.beg)
 				write(oh,obuffer.beg,obuffer.curr);
+#ifdef __cpp_exceptions
 		}
 		catch(...){}
+#endif
 	}
 public:
 	using native_handle_type = Ohandler;
