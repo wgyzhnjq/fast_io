@@ -28,7 +28,7 @@ private:
 		try
 		{
 			if(position!=static_cast<std::size_t>(-1))
-				handle.second(handle.first,buffer.data(),buffer.data()+position);
+				handle.second.write_proxy(handle.first,buffer.data(),buffer.data()+position);
 		}
 		catch(...){}
 	}
@@ -86,7 +86,7 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 	if(ob.buffer.size()<=ob.position+diff)[[unlikely]]
 	{
 		cbegin=std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
-		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 		std::size_t remain_length(diff - (ob.buffer.size()-ob.position));
 		
 		while (remain_length)
@@ -95,16 +95,16 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 			cbegin=std::copy_n(cbegin,out_length,ob.buffer.data());
 			if (out_length == ob.buffer.size())[[unlikely]]
 			{
-				ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+				ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 				remain_length -= out_length;
 			}
 			else
 				break;
 		}
 		ob.position=remain_length;
-		/*for(ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		/*for(ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 			(cbegin=std::copy_n(cbegin,ob.buffer.size(),ob.buffer.data()))!=cend;
-			ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));*/
+			ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));*/
 
 		return;
 	}
@@ -129,7 +129,7 @@ template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t 
 inline constexpr void flush(otransform<Ohandler,func,ch_type,sz,rac>& ob)
 {
 	if(ob.position!=static_cast<std::size_t>(-1))
-		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
+		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
 template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
@@ -184,13 +184,21 @@ inline constexpr void put(otransform<Ohandler,func,ch_type,sz,rac>& ob,typename 
 {
 	if(ob.position==ob.buffer.size())[[unlikely]]		//buffer full
 	{
-		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
 		ob.position=1;
 		ob.buffer.front()=ch;
 		return;//no flow dependency any more
 	}
 	ob.buffer[ob.position]=ch;
 	++ob.position;
+}
+
+template<output_stream output,typename func,std::integral ch_type,std::size_t sz,bool rac,typename... Args>
+requires (random_access_stream<output>&&rac)
+inline constexpr auto seek(otransform<output,func,ch_type,sz,rac>& in,Args&& ...args)
+{
+	in.position={};
+	return in.seek_proxy(in.handle.first,std::forward<Args>(args)...);
 }
 
 }

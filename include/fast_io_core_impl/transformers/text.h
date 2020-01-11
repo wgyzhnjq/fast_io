@@ -19,7 +19,7 @@ class binary_to_text
 {
 public:
 template<buffer_output_stream output,std::contiguous_iterator Iter>
-inline constexpr void operator()(output& out,Iter begin,Iter end)
+inline constexpr Iter write_proxy(output& out,Iter begin,Iter end)
 {
 	if constexpr(!sys||operating_system::native==operating_system::win32)
 		for(auto iter(begin);iter!=end;++iter)
@@ -30,6 +30,7 @@ inline constexpr void operator()(output& out,Iter begin,Iter end)
 				begin=iter;
 			}
 	write(out,begin,end);
+	return end;
 }
 };
 /*
