@@ -37,51 +37,51 @@ try
 	cqw::timer t("obuf");
 	fast_io::obuf obuf("obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
-		send(obuf,vec.cbegin(),vec.cend());
+		write(obuf,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("obuf text");
 	fast_io::text_view<fast_io::obuf> view("obuf_text.txt");
 	for(std::size_t i(0);i!=N;++i)
-		send(view,vec.cbegin(),vec.cend());
+		write(view,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("steam_view for ofstream");
 	std::ofstream fout("stream_view_ofstream.txt",std::ofstream::binary);
 	fast_io::stream_view view(fout);
 	for(std::size_t i(0);i!=N;++i)
-		send(view,vec.cbegin(),vec.cend());
+		write(view,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("steambuf_view for ofstream");
 	std::ofstream fout("streambuf_view_ofstream.txt",std::ofstream::binary);
 	fast_io::streambuf_view view(fout.rdbuf());
 	for(std::size_t i(0);i!=N;++i)
-		send(view,vec.cbegin(),vec.cend());
+		write(view,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("dynamic obuf");
 	fast_io::dynamic_character_output_stream dobuf(std::in_place_type<fast_io::obuf>,u8"dynamic_obuf.txt");
 	for(std::size_t i(0);i!=N;++i)
-		send(dobuf,vec.cbegin(),vec.cend());
+		write(dobuf,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("iobuf_dynamic native_file");
 	fast_io::iobuf_dynamic dobuf(std::in_place_type<fast_io::onative_file>,u8"iobuf_dynamic_native_file.txt");
 	for(std::size_t i(0);i!=N;++i)
-		send(dobuf,vec.cbegin(),vec.cend());
+		write(dobuf,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("obuf_mutex");
 	fast_io::obuf_mutex obuf("obuf_mutex.txt");
 	for(std::size_t i(0);i!=N;++i)
-		send(obuf,vec.cbegin(),vec.cend());
+		write(obuf,vec.cbegin(),vec.cend());
 	}
 	{
 	cqw::timer t("ofsync");
 	fast_io::ofsync obuf("ofsync.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::trunc>);
 	for(std::size_t i(0);i!=N;++i)
-		send(obuf,vec.cbegin(),vec.cend());
+		write(obuf,vec.cbegin(),vec.cend());
 	}
 }
 catch(std::exception const& e)
