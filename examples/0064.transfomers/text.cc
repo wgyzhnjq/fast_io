@@ -3,7 +3,6 @@
 
 int main()
 {
-	fast_io::obinary_to_text<fast_io::obuf> text_obuf("a.txt");
-	std::size_t val(0);
-	println(text_obuf,val);
+	fast_io::obinary_to_native_text<fast_io::obuf> text_obuf("a.txt");
+	println(text_obuf,"weqtqewtqewt");
 }

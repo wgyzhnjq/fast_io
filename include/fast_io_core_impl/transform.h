@@ -4,13 +4,13 @@ namespace fast_io
 {
 
 
-template<output_stream output,typename func>
+template<output_stream output,typename func,std::integral ch_type = typename output::char_type>
 class otransform
 {
 public:
 	using native_handle_type = output; 
 	using transform_function_type = func;
-	using char_type = typename native_handle_type::char_type;
+	using char_type = ch_type;
 	std::pair<native_handle_type,transform_function_type> handle;
 	std::size_t position{};
 	std::array<char_type,4096> buffer;
@@ -63,14 +63,14 @@ public:
 };
 
 
-template<output_stream output,typename func>
+template<output_stream output,typename func,std::integral ch_type = typename output::char_type>
 requires std::is_default_constructible_v<func>
-class otransform_function_default_construct:public otransform<output,func>
+class otransform_function_default_construct:public otransform<output,func,ch_type>
 {
 public:
 	using native_handle_type = output; 
 	using transform_function_type = func;
-	using char_type = typename native_handle_type::char_type;
+	using char_type = ch_type;
 	template<typename... Args>
 	requires std::constructible_from<native_handle_type,Args...>
 	otransform_function_default_construct(Args&& ...args):otransform<output,func>(std::piecewise_construct,
@@ -98,10 +98,10 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 
 }
 
-template<output_stream Ohandler,typename func,std::contiguous_iterator Iter>
-inline constexpr void write(otransform<Ohandler,func>& ob,Iter cbegini,Iter cendi)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::contiguous_iterator Iter>
+inline constexpr void write(otransform<Ohandler,func,ch_type>& ob,Iter cbegini,Iter cendi)
 {
-	using char_type = typename otransform<Ohandler,func>::char_type;
+	using char_type = typename otransform<Ohandler,func,ch_type>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
 		details::otransform_write(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
@@ -109,47 +109,47 @@ inline constexpr void write(otransform<Ohandler,func>& ob,Iter cbegini,Iter cend
 					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
 }
 
-template<output_stream Ohandler,typename func>
-inline constexpr void flush(otransform<Ohandler,func>& ob)
+template<output_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr void flush(otransform<Ohandler,func,ch_type>& ob)
 {
 	if(ob.position!=static_cast<std::size_t>(-1))
 		ob.handle.second(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.position);
 }
 
-template<buffer_input_stream Ohandler,typename func>
-inline constexpr decltype(auto) iflush(otransform<Ohandler,func>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr decltype(auto) iflush(otransform<Ohandler,func,ch_type>& out)
 {
 	return iflush(*out);
 }
 
-template<buffer_input_stream Ohandler,typename func>
-inline constexpr decltype(auto) begin(otransform<Ohandler,func>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr decltype(auto) begin(otransform<Ohandler,func,ch_type>& out)
 {
 	return begin(out.native_handle());
 }
 
-template<buffer_input_stream Ohandler,typename func>
-inline constexpr decltype(auto) end(otransform<Ohandler,func>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr decltype(auto) end(otransform<Ohandler,func,ch_type>& out)
 {
 	return end(out.native_handle());
 }
 
-template<buffer_input_stream Ohandler,typename func>
-inline constexpr otransform<Ohandler,func>& operator++(otransform<Ohandler,func>& out)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr otransform<Ohandler,func>& operator++(otransform<Ohandler,func,ch_type>& out)
 {
 	operator++(out.native_handle());
 	return out;
 }
 
-template<buffer_input_stream Ohandler,typename func,std::integral I>
-inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func>& out,I i)
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::integral I>
+inline constexpr otransform<Ohandler,func>& operator+=(otransform<Ohandler,func,ch_type>& out,I i)
 {
 	operator+=(out.native_handle(),i);
 	return out;
 }
 
-template<output_stream Ohandler,typename func,std::integral I>
-[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func>& ob,I sz) -> decltype(ob.buffer.data())
+template<output_stream Ohandler,typename func,std::integral ch_type,std::integral I>
+[[nodiscard]] inline constexpr auto oreserve(otransform<Ohandler,func,ch_type>& ob,I sz) -> decltype(ob.buffer.data())
 {
 	if(ob.buffer.size()<=ob.position+sz)[[unlikely]]
 		return nullptr;
@@ -157,14 +157,14 @@ template<output_stream Ohandler,typename func,std::integral I>
 	return ob.buffer.data()+ob.position;
 }
 
-template<output_stream Ohandler,typename func,std::integral I>
-inline constexpr void orelease(otransform<Ohandler,func>& ob,I sz)
+template<output_stream Ohandler,typename func,std::integral ch_type,std::integral I>
+inline constexpr void orelease(otransform<Ohandler,func,ch_type>& ob,I sz)
 {
 	ob.position-=sz;
 }
 
-template<output_stream Ohandler,typename func>
-inline constexpr void put(otransform<Ohandler,func>& ob,typename otransform<Ohandler,func>::char_type ch)
+template<output_stream Ohandler,typename func,std::integral ch_type>
+inline constexpr void put(otransform<Ohandler,func,ch_type>& ob,typename otransform<Ohandler,func,ch_type>::char_type ch)
 {
 	if(ob.position==ob.buffer.size())[[unlikely]]		//buffer full
 	{

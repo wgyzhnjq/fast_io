@@ -17,15 +17,16 @@ in_type in(native_stdin_number);
 inline native_io_handle out(native_stdout_number);
 inline native_io_handle err(native_stderr_number);
 
+using log_type = basic_obuf<native_io_handle>;
 
 inline auto out_buf()
 {
-	return basic_obuf<native_io_handle>(native_stdout_number);
+	return log_type(native_stdout_number);
 }
 
 inline auto log()
 {
-	return basic_obuf<native_io_handle>(native_stderr_number);
+	return log_type(native_stderr_number);
 }
 
 }
