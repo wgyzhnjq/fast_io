@@ -3,8 +3,6 @@
 //The problem is that std::exception/std::system_error reports message with char const* instead of char8_t const*
 //To prevent compiler or C locale screw up this library, we have to add a layer for EBCDIC.
 //Also we have to use system call on Linux systems directly to avoid issue for introducing stupid libc runtime
-//Or IBM will cry for dumb shit just like trigraph drama.
-//fast_io will remove all support for char const*, std::u8string and std::string_view since they are historical mistakes.
 //However, this can also be used for code converting from EBCDIC to ASCII or vice versa.
 
 //https://www.ibm.com/support/knowledgecenter/en/SSZJPZ_11.3.0/com.ibm.swg.im.iis.ds.parjob.adref.doc/topics/r_deeadvrf_ASCII_to_EBCDIC.html
