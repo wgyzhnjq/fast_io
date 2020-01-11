@@ -2,10 +2,6 @@
 
 namespace fast_io
 {
-template<input_stream Ihandler,typename Buf>
-class basic_ibuf;
-template<output_stream Ohandler,typename Buf>
-class basic_obuf;
 
 template<typename T,std::size_t alignment=16384>
 struct io_aligned_allocator
@@ -87,7 +83,7 @@ public:
 
 	using native_handle_type = Ihandler;
 	using buffer_type = Buf;
-	using char_type = typename Buf::char_type;	
+	using char_type = typename Buf::char_type;
 	template<typename... Args>
 	requires std::constructible_from<Ihandler,Args...>
 	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){}
@@ -102,8 +98,9 @@ template<input_stream Ihandler,typename Buf>
 {
 	if(ib.ibuffer.end==nullptr)
 		ib.ibuffer.init_space();
-	return (ib.ibuffer.end=read(ib.ih,ib.ibuffer.curr=ib.ibuffer.beg,ib.ibuffer.beg+Buf::size))
-		!=ib.ibuffer.beg;
+	ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg,ib.ibuffer.beg+Buf::size);
+	ib.ibuffer.curr=ib.ibuffer.beg;
+	return ib.ibuffer.end!=ib.ibuffer.beg;
 }
 
 template<input_stream Ihandler,typename Buf>
