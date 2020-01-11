@@ -10,12 +10,13 @@ namespace fast_io
 {
 inline namespace
 {
-
-using in_type = fast_io::basic_iomutex<fast_io::basic_ibuf<native_io_handle>>;
-
-in_type in(native_stdin_number);
+#if defined(__WINNT__) || defined(_MSC_VER)
 inline native_io_handle out(native_stdout_number);
 inline native_io_handle err(native_stderr_number);
+#else
+inline constinit native_io_handle out(native_stdout_number);
+inline constinit native_io_handle err(native_stderr_number);
+#endif
 
 using log_type = basic_obuf<native_io_handle>;
 
