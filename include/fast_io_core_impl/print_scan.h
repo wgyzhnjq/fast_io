@@ -68,7 +68,7 @@ inline constexpr void scan_with_ex(input &in,T&& t)
 #ifdef __cpp_exceptions
 			throw eof();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 }
@@ -276,7 +276,7 @@ inline void fprint_impl(os &out,std::basic_string_view<ch_type> format)
 	for(;(percent_pos=format.find(0x25))!=std::string_view::npos&&percent_pos+1!=format.size()&&format[percent_pos+1]==0X25;format.remove_prefix(percent_pos+2))
 		write(out,format.cbegin(),format.cbegin()+percent_pos+1);
 	if(percent_pos!=std::string_view::npos)
-		std::terminate();
+		fast_terminate();
 	write(out,format.cbegin(),format.cend());
 }
 

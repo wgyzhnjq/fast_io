@@ -56,7 +56,7 @@ inline constexpr posix_file_map_attribute to_posix_file_map_attribute(file_map_a
 #ifdef __cpp_exceptions
 		throw std::runtime_error("unknown file_mapping_attribute");
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	};
 }

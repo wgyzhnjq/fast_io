@@ -53,7 +53,7 @@ inline constexpr win32_file_map_attribute to_win32_file_map_attribute(file_map_a
 #ifdef __cpp_exceptions
 		throw std::runtime_error("unknown file_mapping_attribute");
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	};
 }
@@ -77,7 +77,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	win32_file_mapping(win32_file_mapping const&)=delete;
@@ -123,7 +123,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	win32_map_view_of_file(win32_map_view_of_file const&)=delete;

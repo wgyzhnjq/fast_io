@@ -34,7 +34,7 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open::mode const &om)
 #ifdef __cpp_exceptions
 			throw std::runtime_error("cannot create new while truncating existed file");
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	else if (value&open::trunc.value)
@@ -110,7 +110,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	basic_win32_io_handle& operator=(basic_win32_io_handle const& other)
@@ -121,7 +121,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 		mhandle=new_handle;
 		return *this;
@@ -173,7 +173,7 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_handle<
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return distance_to_move_high;
 }
@@ -192,7 +192,7 @@ inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return begin+numberOfBytesRead;
 }
@@ -205,7 +205,7 @@ inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
@@ -275,7 +275,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
@@ -301,7 +301,7 @@ inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 }
 
@@ -360,7 +360,7 @@ public:
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	basic_win32_pipe():basic_win32_pipe(fast_io::native_interface,nullptr,0)

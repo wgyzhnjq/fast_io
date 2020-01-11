@@ -1,5 +1,4 @@
 #pragma once
-
 #if defined(__WINNT__) || defined(_MSC_VER)
 #include"win32.h"
 #include"win32_mapping.h"

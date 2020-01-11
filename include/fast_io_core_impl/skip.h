@@ -60,7 +60,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}
@@ -87,7 +87,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}
@@ -115,7 +115,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}
@@ -146,7 +146,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}
@@ -175,7 +175,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}
@@ -205,7 +205,7 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 #ifdef __cpp_exceptions
 				throw eof();
 #else
-				std::terminate();
+				fast_terminate();
 #endif
 			}
 		}

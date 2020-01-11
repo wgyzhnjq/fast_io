@@ -361,7 +361,7 @@ inline constexpr T mul_overflow(T a,T1 b)
 #ifdef __cpp_exceptions
 		throw std::overflow_error("mul overflow");
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return t;
 }
@@ -374,7 +374,7 @@ inline constexpr T add_overflow(T a,T1 b)
 #ifdef __cpp_exceptions
 		throw std::overflow_error("add overflow");
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return t;
 }
@@ -409,7 +409,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::runtime_error("illegal input");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			T t(fr);
 			for(;;)
@@ -433,7 +433,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::runtime_error("illegal input");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			for(;;)
 			{
@@ -460,7 +460,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::runtime_error("illegal input");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			unsigned_t t(fr);
 			for(;;)
@@ -474,7 +474,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::overflow_error("signed overflow");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			if(sign)
 			{
@@ -496,7 +496,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::runtime_error("illegal input");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			for(;;)
 			{
@@ -512,7 +512,7 @@ inline constexpr T input_base_number(input& in)
 			#ifdef __cpp_exceptions
 				throw std::overflow_error("signed overflow");
 			#else
-				std::terminate();
+				fast_terminate();
 			#endif
 			if(sign)
 			{

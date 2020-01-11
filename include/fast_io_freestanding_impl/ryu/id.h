@@ -26,7 +26,7 @@ inline constexpr F input_floating(input& in)
 #ifdef __cpp_exceptions
 			throw std::runtime_error("invalid input");
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	bool const zero{first==u8'0'};
@@ -194,7 +194,7 @@ inline constexpr F input_floating(input& in)
 #ifdef __cpp_exceptions
 					throw std::runtime_error("invalid input");
 #else
-					std::terminate();
+					fast_terminate();
 #endif
 			}
 		}
@@ -313,7 +313,7 @@ inline constexpr F input_floating(input& in)
 #ifdef __cpp_exceptions
 			throw std::runtime_error("invalid input");
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 		exponent_type exp_val{};
 		if(mantissa)[[likely]]

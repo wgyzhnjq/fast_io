@@ -33,6 +33,8 @@
 #include"fast_io_core_impl/io_ref.h"
 #include"fast_io_core_impl/manip.h"
 
+#include"fast_io_core_impl/asm/systemcall.h"
+
 // This should provide an option macro to disable any generation for table in freestanding environments.
 #include"fast_io_core_impl/shared_base_table.h"
 #include"fast_io_core_impl/base.h"

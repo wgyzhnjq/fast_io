@@ -76,7 +76,7 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 #ifdef __cpp_exceptions
 		throw std::runtime_error("unknown posix file openmode");
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	}
 }
@@ -112,7 +112,7 @@ public:
 #ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	basic_posix_io_handle& operator=(basic_posix_io_handle const& dp)
@@ -122,7 +122,7 @@ public:
 #ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 		fd=newfd;
 		return *this;
@@ -168,19 +168,26 @@ inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 {
-	auto write_bytes(::write(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
+	auto write_bytes(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<1,std::ptrdiff_t>
+#else
+		::write
+#endif
+(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
+
 	if(write_bytes==-1)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return begin+(write_bytes/sizeof(*begin));
 }
@@ -193,7 +200,7 @@ inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_ty
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return ret;
 }
@@ -262,7 +269,7 @@ public:
 #ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	template<std::size_t om,perms pm>
@@ -305,14 +312,14 @@ inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
 #ifdef __cpp_exceptions
 		throw std::system_error(err,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 #else
 	if(::ftruncate(h.native_handle(),size)<0)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 #endif
 
@@ -354,7 +361,7 @@ public:
 #ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
 #else
-			std::terminate();
+			fast_terminate();
 #endif
 	}
 	template<std::size_t om>
@@ -449,7 +456,7 @@ inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t b
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
-		std::terminate();
+		fast_terminate();
 #endif
 	return transmitted_bytes;
 }
