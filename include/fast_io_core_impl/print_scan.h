@@ -4,17 +4,17 @@ namespace fast_io
 {
 
 
-/*
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
 {
 	std::size_t skipped(0);
 	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
 	return skipped;
 }
+/*
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline constexpr auto eat_space_get(input& in)
 {
 	decltype(get(in)) ch(get(in));
@@ -22,7 +22,7 @@ inline constexpr auto eat_space_get(input& in)
 	return ch;
 }
 
-template<character_input_stream input>
+template<buffer_input_stream input>
 inline constexpr auto try_eat_space_get(input& in)
 {
 	auto ch(get<true>(in));
@@ -30,7 +30,7 @@ inline constexpr auto try_eat_space_get(input& in)
 	return ch;
 }
 
-template<character_input_stream input,std::integral T>
+template<buffer_input_stream input,std::integral T>
 requires std::same_as<T,bool>
 inline constexpr void scan_define(input& in, T& b)
 {

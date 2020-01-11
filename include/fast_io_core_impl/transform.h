@@ -145,6 +145,12 @@ inline constexpr decltype(auto) iflush(otransform<Ohandler,func,ch_type,sz,rac>&
 }
 
 template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr void iclear(otransform<Ohandler,func,ch_type,sz,rac>& out)
+{
+	iclear(*out);
+}
+
+template<buffer_input_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr decltype(auto) begin(otransform<Ohandler,func,ch_type,sz,rac>& out)
 {
 	return begin(out.native_handle());

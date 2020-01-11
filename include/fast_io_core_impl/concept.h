@@ -59,6 +59,7 @@ concept buffer_input_stream_impl = std::ranges::contiguous_range<T>&&requires(T&
 	{iflush(in)}->std::same_as<bool>;
 	in+=n;
 	++in;
+	iclear(in);
 };
 
 template<typename T>

@@ -9,7 +9,7 @@ inline std::size_t bufferred_transmit(output& outp,input& inp)
 	std::size_t transmitted_bytes(0);
 	for(std::array<std::byte,65536> array;;)
 	{
-		auto p(receive(inp,array.data(),array.data()+array.size()));
+		auto p(read(inp,array.data(),array.data()+array.size()));
 		std::size_t transmitted_this_round(p-array.data());
 		transmitted_bytes+=transmitted_this_round;
 		write(outp,array.data(),p);
@@ -27,7 +27,7 @@ inline std::size_t bufferred_transmit(output& outp,input& inp,std::size_t bytes)
 		std::size_t b(array.size());
 		if(bytes<b)
 			b=bytes;
-		auto p(receive(inp,array.data(),array.data()+b));
+		auto p(read(inp,array.data(),array.data()+b));
 		std::size_t read_bytes(p-array.data());
 		write(outp,array.data(),p);
 		transmitted_bytes+=read_bytes;
@@ -53,12 +53,14 @@ inline auto transmit(output& outp,input& inp,Args&& ...args)
 		}
 		else if constexpr(zero_copy_output_stream<output>&&zero_copy_buffer_input_stream<input>)
 		{
-			idump(outp,inp);
+			write(outp,begin(inp),end(inp));
+			iclear(inp);
 			return zero_copy_transmit(outp.native_handle(),std::forward<Args>(args)...);
 		}
 		else
 		{
-			idump(outp,inp);
+			write(outp,begin(inp),end(inp));
+			iclear(inp);
 			flush(outp);
 			return zero_copy_transmit(outp.native_handle(),inp.native_handle(),std::forward<Args>(args)...);
 		}
