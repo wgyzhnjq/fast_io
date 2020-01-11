@@ -151,7 +151,7 @@ switch(static_cast<std::make_unsigned_t<I>>(ch))
 }
 }
 template<buffer_output_stream output,std::contiguous_iterator Iter>
-inline constexpr auto operator()(output& out,Iter begin,Iter end)
+inline constexpr auto write_proxy(output& out,Iter begin,Iter end)
 {
 	for(auto iter(begin);iter!=end;++iter)
 		*iter=operator()(*iter);
