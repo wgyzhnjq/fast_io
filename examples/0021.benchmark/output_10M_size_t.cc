@@ -81,7 +81,7 @@ try
 	}
 	{
 	cqw::timer t("transform_text");
-	fast_io::obinary_to_native_text<fast_io::obuf> obuf("transform_text.txt");
+	fast_io::obinary_to_text<fast_io::obuf> obuf("transform_text.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf,i);
 	}
