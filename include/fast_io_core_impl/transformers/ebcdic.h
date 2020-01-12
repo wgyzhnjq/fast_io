@@ -158,6 +158,31 @@ inline constexpr auto write_proxy(output& out,Iter begin,Iter end)
 	write(out,begin,end);
 	return end;
 }
+template<buffer_input_stream input,std::contiguous_iterator Iter>
+inline constexpr Iter read_proxy(input& in,Iter b,Iter e)
+{
+//This is basically text stream
+	for(;b!=e;++b)
+	{
+		auto ch(ifront<1>(in));
+		if(!ch.second)
+			break;
+		if(ch==u8'\r')
+		{
+			if(!ireserve(in,2)||begin(in)+1==end(in))
+				return b;
+			if(begin(in)[1]==u8'\n')
+			{
+				*b=0x15;
+				in+=2;
+				continue;
+			}
+		}
+		*b=operator()(ch.first);
+		++in;
+	}
+	return b;
+}
 };
 
 class ebcdic_to_ascii
@@ -325,31 +350,7 @@ In this example, a message flow is created that interprets the input message as 
 	write(out,begin,end);
 	return end;
 }
-template<buffer_input_stream input,std::contiguous_iterator Iter>
-inline constexpr Iter read_proxy(input& in,Iter b,Iter e)
-{
-//This is basically text stream
-	for(;b!=e;++b)
-	{
-		auto ch(ifront<1>(in));
-		if(!ch.second)
-			break;
-		if(ch==u8'\r')
-		{
-			if(!ireserve(in,2))
-				return b;
-			if(begin(in)[1]==u8'\n')
-			{
-				*b=0x15;
-				in+=2;
-				continue;
-			}
-		}
-		*b=operator()(ch.first);
-		++in;
-	}
-	return b;
-}
+
 };
 
 
