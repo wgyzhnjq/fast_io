@@ -112,6 +112,12 @@ struct whole
 	T& reference;
 };
 
+template<typename T>
+struct no_decoration
+{
+	T& reference;
+};
+
 }
 template<typename T>
 requires (std::floating_point<T>||std::integral<T>)
@@ -207,25 +213,15 @@ template<typename T>
 inline constexpr manip::local_chinese<T const> local_chinese(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::utc_chinese<T const> utc_chinese(T const &f){return {f};}
-/*
-template<character_input_stream input,std::integral T>
-inline void scan_define(input& in,manip::char_view<T> a)
-{
-	a.reference = get(in);
-}
-template<character_input_stream input,std::floating_point T>
-inline void scan_define(input& in,manip::char_view<T> a)
-{
-	a.reference = get(in);
-}
-
-*/
 
 template<typename T>
 inline constexpr manip::whole<T> whole(T &f){return {f};}
 
 template<typename T>
 inline constexpr manip::int_hint<T> integer_hint(T &f){return {f};}
+
+template<typename T>
+inline constexpr manip::no_decoration<T> no_decoration(T &f){return {f};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)
