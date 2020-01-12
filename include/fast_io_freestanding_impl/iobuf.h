@@ -50,7 +50,7 @@ public:
 	}
 	inline void init_space()
 	{
-		beg=alloc.allocate(buffer_size);
+		end=curr=beg=alloc.allocate(buffer_size);
 	}
 	inline void release()
 	{
@@ -101,6 +101,48 @@ inline constexpr void iclear(basic_ibuf<Ihandler,Buf>& ib)
 	ib.ibuffer.release();
 }
 
+namespace details
+{
+template<input_stream Ihandler,typename Buf>
+constexpr bool ireserve_internal(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
+{
+	if(Buf::size<=n)
+#ifdef __cpp_exceptions
+		throw std::system_error(EOPNOTSUPP,std::generic_category());
+#else
+		fast_terminate();
+#endif
+	if(ib.ibuffer.end==nullptr)
+		ib.ibuffer.init_space();
+	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.beg);
+	for(auto b(ib.ibuffer.curr);;b=ib.end)
+	{
+		if(ib.ibuffer.beg+n<(ib.end=read(ib.ih,b,ib.ibuffer.beg+Buf::size)))
+			return true;
+		else if(ib.end==b)
+		{
+			if(b==ib.ibuffer.beg)
+				return false;
+			return true;	
+		}
+	}
+}
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr bool ireserve(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
+{
+	if(ib.ibuffer.end-ib.ibuffer.curr<n)[[unlikely]]
+		return details::ireserve_internal(ib,n);
+	return true;
+}
+/*
+template<input_stream Ihandler,typename Buf>
+inline constexpr auto ibuffer_size(basic_ibuf<Ihandler,Buf>& ib)
+{
+	return Buf::size;
+}
+*/
 template<input_stream Ihandler,typename Buf>
 inline constexpr auto begin(basic_ibuf<Ihandler,Buf>& ib)
 {

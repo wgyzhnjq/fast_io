@@ -325,6 +325,31 @@ In this example, a message flow is created that interprets the input message as 
 	write(out,begin,end);
 	return end;
 }
+template<buffer_input_stream input,std::contiguous_iterator Iter>
+inline constexpr Iter read_proxy(input& in,Iter b,Iter e)
+{
+//This is basically text stream
+	for(;b!=e;++b)
+	{
+		auto ch(ifront<1>(in));
+		if(!ch.second)
+			break;
+		if(ch==u8'\r')
+		{
+			if(!ireserve(in,2))
+				return b;
+			if(begin(in)[1]==u8'\n')
+			{
+				*b=0x15;
+				in+=2;
+				continue;
+			}
+		}
+		*b=operator()(ch.first);
+		++in;
+	}
+	return b;
+}
 };
 
 

@@ -32,6 +32,30 @@ inline constexpr Iter write_proxy(output& out,Iter begin,Iter end)
 	write(out,begin,end);
 	return end;
 }
+template<buffer_input_stream input,std::contiguous_iterator Iter>
+inline constexpr Iter read_proxy(input& in,Iter b,Iter e)
+{
+	for(;b!=e;++b)
+	{
+		auto ch(ifront<1>(in));
+		if(!ch.second)
+			break;
+		if(ch==u8'\r')
+		{
+			if(!ireserve(in,2)||begin(in)+1==end(in))
+				return b;
+			if(begin(in)[1]==u8'\n')
+			{
+				*b=u8'\n';
+				in+=2;
+				continue;
+			}
+		}
+		*b=ch.first;
+		++in;
+	}
+	return read(in,begin,end);
+}
 };
 /*
 template<bool sys=false>
