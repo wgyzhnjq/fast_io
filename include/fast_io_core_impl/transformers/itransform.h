@@ -61,6 +61,19 @@ inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 	std::copy_n(cbegin,diff,ob.buffer.data()+ob.position);
 	ob.position+=diff;*/
 //Todo
+	while (cend > cbegin)
+	{
+		std::size_t remain_length(ob.buffer.size() - ob.position);
+		std::size_t available_length(std::min(cend - cbegin, remain_length));
+		std::copy_n(ob.buffer.data() + ob.position, available_length, cbegin);
+		ob.position += available_length;
+		if (ob.position == ob.buffer.size())
+		{
+			// read proxy
+			cbegin += ob.buffer.size();
+			ob.position = 0;
+		}
+	}
 }
 
 }
