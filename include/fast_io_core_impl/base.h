@@ -620,15 +620,33 @@ inline constexpr bool scan_define(input& in,T& a)
 }
 
 template<output_stream output,std::integral T>
-inline constexpr void print_define(output& out,T const& a)
+inline constexpr void print_define(output& out,T a)
 {
-	details::output_base_number<10,false>(out,a);
+	if constexpr(std::unsigned_integral<T>)
+		details::jiaendu::output<false>(out,a);
+	else if constexpr(std::signed_integral<T>)
+	{
+		using unsigned_t = std::make_unsigned_t<T>;
+		if(a<0)
+			details::jiaendu::output<false,false>(out,static_cast<unsigned_t>(-a));
+		else
+			details::jiaendu::output<false,false>(out,static_cast<unsigned_t>(a));
+	}
 }
 
 template<output_stream output,std::integral T>
-inline constexpr void println_define(output& out,T const& a)
+inline constexpr void println_define(output& out,T a)
 {
-	details::output_base_number<10,false,true>(out,a);
+	if constexpr(std::unsigned_integral<T>)
+		details::jiaendu::output<true>(out,a);
+	else if constexpr(std::signed_integral<T>)
+	{
+		using unsigned_t = std::make_unsigned_t<T>;
+		if(a<0)
+			details::jiaendu::output<true,false>(out,static_cast<unsigned_t>(-a));
+		else
+			details::jiaendu::output<true,false>(out,static_cast<unsigned_t>(a));
+	}
 }
 
 template<std::size_t base,bool uppercase,output_stream output,typename T>

@@ -137,6 +137,7 @@ inline void put(c_style_io_handle_unlocked& cfhd,typename c_style_io_handle_unlo
 		fputc
 #endif
 	(static_cast<char>(ch),cfhd.native_handle())==EOF)
+
 		throw std::system_error(errno,std::system_category());
 }
 
