@@ -3,7 +3,7 @@
 
 int main()
 {
-	std::size_t a,b;
+	std::int64_t a,b;
 	scan(a,b);
-	println(fast_io::dec(a+b));
+	println(a+b);
 }

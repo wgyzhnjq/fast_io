@@ -628,9 +628,9 @@ inline constexpr void print_define(output& out,T a)
 	{
 		using unsigned_t = std::make_unsigned_t<T>;
 		if(a<0)
-			details::jiaendu::output<false,false>(out,static_cast<unsigned_t>(-a));
+			details::jiaendu::output<false,true>(out,static_cast<unsigned_t>(-a));
 		else
-			details::jiaendu::output<false,false>(out,static_cast<unsigned_t>(a));
+			details::jiaendu::output<false>(out,static_cast<unsigned_t>(a));
 	}
 }
 
@@ -643,9 +643,9 @@ inline constexpr void println_define(output& out,T a)
 	{
 		using unsigned_t = std::make_unsigned_t<T>;
 		if(a<0)
-			details::jiaendu::output<true,false>(out,static_cast<unsigned_t>(-a));
+			details::jiaendu::output<true,true>(out,static_cast<unsigned_t>(-a));
 		else
-			details::jiaendu::output<true,false>(out,static_cast<unsigned_t>(a));
+			details::jiaendu::output<true>(out,static_cast<unsigned_t>(a));
 	}
 }
 

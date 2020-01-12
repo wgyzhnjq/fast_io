@@ -332,7 +332,10 @@ inline void output(outp& out,T t)
 					start[p]=u8'\n';
 					++p;
 				}
-				orelease(out,reserved_size-p);
+				if constexpr(sign)
+					orelease(out,(reserved_size-1)-p);
+				else
+					orelease(out,reserved_size-p);
 				return;
 			}
 		}
@@ -350,7 +353,10 @@ inline void output(outp& out,T t)
 				start[p]=u8'\n';
 				++p;
 			}
-			orelease(out,reserved_size-p);
+			if constexpr(sign)
+				orelease(out,(reserved_size-1)-p);
+			else
+				orelease(out,reserved_size-p);
 			return;
 		}
 	}
@@ -358,7 +364,7 @@ inline void output(outp& out,T t)
 	if constexpr(sign)
 	{
 		array.front() = u8'-';
-		auto p(array.data()+output_unsigned(t,array.data()+1));
+		auto p(array.data()+1+output_unsigned(t,array.data()+1));
 		if constexpr(ln)
 		{
 			*p=u8'\n';
