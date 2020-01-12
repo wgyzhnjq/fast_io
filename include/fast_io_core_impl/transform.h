@@ -86,12 +86,13 @@ namespace details
 template<typename T,std::contiguous_iterator Iter>
 inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 {
+	
 	std::size_t diff(cend-cbegin);
 	if(ob.buffer.size()<=ob.position+diff)[[unlikely]]
 	{
-		std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
+		/*std::copy_n(cbegin,ob.buffer.size()-ob.position,ob.buffer.data()+ob.position);
 		cbegin+=ob.buffer.size()-ob.position;
-		ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
+		auto wrote_pos(ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));
 		std::size_t remain_length(diff - (ob.buffer.size()-ob.position));
 		
 		while (remain_length)
@@ -107,15 +108,38 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 			else
 				break;
 		}
-		ob.position=remain_length;
-		/*for(ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size());
-			(cbegin=std::copy_n(cbegin,ob.buffer.size(),ob.buffer.data()))!=cend;
-			ob.handle.second.write_proxy(ob.handle.first,ob.buffer.data(),ob.buffer.data()+ob.buffer.size()));*/
-
+		ob.position=remain_length;*/
+		while (cend > cbegin)
+		{
+			std::size_t diff(cend - cbegin);
+			std::size_t write_length(std::min(diff, ob.buffer.size() - ob.position));
+			std::copy_n(cbegin, write_length, ob.buffer.data() + ob.position);
+			ob.position += write_length;
+			cbegin += write_length;
+			if (ob.position == ob.buffer.size()) [[unlikely]]
+			{
+				auto wrote_pos(ob.handle.second.write_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
+				if (wrote_pos == ob.buffer.data()) [[unlikely]]
+					throw std::runtime_error("write failed");
+				std::size_t remain_length(ob.buffer.data() + ob.buffer.size() - wrote_pos);
+				std::copy_n(wrote_pos, remain_length, ob.buffer.data());
+				ob.position = remain_length;
+				/*if (remain_length > 0) [[unlikely]]
+				{
+					std::copy_n(wrote_pos, remain_length, ob.buffer.data());
+					ob.position = remain_length;
+				}
+				else
+					ob.position = 0;*/
+			}
+			else
+				return;
+		}
 		return;
 	}
 	std::copy_n(cbegin,diff,ob.buffer.data()+ob.position);
 	ob.position+=diff;
+	/**/
 }
 
 }
