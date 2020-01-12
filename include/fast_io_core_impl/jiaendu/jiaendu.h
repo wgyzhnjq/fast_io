@@ -237,7 +237,7 @@ inline std::size_t output_unsigned(U value,Iter str)
 	}
 	else if constexpr(sizeof(U)==2)
 	{
-		if (value >= 10000) [[unlikely]]
+		if (value >= 10000)
 		{
 #if (_WIN64 || __x86_64__ || __ppc64__)
 			std::uint64_t const v2{
