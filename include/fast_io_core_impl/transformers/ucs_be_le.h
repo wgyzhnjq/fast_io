@@ -68,7 +68,7 @@ public:
 		}
 	inline static constexpr auto read_proxy(input& inp,Iter begin,Iter end)
 	{
-		auto v(read(in,begin,end));
+		auto v(read(inp,begin,end));
 		for(Iter it(begin);it!=v;++it)
 			*it=endian_reverse(*it);
 		return v;
