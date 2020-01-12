@@ -60,6 +60,19 @@ public:
 			*iter=endian_reverse(*iter);
 		return write(out,begin,end);
 	}
+	template<input_stream input,std::contiguous_iterator Iter>
+	requires (sizeof(typename std::iterator_traits<Iter>::value_type)==sizeof(typename input::char_type))&&
+		requires(Iter it)
+		{
+			*it=endian_reverse(*it);
+		}
+	inline static constexpr auto read_proxy(input& inp,Iter begin,Iter end)
+	{
+		auto v(read(in,begin,end));
+		for(Iter it(begin);it!=v;++it)
+			*it=endian_reverse(*it);
+		return v;
+	}
 };
 
 }
