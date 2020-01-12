@@ -83,6 +83,11 @@ inline constexpr void flush(itransform<input,func,ch_type,sz,rac>& ob)
 	flush(ob.handle.first);
 }
 
+template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr void iclear(itransform<input,func,ch_type,sz,rac>& in)
+{
+	in.position={};
+}
 
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr bool iflush(itransform<input,func,ch_type,sz,rac>& in)

@@ -19,30 +19,42 @@ public:
 	}
 	constexpr auto empty() const {return s.empty();}
 };
-template<typename T>
-[[nodiscard]] inline constexpr std::size_t isize(basic_istring_view<T>& isv)
-{
-	return isv.str().size();
-}
 
 template<typename T>
-[[nodiscard]] inline constexpr auto ireserve(basic_istring_view<T>& isv,std::size_t size)
+[[nodiscard]] inline constexpr auto begin(basic_istring_view<T>& isv)
 {
-	isv.str().remove_prefix(size);
 	return isv.str().begin();
 }
 
 template<typename T>
-inline constexpr void irelease(basic_istring_view<T>& isv,std::size_t size)
+[[nodiscard]] inline constexpr auto end(basic_istring_view<T>& isv)
 {
-	isv.str()={isv.str().data()-size,isv.str().size()+size};
+	return isv.str().end();
 }
 
-template<output_stream output, typename T>
-inline constexpr void idump(output& out,basic_istring_view<T>& isv)
+template<typename T>
+inline constexpr bool iflush(basic_istring_view<T>& is)
 {
-	write(out,isv.str().data(),isv.str().data()+isv.str().size());
-	isv.str()={};
+	return false;
+}
+
+template<typename T>
+inline constexpr void iclear(basic_istring_view<T>& isv)
+{
+	return isv.str().clear();
+}
+
+template<typename T,std::integral I>
+inline constexpr void operator+=(basic_istring_view<T>& isv,I i)
+{
+	isv.remove_prefix(i);
+}
+
+template<typename T>
+inline constexpr basic_istring_view<T>& operator++(basic_istring_view<T>& isv)
+{
+	isv.remove_prefix(1);
+	return isv;
 }
 
 template<typename T,std::contiguous_iterator Iter>

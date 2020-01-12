@@ -49,7 +49,7 @@
 //#include"fast_io_core_impl/ebcdic.h"
 // Precondition should be removed in the future. Programming bugs
 #include"fast_io_core_impl/precondition.h"
-#include"fast_io_core_impl/sendrecv.h"
+#include"fast_io_core_impl/read_write_ranges.h"
 #include"fast_io_core_impl/print_scan.h"
 #include"fast_io_core_impl/seek.h"
 #include"fast_io_core_impl/sync.h"

@@ -15,12 +15,6 @@ inline namespace
 inline c_style_io_handle c_stdin(stdin);
 inline c_style_io_handle c_stdout(stdout);
 inline c_style_io_handle c_stderr(stderr);
-/*
-inline streambuf_view cpp_cin(std::cin.rdbuf());
-inline streambuf_view cpp_cout(std::cout.rdbuf());
-inline streambuf_view cpp_cerr(std::cerr.rdbuf());
-inline streambuf_view cpp_clog(std::clog.rdbuf());
-*/
 
 inline stream_view cpp_cin(std::cin);
 inline stream_view cpp_cout(std::cout);

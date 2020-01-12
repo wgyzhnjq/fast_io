@@ -52,27 +52,20 @@ public:
 	{
 		beg=alloc.allocate(buffer_size);
 	}
+	inline void release()
+	{
+		if(beg)
+			alloc.deallocate(beg,buffer_size);
+		end=curr=beg=nullptr;
+	}
 	~basic_buf_handler()
 	{
 		if(beg)
 			alloc.deallocate(beg,buffer_size);
 	}
 	Allocator get_allocator() const{ return alloc;}
-	void swap(basic_buf_handler& o) noexcept
-	{
-		using std::swap;
-		swap(alloc,o.alloc);
-		swap(beg,o.beg);
-		swap(curr,o.curr);
-		swap(end,o.end);
-	}
 };
 
-template<typename CharT,std::size_t buffer_size,typename Allocator>
-inline void swap(basic_buf_handler<CharT,buffer_size,Allocator>& a,basic_buf_handler<CharT,buffer_size,Allocator>& b) noexcept
-{
-	a.swap(b);
-}
 
 template<input_stream Ihandler,typename Buf=basic_buf_handler<typename Ihandler::char_type>>
 class basic_ibuf
@@ -101,6 +94,11 @@ template<input_stream Ihandler,typename Buf>
 	ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg,ib.ibuffer.beg+Buf::size);
 	ib.ibuffer.curr=ib.ibuffer.beg;
 	return ib.ibuffer.end!=ib.ibuffer.beg;
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr void iclear(basic_ibuf<Ihandler,Buf>& ib)
+{
+	ib.ibuffer.release();
 }
 
 template<input_stream Ihandler,typename Buf>

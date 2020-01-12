@@ -75,8 +75,6 @@ class basic_dns
 {
 	addrinfo *result;
 public:
-	template<std::size_t n>
-	basic_dns(char const (&arr)[n])=delete;
 	basic_dns(std::string_view host)
 	{
 		addrinfo hints{};
@@ -156,8 +154,6 @@ inline constexpr auto dns_once(std::string_view host)
 {
 	return *cbegin(basic_dns<fam>(host));
 }
-template<fast_io::sock::family fam=fast_io::sock::family::unspec,std::size_t n>
-inline constexpr auto dns_once(char const (&host)[n])=delete;
 
 template<fast_io::sock::family fam=fast_io::sock::family::unspec>
 inline constexpr auto dns_once(std::u8string_view host)
