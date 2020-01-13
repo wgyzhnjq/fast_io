@@ -22,6 +22,14 @@ try
 		str=std::move(ostr.str());
 	}
 	{
+		std::string str;
+		fast_io::timer tm("ostring <= inative_file");
+		fast_io::inative_file ib("large_file.txt");
+		fast_io::ostring ostr;
+		transmit(ostr,ib);
+		str=std::move(ostr.str());
+	}
+	{
 		fast_io::timer tm("ofstream <= ifstream");
 		std::ifstream ifst("large_file.txt",std::ifstream::binary);
 		std::ofstream ofst("large_file_stream.txt",std::ofstream::binary);
