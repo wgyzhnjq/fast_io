@@ -20,7 +20,7 @@ try
 		transmit(ob,ib);
 	}
 	{
-		fast_io::timer tm("fast_io obuf_file <= ibuf_file");
+		fast_io::timer tm("fast_io onative_file <= inative_file");
 		fast_io::inative_file ib("large_file.txt");
 		fast_io::onative_file ob("large_file_inative_file_to_onative_file.txt");
 		transmit(ob,ib);
