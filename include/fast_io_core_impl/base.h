@@ -427,7 +427,7 @@ inline constexpr T input_base_number(input& in)
 			T t{};
 			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
 				t=fr;
-			else if(static_cast<unsigned_char_type>(fr-=0x17)<bm10||static_cast<unsigned_char_type>(fr-=0x32)<bm10)
+			else if(static_cast<unsigned_char_type>(fr-=17)<bm10||static_cast<unsigned_char_type>(fr-=32)<bm10)
 				t=fr+10;
 			else[[unlikely]]
 			#ifdef __cpp_exceptions
@@ -440,7 +440,7 @@ inline constexpr T input_base_number(input& in)
 				auto f(next_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=t*base+f;
-				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
+				else if(static_cast<unsigned_char_type>(f-=17)<bm10||static_cast<unsigned_char_type>(f-=32)<bm10)
 					t=t*base+(f+10);
 				else[[unlikely]]
 					break;
@@ -490,7 +490,7 @@ inline constexpr T input_base_number(input& in)
 			unsigned_t t{};
 			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
 				t=fr;
-			else if(static_cast<unsigned_char_type>(fr-=0x17)<bm10||static_cast<unsigned_char_type>(fr-=0x32)<bm10)
+			else if(static_cast<unsigned_char_type>(fr-=17)<bm10||static_cast<unsigned_char_type>(fr-=32)<bm10)
 				t=fr+10;
 			else[[unlikely]]
 			#ifdef __cpp_exceptions
@@ -503,7 +503,7 @@ inline constexpr T input_base_number(input& in)
 				auto f(next_unsigned<2>(in));
 				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
 					t=add_overflow(mul_overflow(t,base),f);
-				else if(static_cast<unsigned_char_type>(f-=0x17)<bm10||static_cast<unsigned_char_type>(f-=0x32)<bm10)
+				else if(static_cast<unsigned_char_type>(f-=17)<bm10||static_cast<unsigned_char_type>(f-=32)<bm10)
 					t=add_overflow(mul_overflow(t,base),f+10);
 				else[[unlikely]]
 					break;
