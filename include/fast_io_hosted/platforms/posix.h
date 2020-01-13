@@ -486,7 +486,6 @@ inline std::size_t zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
 		bytes-=transferred_this_round;
 	}
 	return transmitted;
-	
 }
 template<zero_copy_output_stream output,zero_copy_input_stream input>
 inline std::size_t zero_copy_transmit(output& outp,input& inp)
