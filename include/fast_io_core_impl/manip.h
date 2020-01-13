@@ -118,6 +118,24 @@ struct no_decoration
 	T& reference;
 };
 
+template<typename T>
+struct transmission
+{
+	T& reference;
+};
+
+template<typename T>
+struct binary_serialization
+{
+	T& reference;
+};
+
+template<typename T,std::integral char_type>
+struct follow_character
+{
+	T& reference;
+	char_type character;
+};
 }
 template<typename T>
 requires (std::floating_point<T>||std::integral<T>)
@@ -222,6 +240,21 @@ inline constexpr manip::int_hint<T> integer_hint(T &f){return {f};}
 
 template<typename T>
 inline constexpr manip::no_decoration<T> no_decoration(T &f){return {f};}
+
+template<input_stream T>
+inline constexpr manip::transmission<T> transmission(T &f){return {f};}
+
+template<std::ranges::range T>
+inline constexpr manip::binary_serialization<T> binary_serialization(T &f){return {f};}
+
+template<std::ranges::range T>
+inline constexpr manip::binary_serialization<T const> binary_serialization(T const &f){return {f};}
+
+template<typename T,std::integral ch_type>
+inline constexpr manip::follow_character<T,ch_type> follow(T &f,ch_type ch){return {f,ch};}
+
+template<typename T,std::integral ch_type>
+inline constexpr manip::follow_character<T const,ch_type> follow(T const &f,ch_type ch){return {f,ch};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)
