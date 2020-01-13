@@ -454,50 +454,103 @@ inline int constexpr posix_stderr_number = 2;
 //zero copy IO for linux
 namespace details
 {
-template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
+template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
 {
 	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),nullptr,bytes));
 	if(transmitted_bytes==-1)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
-#else
-		fast_terminate();
-#endif
-	return transmitted_bytes;
+	{
+		if constexpr(report_einval)
+		{
+			auto const eno(errno);
+			if(eno==EINVAL)
+				return {0,true};
+			else
+			{
+			#ifdef __cpp_exceptions
+				throw std::system_error(eno,std::generic_category());
+			#else
+				fast_terminate();
+			#endif
+			}
+		}
+		else
+		{
+			#ifdef __cpp_exceptions
+				throw std::system_error(errno,std::generic_category());
+			#else
+				fast_terminate();
+			#endif
+		}
+	}
+	if constexpr(report_einval)
+		return {transmitted_bytes,false};
+	else
+		return transmitted_bytes;
+
 }
 }
 
 
-template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
+template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
 {
 	std::size_t constexpr maximum_transmit_bytes(2147479552);
-	std::size_t transmitted(0);
+	std::size_t transmitted{};
 	for(;bytes;)
 	{
 		std::size_t should_transfer(maximum_transmit_bytes);
 		if(bytes<should_transfer)
 			should_transfer=bytes;
-		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,should_transfer));
+		std::size_t transferred_this_round{};
+		auto ret(details::zero_copy_transmit_once<report_einval>(outp,inp,should_transfer));
+		if constexpr(report_einval)
+		{
+			if(ret.second)
+				return {transmitted,true};
+			transferred_this_round=ret.first;
+		}
+		else
+			transferred_this_round=ret;
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=should_transfer)
-			return transmitted;
+		{
+			if constexpr(report_einval)
+				return {transmitted,false};
+			else
+				return transmitted;
+		}
 		bytes-=transferred_this_round;
 	}
-	return transmitted;
-	
+	if constexpr(report_einval)
+		return {transmitted,false};
+	else
+		return transmitted;
 }
-template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit(output& outp,input& inp)
+template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit(output& outp,input& inp)
 {
 	std::size_t constexpr maximum_transmit_bytes(2147479552);
-	for(std::size_t transmitted(0);;)
+	for(std::size_t transmitted{};;)
 	{
-		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes));
+		std::size_t transferred_this_round{};
+		auto ret(details::zero_copy_transmit_once<report_einval>(outp,inp,maximum_transmit_bytes));
+		if constexpr(report_einval)
+		{
+			if(ret.second)
+				return {transmitted,true};
+			transferred_this_round=ret.first;
+		}
+		else
+			transferred_this_round=ret;
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=maximum_transmit_bytes)
-			return transmitted;
+		{
+			if constexpr(report_einval)
+				return {transmitted,false};
+			else
+				return transmitted;
+		}
 	}
 }
 #endif

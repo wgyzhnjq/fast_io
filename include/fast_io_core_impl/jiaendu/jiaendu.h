@@ -320,7 +320,7 @@ inline void output(outp& out,T t)
 		auto reserved(oreserve(out,reserved_size));
 		if constexpr(std::is_pointer_v<decltype(reserved)>)
 		{
-			if(reserved)
+			if(reserved)[[likely]]
 			{
 				auto start(reserved-reserved_size);
 				if constexpr(sign)

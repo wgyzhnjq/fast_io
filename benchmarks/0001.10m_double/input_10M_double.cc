@@ -1,9 +1,9 @@
 //Please run output_10M_double before this
 
-#include"timer.h"
+#include"../timer.h"
 #include<fstream>
-#include"../include/fast_io.h"
-#include"../include/fast_io_device.h"
+#include"../../include/fast_io.h"
+#include"../../include/fast_io_device.h"
 #include<exception>
 #include<memory>
 #include<cstdio>
@@ -40,8 +40,8 @@ try
 		scan(view,v[i]);
 	}*/
 	{
-	cqw::timer t("ibuf");
-	fast_io::ibuf ibuf("obufdb.txt");
+	fast_io::timer t("ibuf");
+	fast_io::ibuf_file ibuf("obuf_filedb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}

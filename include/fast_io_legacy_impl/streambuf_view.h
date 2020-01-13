@@ -76,7 +76,11 @@ template<typename T>
 inline void put(streambuf_view<T>& t,typename T::char_type ch)
 {
 	if(!t.native_handle()->sputc(ch))
-		throw std::runtime_error("put() failed for streambuf view");
+#ifdef __cpp_exceptions
+		throw std::system_error(std::make_error_code(std::errc::io_error));
+#else
+		fast_terminate();
+#endif
 }
 
 template<typename T,std::contiguous_iterator Iter>
@@ -84,7 +88,12 @@ inline void write(streambuf_view<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 	if(!t.native_handle()->sputn(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))
-		throw std::runtime_error("send failed for stream view");
+#ifdef __cpp_exceptions
+		throw std::system_error(std::make_error_code(std::errc::io_error));
+#else
+		fast_terminate();
+#endif
+
 }
 
 template<typename T>

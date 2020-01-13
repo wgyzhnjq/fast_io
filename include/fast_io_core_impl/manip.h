@@ -118,6 +118,34 @@ struct no_decoration
 	T& reference;
 };
 
+template<typename T,std::integral size_type>
+struct transmission
+{
+	size_type& transmitted;
+	T& reference;
+};
+
+template<typename T,std::integral size_type>
+struct transmission_with_size
+{
+	size_type& transmitted;
+	T& reference;
+	size_type size;
+};
+
+
+template<typename T>
+struct binary_serialization
+{
+	T& reference;
+};
+
+template<typename T,std::integral char_type>
+struct follow_character
+{
+	T& reference;
+	char_type character;
+};
 }
 template<typename T>
 requires (std::floating_point<T>||std::integral<T>)
@@ -222,6 +250,24 @@ inline constexpr manip::int_hint<T> integer_hint(T &f){return {f};}
 
 template<typename T>
 inline constexpr manip::no_decoration<T> no_decoration(T &f){return {f};}
+
+template<input_stream T,std::integral sz_type>
+inline constexpr manip::transmission<T,sz_type> transmission(sz_type& transmitted,T &f){return {transmitted,f};}
+
+template<input_stream T,std::integral sz_type>
+inline constexpr manip::transmission_with_size<T,sz_type> transmission(sz_type& transmitted,T &f,sz_type s){return {transmitted,f,s};}
+
+template<std::ranges::range T>
+inline constexpr manip::binary_serialization<T> binary_serialization(T &f){return {f};}
+
+template<std::ranges::range T>
+inline constexpr manip::binary_serialization<T const> binary_serialization(T const &f){return {f};}
+
+template<typename T,std::integral ch_type>
+inline constexpr manip::follow_character<T,ch_type> follow(T &f,ch_type ch){return {f,ch};}
+
+template<typename T,std::integral ch_type>
+inline constexpr manip::follow_character<T const,ch_type> follow(T const &f,ch_type ch){return {f,ch};}
 
 template<character_output_stream output,std::integral T>
 inline void print_define(output& out,manip::char_view<T> a)
