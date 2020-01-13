@@ -5,7 +5,7 @@ namespace fast_io
 namespace details
 {
 template<output_stream output,input_stream input>
-inline std::size_t bufferred_transmit_impl(output& outp,input& inp)
+inline constexpr std::size_t bufferred_transmit_impl(output& outp,input& inp)
 {
 	std::size_t transmitted_bytes{};
 	if constexpr(buffer_input_stream<input>)
@@ -36,7 +36,7 @@ inline std::size_t bufferred_transmit_impl(output& outp,input& inp)
 }
 
 template<output_stream output,input_stream input>
-inline std::size_t bufferred_transmit_impl(output& outp,input& inp,std::size_t bytes)
+inline constexpr std::size_t bufferred_transmit_impl(output& outp,input& inp,std::size_t bytes)
 {
 	std::size_t transmitted_bytes{};
 	if constexpr(buffer_input_stream<input>)
@@ -84,7 +84,7 @@ inline std::size_t bufferred_transmit_impl(output& outp,input& inp,std::size_t b
 }
 #ifdef __linux__
 template<output_stream output,input_stream input>
-inline std::size_t zero_copy_transmit_impl(output& outp,input& inp)
+inline constexpr std::size_t zero_copy_transmit_impl(output& outp,input& inp)
 {
 	auto ret(zero_copy_transmit<true>(outp,inp));
 	if(ret.second)
@@ -93,7 +93,7 @@ inline std::size_t zero_copy_transmit_impl(output& outp,input& inp)
 }
 
 template<output_stream output,input_stream input>
-inline std::size_t zero_copy_transmit_impl(output& outp,input& inp,std::size_t sz)
+inline constexpr std::size_t zero_copy_transmit_impl(output& outp,input& inp,std::size_t sz)
 {
 	auto ret(zero_copy_transmit<true>(outp,inp,sz)); 
 	if(ret.second)
@@ -103,7 +103,7 @@ inline std::size_t zero_copy_transmit_impl(output& outp,input& inp,std::size_t s
 #endif
 
 template<output_stream output,input_stream input,typename... Args>
-inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
+inline constexpr auto transmit_impl(output& outp,input& inp,Args&& ...args)
 {
 	if constexpr(mutex_input_stream<input>)
 	{
@@ -113,6 +113,12 @@ inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
 	}
 	else
 	{
+#ifdef __cpp_lib_is_constant_evaluated
+		if (std::is_constant_evaluated())
+			return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);
+		else
+		{
+#endif
 		if constexpr(zero_copy_output_stream<output>&&zero_copy_input_stream<input>)
 		{
 			if constexpr(buffer_input_stream<input>)
@@ -128,8 +134,11 @@ inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
 			return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
 #endif
 		}
+#ifdef __cpp_lib_is_constant_evaluated
 		else
 			return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);
+		}
+#endif
 	}
 }
 }
