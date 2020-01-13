@@ -3,5 +3,5 @@
 
 int main()
 {
-	transmit(fast_io::out,fast_io::in);
+	println("\nTransmitted: ",transmit(fast_io::out,fast_io::in)," bytes");
 }

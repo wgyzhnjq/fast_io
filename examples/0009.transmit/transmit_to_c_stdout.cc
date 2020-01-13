@@ -3,7 +3,7 @@
 
 int main()
 {
-	println("\nTransmitted: ",transmit(fast_io::c_stdout,fast_io::in)," bytes");
+	transmit(fast_io::c_stdout,fast_io::in);
 }
 /*
 Transmit from fast_io::in to C stdout (Which means exploit the internal implementation of C stdout's buffer)
