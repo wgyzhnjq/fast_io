@@ -1,0 +1,6 @@
+GET /portal/home/index HTTP/1.1
+Host:www.jszg.edu.cn
+User-agent:whatever
+Accept-Type:*/*
+Connection:close
+

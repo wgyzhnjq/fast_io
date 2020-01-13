@@ -9,7 +9,7 @@ template<buffer_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
 {
 	std::size_t skipped(0);
-	for(decltype(get<true>(in)) ch;!(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
+	for(decltype(get<true>(in)) ch;(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
 	return skipped;
 }
 /*

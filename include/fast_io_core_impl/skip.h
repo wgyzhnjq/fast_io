@@ -92,17 +92,18 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 			}
 		}
 	}
+	auto ch(*begin(input));
 	++input;
 	if constexpr(report_eof==1)
-		return {*begin(input),true};
+		return {ch,true};
 	else
-		return *begin(input);
+		return ch;
 }
 
 template<std::size_t report_eof=0,buffer_input_stream bip>
 [[nodiscard]] inline constexpr auto next(bip& input)->std::conditional_t<report_eof==1,std::pair<typename bip::char_type,bool>,typename bip::char_type>
 {
-	if(begin(input)==end(input))
+	if(begin(++input)==end(input))
 	{
 		if(!iflush(input))
 		{
@@ -120,8 +121,6 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 			}
 		}
 	}
-	else [[likely]]
-		++input;
 	if constexpr(report_eof==1)
 		return {*begin(input),true};
 	else
@@ -180,11 +179,12 @@ template<std::size_t report_eof=0,buffer_input_stream bip>
 			}
 		}
 	}
+	auto ch{static_cast<unsigned_char_type>(*begin(input))};
 	++input;
 	if constexpr(report_eof==1)
-		return {static_cast<unsigned_char_type>(*begin(input)),true};
+		return {ch,true};
 	else
-		return static_cast<unsigned_char_type>(*begin(input));
+		return ch;
 }
 
 template<std::size_t report_eof=0,buffer_input_stream bip>
