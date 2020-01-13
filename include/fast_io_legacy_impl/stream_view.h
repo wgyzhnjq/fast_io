@@ -58,7 +58,7 @@ public:
 };
 
 template<fast_io::stream_view_details::istream_concept_impl T,std::contiguous_iterator Iter>
-inline Iter receive(stream_view<T>& t,Iter begin,Iter end)
+inline Iter read(stream_view<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 	return begin+(t.native_handle().sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
