@@ -137,15 +137,6 @@ concept zero_copy_output_stream = output_stream<T>&&details::zero_copy_output_st
 template<typename T>
 concept zero_copy_io_stream = zero_copy_input_stream<T>&&zero_copy_output_stream<T>;
 
-template<typename T>
-concept zero_copy_buffer_input_stream = zero_copy_input_stream<T>&&buffer_input_stream<T>;
-
-template<typename T>
-concept zero_copy_buffer_output_stream = zero_copy_output_stream<T>&&buffer_output_stream<T>;
-
-template<typename T>
-concept zero_copy_buffer_io_stream = zero_copy_buffer_input_stream<T>&&zero_copy_buffer_output_stream<T>;
-
 template<typename input,typename T>
 concept scanable=input_stream<input>&&requires(input& in,T&& t)
 {

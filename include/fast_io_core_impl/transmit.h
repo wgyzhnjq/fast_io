@@ -113,8 +113,7 @@ inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
 	}
 	else
 	{
-		if constexpr((zero_copy_output_stream<output>||zero_copy_buffer_output_stream<output>)
-			&&(zero_copy_buffer_input_stream<input>||zero_copy_input_stream<input>))
+		if constexpr(zero_copy_output_stream<output>&&zero_copy_input_stream<input>)
 		{
 			if constexpr(buffer_input_stream<input>)
 			{
