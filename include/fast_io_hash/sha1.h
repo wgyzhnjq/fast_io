@@ -245,7 +245,7 @@ inline constexpr void flush(sha1& sh)
 }
 
 template<std::contiguous_iterator Iter>
-inline constexpr Iter receive(sha1& sh,Iter begin,Iter end)
+inline constexpr Iter read(sha1& sh,Iter begin,Iter end)
 {
 	auto b(static_cast<char*>(static_cast<void*>(std::to_address(begin))));
 	auto e(static_cast<char*>(static_cast<void*>(std::to_address(end))));
