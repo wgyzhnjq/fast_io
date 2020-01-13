@@ -7,37 +7,82 @@ namespace details
 template<output_stream output,input_stream input>
 inline std::size_t bufferred_transmit_impl(output& outp,input& inp)
 {
-	std::size_t transmitted_bytes(0);
-	for(std::array<std::byte,65536> array;;)
+	std::size_t transmitted_bytes{};
+	if constexpr(buffer_input_stream<input>)
 	{
-		auto p(read(inp,array.data(),array.data()+array.size()));
-		std::size_t transmitted_this_round(p-array.data());
-		transmitted_bytes+=transmitted_this_round;
-		write(outp,array.data(),p);
-		if(!transmitted_this_round)
-			return transmitted_bytes;
+		do
+		{
+			auto b(begin(inp));
+			auto e(end(inp));
+			std::size_t transmitted_this_round(static_cast<std::size_t>(e-b));
+			write(outp,b,e);
+			transmitted_bytes+=transmitted_this_round;
+		}
+		while(iflush(inp));
+		return transmitted_bytes;
+	}
+	else
+	{
+		for(std::array<std::byte,65536> array;;)
+		{
+			auto p(read(inp,array.data(),array.data()+array.size()));
+			std::size_t transmitted_this_round(p-array.data());
+			transmitted_bytes+=transmitted_this_round;
+			write(outp,array.data(),p);
+			if(!transmitted_this_round)
+				return transmitted_bytes;
+		}
 	}
 }
 
 template<output_stream output,input_stream input>
 inline std::size_t bufferred_transmit_impl(output& outp,input& inp,std::size_t bytes)
 {
-	std::size_t transmitted_bytes(0);
-	for(std::array<std::byte,65536> array;bytes;)
+	std::size_t transmitted_bytes{};
+	if constexpr(buffer_input_stream<input>)
 	{
-		std::size_t b(array.size());
-		if(bytes<b)
-			b=bytes;
-		auto p(read(inp,array.data(),array.data()+b));
-		std::size_t read_bytes(p-array.data());
-		write(outp,array.data(),p);
-		transmitted_bytes+=read_bytes;
-		if(read_bytes!=b)
-			return transmitted_bytes;
-		bytes-=read_bytes;
+		do
+		{
+			auto b(begin(inp));
+			auto e(end(inp));
+			if(b!=e)[[likely]]
+			{
+				std::size_t transmitted_this_round((e-b)*sizeof(*b));
+				if(bytes<=transmitted_this_round)
+				{
+					write(outp,b,bytes);
+					return transmitted_bytes+transmitted_this_round;
+				}
+				else
+				{
+					write(outp,b,e);
+					transmitted_bytes+=transmitted_this_round;
+					bytes-=transmitted_this_round;
+				}
+			}
+		}
+		while(iflush(inp));
+		return transmitted_bytes;
 	}
-	return transmitted_bytes;
+	else
+	{
+		for(std::array<std::byte,65536> array;bytes;)
+		{
+			std::size_t b(array.size());
+			if(bytes<b)
+				b=bytes;
+			auto p(read(inp,array.data(),array.data()+b));
+			std::size_t read_bytes(p-array.data());
+			write(outp,array.data(),p);
+			transmitted_bytes+=read_bytes;
+			if(read_bytes!=b)
+				return transmitted_bytes;
+			bytes-=read_bytes;
+		}
+		return transmitted_bytes;
+	}
 }
+#ifdef __linux__
 template<output_stream output,input_stream input>
 inline std::size_t zero_copy_transmit_impl(output& outp,input& inp)
 {
@@ -55,6 +100,7 @@ inline std::size_t zero_copy_transmit_impl(output& outp,input& inp,std::size_t s
 		return ret.first+bufferred_transmit_impl(outp,inp,sz-ret.first);
 	return ret.first;
 }
+#endif
 
 template<output_stream output,input_stream input,typename... Args>
 inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
@@ -80,7 +126,7 @@ inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
 #ifdef __linux__
 			return zero_copy_transmit_impl(outp,inp,std::forward<Args>(args)...);
 #else
-			return zero_copy_transmit(outp,inp,sz);
+			return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
 #endif
 		}
 		else
