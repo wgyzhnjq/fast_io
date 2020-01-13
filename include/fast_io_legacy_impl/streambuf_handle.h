@@ -69,8 +69,10 @@ inline void orelease(streambuf_handle<T>& hd,std::size_t size)
 }
 #ifdef __GLIBCXX__
 
+#ifdef __WINNT__
 class filebuf_performance_guard	//stream has performance problems on windows
 {};
+#endif
 
 template<std::integral ch_type>
 class basic_filebuf_handle:public streambuf_handle<__gnu_cxx::stdio_filebuf<ch_type>>
@@ -134,7 +136,7 @@ inline auto zero_copy_out_handle(basic_filebuf_handle<T>& h)
 	return h.handle.fd();
 }
 #endif
-//#ifdef __WINNT__
+#ifdef __WINNT__
 template<std::integral T>
 inline constexpr filebuf_performance_guard mutex(basic_filebuf_handle<T>& h)
 {
@@ -147,6 +149,6 @@ inline auto unlocked_handle(basic_filebuf_handle<T>& h)
 	return static_cast<basic_c_style_io_handle_unlocked<T>>(h);
 }
 
-//#endif
+#endif
 #endif
 }
