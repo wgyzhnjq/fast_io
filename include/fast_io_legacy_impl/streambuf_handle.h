@@ -69,12 +69,19 @@ inline void orelease(streambuf_handle<T>& hd,std::size_t size)
 }
 #ifdef __GLIBCXX__
 
+#ifdef __WINNT__
+class filebuf_performance_guard	//stream has performance problems on windows
+{};
+#endif
 
 template<std::integral ch_type>
 class basic_filebuf_handle:public streambuf_handle<__gnu_cxx::stdio_filebuf<ch_type>>
 {
 public:
 	using native_handle_type = __gnu_cxx::stdio_filebuf<ch_type>;
+#ifdef __WINNT__
+	using lock_guard_type = filebuf_performance_guard;
+#endif
 	using char_type = ch_type;
 	template<typename ...Args>
 	requires std::constructible_from<streambuf_handle<__gnu_cxx::stdio_filebuf<ch_type>>,int,Args...>
@@ -117,19 +124,31 @@ public:
 using filebuf_handle = basic_filebuf_handle<char>;
 
 #ifdef __linux__
-template<typename T>
+template<std::integral T>
 inline auto zero_copy_in_handle(basic_filebuf_handle<T>& h)
 {
 	return h.handle.fd();
 }
 
-template<typename T>
+template<std::integral T>
 inline auto zero_copy_out_handle(basic_filebuf_handle<T>& h)
 {
 	return h.handle.fd();
 }
 #endif
+#ifdef __WINNT__
+template<std::integral T>
+inline constexpr filebuf_performance_guard mutex(basic_filebuf_handle<T>& h)
+{
+	return {};
+}
 
+template<std::integral T>
+inline auto unlocked_handle(basic_filebuf_handle<T>& h)
+{
+	return static_cast<basic_c_style_io_handle_unlocked<T>>(h);
+}
 
+#endif
 #endif
 }
