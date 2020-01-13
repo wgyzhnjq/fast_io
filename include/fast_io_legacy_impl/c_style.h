@@ -85,7 +85,11 @@ inline void write(c_style_io_handle_unlocked& cfhd,Iter begin,Iter end)
 	fwrite
 #endif
 	(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
-		throw std::system_error(errno,std::generic_category());
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 template<bool err=false>
@@ -138,7 +142,11 @@ inline void put(c_style_io_handle_unlocked& cfhd,typename c_style_io_handle_unlo
 #endif
 	(static_cast<char>(ch),cfhd.native_handle())==EOF)
 
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 inline void flush(c_style_io_handle_unlocked& cfhd)
@@ -152,7 +160,11 @@ inline void flush(c_style_io_handle_unlocked& cfhd)
 		fflush
 #endif
 	(cfhd.native_handle()))
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 template<typename T,std::integral U>
@@ -283,13 +295,17 @@ public:
 
 
 template<std::contiguous_iterator Iter>
-inline Iter receive(c_style_io_handle& cfhd,Iter begin,Iter end)
+inline Iter read(c_style_io_handle& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(std::fread(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
 	if(r==count||std::feof(cfhd.native_handle()))
 		return begin+r;
-	throw std::system_error(errno,std::generic_category());
+#ifdef __cpp_exceptions
+	throw std::system_error(errno,std::system_category());
+#else
+	fast_terminate();
+#endif
 }
 
 template<std::contiguous_iterator Iter>
@@ -297,7 +313,11 @@ inline void write(c_style_io_handle& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
-		throw std::system_error(errno,std::generic_category());
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 template<bool err=false>
@@ -327,20 +347,32 @@ inline auto get(c_style_io_handle& cfhd)
 inline void put(c_style_io_handle& cfhd,typename c_style_io_handle::char_type ch)
 {
 	if(std::fputc(ch,cfhd.native_handle())==EOF)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 inline void flush(c_style_io_handle& cfhd)
 {
 	if(std::fflush(cfhd.native_handle()))
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 template<typename T,std::integral U>
 inline void seek(c_style_io_handle& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 {
 	if(std::fseek(cfhd.native_handle(),seek_precondition<long,T,typename c_style_io_handle::char_type>(i),static_cast<int>(s)))
-		throw std::system_error(errno,std::system_category()); 
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 }
 
 template<std::integral U>
@@ -365,12 +397,20 @@ public:
 	basic_c_style_file(native_interface_t,Args&& ...args):T(std::fopen(std::forward<Args>(args)...))
 	{
 		if(native_handle()==nullptr)
-			throw std::system_error(errno,std::generic_category());
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
 	}
 	basic_c_style_file(std::string_view name,std::string_view mode):T(std::fopen(name.data(),mode.data()))
 	{
 		if(native_handle()==nullptr)
-			throw std::system_error(errno,std::generic_category());
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
 	}
 	basic_c_style_file(std::string_view file,open::mode const& m):basic_c_style_file(file,c_style(m))
 	{
@@ -415,7 +455,11 @@ inline auto fprintf(c_style_io_handle& h,Args&& ...args)
 	auto v(std::fprintf(h.native_handle(),std::forward<Args>(args)...));
 // forgetting checking printf/fprintf return value is a common mistake and a huge source of security vulnerability
 	if(v<0)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 	return v;
 }
 
@@ -430,7 +474,11 @@ inline auto fscanf(c_style_io_handle& h,Args&& ...args)
 	auto v(std::fscanf(h.native_handle(),std::forward<Args>(args)...));
 // forgetting checking scanf/fscanf return value is a common mistake and a huge source of security vulnerability
 	if(v<0)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
 	return v;
 }
 
