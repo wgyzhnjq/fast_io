@@ -38,6 +38,23 @@ inline std::size_t bufferred_transmit_impl(output& outp,input& inp,std::size_t b
 	}
 	return transmitted_bytes;
 }
+template<output_stream output,input_stream input>
+inline std::size_t zero_copy_transmit_impl(output& outp,input& inp)
+{
+	auto ret(zero_copy_transmit<true>(outp,inp));
+	if(ret.second)
+		return ret.first+bufferred_transmit_impl(outp,inp);
+	return ret.first;
+}
+
+template<output_stream output,input_stream input>
+inline std::size_t zero_copy_transmit_impl(output& outp,input& inp,std::size_t sz)
+{
+	auto ret(zero_copy_transmit<true>(outp,inp,sz)); 
+	if(ret.second)
+		return ret.first+bufferred_transmit_impl(outp,inp,sz-ret.first);
+	return ret.first;
+}
 
 template<output_stream output,input_stream input,typename... Args>
 inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
@@ -53,26 +70,18 @@ inline auto transmit_impl(output& outp,input& inp,Args&& ...args)
 		if constexpr((zero_copy_output_stream<output>||zero_copy_buffer_output_stream<output>)
 			&&(zero_copy_buffer_input_stream<input>||zero_copy_input_stream<input>))
 		{
-			if constexpr(zero_copy_output_stream<output>&&zero_copy_input_stream<input>)
-				return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
-			else if constexpr(zero_copy_buffer_output_stream<output>&&zero_copy_input_stream<input>)
-			{
-				flush(outp);
-				return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
-			}
-			else if constexpr(zero_copy_output_stream<output>&&zero_copy_buffer_input_stream<input>)
+			if constexpr(buffer_input_stream<input>)
 			{
 				write(outp,begin(inp),end(inp));
 				iclear(inp);
-				return zero_copy_transmit(outp,std::forward<Args>(args)...);
 			}
-			else
-			{
-				write(outp,begin(inp),end(inp));
-				iclear(inp);
+			if constexpr(buffer_output_stream<output>)
 				flush(outp);
-				return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
-			}
+#ifdef __linux__
+			return zero_copy_transmit_impl(outp,inp,std::forward<Args>(args)...);
+#else
+			return zero_copy_transmit(outp,inp,sz);
+#endif
 		}
 		else
 			return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);
