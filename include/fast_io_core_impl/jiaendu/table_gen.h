@@ -117,6 +117,9 @@ class static_tables
 {
 public:
 //Is table 1 useless??
+	using type = std::conditional_t<sizeof(ch_type)==1,char8_t,
+		std::conditional_t<sizeof(ch_type)==2,char16_t,
+		std::conditional_t<sizeof(ch_type)==4,char32_t,ch_type>>>;
 	inline static constexpr auto table2{calculate_table2<ch_type>()};
 	inline static constexpr auto table3{calculate_table3<ch_type>()};
 	inline static constexpr auto table4{calculate_table4<ch_type>()};
