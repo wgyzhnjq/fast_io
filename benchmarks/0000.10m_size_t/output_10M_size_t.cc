@@ -131,6 +131,19 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,i);
 	}
+	{
+	fast_io::timer t("obuf_file_mutex");
+	fast_io::obuf_file_mutex obuf_file("obuf_file_mutex.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf_file,i);
+	}
+	{
+	fast_io::timer t("fbh");
+	fast_io::posix_file pf("fbh.txt",fast_io::open::interface<fast_io::open::out|fast_io::open::binary>);
+	fast_io::filebuf_handle hd(pf,std::ofstream::out|std::ofstream::binary);
+	for(std::size_t i(0);i!=N;++i)
+		println(hd,i);
+	}
 }
 #ifdef __cpp_exceptions
 catch(std::exception const& e)
