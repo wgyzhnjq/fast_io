@@ -1,8 +1,8 @@
-#include"timer.h"
+#include"../timer.h"
 #include<fstream>
-#include"../include/fast_io_device.h"
+#include"../../include/fast_io_device.h"
 //#include"../../include/fast_io_crypto.h"
-#include"../include/fast_io_legacy.h"
+#include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
 #include<memory>

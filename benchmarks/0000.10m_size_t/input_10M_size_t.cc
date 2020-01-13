@@ -1,6 +1,6 @@
 //Please run output_10M_size_t before this
 
-#include"timer.h"
+#include"../timer.h"
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
@@ -16,7 +16,7 @@ try
 	std::size_t constexpr N(10000000);
 	std::vector<std::size_t> v(N);
 	{
-	cqw::timer t("std::FILE*");
+	fast_io::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","rb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
 		auto const ret(fscanf(fp.get(),"%zu",v.data()+i));
@@ -31,7 +31,7 @@ try
 		auto const ret(fscanf(fp.get(),u8"%zu",v.data()+i));
 	}*/
 	{
-	cqw::timer t("std::ifstream");
+	fast_io::timer t("std::ifstream");
 	std::ifstream fin("cfilestar.txt",std::ifstream::binary);
 	for(std::size_t i(0);i!=N;++i)
 		fin>>v[i];
@@ -50,16 +50,16 @@ try
 		scan(view,v[i]);
 	}*/
 	{
-	cqw::timer t("ibuf");
-	fast_io::ibuf ibuf("cfilestar.txt");
+	fast_io::timer t("ibuf");
+	fast_io::ibuf_file ibuf_file("cfilestar.txt");
 	for(std::size_t i(0);i!=N;++i)
-		scan(ibuf,v[i]);
+		scan(ibuf_file,v[i]);
 	}
 	{
-	cqw::timer t("ibuf_mutex");
-	fast_io::ibuf_mutex ibuf("cfilestar.txt");
+	fast_io::timer t("ibuf_mutex");
+	fast_io::ibuf_file_mutex ibuf_file("cfilestar.txt");
 	for(std::size_t i(0);i!=N;++i)
-		scan(ibuf,v[i]);
+		scan(ibuf_file,v[i]);
 	}
 /*	{
 	cqw::timer t("ibuf text");
