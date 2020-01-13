@@ -8,6 +8,14 @@ int main()
 try
 {
 	{
+		std::string str;
+		fast_io::timer tm("ostring <= ibuf_file");
+		fast_io::ibuf_file ib("large_file.txt");
+		fast_io::ostring ostr;
+		transmit(ostr,ib);
+		str=std::move(ostr.str());
+	}
+	{
 		fast_io::timer tm("ofstream <= ifstream");
 		std::ifstream ifst("large_file.txt",std::ifstream::binary);
 		std::ofstream ofst("large_file_stream.txt",std::ofstream::binary);
