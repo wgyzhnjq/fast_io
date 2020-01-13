@@ -134,9 +134,9 @@ inline constexpr auto transmit_impl(output& outp,input& inp,Args&& ...args)
 			return zero_copy_transmit(outp,inp,std::forward<Args>(args)...);
 #endif
 		}
-#ifdef __cpp_lib_is_constant_evaluated
 		else
 			return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);
+#ifdef __cpp_lib_is_constant_evaluated
 		}
 #endif
 	}
