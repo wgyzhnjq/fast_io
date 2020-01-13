@@ -5,10 +5,9 @@
 
 int main()
 {
-	using std::string;
-	string name;
+	std::string name;
 	scan(name);
-	string greeting = "Hello, " + name;
+	std::string greeting = "Hello, " + name;
 	if (name == "Kate")
 		greeting += ", I know you!";
 	println(greeting);
