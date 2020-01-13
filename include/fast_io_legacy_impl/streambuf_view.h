@@ -48,7 +48,7 @@ public:
 };
 
 template<typename T,std::contiguous_iterator Iter>
-inline Iter receive(streambuf_view<T>& t,Iter begin,Iter end)
+inline Iter read(streambuf_view<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 	return begin+(t.native_handle()->sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
