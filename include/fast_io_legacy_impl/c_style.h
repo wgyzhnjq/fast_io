@@ -486,4 +486,17 @@ inline auto fscanf(c_style_io_handle& h,Args&& ...args)
 using c_style_file = basic_c_style_file<c_style_io_handle>;
 using c_style_file_unlocked = basic_c_style_file<c_style_io_handle_unlocked>;
 
+#ifdef __linux__
+template<std::integral ch_type>
+inline auto zero_copy_in_handle(basic_c_style_io_handle_unlocked<ch_type>& h)
+{
+	return ::fileno_unlocked(h.native_handle());
+}
+template<std::integral ch_type>
+inline auto zero_copy_out_handle(basic_c_style_io_handle_unlocked<ch_type>& h)
+{
+	return ::fileno_unlocked(h.native_handle());
+}
+#endif
+
 }
