@@ -7,24 +7,24 @@ namespace details
 
 #ifdef __linux__
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(output& outp,input& inp,common_ptrdiff_int64_t offset)
+inline constexpr std::uintmax_t zero_copy_random_access_transmit_impl(output& outp,input& inp,std::intmax_t offset)
 {
 	auto ret(zero_copy_transmit<true,true>(outp,inp,offset));
 	if(ret.second)
 	{
-		//Todo: correct offset
+		offset+=static_cast<std::intmax_t>(ret.first);
 		return ret.first+bufferred_transmit_impl(outp,inp);
 	}
 	return ret.first;
 }
 
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(output& outp,input& inp,common_ptrdiff_int64_t offset,common_size_uint64_t sz)
+inline constexpr std::uintmax_t zero_copy_random_access_transmit_impl(output& outp,input& inp,std::intmax_t offset,std::uintmax_t sz)
 {
 	auto ret(zero_copy_transmit<true,true>(outp,inp,offset,sz)); 
 	if(ret.second)
 	{
-		//Todo: correct offset
+		offset+=static_cast<std::intmax_t>(ret.first);
 		return ret.first+bufferred_transmit_impl(outp,inp,sz-ret.first);
 	}
 	return ret.first;
@@ -32,7 +32,7 @@ inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(outp
 #endif
 
 template<output_stream output,input_stream input,typename... Args>
-inline constexpr auto random_access_transmit_impl(output& outp,input& inp,common_ptrdiff_int64_t offset,Args&& ...args)
+inline constexpr auto random_access_transmit_impl(output& outp,input& inp,std::intmax_t offset,Args&& ...args)
 {
 	if constexpr(mutex_input_stream<input>)
 	{
@@ -56,7 +56,6 @@ inline constexpr auto random_access_transmit_impl(output& outp,input& inp,common
 			if constexpr(buffer_input_stream<input>)
 			{
 				offset-=end(inp)-begin(inp);
-				//Todo correct offset
 				iclear(inp);
 			}
 			if constexpr(buffer_output_stream<output>)
@@ -77,6 +76,8 @@ inline constexpr auto random_access_transmit_impl(output& outp,input& inp,common
 #endif
 	}
 }
+
+
 }
 
 template<output_stream output,input_stream input,std::integral sz_type,std::integral offset_type>
@@ -95,10 +96,10 @@ inline constexpr void print_define(output& outp,manip::random_access_transmissio
 
 template<output_stream output,std::integral offset_type,input_stream input>
 requires fast_io::random_access_stream<input>
-inline constexpr common_size_uint64_t random_access_transmit(output& outp,offset_type offset,input& in)
+inline constexpr std::uintmax_t random_access_transmit(output& outp,offset_type offset,input& in)
 {
-	common_size_uint64_t transmitted{};
-	print(outp,manip::random_access_transmission<input,offset_type,common_size_uint64_t>(transmitted,offset,in));
+	std::uintmax_t transmitted{};
+	print(outp,manip::random_access_transmission<input,offset_type,std::uintmax_t>(transmitted,offset,in));
 	return transmitted;
 }
 
@@ -107,7 +108,7 @@ requires fast_io::random_access_stream<input>
 inline constexpr sz_type random_access_transmit(output& outp,offset_type offset,input& in,sz_type bytes)
 {
 	sz_type transmitted{};
-	print(outp,manip::random_access_transmission_with_size<input,offset_type,common_size_uint64_t>(transmitted,offset,in,bytes));
+	print(outp,manip::random_access_transmission_with_size<input,offset_type,std::uintmax_t>(transmitted,offset,in,bytes));
 	return transmitted;
 }
 

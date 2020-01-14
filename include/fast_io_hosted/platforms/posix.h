@@ -458,9 +458,9 @@ namespace details
 
 template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
 inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
-	zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,common_ptrdiff_int64_t offset)
+	zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,std::intmax_t offset)
 {
-	common_ptrdiff_int64_t *np{};
+	std::intmax_t *np{};
 	if constexpr(random_access)
 		np=std::addressof(offset);
 	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes));
@@ -497,11 +497,11 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 
 
 template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::conditional_t<report_einval,std::pair<common_size_uint64_t,bool>,common_size_uint64_t> zero_copy_transmit
-(output& outp,input& inp,common_size_uint64_t bytes,common_ptrdiff_int64_t offset)
+inline std::conditional_t<report_einval,std::pair<std::uintmax_t,bool>,std::uintmax_t> zero_copy_transmit
+(output& outp,input& inp,std::uintmax_t bytes,std::intmax_t offset)
 {
 	constexpr std::size_t maximum_transmit_bytes(2147479552);
-	common_size_uint64_t transmitted{};
+	std::uintmax_t transmitted{};
 	for(;bytes;)
 	{
 		std::size_t should_transfer(maximum_transmit_bytes);
@@ -533,10 +533,10 @@ inline std::conditional_t<report_einval,std::pair<common_size_uint64_t,bool>,com
 		return transmitted;
 }
 template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::conditional_t<report_einval,std::pair<common_size_uint64_t,bool>,common_size_uint64_t> zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset)
+inline std::conditional_t<report_einval,std::pair<std::uintmax_t,bool>,std::uintmax_t> zero_copy_transmit(output& outp,input& inp,std::intmax_t offset)
 {
 	constexpr std::size_t maximum_transmit_bytes(2147479552);
-	for(common_size_uint64_t transmitted{};;)
+	for(std::uintmax_t transmitted{};;)
 	{
 		std::size_t transferred_this_round{};
 		auto ret(details::zero_copy_transmit_once<random_access,report_einval>(outp,inp,maximum_transmit_bytes,offset));

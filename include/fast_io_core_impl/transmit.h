@@ -3,15 +3,12 @@
 namespace fast_io
 {
 
-using common_size_uint64_t = std::common_type_t<std::size_t,std::uint64_t>;
-using common_ptrdiff_int64_t = std::common_type_t<std::ptrdiff_t,std::int64_t>;
-
 namespace details
 {
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t bufferred_transmit_impl(output& outp,input& inp)
+inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp)
 {
-	common_size_uint64_t transmitted_bytes{};
+	std::uintmax_t transmitted_bytes{};
 	if constexpr(buffer_input_stream<input>)
 	{
 		do
@@ -40,9 +37,9 @@ inline constexpr common_size_uint64_t bufferred_transmit_impl(output& outp,input
 }
 
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t bufferred_transmit_impl(output& outp,input& inp,common_size_uint64_t bytes)
+inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp,std::uintmax_t bytes)
 {
-	common_size_uint64_t transmitted_bytes{};
+	std::uintmax_t transmitted_bytes{};
 	if constexpr(buffer_input_stream<input>)
 	{
 		do
@@ -88,7 +85,7 @@ inline constexpr common_size_uint64_t bufferred_transmit_impl(output& outp,input
 }
 #ifdef __linux__
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t zero_copy_transmit_impl(output& outp,input& inp)
+inline constexpr std::uintmax_t zero_copy_transmit_impl(output& outp,input& inp)
 {
 	auto ret(zero_copy_transmit<false,true>(outp,inp,0));
 	if(ret.second)
@@ -97,7 +94,7 @@ inline constexpr common_size_uint64_t zero_copy_transmit_impl(output& outp,input
 }
 
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t zero_copy_transmit_impl(output& outp,input& inp,common_size_uint64_t sz)
+inline constexpr std::uintmax_t zero_copy_transmit_impl(output& outp,input& inp,std::uintmax_t sz)
 {
 	auto ret(zero_copy_transmit<false,true>(outp,inp,sz,0)); 
 	if(ret.second)
@@ -167,10 +164,10 @@ inline constexpr sz_type transmit(output& outp,input& in,sz_type s)
 }
 
 template<output_stream output,input_stream input>
-inline constexpr common_size_uint64_t transmit(output& outp,input& in)
+inline constexpr std::uintmax_t transmit(output& outp,input& in)
 {
-	common_size_uint64_t transmitted{};
-	print(outp,manip::transmission<input,common_size_uint64_t>(transmitted,in));
+	std::uintmax_t transmitted{};
+	print(outp,manip::transmission<input,std::uintmax_t>(transmitted,in));
 	return transmitted;
 }
 

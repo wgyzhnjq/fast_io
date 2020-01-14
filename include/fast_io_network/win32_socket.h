@@ -265,10 +265,10 @@ inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t b
 
 
 template<bool rac=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline common_size_uint64_t zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset,std::size_t bytes)
+inline std::uintmax_t zero_copy_transmit(output& outp,input& inp,std::intmax_t offset,std::size_t bytes)
 {
 	constexpr std::size_t maximum_transmit_bytes(2147483646);
-	common_size_uint64_t transmitted{};
+	std::uintmax_t transmitted{};
 	for(;bytes;)
 	{
 		std::size_t should_transfer(maximum_transmit_bytes);
@@ -284,10 +284,10 @@ inline common_size_uint64_t zero_copy_transmit(output& outp,input& inp,common_pt
 	
 }
 template<bool rac=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset)
+inline std::size_t zero_copy_transmit(output& outp,input& inp,std::intmax_t offset)
 {
 	constexpr std::size_t maximum_transmit_bytes(2147483646);
-	for(common_size_uint64_t transmitted(0);;)
+	for(std::uintmax_t transmitted(0);;)
 	{
 		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes,offset));
 		transmitted+=transferred_this_round;
