@@ -250,9 +250,23 @@ inline win32_startup const startup;
 namespace fast_io::details
 {
 //zero copy IO for win32
-template<zero_copy_output_stream output,zero_copy_input_stream input>
+template<bool rac=false, zero_copy_output_stream output,zero_copy_input_stream input>
 inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,std::int64_t offset)
 {
+	if constexpr(rac)
+	{
+		fast_io::win32::overlapped ov{};
+		memcpy(std::addressof(ov),offset,sizeof(std::int64_t));
+	if(!((fast_io::sock::details::get_proc_address_mswsock<decltype(fast_io::win32::TransmitFile)*>
+		("TransmitFile"))(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,std::addressof(ov),nullptr,0/*TF_USE_DEFAULT_WORKER*/)))
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
+	}
+	else
+	{
 	if(!((fast_io::sock::details::get_proc_address_mswsock<decltype(fast_io::win32::TransmitFile)*>
 		("TransmitFile"))(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,nullptr,nullptr,0/*TF_USE_DEFAULT_WORKER*/)))
 #ifdef __cpp_exceptions
@@ -260,6 +274,7 @@ inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t b
 #else
 		fast_terminate();
 #endif
+	}
 	return bytes;
 }
 
@@ -274,7 +289,7 @@ inline std::uintmax_t zero_copy_transmit(output& outp,input& inp,std::intmax_t o
 		std::size_t should_transfer(maximum_transmit_bytes);
 		if(bytes<should_transfer)
 			should_transfer=bytes;
-		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,should_transfer,offset));
+		std::size_t transferred_this_round(details::zero_copy_transmit_once<rac>(outp,inp,should_transfer,offset));
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=should_transfer)
 			return transmitted;
@@ -289,7 +304,7 @@ inline std::size_t zero_copy_transmit(output& outp,input& inp,std::intmax_t offs
 	constexpr std::size_t maximum_transmit_bytes(2147483646);
 	for(std::uintmax_t transmitted(0);;)
 	{
-		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes,offset));
+		std::size_t transferred_this_round(details::zero_copy_transmit_once<rac>(outp,inp,maximum_transmit_bytes,offset));
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=maximum_transmit_bytes)
 			return transmitted;

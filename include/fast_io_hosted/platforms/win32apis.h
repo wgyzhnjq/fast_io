@@ -26,8 +26,11 @@ void* __stdcall CreateFileA(char const*,std::uint32_t,std::uint32_t,security_att
 
 struct overlapped
 {
-std::uintptr_t Internal;
-std::uintptr_t InternalHigh;
+#if defined(_WIN64) || defined(__MINGW64__)
+	std::uint64_t Internal,InternalHigh;
+#else
+	std::uint32_t Internal,InternalHigh;
+#endif
 union
 {
 struct

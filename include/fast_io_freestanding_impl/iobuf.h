@@ -325,7 +325,7 @@ public:
 	using buffer_type = Buf;
 	using char_type = typename Buf::char_type;
 	template<typename... Args>
-//	requires std::constructible_from<Ohandler,Args...>
+	requires std::constructible_from<Ohandler,Args...>
 	basic_obuf(Args&&... args):oh(std::forward<Args>(args)...){}
 	~basic_obuf()
 	{
