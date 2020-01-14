@@ -14,7 +14,7 @@ try
 		ofst<<ifst.rdbuf();
 	}
 	{
-		fast_io::timer tm("ofstream <= ifstream");
+		fast_io::timer tm("ofstream with filebuf_handle <= ifstream with filebuf_handle");
 		std::ifstream ifst("large_file.txt",std::ifstream::binary);
 		std::ofstream ofst("large_file_filebuf_handle.txt",std::ofstream::binary);
 		fast_io::filebuf_handle ifst_bf(ifst),ofst_bf(ofst);
