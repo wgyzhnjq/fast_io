@@ -114,17 +114,15 @@ inline auto unlocked_handle(basic_filebuf_handle<T,Traits>& h)
 #endif
 #endif
 
-template<typename T,typename Traits,std::contiguous_iterator Iter>
-inline Iter read(basic_filebuf_handle<T,Traits>& hd,Iter begin,Iter end)
+template<std::integral char_type,typename Traits,std::contiguous_iterator Iter>
+inline Iter read(basic_filebuf_handle<char_type,Traits>& hd,Iter begin,Iter end)
 {
-	using char_type = typename T::char_type;
 	return begin+(hd.handle->sgetn(static_cast<char_type*>(static_cast<void*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type))*sizeof(char_type)/sizeof(*begin));
 }
 
-template<typename T,typename Traits,std::contiguous_iterator Iter>
-inline void write(basic_filebuf_handle<T,Traits>& hd,Iter begin,Iter end) 
+template<std::integral char_type,typename Traits,std::contiguous_iterator Iter>
+inline void write(basic_filebuf_handle<char_type,Traits>& hd,Iter begin,Iter end) 
 {
-	using char_type = typename T::char_type;
 	if(!hd.handle->sputn(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))
 #ifdef __cpp_exceptions
 		throw std::system_error(std::make_error_code(std::errc::io_error));
