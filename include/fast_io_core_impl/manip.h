@@ -133,6 +133,22 @@ struct transmission_with_size
 	size_type size;
 };
 
+template<typename T,std::integral offset_type,std::integral size_type>
+struct random_access_transmission
+{
+	size_type& transmitted;
+	offset_type offset;
+	T& reference;
+};
+
+template<typename T,std::integral offset_type,std::integral size_type>
+struct random_access_transmission_with_size
+{
+	size_type& transmitted;
+	offset_type offset;
+	T& reference;
+	size_type size;
+};
 
 template<typename T>
 struct binary_serialization
@@ -256,6 +272,12 @@ inline constexpr manip::transmission<T,sz_type> transmission(sz_type& transmitte
 
 template<input_stream T,std::integral sz_type>
 inline constexpr manip::transmission_with_size<T,sz_type> transmission(sz_type& transmitted,T &f,sz_type s){return {transmitted,f,s};}
+
+template<input_stream T,std::integral sz_type,std::integral offset_type>
+inline constexpr manip::random_access_transmission<T,offset_type,sz_type> random_access_transmission(sz_type& transmitted,offset_type offset,T &f){return {transmitted,offset,f};}
+
+template<input_stream T,std::integral sz_type,std::integral offset_type>
+inline constexpr manip::random_access_transmission_with_size<T,offset_type,sz_type> random_access_transmission(sz_type& transmitted,offset_type offset,T &f,sz_type s){return {transmitted,offset,f,s};}
 
 template<std::ranges::range T>
 inline constexpr manip::binary_serialization<T> binary_serialization(T &f){return {f};}

@@ -454,10 +454,16 @@ inline int constexpr posix_stderr_number = 2;
 //zero copy IO for linux
 namespace details
 {
-template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
+
+
+template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
+	zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,common_ptrdiff_int64_t offset)
 {
-	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),nullptr,bytes));
+	common_ptrdiff_int64_t *np{};
+	if constexpr(random_access)
+		np=std::addressof(offset);
+	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes));
 	if(transmitted_bytes==-1)
 	{
 		if constexpr(report_einval)
@@ -487,23 +493,22 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 		return {transmitted_bytes,false};
 	else
 		return transmitted_bytes;
-
-}
 }
 
 
-template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
+template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<common_size_uint64_t,bool>,common_size_uint64_t> zero_copy_transmit
+(output& outp,input& inp,common_size_uint64_t bytes,common_ptrdiff_int64_t offset)
 {
-	std::size_t constexpr maximum_transmit_bytes(2147479552);
-	std::size_t transmitted{};
+	constexpr std::size_t maximum_transmit_bytes(2147479552);
+	common_size_uint64_t transmitted{};
 	for(;bytes;)
 	{
 		std::size_t should_transfer(maximum_transmit_bytes);
 		if(bytes<should_transfer)
 			should_transfer=bytes;
 		std::size_t transferred_this_round{};
-		auto ret(details::zero_copy_transmit_once<report_einval>(outp,inp,should_transfer));
+		auto ret(details::zero_copy_transmit_once<random_access,report_einval>(outp,inp,should_transfer,offset));
 		if constexpr(report_einval)
 		{
 			if(ret.second)
@@ -527,14 +532,14 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	else
 		return transmitted;
 }
-template<bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t> zero_copy_transmit(output& outp,input& inp)
+template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::conditional_t<report_einval,std::pair<common_size_uint64_t,bool>,common_size_uint64_t> zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset)
 {
-	std::size_t constexpr maximum_transmit_bytes(2147479552);
-	for(std::size_t transmitted{};;)
+	constexpr std::size_t maximum_transmit_bytes(2147479552);
+	for(common_size_uint64_t transmitted{};;)
 	{
 		std::size_t transferred_this_round{};
-		auto ret(details::zero_copy_transmit_once<report_einval>(outp,inp,maximum_transmit_bytes));
+		auto ret(details::zero_copy_transmit_once<random_access,report_einval>(outp,inp,maximum_transmit_bytes,offset));
 		if constexpr(report_einval)
 		{
 			if(ret.second)
@@ -553,6 +558,8 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 		}
 	}
 }
+}
+
 #endif
 
 inline constexpr posix_io_handle posix_stdin()
