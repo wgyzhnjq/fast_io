@@ -62,22 +62,27 @@ inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 	ob.position+=diff;*/
 //Todo
 	// empty ob first
-	std::size_t remain_length(ob.position);
-	std::size_t available_length(std::min(cend - cbegin, remain_length));
-	cbegin = std::copy_n(ob.buffer.data(), available_length, cbegin);
-	std::copy_n(ob.buffer.data() + available_length, ob.position - available_length, ob.buffer.data());
-	ob.position -= available_length;
+	std::size_t remain_length(ob.position_end - ob.position);
+	std::size_t available_length(cend - cbegin);
+	if (remain_length < available_length)
+		available_length = remain_length;
+	cbegin = std::copy_n(ob.buffer.data() + ob.position, available_length, cbegin);
+	//std::copy_n(ob.buffer.data() + ob.position + available_length, ob.position - available_length, ob.buffer.data());
+	ob.position += available_length;
 
 	// if buffer is empty now
-	if (ob.position == 0)
+	if (ob.position == ob.position_end)
 	{
 		auto read_pos(ob.handle.second.read_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
-		ob.position = read_pos - ob.buffer.data();
+		ob.position_end = read_pos - ob.buffer.data();
+		ob.position = 0;
 		remain_length = ob.position;
-		available_length = std::min(cend - cbegin, remain_length);
+		available_length = cend - cbegin;
+		if (remain_length < available_length)
+			available_length = remain_length;
 		cbegin = std::copy_n(ob.buffer.data(), available_length, cbegin);
-		std::copy_n(ob.buffer.data() + available_length, ob.position - available_length, ob.buffer.data());
-		ob.position -= available_length;
+		//std::copy_n(ob.buffer.data() + available_length, ob.position - available_length, ob.buffer.data());
+		ob.position += available_length;
 	}
 	return cbegin;
 }
