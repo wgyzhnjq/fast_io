@@ -16,7 +16,7 @@ try
 	{
 		fast_io::timer tm("ofstream <= ifstream");
 		std::ifstream ifst("large_file.txt",std::ifstream::binary);
-		std::ofstream ofst("large_file_stream.txt",std::ofstream::binary);
+		std::ofstream ofst("large_file_filebuf_handle.txt",std::ofstream::binary);
 		fast_io::filebuf_handle ifst_bf(ifst),ofst_bf(ofst);
 		transmit(ofst_bf,ifst_bf);
 	}
@@ -29,7 +29,7 @@ try
 	{
 		fast_io::timer tm("oascii_to_ebcdic<obuf_file> <= ibuf_file");
 		fast_io::ibuf_file ib("large_file.txt");
-		fast_io::oascii_to_ebcdic<fast_io::obuf_file> ob("large_file_ibuf_to_obuf.txt");
+		fast_io::oascii_to_ebcdic<fast_io::obuf_file> ob("large_file_ebcdic.txt");
 		transmit(ob,ib);
 	}
 	{
