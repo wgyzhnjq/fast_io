@@ -170,8 +170,8 @@ inline constexpr auto seek(itransform<input,func,ch_type,sz,rac>& in,Args&& ...a
 
 namespace details
 {
-template<buffer_input_stream T>
-constexpr bool ireserve_internal(T& ib,std::size_t n)
+template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
+constexpr bool itransform_ireserve_internal(itransform<input,func,ch_type,sz,rac>& ib,std::size_t n)
 {
 	if(ib.buffer.size()<=n)
 #ifdef __cpp_exceptions
@@ -185,7 +185,7 @@ constexpr bool ireserve_internal(T& ib,std::size_t n)
 	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.beg);
 	for(auto b(ib.ibuffer.curr);;b=ib.end)
 	{
-		if(ib.ibuffer.beg+n<(ib.end=read(ib.ih,b,ib.ibuffer.beg+Buf::size)))
+		if(n<=(ib.position=read(ib.ih,ib.buffer.data(),ib.buffer.data()+ib.buffer.size()-ib.ibuffer.data())))
 			return true;
 		else if(ib.end==b)
 		{
@@ -197,11 +197,11 @@ constexpr bool ireserve_internal(T& ib,std::size_t n)
 }
 }
 
-template<buffer_input_stream T>
-inline constexpr bool ireserve(T& ib,std::size_t n)
+template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr bool ireserve(itransform<input,func,ch_type,sz,rac>& ib,std::size_t n)
 {
-	if(ib.buffer.end()-(ib.buffer.data()+ib.buffer.position)<n)[[unlikely]]
-		return details::ireserve_internal(ib,n);
+	if(ib.buffer.position<n)[[unlikely]]
+		return details::itransform_ireserve_internal(ib,n);
 	return true;
 }
 

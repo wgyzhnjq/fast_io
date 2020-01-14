@@ -47,13 +47,13 @@ inline constexpr void iclear(basic_istring_view<T>& isv)
 template<typename T,std::integral I>
 inline constexpr void operator+=(basic_istring_view<T>& isv,I i)
 {
-	isv.remove_prefix(i);
+	isv.str().remove_prefix(i);
 }
 
 template<typename T>
 inline constexpr basic_istring_view<T>& operator++(basic_istring_view<T>& isv)
 {
-	isv.remove_prefix(1);
+	isv.str().remove_prefix(1);
 	return isv;
 }
 
