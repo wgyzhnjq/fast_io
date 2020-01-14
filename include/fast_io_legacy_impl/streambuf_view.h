@@ -23,6 +23,7 @@ public:
 	using T::overflow;
 	using T::pbump;
 	using T::setp;
+
 	template<typename... Args>
 	requires std::constructible_from<T,Args...>
 	streambuf_pub(Args&& ...args):T(std::forward<Args>(args)...){}

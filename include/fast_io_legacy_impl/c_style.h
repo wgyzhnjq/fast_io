@@ -4,6 +4,7 @@
 namespace fast_io
 {
 
+
 template<std::integral ch_type>
 requires (std::same_as<ch_type,char>||std::same_as<ch_type,wchar_t>)
 class basic_c_style_io_handle_unlocked
@@ -11,6 +12,7 @@ class basic_c_style_io_handle_unlocked
 	std::FILE *fp;
 public:
 	basic_c_style_io_handle_unlocked(std::FILE* fpp):fp(fpp){}
+
 	using char_type = ch_type;
 	using native_handle_type = std::FILE*;
 	native_handle_type& native_handle()
