@@ -179,17 +179,14 @@ constexpr bool itransform_ireserve_internal(itransform<input,func,ch_type,sz,rac
 #else
 		fast_terminate();
 #endif
-	//if(ib.ibuffer.end==nullptr)
-	//	ib.ibuffer.init_space();
-	//TODO
-	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.beg);
-	for(auto b(ib.ibuffer.curr);;b=ib.end)
+	ib.position=std::copy(ib.data()+ib.position,ib.data()+ib.position_end,ib.data())-ib.data();
+	for(auto b(ib.position);;b=ib.position_end)
 	{
-		if(n<=(ib.position=read(ib.ih,ib.buffer.data(),ib.buffer.data()+ib.buffer.size()-ib.ibuffer.data())))
+		if(n<=(ib.position=read(ib.ih,ib.buffer.data(),ib.buffer.data()+ib.buffer.size())))
 			return true;
-		else if(ib.end==b)
+		else if(!ib.position)
 		{
-			if(b==ib.ibuffer.beg)
+			if(!b)
 				return false;
 			return true;	
 		}
@@ -200,7 +197,7 @@ constexpr bool itransform_ireserve_internal(itransform<input,func,ch_type,sz,rac
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr bool ireserve(itransform<input,func,ch_type,sz,rac>& ib,std::size_t n)
 {
-	if(ib.buffer.position<n)[[unlikely]]
+	if((sz-ib.position)<n)[[unlikely]]
 		return details::itransform_ireserve_internal(ib,n);
 	return true;
 }
