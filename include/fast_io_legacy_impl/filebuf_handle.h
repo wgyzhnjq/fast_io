@@ -4,13 +4,8 @@
 
 namespace fast_io
 {
-#ifdef __GLIBCXX__
-#ifdef __WINNT__
-class filebuf_performance_guard	//stream has performance problems on windows for libstdc++
-{};
-#endif
-#endif
 
+//stream has performance problems on windows for libstdc++
 template<typename T>
 class filebuf_pub:public T
 {
@@ -96,21 +91,6 @@ inline auto zero_copy_out_handle(basic_filebuf_handle<T,Traits>& h)
 {
 	return h.handle->_M_file.fd();
 }
-#endif
-
-#ifdef __WINNT__
-template<std::integral T,typename Traits>
-inline constexpr filebuf_performance_guard mutex(basic_filebuf_handle<T,Traits>& h)
-{
-	return {};
-}
-
-template<std::integral T,typename Traits>
-inline auto unlocked_handle(basic_filebuf_handle<T,Traits>& h)
-{
-	return static_cast<basic_c_style_io_handle_unlocked<T>>(h);
-}
-
 #endif
 #endif
 
