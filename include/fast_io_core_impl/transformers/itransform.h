@@ -61,21 +61,23 @@ inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 	std::copy_n(cbegin,diff,ob.buffer.data()+ob.position);
 	ob.position+=diff;*/
 //Todo
-	while (cend > cbegin)
-	{
-		// empty ob first
-		std::size_t remain_length(ob.buffer.size() - ob.position);
-		std::size_t available_length(std::min(cend - cbegin, remain_length));
-		cbegin = std::copy_n(ob.buffer.data() + ob.position, available_length, cbegin);
-		ob.position += available_length;
+	// empty ob first
+	std::size_t remain_length(ob.position);
+	std::size_t available_length(std::min(cend - cbegin, remain_length));
+	cbegin = std::copy_n(ob.buffer.data(), available_length, cbegin);
+	std::copy_n(ob.buffer.data() + available_length, ob.position - available_length, ob.buffer.data());
+	ob.position -= available_length;
 
-		// if buffer is empty now
-		if (ob.position == ob.buffer.size())
-		{
-			auto read_pos(ob.handle.second.read_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
-			ob.position = ob.buffer.size() - (read_pos - ob.buffer.data());
-			std::copy_backward(ob.buffer.data(), read_pos, ob.buffer.end());
-		}
+	// if buffer is empty now
+	if (ob.position == 0)
+	{
+		auto read_pos(ob.handle.second.read_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
+		ob.position = read_pos - ob.buffer.data();
+		remain_length = ob.position;
+		available_length = std::min(cend - cbegin, remain_length);
+		cbegin = std::copy_n(ob.buffer.data(), available_length, cbegin);
+		std::copy_n(ob.buffer.data() + available_length, ob.position - available_length, ob.buffer.data());
+		ob.position -= available_length;
 	}
 	return cbegin;
 }
@@ -164,6 +166,43 @@ inline constexpr auto seek(itransform<input,func,ch_type,sz,rac>& in,Args&& ...a
 {
 	in.position=in.position_end={};
 	return in.seek_proxy(in.handle.first,std::forward<Args>(args)...);
+}
+
+namespace details
+{
+template<buffer_input_stream T>
+constexpr bool ireserve_internal(T& ib,std::size_t n)
+{
+	if(ib.buffer.size()<=n)
+#ifdef __cpp_exceptions
+		throw std::system_error(EOPNOTSUPP,std::generic_category());
+#else
+		fast_terminate();
+#endif
+	//if(ib.ibuffer.end==nullptr)
+	//	ib.ibuffer.init_space();
+	//TODO
+	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.beg);
+	for(auto b(ib.ibuffer.curr);;b=ib.end)
+	{
+		if(ib.ibuffer.beg+n<(ib.end=read(ib.ih,b,ib.ibuffer.beg+Buf::size)))
+			return true;
+		else if(ib.end==b)
+		{
+			if(b==ib.ibuffer.beg)
+				return false;
+			return true;	
+		}
+	}
+}
+}
+
+template<buffer_input_stream T>
+inline constexpr bool ireserve(T& ib,std::size_t n)
+{
+	if(ib.buffer.end()-(ib.buffer.data()+ib.buffer.position)<n)[[unlikely]]
+		return details::ireserve_internal(ib,n);
+	return true;
 }
 
 }
