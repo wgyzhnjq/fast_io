@@ -65,11 +65,27 @@ inline constexpr void flush(socket&)
 {
 }
 
-#if defined(__linux__) || defined(__WINNT__) || defined(_MSC_VER)
+#ifdef __linux__
+inline auto zero_copy_in_handle(socket& soc)
+{
+	return soc.native_handle();
+}
+
 inline auto zero_copy_out_handle(socket& soc)
 {
 	return soc.native_handle();
 }
+#endif
+
+#if defined(__WINNT__) || defined(_MSC_VER)
+/*
+Bug to be fixed. disable first
+inline auto zero_copy_out_handle(socket& soc)
+{
+	return soc.native_handle();
+}
+
+*/
 #endif
 
 struct address_info
