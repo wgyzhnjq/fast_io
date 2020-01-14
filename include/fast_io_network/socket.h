@@ -7,13 +7,19 @@ class socket
 {
 	sock::details::socket_type handle=sock::details::invalid_socket;
 	void close_impl()
+	{
+#ifdef __cpp_exceptions
 	try
 	{
+#endif
 		if(handle!=sock::details::invalid_socket)
 			sock::details::closesocket(handle);
+#ifdef __cpp_exceptions
 	}
 	catch(...)
 	{}
+#endif
+	}
 public:
 	socket()=default;
 	socket(sock::details::socket_type v):handle(v){}
@@ -120,7 +126,11 @@ public:
 inline void unblock(socket& sv)
 {
 	if(::fcntl(sv.native_handle(), F_SETFL, O_NONBLOCK)==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
 }
 
 inline void unblock(server& sv)

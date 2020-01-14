@@ -9,7 +9,7 @@ namespace details
 template<output_stream output,input_stream input>
 inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(output& outp,input& inp,common_ptrdiff_int64_t offset)
 {
-	auto ret(zero_copy_random_access_transmit<true,true>(outp,inp,offset));
+	auto ret(zero_copy_transmit<true,true>(outp,inp,offset));
 	if(ret.second)
 	{
 		//Todo: correct offset
@@ -21,7 +21,7 @@ inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(outp
 template<output_stream output,input_stream input>
 inline constexpr common_size_uint64_t zero_copy_random_access_transmit_impl(output& outp,input& inp,common_ptrdiff_int64_t offset,common_size_uint64_t sz)
 {
-	auto ret(zero_copy_random_access_transmit<true,true>(outp,inp,offset,sz)); 
+	auto ret(zero_copy_transmit<true,true>(outp,inp,offset,sz)); 
 	if(ret.second)
 	{
 		//Todo: correct offset
@@ -62,9 +62,9 @@ inline constexpr auto random_access_transmit_impl(output& outp,input& inp,common
 			if constexpr(buffer_output_stream<output>)
 				flush(outp);
 #ifdef __linux__
-			return random_access_zero_copy_transmit_impl(outp,inp,offset,std::forward<Args>(args)...);
+			return zero_copy_random_access_transmit_impl(outp,inp,offset,std::forward<Args>(args)...);
 #else
-			return random_access_zero_copy_transmit(outp,inp,offset,std::forward<Args>(args)...);
+			return zero_copy_transmit<true>(outp,inp,offset,std::forward<Args>(args)...);
 #endif
 		}
 		else

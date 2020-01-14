@@ -58,6 +58,7 @@ public:
 
 inline win32_library const ws2_32_dll(L"ws2_32.dll");
 
+inline win32_library const mswsock_dll(L"mswsock.dll");
 
 using address_family = std::int16_t;
 
@@ -79,6 +80,19 @@ inline auto get_proc_address(char const* proc)
 }
 
 inline auto get_last_error(get_proc_address<int(*)()>("WSAGetLastError"));
+
+template<typename prototype>
+inline auto get_proc_address_mswsock(char const* proc)
+{
+	auto address(::GetProcAddress(mswsock_dll.get(),proc));
+	if(address==nullptr)
+#ifdef __cpp_exceptions
+		throw win32_error();
+#else
+		fast_terminate();
+#endif
+	return bit_cast<prototype>(address);
+}
 
 template<typename prototype,typename ...Args>
 inline auto call_win32_ws2_32(char const *name,Args&& ...args)
@@ -233,15 +247,14 @@ inline win32_startup const startup;
 }
 }
 
-namespace fast_io
+namespace fast_io::details
 {
 //zero copy IO for win32
-namespace details::win32
-{
 template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes)
+inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,std::int64_t offset)
 {
-	if(!fast_io::win32::TransmitFile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,nullptr,nullptr,0/*TF_USE_DEFAULT_WORKER*/))
+	if(!((fast_io::sock::details::get_proc_address_mswsock<decltype(fast_io::win32::TransmitFile)*>
+		("TransmitFile"))(zero_copy_out_handle(outp),zero_copy_in_handle(inp),bytes,0,nullptr,nullptr,0/*TF_USE_DEFAULT_WORKER*/)))
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
@@ -249,19 +262,19 @@ inline std::size_t zero_copy_transmit_once(output& outp,input& inp,std::size_t b
 #endif
 	return bytes;
 }
-}
 
-template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
+
+template<bool rac=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline common_size_uint64_t zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset,std::size_t bytes)
 {
-	std::size_t constexpr maximum_transmit_bytes(2147483646);
-	std::size_t transmitted(0);
+	constexpr std::size_t maximum_transmit_bytes(2147483646);
+	common_size_uint64_t transmitted{};
 	for(;bytes;)
 	{
 		std::size_t should_transfer(maximum_transmit_bytes);
 		if(bytes<should_transfer)
 			should_transfer=bytes;
-		std::size_t transferred_this_round(details::win32::zero_copy_transmit_once(outp,inp,should_transfer));
+		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,should_transfer,offset));
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=should_transfer)
 			return transmitted;
@@ -270,13 +283,13 @@ inline std::size_t zero_copy_transmit(output& outp,input& inp,std::size_t bytes)
 	return transmitted;
 	
 }
-template<zero_copy_output_stream output,zero_copy_input_stream input>
-inline std::size_t zero_copy_transmit(output& outp,input& inp)
+template<bool rac=false,zero_copy_output_stream output,zero_copy_input_stream input>
+inline std::size_t zero_copy_transmit(output& outp,input& inp,common_ptrdiff_int64_t offset)
 {
 	constexpr std::size_t maximum_transmit_bytes(2147483646);
-	for(std::size_t transmitted(0);;)
+	for(common_size_uint64_t transmitted(0);;)
 	{
-		std::size_t transferred_this_round(details::win32::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes));
+		std::size_t transferred_this_round(details::zero_copy_transmit_once(outp,inp,maximum_transmit_bytes,offset));
 		transmitted+=transferred_this_round;
 		if(transferred_this_round!=maximum_transmit_bytes)
 			return transmitted;

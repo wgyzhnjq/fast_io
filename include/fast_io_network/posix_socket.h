@@ -27,7 +27,11 @@ inline auto call_posix(Func&& func,Args&& ...args)
 {
 	auto ret(func(std::forward<Args>(args)...));
 	if(ret==-1)
+#ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
 	return ret;
 }
 
@@ -89,7 +93,11 @@ inline void getaddrinfo(Args&& ...args)
 {
 	int ec(::getaddrinfo(std::forward<Args>(args)...));
 	if(ec)
+#ifdef __cpp_exceptions
 		throw gai_exception(ec);
+#else
+		fast_terminate();
+#endif
 }
 
 template<typename ...Args>

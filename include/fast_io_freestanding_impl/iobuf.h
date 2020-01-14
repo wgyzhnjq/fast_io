@@ -284,6 +284,13 @@ inline constexpr auto zero_copy_in_handle(basic_ibuf<Ihandler,Buf>& ib)
 	return zero_copy_in_handle(ib.native_handle());
 }
 
+template<zero_copy_output_stream Ohandler,typename Buf>
+inline constexpr decltype(auto) zero_copy_out_handle(basic_ibuf<Ohandler,Buf>& ib)
+{
+	return zero_copy_out_handle(ib.native_handle());
+}
+
+
 template<output_stream Ohandler,typename Buf=basic_buf_handler<typename Ohandler::char_type>>
 class basic_obuf
 {
@@ -465,11 +472,6 @@ inline constexpr basic_obuf<Ohandler,Buf>& operator+=(basic_obuf<Ohandler,Buf>& 
 	return out;
 }
 
-template<zero_copy_input_stream Ohandler,typename Buf>
-inline constexpr decltype(auto) zero_copy_in_handle(basic_obuf<Ohandler,Buf>& out)
-{
-	return zero_copy_in_handle(out.native_handle());
-}
 
 template<output_stream Ohandler,typename Buf>
 inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohandler,Buf>::char_type ch)
@@ -531,6 +533,11 @@ inline constexpr decltype(auto) zero_copy_out_handle(basic_obuf<Ohandler,Buf>& o
 	return zero_copy_out_handle(ob.native_handle());
 }
 
+template<zero_copy_input_stream Ohandler,typename Buf>
+inline constexpr decltype(auto) zero_copy_in_handle(basic_obuf<Ohandler,Buf>& ob)
+{
+	return zero_copy_in_handle(ob.native_handle());
+}
 template<io_stream ioh,typename bf=basic_buf_handler<typename ioh::char_type>>
 using basic_iobuf=basic_obuf<basic_ibuf<ioh,bf>,bf>;
 
