@@ -132,7 +132,7 @@ constexpr bool ireserve_internal(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
 template<input_stream Ihandler,typename Buf>
 inline constexpr bool ireserve(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
 {
-	if(ib.ibuffer.end-ib.ibuffer.curr<n)[[unlikely]]
+	if(static_cast<std::size_t>(ib.ibuffer.end-ib.ibuffer.curr)<n)[[unlikely]]
 		return details::ireserve_internal(ib,n);
 	return true;
 }
