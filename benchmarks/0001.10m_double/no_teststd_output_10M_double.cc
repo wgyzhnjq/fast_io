@@ -54,13 +54,19 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,vec[i]);
 	}
-/*	{
+	{
+	fast_io::timer t("u8obuf_file int hint");
+	fast_io::u8obuf_file obuf_file("u8obuf_filedb_hint.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf_file,fast_io::int_hint(vec[i]));
+	}
+	{
 	fast_io::timer t("stream_view");
 	std::ofstream fout("smvdb.txt",std::ofstream::binary);
 	fast_io::filebuf_handle stm_v(fout);
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_v,vec[i]);
-	}*/
+	}
 #ifdef _MSC_VER
 	{
 		fast_io::timer t("charconv");
