@@ -76,6 +76,13 @@ try
 	}
 	{
 	constexpr double dbN(N);
+	fast_io::timer t("obuf_file floating gsu");
+	fast_io::obuf_file obuf_file("obuf_file_floating_intdb.txt");
+	for(double i(0);i!=dbN;++i)
+		println(obuf_file,fast_io::grisu_exact(i));
+	}
+	{
+	constexpr double dbN(N);
 	fast_io::timer t("obuf_file int hint");
 	fast_io::obuf_file obuf_file("obuf_file_floating_int_hint.txt");
 	for(double i(0);i!=dbN;++i)
