@@ -31,8 +31,12 @@ template<typename T>
 template<typename T>
 [[nodiscard]] inline constexpr auto oreserve(basic_ostring<T>& ob,std::size_t size)
 {
-	ob.str().append(size,0);
-	return ob.str().end();
+	if(ob.str().size()+size<=ob.str.capacity())
+	{
+		ob.str().append(size,0);
+		return std::to_address(ob.str().end());
+	}
+	return nullptr;
 }
 
 template<typename T>
