@@ -313,7 +313,7 @@ inline std::size_t output_unsigned(U value,Iter str)
 template<std::unsigned_integral U,std::contiguous_iterator Iter>
 inline std::size_t output_unsigned_point(U value,Iter str)
 {
-	if(9<value)[[likely]]
+	if(value >= 10)[[likely]]
 	{
 		std::size_t ret(output_unsigned(value,str+1));
 		*str=str[1];
