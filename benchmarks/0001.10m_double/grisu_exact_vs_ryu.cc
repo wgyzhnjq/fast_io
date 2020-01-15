@@ -44,6 +44,16 @@ try
 			print(osp,e);
 		}
 	}
+	{
+		fast_io::timer t("grisu exact");
+		std::array<char,100> arr;
+		fast_io::ospan osp(arr);
+		for(auto const& e : vec)
+		{
+			osp.clear();
+			print(osp,fast_io::grisu_exact(e));
+		}
+	}
 }
 catch(std::exception const& e)
 {
