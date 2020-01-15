@@ -969,9 +969,6 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		}
 		else if(0<=real_exp&&real_exp<olength)
 		{
-			constexpr auto &table(details::shared_static_base_table<10,uppercase_e>::table);
-			constexpr std::uint32_t pw(table.size());
-			constexpr std::uint32_t chars(table.front().size());
 			auto a(v.front());
 			auto eposition(real_exp+1);
 			if(olength==eposition)
