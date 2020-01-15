@@ -310,6 +310,19 @@ inline std::size_t output_unsigned(U value,Iter str)
 		}
 	}
 }
+template<std::unsigned_integral U,std::contiguous_iterator Iter>
+inline std::size_t output_unsigned_point(U value,Iter str)
+{
+	if(9<value)[[likely]]
+	{
+		std::size_t ret(output_unsigned(value,str+1));
+		*str=str[1];
+		str[1]=u8'.';
+		return ret+1;
+	}
+	else
+		return output_unsigned(value,str);
+}
 
 template<bool ln=false,bool sign=false,output_stream outp,std::unsigned_integral T>
 inline void output(outp& out,T t)

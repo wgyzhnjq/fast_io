@@ -224,14 +224,9 @@ inline constexpr Iter output_exp(T exp,Iter result)
 	}
 	using char_type = std::remove_reference_t<decltype(*result)>;
 	std::make_unsigned_t<T> unsigned_exp(exp);
-	if(99<unsigned_exp)
-	{
-		auto const quo(unsigned_exp/100);
-		unsigned_exp%=100;
-		*result=static_cast<char_type>(quo+0x30);
-		++result;
-	}
-	return my_copy_n(shared_static_base_table<10,false>::table[unsigned_exp].data(),2,result);
+	if(100<=unsigned_exp)[[unlikely]]
+		return my_copy_n(jiaendu::static_tables<char_type>::table3[unsigned_exp].data(),3,result);
+	return my_copy_n(jiaendu::static_tables<char_type>::table2[unsigned_exp].data(),2,result);
 }
 
 template<std::size_t precision,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
@@ -903,10 +898,10 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		*result=0x2d;
 		++result;
 	}
-	std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));
-	std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 	if constexpr(mode==0) //shortest
 	{
+		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));	
+		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 		std::uint32_t fixed_length(0),this_case(0);
 		if(olength<=real_exp)
 		{
@@ -925,58 +920,49 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		std::uint32_t scientific_length(olength==1?olength+3:olength+5);
 		if(scientific_length<fixed_length)
 		{
-			if(olength==1)
-				output_base_number_impl<10,false,false>(result+=olength,v.front());
-			else
-				output_base_number_impl<10,false,true>(result+=olength+1,v.front());
+			result+=details::jiaendu::output_unsigned_point(v.front(),result);
 			return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);
 		}
 		switch(this_case)
 		{
 		case 1:
-			output_base_number_impl<10,false>(result+=olength,v.front());
+			jiaendu::output_unsigned(v.front(),result);
+			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);
 		case 2:
 		{
-			constexpr auto &table(details::shared_static_base_table<10,uppercase_e>::table);
-			constexpr std::uint32_t pw(table.size());
-			constexpr std::uint32_t chars(table.front().size());
 			auto a(v.front());
-			auto eposition(result+real_exp+1);
-			auto iter(result+=olength);
-			if(eposition!=iter)
+			auto eposition(real_exp+1);
+			if(olength==eposition)
 			{
-				++result;
-				++iter;
-				for(;eposition+2<iter&&pw<=a;)
-				{
-					auto const rem(a%pw);
-					a/=pw;
-					my_copy_n(table[rem].data(),chars,iter-=chars);
-				}
-				if(iter==eposition+2)
-				{
-					auto const rem(a%10);
-					a/=10;
-					*--iter=static_cast<char_type>(0x30+rem);
-				}
-				*--iter=0x2E;
+				jiaendu::output_unsigned(a,result);
+				result+=olength;
 			}
-			output_base_number_impl<10,false>(iter,a);
+			else
+			{
+				jiaendu::output_unsigned(a,result+1);
+				my_copy_n(result+1,eposition,result);
+				result[eposition]=u8'.';
+				result+=olength+1;
+			}
 			return result;
 		}
 		default:
 			result=my_copy_n(u8"0.",2,result);
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			output_base_number_impl<10,false>(result+=olength,v.front());
+			jiaendu::output_unsigned(v.front(),result);
+			result+=olength;
 			return result;
 		}
 	}
 	else if constexpr(mode==1) //fixed
 	{
+		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));	
+		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 		if(olength<=real_exp)
 		{
-			output_base_number_impl<10,false>(result+=olength,v.front());
+			jiaendu::output_unsigned(v.front(),result);
+			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);	
 		}
 		else if(0<=real_exp&&real_exp<olength)
@@ -985,43 +971,48 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			constexpr std::uint32_t pw(table.size());
 			constexpr std::uint32_t chars(table.front().size());
 			auto a(v.front());
-			auto eposition(result+real_exp+1);
-			auto iter(result+=olength);
-			if(eposition!=iter)
+			auto eposition(real_exp+1);
+			if(olength==eposition)
 			{
-				++result;
-				++iter;
-				for(;eposition+2<iter&&pw<=a;)
-				{
-					auto const rem(a%pw);
-					a/=pw;
-					my_copy_n(table[rem].data(),chars,iter-=chars);
-				}
-				if(iter==eposition+2)
-				{
-					auto const rem(a%10);
-					a/=10;
-					*--iter=static_cast<char_type>(0x30+rem);
-				}
-				*--iter=0x2E;
+				jiaendu::output_unsigned(a,result);
+				result+=olength;
 			}
-			output_base_number_impl<10,false>(iter,a);
+			else
+			{
+				jiaendu::output_unsigned(a,result+1);
+				my_copy_n(result+1,eposition,result);
+				result[eposition]=u8'.';
+				result+=olength+1;
+			}
 			return result;
 		}
 		else
 		{
 			result=my_copy_n(u8"0.",2,result);
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			output_base_number_impl<10,false>(result+=olength,v.front());
+			jiaendu::output_unsigned(v.front(),result);
+			result+=olength;
 			return result;
 		}
 	}
 	else		//scientific
 	{
-		if(olength==1)
-			output_base_number_impl<10,false,false>(result+=olength,v.front());
+		auto a(v.front());
+		std::int32_t real_exp(static_cast<std::int32_t>(e10 + removed - 1));
+		if(a<10)
+		{
+			std::size_t olength(details::jiaendu::output_unsigned(a,result));
+			real_exp+=olength;
+			result+=olength;
+		}
 		else
-			output_base_number_impl<10,false,true>(result+=olength+1,v.front());
+		{
+			std::size_t olength(details::jiaendu::output_unsigned(a,result+1));
+			real_exp+=static_cast<std::int32_t>(olength);
+			*result=result[1];
+			result[1]=u8'.';
+			result+=olength+1;
+		}
 		return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);
 	}
 }

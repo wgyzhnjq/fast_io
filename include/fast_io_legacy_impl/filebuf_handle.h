@@ -34,9 +34,6 @@ class basic_filebuf_handle
 {
 public:
 	using native_handle_type = filebuf_pub<std::basic_filebuf<ch_type,Traits>>*;
-#ifdef __WINNT__
-	using lock_guard_type = filebuf_performance_guard;
-#endif
 	using char_type = ch_type;
 
 /*

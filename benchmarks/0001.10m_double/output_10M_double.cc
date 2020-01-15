@@ -23,7 +23,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
 
-	{
+/*	{
 	fast_io::timer t("fprintf");
 	fast_io::c_style_file cs("csfdb.txt","wb");
 	auto fp(cs.native_handle());
@@ -58,7 +58,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		fout<<vec[i]<<'\n';
 	}
-
+*/
 	{
 	fast_io::timer t("cstyle file");
 	fast_io::c_style_file cs("csfdb1.txt","wb");
@@ -83,20 +83,19 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,vec[i]);
 	}
-
 	{
 	fast_io::timer t("u8obuf_file");
 	fast_io::u8obuf_file obuf_file("u8obuf_filedb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,vec[i]);
 	}
-	{
+/*	{
 	fast_io::timer t("stream_view");
 	std::ofstream fout("smvdb.txt",std::ofstream::binary);
-	fast_io::stream_view stm_v(fout);
+	fast_io::filebuf_handle stm_v(fout);
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_v,vec[i]);
-	}
+	}*/
 #ifdef _MSC_VER
 	{
 		fast_io::timer t("charconv");

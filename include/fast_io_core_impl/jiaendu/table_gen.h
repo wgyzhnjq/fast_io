@@ -120,10 +120,10 @@ public:
 	using type = std::conditional_t<sizeof(ch_type)==1,char8_t,
 		std::conditional_t<sizeof(ch_type)==2,char16_t,
 		std::conditional_t<sizeof(ch_type)==4,char32_t,ch_type>>>;
-	inline static constexpr auto table2{calculate_table2<ch_type>()};
-	inline static constexpr auto table3{calculate_table3<ch_type>()};
-	inline static constexpr auto table4{calculate_table4<ch_type>()};
-	inline static constexpr auto table5{calculate_table5<ch_type>()};
+	inline static constexpr auto table2{calculate_table2<type>()};
+	inline static constexpr auto table3{calculate_table3<type>()};
+	inline static constexpr auto table4{calculate_table4<type>()};
+	inline static constexpr auto table5{calculate_table5<type>()};
 };
 
 }
