@@ -1,7 +1,6 @@
 #include"../timer.h"
 #include<fstream>
 #include"../../include/fast_io_device.h"
-//#include"../../include/fast_io_crypto.h"
 #include"../../include/fast_io_legacy.h"
 #include<exception>
 #include<cmath>
@@ -10,6 +9,8 @@
 #include<random>
 #include<iomanip>
 #include<charconv>
+
+//#include"ryu.h"
 
 int main()
 try
@@ -25,25 +26,25 @@ try
 
 	{
 	fast_io::timer t("cstyle file");
-	fast_io::c_style_file cs("csfdb1.txt","wb");
+	fast_io::c_style_file cs("csfdb1_sc.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("cstyle file unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb1.txt","wb");
+	fast_io::c_style_file_unlocked cs("csfdb1_sc.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
+	fast_io::c_style_file_unlocked cs("csfdb2_sc.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("obuf_file");
-	fast_io::obuf_file obuf_file("obuf_filedb.txt");
+	fast_io::obuf_file obuf_file("obuf_filedb_sc.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,fast_io::scientific(vec[i]));
 	}
@@ -62,17 +63,23 @@ try
 #endif
 	{
 	fast_io::timer t("u8obuf_file");
-	fast_io::u8obuf_file obuf_file("u8obuf_filedb.txt");
+	fast_io::u8obuf_file obuf_file("u8obuf_filedb_sc.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,fast_io::scientific(vec[i]));
 	}
-/*	{
+	{
+	fast_io::timer t("u8obuf_file int hint");
+	fast_io::u8obuf_file obuf_file("u8obuf_filedb_hint_sc.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(obuf_file,fast_io::int_hint(vec[i]));
+	}
+	{
 	fast_io::timer t("stream_view");
 	std::ofstream fout("smvdb.txt",std::ofstream::binary);
 	fast_io::filebuf_handle stm_v(fout);
 	for(std::size_t i(0);i!=N;++i)
 		println(stm_v,vec[i]);
-	}*/
+	}
 #ifdef _MSC_VER
 	{
 		fast_io::timer t("charconv");
@@ -82,21 +89,17 @@ try
 		{
 			auto [p,ec]=std::to_chars(arr.data(),arr.data()+arr.size(),vec[i]);
 			*p='\n';
-			send(obuf_file,arr.data(),++p);
+			write(obuf_file,arr.data(),++p);
 		}
 	}
 #endif
 	{
 	fast_io::timer t("obuf_file_mutex");
-	fast_io::obuf_file_mutex obuf_file("obuf_file_mutexdb.txt");
+	fast_io::obuf_file_mutex obuf_file("obuf_file_mutexdb_sc.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,fast_io::scientific(vec[i]));
 	}
-/*	{
-	fast_io::timer t(u8"speck128/128");
-	fast_io::crypto::basic_octr<fast_io::obuf_file, fast_io::crypto::speck::speck_enc_128_128> enc_stream(
-		std::array<uint8_t, 16>{u8'8',u8'3',u8'3',u8'4',u8';',u8'2',u8'3',u8'4',u8'a',u8'2',u8'c',u8'4',u8']',u8'0',u8'3',u8'4'}, "encdb.txt");
-	}*/
+
 }
 catch(std::exception const& e)
 {
