@@ -8,12 +8,12 @@ namespace grisu_exact
 template<typename T,std::random_access_iterator Iter>
 inline constexpr Iter floating_to_chars(T f,Iter result)
 {
-	auto v(jkj::grisu_exact(f));
-	if(v.is_negative)
+	auto v(jkj::grisu_exact<false>(f));
+/*	if(v.is_negative)
 	{
 		*result=u8'-';
 		++result;
-	}
+	}*/
 	std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.significand)));
 	std::int32_t const real_exp(static_cast<std::int32_t>(v.exponent + olength - 1));
 	std::uint32_t fixed_length(0),this_case(0);
