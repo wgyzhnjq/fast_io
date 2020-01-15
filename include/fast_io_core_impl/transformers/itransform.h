@@ -76,7 +76,7 @@ inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 		auto read_pos(ob.handle.second.read_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
 		ob.position_end = read_pos - ob.buffer.data();
 		ob.position = 0;
-		remain_length = ob.position;
+		remain_length = ob.position_end;
 		available_length = cend - cbegin;
 		if (remain_length < available_length)
 			available_length = remain_length;
