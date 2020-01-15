@@ -9,47 +9,13 @@
 #include<memory>
 #include<cstdio>
 #include<charconv>
-
+//standard library implementation is just too slow that wastes my time
 int main()
 #ifdef __cpp_exceptions
 try
 #endif
 {
 	std::size_t constexpr N(10000000);
-	{
-	fast_io::timer t("std::FILE*");
-	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","wb"),fclose);
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp.get(),"%zu\n",i);
-	}
-	{
-	fast_io::timer t("std::ofstream");
-	std::ofstream fout("ofstream.txt",std::ofstream::binary);
-	for(std::size_t i(0);i!=N;++i)
-		fout<<i<<'\n';
-	}
-	{
-	fast_io::timer t("std::ofstream with tricks");
-	std::ofstream fout("ofstream_tricks.txt",std::ofstream::binary);
-	auto &rdbuf(*fout.rdbuf());
-	for(std::size_t i(0);i!=N;++i)
-	{
-		fout<<i;
-		rdbuf.sputc('\n');
-	}
-	}
-	{
-	fast_io::timer t("std::to_chars + ofstream rdbuf tricks");
-	std::ofstream fout("ofstream_to_chars_tricks.txt",std::ofstream::binary);
-	auto &rdbuf(*fout.rdbuf());
-	std::array<char, 50> buffer;
-	for(std::size_t i(0);i!=N;++i)
-	{
-		auto [p,ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(),i);
-		*p='\n';
-		rdbuf.sputn(buffer.data(),++p-buffer.data());
-	}
-	}
 	{
 	fast_io::timer t("std::to_chars + obuf_file");
 	fast_io::obuf_file obuf_file("std_to_chars_obuf_file.txt");

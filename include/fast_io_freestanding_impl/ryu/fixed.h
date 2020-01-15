@@ -697,7 +697,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 						mantissa_type m1(v2%static_cast<mantissa_type>(10000));
 						mantissa_type v3(v2/static_cast<mantissa_type>(10000));
 						if(m1)[[likely]]//This must be fixed form
-							output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+							result+=jiaendu::output_unsigned(v2,result);
 						else
 						{
 							for(;;)
@@ -718,17 +718,25 @@ inline constexpr Iter output_shortest(Iter result, F d)
 									++result;
 								}
 								else
-									output_base_number_impl<10,false,true>(result+=v3_len+1,v3);
+								{
+									jiaendu::output_unsigned(v3,result+1);
+									*result=result[1];
+									result[1]=u8'.';
+									result+=v3_len+1;
+								}
 								if constexpr(uppercase_e)
 									my_copy_n(u8"E+",2,result);
 								else
 									my_copy_n(u8"e+",2,result);
 								result+=2;
-								my_copy_n(shared_static_base_table<10,false>::table[v2_len-1].data(),2,result);
+								my_copy_n(jiaendu::static_tables<char_type>::table2[v2_len-1].data(),2,result);
 								result+=2;
 							}
 							else
-								output_base_number_impl<10,false>(result+=v2_len,v2);
+							{
+								jiaendu::output_unsigned(v2,result);
+								result+=v2_len;
+							}
 						}
 					}
 					else
@@ -738,7 +746,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 					}
 				}
 				else if constexpr(mode==1)		//fixed
-					output_base_number_impl<10,false>(result+=chars_len<10,true>(v2),v2);
+					result+=jiaendu::output_unsigned(v2,result);
 				else	//scientific
 				{
 					auto const v2_len(chars_len<10,true>(v2));
@@ -749,19 +757,13 @@ inline constexpr Iter output_shortest(Iter result, F d)
 							break;
 						v2=d;
 					}
-					if(v2<10)
-					{
-						*result=static_cast<char_type>(v2+u8'0');
-						++result;
-					}
-					else
-						output_base_number_impl<10,false,true>(result+=chars_len<10,true>(v2)+1,v2);
+					result+=output_unsigned_point(v2);
 					if constexpr(uppercase_e)
 						my_copy_n(u8"E+",2,result);
 					else
 						my_copy_n(u8"e+",2,result);
 					result+=2;
-					my_copy_n(shared_static_base_table<10,false>::table[v2_len-1].data(),2,result);
+					my_copy_n(jiaendu::static_tables<char_type>::table2[v2_len-1].data(),2,result);
 					result+=2;
 				}
 				return result;
