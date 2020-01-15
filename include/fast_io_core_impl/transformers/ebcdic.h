@@ -360,4 +360,11 @@ using oascii_to_ebcdic=otransform_function_default_construct<T,ascii_to_ebcdic,c
 template<buffer_output_stream T,std::integral ch_type=char,std::size_t sz=4096>
 using oebcdic_to_ascii=otransform_function_default_construct<T,ebcdic_to_ascii,ch_type,sz>;
 
+
+template<buffer_input_stream T,std::integral ch_type=char,std::size_t sz=4096>
+using iascii_to_ebcdic=itransform_function_default_construct<T,ascii_to_ebcdic,ch_type,sz>;
+
+template<buffer_input_stream T,std::integral ch_type=typename T::char_type,std::size_t sz=4096>
+using iebcdic_to_ascii=itransform_function_default_construct<T,ebcdic_to_ascii,ch_type,sz>;
+
 }
