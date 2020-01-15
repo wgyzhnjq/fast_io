@@ -45,7 +45,7 @@ public:
 namespace details
 {
 
-template<buffer_input_stream T,std::contiguous_iterator Iter>
+template<typename T,std::contiguous_iterator Iter>
 inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 {
 /*	std::size_t diff(cend-cbegin);
@@ -92,7 +92,7 @@ inline constexpr Iter itransform_read(T& ob,Iter cbegin,Iter cend)
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac,std::contiguous_iterator Iter>
 inline constexpr auto read(itransform<input,func,ch_type,sz,rac>& in,Iter cbegini,Iter cendi)
 {
-	return details::itransform_read(in.handle.first,cbegini,cendi);
+	return details::itransform_read(in,cbegini,cendi);
 }
 
 template<output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac,std::contiguous_iterator Iter>
@@ -104,7 +104,7 @@ inline constexpr auto write(itransform<input,func,ch_type,sz,rac>& ob,Iter cbegi
 template<output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr void flush(itransform<input,func,ch_type,sz,rac>& ob)
 {
-	flush(ob.handle.first);
+//	flush(ob.handle.first);
 }
 
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>

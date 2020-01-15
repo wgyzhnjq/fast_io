@@ -114,12 +114,12 @@ constexpr bool ireserve_internal(basic_ibuf<Ihandler,Buf>& ib,std::size_t n)
 #endif
 	if(ib.ibuffer.end==nullptr)
 		ib.ibuffer.init_space();
-	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.beg);
-	for(auto b(ib.ibuffer.curr);;b=ib.end)
+	ib.ibuffer.curr=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
+	for(auto b(ib.ibuffer.curr);;b=ib.ibuffer.end)
 	{
-		if(ib.ibuffer.beg+n<(ib.end=read(ib.ih,b,ib.ibuffer.beg+Buf::size)))
+		if(ib.ibuffer.beg+n<(ib.ibuffer.end=read(ib.ih,b,ib.ibuffer.beg+Buf::size)))
 			return true;
-		else if(ib.end==b)
+		else if(ib.ibuffer.end==b)
 		{
 			if(b==ib.ibuffer.beg)
 				return false;

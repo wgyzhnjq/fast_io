@@ -164,10 +164,10 @@ inline constexpr Iter read_proxy(input& in,Iter b,Iter e)
 //This is basically text stream
 	for(;b!=e;++b)
 	{
-		auto ch(ifront<1>(in));
+		auto ch(front<1>(in));
 		if(!ch.second)
 			break;
-		if(ch==u8'\r')
+		if(ch.first==u8'\r')
 		{
 			if(!ireserve(in,2)||begin(in)+1==end(in))
 				return b;
