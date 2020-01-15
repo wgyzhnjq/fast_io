@@ -139,12 +139,6 @@ try
 		println(obuf_file,i);
 	}
 	{
-	fast_io::timer t("obuf_file_mutex");
-	fast_io::obuf_file_mutex obuf_file("obuf_file_mutex.txt");
-	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,i);
-	}
-	{
 	fast_io::timer t("fbh");
 	std::ofstream pf("fbh.txt",std::ofstream::binary);
 	fast_io::filebuf_handle hd(pf);
