@@ -24,70 +24,47 @@ try
 		vec.emplace_back(dis(eng));
 
 	{
-	fast_io::timer t("fprintf");
-	fast_io::c_style_file cs("csfdb.txt","wb");
-	auto fp(cs.native_handle());
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp,"%g\n",vec[i]);
-	}
-	{
-	fast_io::timer t("fprintf checked");
-	fast_io::c_style_file cs("csfdb_checked.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(cs,"%g\n",vec[i]);
-	}
-	{
-	fast_io::timer t("ofstream");
-	std::ofstream fout("ofs.txt");
-	for(std::size_t i(0);i!=N;++i)
-		fout<<vec[i]<<'\n';
-	}
-	{
-	fast_io::timer t("ofstream tricks");
-	std::ofstream fout("ofs_tricks.txt");
-	auto &rdbuf(*fout.rdbuf());
-	for(std::size_t i(0);i!=N;++i)
-	{
-		fout<<vec[i];
-		rdbuf.sputc('\n');
-	}
-	}
-	{
-	fast_io::timer t("ofstream");
-	std::ofstream fout("ofs.txt");
-	for(std::size_t i(0);i!=N;++i)
-		fout<<vec[i]<<'\n';
-	}
-
-	{
 	fast_io::timer t("cstyle file");
 	fast_io::c_style_file cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
-		println(cs,vec[i]);
+		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("cstyle file unlocked");
 	fast_io::c_style_file_unlocked cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
-		println(cs,vec[i]);
+		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("c_style_file_unlocked");
 	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
-		println(cs,vec[i]);
+		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("obuf_file");
 	fast_io::obuf_file obuf_file("obuf_filedb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,vec[i]);
+		println(obuf_file,fast_io::scientific(vec[i]));
 	}
+#ifdef RYU_H
+	{
+	fast_io::timer t("ryu source");
+	fast_io::obuf_file obuf_file("ryu_source.txt");
+	std::array<char,40> arr;
+	for(std::size_t i(0);i!=N;++i)
+	{
+		auto v(d2s_buffered_n(vec[i],arr.data()));
+		arr[v]='\n';
+		write(obuf_file,arr.data(),arr.data()+v+1);
+	}
+	}
+#endif
 	{
 	fast_io::timer t("u8obuf_file");
 	fast_io::u8obuf_file obuf_file("u8obuf_filedb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,vec[i]);
+		println(obuf_file,fast_io::scientific(vec[i]));
 	}
 /*	{
 	fast_io::timer t("stream_view");
@@ -113,7 +90,7 @@ try
 	fast_io::timer t("obuf_file_mutex");
 	fast_io::obuf_file_mutex obuf_file("obuf_file_mutexdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,vec[i]);
+		println(obuf_file,fast_io::scientific(vec[i]));
 	}
 /*	{
 	fast_io::timer t(u8"speck128/128");

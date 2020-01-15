@@ -11,6 +11,8 @@
 #include<iomanip>
 #include<charconv>
 
+//standard library implementation is just too slow that wastes my time
+
 int main()
 try
 {
@@ -22,43 +24,6 @@ try
 	std::uniform_real_distribution dis(-1000.0,1000.0);
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
-
-	{
-	fast_io::timer t("fprintf");
-	fast_io::c_style_file cs("csfdb.txt","wb");
-	auto fp(cs.native_handle());
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(fp,"%g\n",vec[i]);
-	}
-	{
-	fast_io::timer t("fprintf checked");
-	fast_io::c_style_file cs("csfdb_checked.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(cs,"%g\n",vec[i]);
-	}
-	{
-	fast_io::timer t("ofstream");
-	std::ofstream fout("ofs.txt");
-	for(std::size_t i(0);i!=N;++i)
-		fout<<vec[i]<<'\n';
-	}
-	{
-	fast_io::timer t("ofstream tricks");
-	std::ofstream fout("ofs_tricks.txt");
-	auto &rdbuf(*fout.rdbuf());
-	for(std::size_t i(0);i!=N;++i)
-	{
-		fout<<vec[i];
-		rdbuf.sputc('\n');
-	}
-	}
-	{
-	fast_io::timer t("ofstream");
-	std::ofstream fout("ofs.txt");
-	for(std::size_t i(0);i!=N;++i)
-		fout<<vec[i]<<'\n';
-	}
-
 	{
 	fast_io::timer t("cstyle file");
 	fast_io::c_style_file cs("csfdb1.txt","wb");
