@@ -33,6 +33,12 @@ try
 		transmit(ob,ib);
 	}
 	{
+		fast_io::timer tm("oascii_to_ebcdic<obuf_file> <= ascii_to_ebcdic<ibuf_file>");
+		fast_io::iascii_to_ebcdic<fast_io::ibuf_file> ib("large_file.txt");
+		fast_io::oascii_to_ebcdic<fast_io::obuf_file> ob("large_file_ascii_ebcdic.txt");
+		transmit(ob,ib);
+	}
+	{
 		fast_io::timer tm("onative_file <= inative_file");
 		fast_io::inative_file ib("large_file.txt");
 		fast_io::onative_file ob("large_file_inative_file_to_onative_file.txt");
