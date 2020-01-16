@@ -13,21 +13,18 @@ public:
 	typename T::block_type block{};
 	T function;
 	std::size_t transform_counter{};
-	template<output_stream output, std::contiguous_iterator Iter>
-	inline constexpr Iter write_proxy(output&, Iter begin, Iter end)
+	inline static constexpr std::size_t block_size = block.size();
+	void operator()(std::span<std::byte const,block_size> process_block)
 	{
-		std::span be(std::as_bytes(std::span(begin,end)));
-		for(;block.size()<=be.size();++transform_counter)
-		{
-			function(std::span(digest),std::span<std::byte,64>(block));
-			be=subspan(block.size());
-		}
-		return e - be.size() / sizeof(*b);
+		if constexpr(std::endian::native==std::endian::little)
+			function(process_block.data());
+		else
+			function(process_block.data());
+		++transform_counter;
 	}
-	template<input_stream input,std::contiguous_iterator Iter>
-	inline constexpr Iter read_proxy(input& input,Iter begin,Iter end)
+	void digest(std::span<std::byte const,block_size> final_block)
 	{
-		
+
 	}
 };
 
