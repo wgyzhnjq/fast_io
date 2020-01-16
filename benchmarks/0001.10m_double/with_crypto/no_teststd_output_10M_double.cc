@@ -41,7 +41,7 @@ try
 	ob(std::piecewise_construct,std::forward_as_tuple("aes_db_encrypt.txt"),
 	std::forward_as_tuple(std::as_writable_bytes(std::span(key)), std::as_writable_bytes(std::span(iv))));
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,vec[i]);
+		println(ob,vec[i]);
 	}
 	{
 	fast_io::timer t("u8obuf_file_speck");
@@ -51,7 +51,7 @@ try
 	ob(std::piecewise_construct,std::forward_as_tuple("speck_db_encrypt.txt"),
 	std::forward_as_tuple(std::as_writable_bytes(std::span(key)), std::as_writable_bytes(std::span(iv))));
 	for(std::size_t i(0);i!=N;++i)
-		println(obuf_file,vec[i]);
+		println(ob,vec[i]);
 	}
 }
 catch(std::exception const& e)
