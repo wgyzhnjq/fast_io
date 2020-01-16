@@ -7,23 +7,21 @@ namespace fast_io::crypto::speck
 namespace details
 {
 
-template<std::size_t alpha = 8, std::size_t beta = 3>
 inline constexpr std::pair<uint64_t, uint64_t> speck_round(uint64_t x, uint64_t y, uint64_t k) {
-    x = (x >> alpha) | (x << (8 * sizeof(x) - alpha));  // x = ROTR(x, 8)
+    x = std::rotr(x, 8);
     x += y;
     x ^= k;
-    y = (y << beta) | (y >> (8 * sizeof(y) - beta));  // y = ROTL(y, 3)
+    y = std::rotl(y, 3);
     y ^= x;
     return {x, y};
 }
 
-template<std::size_t alpha = 8, std::size_t beta = 3>
 inline constexpr std::pair<uint64_t, uint64_t> speck_back(uint64_t x, uint64_t y, uint64_t k) {
     y ^= x;
-    y = (y >> beta) | (y << (8 * sizeof(y) - beta));  // y = ROTR(y, 3)
+    y = std::rotr(y, 3);
     x ^= k;
     x -= y;
-    x = (x << alpha) | (x >> (8 * sizeof(x) - alpha));  // x = ROTL(x, 8)
+    x = std::rotl(x, 8);
     return {x, y};
 }
 
@@ -35,8 +33,9 @@ struct speck
     static std::size_t constexpr block_size = blocksize;
     static std::size_t constexpr key_size = keysize;
     std::array<uint64_t, rounds + 1> key_schedule{};
-    constexpr speck(std::byte const *key)
+    constexpr speck(std::span<std::byte const, keysize> key_span)
     {
+        std::byte const *key(key_span.data());
         std::array<uint64_t, key_size / sizeof(uint64_t)> subkeys{};
         memcpy(subkeys.data(), key, key_size);
 
@@ -60,12 +59,16 @@ struct speck
             key_schedule[i + 1] = subkeys[0];
         }
     }
-    constexpr auto operator()(std::byte const *plaintext_or_ciphertext)
+    auto operator()(std::byte const *plaintext_or_ciphertext)
     {
         if constexpr (encrypt) {
             std::array<std::byte, block_size> ciphertext{};
-            auto cipher_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(ciphertext.data()));
-            auto plain_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));
+            std::array<uint64_t, 2> cipher_as_uint64_t;
+            std::array<uint64_t, 2> plain_as_uint64_t;
+            //memcpy(cipher_as_uint64_t.data(), ciphertext.data(), blocksize);
+            //auto cipher_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(ciphertext.data()));
+            memcpy(plain_as_uint64_t.data(), plaintext_or_ciphertext, blocksize);
+            //auto plain_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));
 
             cipher_as_uint64_t[0] = plain_as_uint64_t[0];
             cipher_as_uint64_t[1] = plain_as_uint64_t[1];
@@ -74,13 +77,18 @@ struct speck
                 cipher_as_uint64_t[1] = a;
                 cipher_as_uint64_t[0] = b;
             }
-
+            memcpy(ciphertext.data(), cipher_as_uint64_t.data(), blocksize);
             return ciphertext;
         } else {
             std::array<std::byte, block_size> plaintext{};
 
-            auto plain_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(plaintext.data()));
-            auto cipher_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));
+            std::array<uint64_t, 2> cipher_as_uint64_t;
+            std::array<uint64_t, 2> plain_as_uint64_t;
+            //memcpy(plain_as_uint64_t.data(), plaintext.data(), blocksize);
+            memcpy(cipher_as_uint64_t.data(), plaintext_or_ciphertext, blocksize);
+
+            //auto plain_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(plaintext.data()));
+            //auto cipher_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));
 
             plain_as_uint64_t[0] = cipher_as_uint64_t[0];
             plain_as_uint64_t[1] = cipher_as_uint64_t[1];
@@ -90,6 +98,7 @@ struct speck
                 plain_as_uint64_t[0] = b;
             }
 
+            memcpy(plaintext.data(), plain_as_uint64_t.data(), blocksize);
             return plaintext;
         }
     }

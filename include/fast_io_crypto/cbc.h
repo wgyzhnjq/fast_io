@@ -9,17 +9,17 @@ class cbc_encrypt
 public:
 	using cipher_type = Enc;
 	using unsigned_char_type = std::byte;
-	using key_type = std::span<unsigned_char_type, cipher_type::key_size>;
+	using key_type = std::span<unsigned_char_type const, cipher_type::key_size>;
 	using block_type = std::span<unsigned_char_type, cipher_type::block_size>;
+	using iv_type = std::array<unsigned_char_type, cipher_type::block_size>;
 
 public:
-	key_type key;
-	block_type iv;
+	iv_type iv;
 	cipher_type enc;
 	
-	cbc_encrypt(key_type key, block_type iv):key(key),iv(iv),enc(key.data())
+	cbc_encrypt(key_type key, block_type iv2):enc(key)
 	{
-
+		details::my_copy_n(iv2.begin(), cipher_type::block_size, iv.data());
 	}
 	template<buffer_output_stream output, std::contiguous_iterator Iter>
 	inline constexpr Iter write_proxy(output& out, Iter begin, Iter end)
@@ -40,6 +40,7 @@ public:
 	template<buffer_output_stream output, std::contiguous_iterator Iter>
 	inline constexpr void flush_proxy(output& out, Iter begin, Iter end)
 	{
+		begin = write_proxy(out, begin, end);
 		auto plain_text(std::as_writable_bytes(std::span<char>(begin,end)));
 		//details::my_copy_n(begin, diff, plain_text.data());
 		for (std::size_t i{}; i != iv.size(); ++i)
@@ -73,16 +74,16 @@ class cbc_decrypt
 public:
 	using cipher_type = Dec;
 	using unsigned_char_type = std::byte;
-	using key_type = std::span<unsigned_char_type, cipher_type::key_size>;
+	using key_type = std::span<unsigned_char_type const, cipher_type::key_size>;
 	using block_type = std::span<unsigned_char_type, cipher_type::block_size>;
+	using iv_type = std::array<unsigned_char_type, cipher_type::block_size>;
 
 public:
-	key_type key;
-	block_type iv;
+	iv_type iv;
 	cipher_type dec;
-	cbc_decrypt(key_type key, block_type iv):key(key),iv(iv),dec(key.data())
+	cbc_decrypt(key_type key, block_type iv2):dec(key)
 	{
-
+		details::my_copy_n(iv2.begin(), cipher_type::block_size, iv.data());
 	}
 	template<buffer_output_stream output, std::contiguous_iterator Iter>
 	inline constexpr Iter write_proxy(output& out, Iter begin, Iter end)
