@@ -54,7 +54,7 @@ struct aes
 	static std::size_t constexpr key_size = keysize;
 	__m128i key_schedule[15];
 	__m128i key_schedule_dec[15];
-	constexpr aes(std::span<std::byte const, keysize> key_span)
+	aes(std::span<std::byte const, keysize> key_span)
 	{
 		std::byte const *key(key_span.data());
 		// key schedule for encryption

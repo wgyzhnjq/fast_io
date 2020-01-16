@@ -24,6 +24,11 @@ public:
 		}
 		return e - be.size() / sizeof(*b);
 	}
+	template<input_stream input,std::contiguous_iterator Iter>
+	inline constexpr Iter read_proxy(input& input,Iter begin,Iter end)
+	{
+		
+	}
 };
 
 
