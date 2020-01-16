@@ -35,7 +35,7 @@ struct speck
     static std::size_t constexpr block_size = blocksize;
     static std::size_t constexpr key_size = keysize;
     std::array<uint64_t, rounds + 1> key_schedule{};
-    constexpr speck(uint8_t const *key)
+    constexpr speck(std::byte const *key)
     {
         std::array<uint64_t, key_size / sizeof(uint64_t)> subkeys{};
         memcpy(subkeys.data(), key, key_size);
@@ -60,10 +60,10 @@ struct speck
             key_schedule[i + 1] = subkeys[0];
         }
     }
-    constexpr auto operator()(uint8_t const *plaintext_or_ciphertext)
+    constexpr auto operator()(std::byte const *plaintext_or_ciphertext)
     {
         if constexpr (encrypt) {
-            std::array<uint8_t, block_size> ciphertext{};
+            std::array<std::byte, block_size> ciphertext{};
             auto cipher_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(ciphertext.data()));
             auto plain_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));
 
@@ -77,7 +77,7 @@ struct speck
 
             return ciphertext;
         } else {
-            std::array<uint8_t, block_size> plaintext{};
+            std::array<std::byte, block_size> plaintext{};
 
             auto plain_as_uint64_t = static_cast<uint64_t*>(static_cast<void*>(plaintext.data()));
             auto cipher_as_uint64_t = static_cast<uint64_t const*>(static_cast<void const*>(plaintext_or_ciphertext));

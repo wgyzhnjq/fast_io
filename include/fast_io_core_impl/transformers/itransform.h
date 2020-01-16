@@ -116,7 +116,7 @@ inline constexpr void iclear(itransform<input,func,ch_type,sz,rac>& in)
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr bool iflush(itransform<input,func,ch_type,sz,rac>& in)
 {
-	in.position_end=in.handle.second.read_proxy(in.handle.second,in.buffer.data(),in.buffer.data()+in.buffer.size())-in.buffer.size();
+	in.position_end=in.handle.second.read_proxy(in.handle.first,in.buffer.data(),in.buffer.data()+in.buffer.size())-in.buffer.data();
 	in.position={};
 	return in.position_end;
 }
@@ -187,7 +187,7 @@ constexpr bool itransform_ireserve_internal(itransform<input,func,ch_type,sz,rac
 	ib.position=std::copy(ib.data()+ib.position,ib.data()+ib.position_end,ib.data())-ib.data();
 	for(auto b(ib.position);;b=ib.position_end)
 	{
-		if(n<=(ib.position=read(ib.ih,ib.buffer.data(),ib.buffer.data()+ib.buffer.size())))
+		if(n<=(ib.position=ib.handle.second.read_proxy(ib.handle.first,ib.buffer.data(),ib.buffer.data()+ib.buffer.size())-ib.buffer.data()))
 			return true;
 		else if(!ib.position)
 		{
