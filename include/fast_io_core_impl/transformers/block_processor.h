@@ -42,10 +42,10 @@ public:
 		{
 			{function.digest()}->std::same_as<void>;
 		})
-			function.digest(std::span<std::byte,block_size>(be));
+			function.digest(be);
 		else
 		{
-			auto ret(function.digest(std::span<std::byte,block_size>(be)));
+			auto ret(function.digest(be));
 			write(out,ret);
 		}
 	}

@@ -4,5 +4,5 @@
 
 int main()
 {
-
+//	fast_io::osha s(std::piecewise_construct,std::forward_as_tuple(),std::forward_as_tuple());
 }
