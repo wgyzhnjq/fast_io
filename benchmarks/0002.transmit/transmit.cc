@@ -11,10 +11,10 @@ try
 	{
 		fast_io::timer tm("obuf_file <= ibuf_file");
 		fast_io::ibuf_file ib("large_file.txt");
-//		fast_io::obuf_file ob("large_file_ibuf_to_obuf.txt");
-//		transmit(ob,ib);
+		fast_io::obuf_file ob("large_file_ibuf_to_obuf.txt");
+		transmit(ob,ib);
 	}
-/*	{
+	{
 		fast_io::timer tm("oascii_to_ebcdic<obuf_file> <= ibuf_file");
 		fast_io::ibuf_file ib("large_file.txt");
 		fast_io::oascii_to_ebcdic<fast_io::obuf_file> ob("large_file_ebcdic.txt");
@@ -53,7 +53,7 @@ try
 		ob(std::piecewise_construct,std::forward_as_tuple("cbc_encrypt.txt"),
 		std::forward_as_tuple(std::as_writable_bytes(std::span(key)), std::as_writable_bytes(std::span(iv))));
 		transmit(ob,ib);
-	}*/
+	}
 }
 catch(std::exception const& e)
 {
