@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef __x86_64__
-
+//#define __AES__
 #include <wmmintrin.h>  // for intrinsics for AES-NI
 
 namespace fast_io::crypto::aes
@@ -52,9 +52,9 @@ struct aes
 {
 	static std::size_t constexpr block_size = 16;
 	static std::size_t constexpr key_size = keysize;
-	std::array<__m128i, 15> key_schedule{};
-	std::array<__m128i, 15> key_schedule_dec{};
-	constexpr aes(std::span<std::byte, keysize> key_span)
+	__m128i key_schedule[15];
+	__m128i key_schedule_dec[15];
+	constexpr aes(std::span<std::byte const, keysize> key_span)
 	{
 		std::byte const *key(key_span.data());
 		// key schedule for encryption
@@ -179,7 +179,7 @@ struct aes
 		}
 	}
 
-	constexpr auto operator()(uint8_t const *plaintext_or_ciphertext)
+	constexpr auto operator()(std::byte const *plaintext_or_ciphertext)
 	{
 		__m128i m;// = _mm_loadu_si128(static_cast<__m128i const*>(static_cast<void const*>(plaintext_or_ciphertext)));
 		memcpy(std::addressof(m), plaintext_or_ciphertext, 16);
@@ -235,7 +235,7 @@ struct aes
 				m = _mm_aesdeclast_si128(m, key_schedule_dec[14]);
 			}
 		}
-		std::array<uint8_t, 16> result{};
+		std::array<std::byte, 16> result{};
 		//_mm_storeu_si128(static_cast<__m128i*>(static_cast<void*>(result.data())), m);
 		memcpy(result.data(), std::addressof(m), 16);
 		return result;

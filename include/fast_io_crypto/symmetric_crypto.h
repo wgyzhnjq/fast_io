@@ -4,7 +4,7 @@
 #include "cbc.h"
 //#include "ctr.h"
 #include "speck.h"
-//#include "aes.h"
+#include "aes.h"
 
 /*namespace fast_io::crypto
 {
