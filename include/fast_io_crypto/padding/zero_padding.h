@@ -1,4 +1,10 @@
 
 #pragma once
 
-struct zer
+namespace fast_io::crypto
+{
+struct zero_padding
+{
+    operator()()
+};
+};
