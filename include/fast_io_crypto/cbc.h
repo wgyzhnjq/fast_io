@@ -41,8 +41,9 @@ public:
 	inline constexpr void flush_proxy(output& out, Iter begin, Iter end)
 	{
 		begin = write_proxy(out, begin, end);
-		auto plain_text(std::as_writable_bytes(std::span<char>(begin,end)));
-		//details::my_copy_n(begin, diff, plain_text.data());
+		//auto plain_text(std::as_writable_bytes(std::span<char>(begin,end)));
+		std::array<std::byte, cipher_type::block_size> plain_text;
+		details::my_copy_n(begin, diff, plain_text.data());
 		for (std::size_t i{}; i != iv.size(); ++i)
 			plain_text[i] ^= iv[i];
 		auto cipher(enc(plain_text.data()));
