@@ -9,7 +9,7 @@ int main()
 try
 #endif
 {
-	std::size_t constexpr N(100000000);
+	std::size_t constexpr N(1000000000ULL);
 	{
 	fast_io::timer t("u8obuf_file");
 	fast_io::u8obuf_file u8obuf_file("u8obuf_file.txt");
