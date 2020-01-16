@@ -322,29 +322,6 @@ inline void write(c_style_io_handle& cfhd,Iter begin,Iter end)
 #endif
 }
 
-template<bool err=false>
-inline auto get(c_style_io_handle& cfhd)
-{
-	auto ch(fgetc(cfhd.native_handle()));
-	if(ch==EOF)
-	{
-		if(feof(cfhd.native_handle()))
-		{
-			if constexpr(err)
-				return std::pair<typename c_style_io_handle::char_type,bool>{0,true};
-			else
-				throw eof();
-		}
-		throw std::system_error(errno,std::system_category());
-	}
-	if constexpr(err)
-		return std::pair<typename c_style_io_handle::char_type,bool>
-		{
-			std::char_traits<typename c_style_io_handle::char_type>::to_char_type(ch),false
-		};
-	else
-		return std::char_traits<typename c_style_io_handle::char_type>::to_char_type(ch);
-}
 
 inline void put(c_style_io_handle& cfhd,typename c_style_io_handle::char_type ch)
 {

@@ -2,24 +2,12 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_legacy.h"
+#include"../../include/fast_io_crypto.h"
 #include<fstream>
 
 int main()
 try
 {
-	{
-		fast_io::timer tm("ofstream <= ifstream");
-		std::ifstream ifst("large_file.txt",std::ifstream::binary);
-		std::ofstream ofst("large_file_stream.txt",std::ofstream::binary);
-		ofst<<ifst.rdbuf();
-	}
-	{
-		fast_io::timer tm("ofstream with filebuf_handle <= ifstream with filebuf_handle");
-		std::ifstream ifst("large_file.txt",std::ifstream::binary);
-		std::ofstream ofst("large_file_filebuf_handle.txt",std::ofstream::binary);
-		fast_io::filebuf_handle ifst_bf(ifst),ofst_bf(ofst);
-		transmit(ofst_bf,ifst_bf);
-	}
 	{
 		fast_io::timer tm("obuf_file <= ibuf_file");
 		fast_io::ibuf_file ib("large_file.txt");
@@ -49,6 +37,22 @@ try
 		fast_io::ibuf_file ib("large_file.txt");
 		fast_io::c_style_file csf("large_file_ibuf_to_c_style_file.txt","wb");
 		transmit(csf,ib);
+	}
+	{
+		fast_io::timer tm("c_style_file <= ibuf_file");
+		fast_io::ibuf_file ib("large_file.txt");
+		fast_io::c_style_file csf("large_file_ibuf_to_c_style_file.txt","wb");
+		transmit(csf,ib);
+	}
+	{
+		fast_io::timer tm("spec enc 128 128 cbc crypt obuf file <= ibuf_file");
+		std::array<unsigned char, 16> key{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
+		std::array<unsigned char, 16> iv{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
+		fast_io::ibuf_file ib("large_file.txt");
+		fast_io::crypto::ocbc_encrypt<fast_io::obuf_file, fast_io::crypto::speck::speck_enc_128_128> 
+		ob(std::piecewise_construct,std::forward_as_tuple("cbc_encrypt.txt"),
+		std::forward_as_tuple(std::as_writable_bytes(std::span(key)), std::as_writable_bytes(std::span(iv))));
+		transmit(ob,ib);
 	}
 }
 catch(std::exception const& e)
