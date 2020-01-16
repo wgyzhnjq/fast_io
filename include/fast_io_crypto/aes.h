@@ -2,7 +2,7 @@
 #pragma once
 
 #ifdef __x86_64__
-//#define __AES__
+//requires -maes -msse2
 #include <wmmintrin.h>  // for intrinsics for AES-NI
 
 namespace fast_io::crypto::aes
