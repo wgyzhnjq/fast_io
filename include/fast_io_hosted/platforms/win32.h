@@ -227,7 +227,11 @@ public:
 	basic_win32_file(fast_io::native_interface_t,Args&& ...args):basic_win32_io_handle<char_type>(win32::CreateFileW(std::forward<Args>(args)...))
 	{
 		if(native_handle()==((void*) (std::intptr_t)-1))
+#ifdef __cpp_exceptions
 			throw win32_error();
+#else
+			fast_terminate();
+#endif
 	}
 
 	template<std::size_t om,perms pm>
@@ -238,6 +242,12 @@ public:
 				details::win32_file_openmode<om,pm>::mode.dwCreationDisposition,
 				details::win32_file_openmode<om,pm>::mode.dwFlagsAndAttributes,nullptr))
 	{
+		if(native_handle()==((void*) (std::intptr_t)-1))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
@@ -249,6 +259,12 @@ public:
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
 				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,nullptr))
 	{
+		if(native_handle()==((void*) (std::intptr_t)-1))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
@@ -260,6 +276,12 @@ public:
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
 				details::dw_flag_attribute_with_perms(details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,p),nullptr))
 	{
+		if(native_handle()==((void*) (std::intptr_t)-1))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
