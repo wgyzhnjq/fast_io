@@ -39,12 +39,6 @@ try
 		transmit(csf,ib);
 	}
 	{
-		fast_io::timer tm("c_style_file <= ibuf_file");
-		fast_io::ibuf_file ib("large_file.txt");
-		fast_io::c_style_file csf("large_file_ibuf_to_c_style_file.txt","wb");
-		transmit(csf,ib);
-	}
-	{
 		fast_io::timer tm("spec enc 128 128 cbc crypt obuf file <= ibuf_file");
 		std::array<unsigned char, 16> key{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
 		std::array<unsigned char, 16> iv{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
