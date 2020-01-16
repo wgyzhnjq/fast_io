@@ -101,17 +101,6 @@ public:
 		}
 		return begin;
 	}
-	template<buffer_output_stream output, std::contiguous_iterator Iter>
-	inline constexpr void flush_proxy(output& out, Iter begin, Iter end)
-	{
-		/*auto diff(end - begin);
-		block_type plain_text{};
-		my_copy_n(begin, diff, plain_text.data());
-		for (std::size_t i{}; i != iv.size(); ++i)
-			plain_text[i] ^= iv[i];
-		auto cipher(enc(plain_text.data()));
-		write(out, cipher.begin(), cipher.end());*/
-	}
 	template<buffer_input_stream input, std::contiguous_iterator Iter>
 	inline constexpr Iter read_proxy(input& in, Iter b, Iter e)
 	{
