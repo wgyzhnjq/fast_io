@@ -20,7 +20,7 @@ public:
 	{
 		details::my_copy_n(iv2.begin(), cipher_type::block_size, iv.data());
 	}
-	auto operator()(std::span<std::byte, block_size> plain_cipher_text)
+	inline auto operator()(std::span<std::byte, block_size> plain_cipher_text)
 	{
 		if constexpr(Enc)
 		{
@@ -30,7 +30,7 @@ public:
 			details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
 			return cipher_text;
 		}
-		else if constexpr(!Enc)
+		else
 		{
 			auto plain(cipher(plain_cipher_text.data()));
 			for (std::size_t i{}; i != iv.size(); ++i)
