@@ -9,7 +9,7 @@ class cbc
 public:
 	using cipher_type = ciphert;
 	using key_type = std::span<std::byte const, cipher_type::key_size>;
-	using block_type = std::span<std::byte, cipher_type::block_size>;
+	using block_type = std::span<std::byte const, cipher_type::block_size>;
 	using iv_type = std::array<std::byte, cipher_type::block_size>;
 	inline static constexpr std::size_t block_size = cipher_type::block_size;
 
