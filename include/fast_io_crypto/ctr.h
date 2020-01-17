@@ -14,8 +14,7 @@ public:
 	using counter_type = std::uint64_t;
 	inline static constexpr std::size_t block_size = cipher_type::block_size;
 public:
-	alignas(16) std::array<std::byte,cipher_type::block_size> nonce_block;
-	std::uint64_t counter{};
+	alignas(16) std::array<std::byte,cipher_type::block_size> nonce_block{};
 	cipher_type cipher;
 	ctr(key_type key, nonce_type nc):cipher(key)
 	{
@@ -23,17 +22,18 @@ public:
 	}
 	inline void operator()(std::span<std::byte, block_size> text)
 	{
+		std::uint64_t counter;
+		memcpy(std::addressof(counter),nonce_block.data()+(cipher_type::block_size-8),8);
 		if constexpr((std::endian::little==std::endian::native&&big_endian)||
 			(std::endian::big==std::endian::native&&!big_endian))
 		{
-			std::uint64_t v{fast_io::details::byte_swap(counter)};
-			memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(v),8);
+			std::uint64_t v(fast_io::details::byte_swap(counter));
+			memcpy(nonce_block.data()+(cipher_type::block_size-8),std::addressof(v),8);
 		}
-		else
-			memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(counter),8);
 		alignas(16) std::array<std::byte,cipher_type::block_size> res(cipher(nonce_block.data()));
 		fast_xor_assignment(text,std::span(res));
 		++counter;
+		memcpy(nonce_block.data()+(cipher_type::block_size-8),std::addressof(counter),8);
 	}
 };
 
