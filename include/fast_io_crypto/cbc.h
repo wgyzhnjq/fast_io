@@ -39,28 +39,18 @@ public:
 			return plain;
 		}
 	}
-	auto digest(std::span<std::byte const> inp) requires (Enc)
-	{
-		std::array<std::byte, block_size> plain_text{};
-		details::my_copy(inp.begin(), inp.end(), plain_text.data());
-		for (std::size_t i{}; i != iv.size(); ++i)
-			plain_text[i] ^= iv[i];
-		auto const cipher_text(cipher(plain_text.data()));
-		details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
-		return cipher_text;
-	}
 };
 
 template<buffer_output_stream T, typename Enc, std::size_t sz = 4096>
-using ocbc_encrypt = otransform<T, block_processor<cbc<Enc,true>>, typename T::char_type, sz>;
+using ocbc_encrypt = otransform<T, block_processor<block_cipher<cbc<Enc,true>>>, typename T::char_type, sz>;
 
 template<buffer_input_stream T, typename Dec, std::size_t sz = 4096>
-using icbc_decrypt = itransform<T, block_processor<cbc<Dec,false>>, typename T::char_type, sz>;
+using icbc_decrypt = itransform<T, block_processor<block_cipher<cbc<Dec,false>>>, typename T::char_type, sz>;
 
 template<buffer_output_stream T, typename Dec, std::size_t sz = 4096>
-using ocbc_decrypt = otransform<T, block_processor<cbc<Dec,false>>, typename T::char_type, sz>;
+using ocbc_decrypt = otransform<T, block_processor<block_cipher<cbc<Dec,false>>>, typename T::char_type, sz>;
 
 template<buffer_input_stream T, typename Enc, std::size_t sz = 4096>
-using icbc_encrypt = itransform<T, block_processor<cbc<Enc,true>>, typename T::char_type, sz>;
+using icbc_encrypt = itransform<T, block_processor<block_cipher<cbc<Enc,true>>>, typename T::char_type, sz>;
 
 }

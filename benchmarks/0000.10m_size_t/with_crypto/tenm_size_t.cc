@@ -40,7 +40,7 @@ try
 	fast_io::timer t("u8obuf_file cbc aes");
 	std::array<unsigned char, 16> key{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
 	std::array<unsigned char, 16> iv{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
-	fast_io::crypto::ocbc_encrypt<fast_io::obuf_file, fast_io::crypto::aes::aes_enc_128> 
+	fast_io::crypto::ocbc<fast_io::obuf_file, fast_io::crypto::aes::aes_enc_128> 
 	ob(std::piecewise_construct,std::forward_as_tuple("aes_cbc_encrypt.txt"),
 	std::forward_as_tuple(std::as_bytes(std::span(key)), std::as_bytes(std::span(iv))));
 	for(std::size_t i(0);i!=N;++i)
@@ -50,7 +50,7 @@ try
 	fast_io::timer t("u8obuf_file ecb speck");
 	std::array<unsigned char, 16> key{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
 	std::array<unsigned char, 16> iv{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
-	fast_io::crypto::ocbc_encrypt<fast_io::obuf_file, fast_io::crypto::speck::speck_enc_128_128> 
+	fast_io::crypto::ocbc<fast_io::obuf_file, fast_io::crypto::speck::speck_enc_128_128> 
 	ob(std::piecewise_construct,std::forward_as_tuple("speck_cbc_encrypt.txt"),
 	std::forward_as_tuple(std::as_bytes(std::span(key)), std::as_bytes(std::span(iv))));
 	for(std::size_t i(0);i!=N;++i)

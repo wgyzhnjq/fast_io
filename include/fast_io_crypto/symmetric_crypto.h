@@ -1,5 +1,6 @@
 #pragma once
 
+#include "block_cipher.h"
 #include "ecb.h"
 #include "cbc.h"
 //#include "ctr.h"
