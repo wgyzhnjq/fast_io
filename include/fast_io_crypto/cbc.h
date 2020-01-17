@@ -4,7 +4,7 @@ namespace fast_io::crypto
 {
 
 template<typename Enc>
-class cbc_encrypt
+class [[deprecated("CBC is no longer secure due to a padding oracle attack. https://en.wikipedia.org/wiki/Padding_oracle_attack#Padding_oracle_attack_on_CBC_encryption")]] cbc_encrypt
 {
 public:
 	using cipher_type = Enc;
@@ -45,7 +45,7 @@ public:
 };
 
 template<typename Dec>
-class cbc_decrypt
+class [[deprecated("CBC is no longer secure due to a padding oracle attack. https://en.wikipedia.org/wiki/Padding_oracle_attack#Padding_oracle_attack_on_CBC_encryption")]] cbc_decrypt
 {
 public:
 	using cipher_type = Dec;
