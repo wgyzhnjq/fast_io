@@ -20,6 +20,18 @@ public:
 	{
 		details::my_copy(nc.begin(), nc.end(), nonce_block.data());
 	}
+	ctr(key_type key, nonce_type nc, std::uint64_t start_counter):cipher(key)
+	{
+		details::my_copy(nc.begin(), nc.end(), nonce_block.data());
+		if constexpr((std::endian::little==std::endian::native&&big_endian)||
+			(std::endian::big==std::endian::native&&!big_endian))
+		{
+			std::uint64_t v(fast_io::details::byte_swap(start_counter));
+			memcpy(nonce_block.data()+(cipher_type::block_size-8),std::addressof(v),8);
+		}
+		else
+			memcpy(nonce_block.data()+(cipher_type::block_size-8),std::addressof(start_counter),8);
+	}
 	inline void operator()(std::span<std::byte, block_size> text)
 	{
 		std::uint64_t counter;
