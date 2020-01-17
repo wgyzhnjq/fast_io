@@ -36,8 +36,15 @@ public:
 };
 
 template<buffer_output_stream T, typename Enc, std::size_t sz = 4096>
-using octr = otransform<T, block_processor<block_cipher<ctr<Enc>>>, typename T::char_type, sz>;
+using octr_little_endian = otransform<T, block_processor<block_cipher<ctr<Enc,false>>>, typename T::char_type, sz>;
 
 template<buffer_input_stream T, typename Enc, std::size_t sz = 4096>
-using ictr = itransform<T, block_processor<block_cipher<ctr<Enc>>>, typename T::char_type, sz>;
+using ictr_little_endian = itransform<T, block_processor<block_cipher<ctr<Enc,false>>>, typename T::char_type, sz>;
+
+template<buffer_output_stream T, typename Enc, std::size_t sz = 4096>
+using octr_big_endian = otransform<T, block_processor<block_cipher<ctr<Enc,true>>>, typename T::char_type, sz>;
+
+template<buffer_input_stream T, typename Enc, std::size_t sz = 4096>
+using ictr_big_endian = itransform<T, block_processor<block_cipher<ctr<Enc,true>>>, typename T::char_type, sz>;
+
 }
