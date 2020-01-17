@@ -22,7 +22,7 @@ public:
 		std::span be(std::as_writable_bytes(std::span<char>(std::to_address(b),std::to_address(e))));
 		for(;block_size<=be.size();)
 		{
-			//if constexpr(std::same_as<std::result_of_t<function_type>,void>)
+			//if constexpr(std::same_as<std::result_of_t<function_type()>,void>)
 			//	function(std::span<std::byte,block_size>(be));
 			//else
 			{
@@ -42,10 +42,10 @@ public:
 		}
 	{
 		begin = write_proxy(out, begin, end);
-		std::span be(std::as_bytes(std::span<char>(std::to_address(begin),std::to_address(end))));
+		std::span be(std::as_bytes(std::span<char const>(std::to_address(begin),std::to_address(end))));
 		if constexpr(requires()
 		{
-			{function.digest()}->std::same_as<void>;
+			{function.digest(be)}->std::same_as<void>;
 		})
 			function.digest(be);
 		else
