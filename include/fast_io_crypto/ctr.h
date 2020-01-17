@@ -14,7 +14,7 @@ public:
 	using counter_type = std::uint64_t;
 	inline static constexpr std::size_t block_size = cipher_type::block_size;
 public:
-	std::array<std::byte,cipher_type::block_size> nonce_block;
+	alignas(16) std::array<std::byte,cipher_type::block_size> nonce_block;
 	std::uint64_t counter{};
 	cipher_type cipher;
 	ctr(key_type key, nonce_type nc):cipher(key)
@@ -27,7 +27,7 @@ public:
 		if constexpr((std::endian::little==std::endian::native&&big_endian)||
 			(std::endian::big==std::endian::native&&!big_endian))
 			std::reverse(nonce_block.end()-8,nonce_block.end());
-		auto res(cipher(nonce_block.data()));
+		alignas(16) std::array<std::byte,cipher_type::block_size> res(cipher(nonce_block.data()));
 		for(std::size_t i{};i!=text.size();++i)
 			text[i]^=res[i];
 		++counter;
