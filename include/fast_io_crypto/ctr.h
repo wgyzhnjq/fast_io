@@ -3,64 +3,41 @@
 namespace fast_io::crypto
 {
 
-template<typename ciphert,bool Enc>
-class cbc
+template<typename ciphert,bool big_endian = false>
+class ctr
 {
 public:
 	using cipher_type = ciphert;
 	using key_type = std::span<std::byte const, cipher_type::key_size>;
 	using block_type = std::span<std::byte, cipher_type::block_size>;
-	using iv_type = std::array<std::byte, cipher_type::block_size>;
+	using nonce_type = std::span<std::byte const, cipher_type::block_size-8>;
+	using counter_type = std::uint64_t;
 	inline static constexpr std::size_t block_size = cipher_type::block_size;
-
 public:
-	iv_type iv;
+	std::array<std::byte,cipher_type::block_size> nonce_block;
+	std::uint64_t counter{};
 	cipher_type cipher;
-	[[deprecated("CBC is no longer secure due to a padding oracle attack. https://en.wikipedia.org/wiki/Padding_oracle_attack#Padding_oracle_attack_on_CBC_encryption")]] cbc(key_type key, block_type iv2):cipher(key)
+	ctr(key_type key, nonce_type nc):cipher(key)
 	{
-		details::my_copy_n(iv2.begin(), cipher_type::block_size, iv.data());
+		details::my_copy(nc.begin(), nc.end(), nonce_block.data());
 	}
-	inline auto operator()(std::span<std::byte, block_size> plain_cipher_text)
+	inline auto operator()(std::span<std::byte, block_size> text)
 	{
-		if constexpr(Enc)
-		{
-			for (std::size_t i{}; i != iv.size(); ++i)
-				plain_cipher_text[i] ^= iv[i];
-			auto cipher_text(cipher(plain_cipher_text.data()));
-			details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
-			return cipher_text;
-		}
-		else
-		{
-			auto plain(cipher(plain_cipher_text.data()));
-			for (std::size_t i{}; i != iv.size(); ++i)
-				plain[i] ^= iv[i];
-			details::my_copy(plain_cipher_text.begin(), plain_cipher_text.end(), iv.data());
-			return plain;
-		}
-	}
-	auto digest(std::span<std::byte const> inp) requires (Enc)
-	{
-		std::array<std::byte, block_size> plain_text{};
-		details::my_copy(inp.begin(), inp.end(), plain_text.data());
-		for (std::size_t i{}; i != iv.size(); ++i)
-			plain_text[i] ^= iv[i];
-		auto const cipher_text(cipher(plain_text.data()));
-		details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
-		return cipher_text;
+		memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(counter),8);
+		if constexpr((std::endian::little==std::endian::native&&big_endian)||
+			(std::endian::big==std::endian::native&&!big_endian))
+			std::reverse(nonce_block.end()-8,nonce_block.end());
+		auto res(cipher(nonce_block.data()));
+		for(std::size_t i{};i!=text.size();++i)
+			res[i]^=text[i];
+		++counter;
+		return res;
 	}
 };
 
 template<buffer_output_stream T, typename Enc, std::size_t sz = 4096>
-using ocbc_encrypt = otransform<T, block_processor<cbc<Enc,true>>, typename T::char_type, sz>;
-
-template<buffer_input_stream T, typename Dec, std::size_t sz = 4096>
-using icbc_decrypt = itransform<T, block_processor<cbc<Dec,false>>, typename T::char_type, sz>;
-
-template<buffer_output_stream T, typename Dec, std::size_t sz = 4096>
-using ocbc_decrypt = otransform<T, block_processor<cbc<Dec,false>>, typename T::char_type, sz>;
+using octr = otransform<T, block_processor<block_cipher<ctr<Enc>>>, typename T::char_type, sz>;
 
 template<buffer_input_stream T, typename Enc, std::size_t sz = 4096>
-using icbc_encrypt = itransform<T, block_processor<cbc<Enc,true>>, typename T::char_type, sz>;
-
+using ictr = itransform<T, block_processor<block_cipher<ctr<Enc>>>, typename T::char_type, sz>;
 }

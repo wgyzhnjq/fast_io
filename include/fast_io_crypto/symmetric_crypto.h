@@ -3,7 +3,7 @@
 #include "block_cipher.h"
 #include "ecb.h"
 #include "cbc.h"
-//#include "ctr.h"
+#include "ctr.h"
 #include "speck.h"
 #include "aes.h"
 
