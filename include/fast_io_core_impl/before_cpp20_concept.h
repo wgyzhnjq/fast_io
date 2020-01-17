@@ -20,17 +20,42 @@ namespace details
 {
 
 template<std::unsigned_integral U>
+requires (std::same_as<U,std::uint16_t>||std::same_as<U,std::uint32_t>||std::same_as<U,std::uint64_t>)
+inline U byte_swap(U a)
+{
+#ifdef _MSC_VER
+	if constexpr(std::same_as<U,std::uint64_t>)
+		return _byteswap_uint64(a);
+	else if constexpr(std::same_as<U,std::uint32_t>)
+		return _byteswap_ulong(a);
+	else
+		return _byteswap_ushort(a);
+#elif (defined(__GNUG__) || defined(__clang__))
+	if constexpr(std::same_as<U,std::uint64_t>)
+		return __builtin_bswap64(a);
+	else if constexpr(std::same_as<U,std::uint32_t>)
+		return __builtin_bswap32(a);
+	else
+		return __builtin_bswap16(a);
+#else
+	std::array<std::byte,sizeof(U)> b;
+	memcpy(b.data(),std::addressof(a),sizeof(U));
+	std::reverse(b.begin(),b.end());
+	memcpy(std::addressof(a),b.data(),sizeof(U));
+	return a;
+#endif
+}
+
+template<std::unsigned_integral U>
 inline constexpr U big_endian(U u)
 {
 	if constexpr(std::endian::little==std::endian::native)
-	{
-		auto pun(bit_cast<std::array<std::byte,sizeof(U)>>(u));
-		std::reverse(pun.begin(),pun.end());
-		return bit_cast<U>(pun);
-	}
+		return bit_cast<U>(byte_swap(u));
 	else
 		return u;
 }
+
+
 // I think the standard libraries haven't applied these optimization
 
 template<std::input_iterator input_iter,std::integral count_type,std::input_or_output_iterator output_iter>

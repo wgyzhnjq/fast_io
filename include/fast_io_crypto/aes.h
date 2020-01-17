@@ -60,8 +60,7 @@ struct aes
 		// key schedule for encryption
 		if constexpr (keysize == 16)
 		{
-			memcpy(key_schedule, key, 16);
-			//key_schedule[0]  = _mm_loadu_si128(static_cast<__m128i const*>(static_cast<void const*>(key)));
+			key_schedule[0]  = _mm_loadu_si128(static_cast<__m128i const*>(static_cast<void const*>(key)));
 			key_schedule[1]  = detail::aes_128_key_exp(key_schedule[0], 0x01);
 			key_schedule[2]  = detail::aes_128_key_exp(key_schedule[1], 0x02);
 			key_schedule[3]  = detail::aes_128_key_exp(key_schedule[2], 0x04);
@@ -181,8 +180,7 @@ struct aes
 
 	constexpr auto operator()(std::byte const *plaintext_or_ciphertext)
 	{
-		__m128i m;// = _mm_loadu_si128(static_cast<__m128i const*>(static_cast<void const*>(plaintext_or_ciphertext)));
-		memcpy(std::addressof(m), plaintext_or_ciphertext, 16);
+		__m128i m(_mm_loadu_si128(static_cast<__m128i const*>(static_cast<void const*>(plaintext_or_ciphertext))));
 		if constexpr (encrypt)
 		{
 			m = _mm_xor_si128       (m, key_schedule[ 0]);
@@ -235,9 +233,8 @@ struct aes
 				m = _mm_aesdeclast_si128(m, key_schedule_dec[14]);
 			}
 		}
-		std::array<std::byte, 16> result{};
-		//_mm_storeu_si128(static_cast<__m128i*>(static_cast<void*>(result.data())), m);
-		memcpy(result.data(), std::addressof(m), 16);
+		std::array<std::byte, 16> result;
+		_mm_storeu_si128(static_cast<__m128i*>(static_cast<void*>(result.data())), m);
 		return result;
 	}
 };

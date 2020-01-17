@@ -46,7 +46,7 @@ try
 		println(ob,i);
 	}
 	{
-	fast_io::timer t("u8obuf_file aes aes");
+	fast_io::timer t("u8obuf_file cbc aes");
 	std::array<unsigned char, 16> key{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
 	std::array<unsigned char, 16> iv{1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8};
 	fast_io::crypto::ocbc_encrypt<fast_io::obuf_file, fast_io::crypto::aes::aes_enc_128> 

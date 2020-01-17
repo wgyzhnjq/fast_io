@@ -24,8 +24,7 @@ public:
 	{
 		if constexpr(Enc)
 		{
-			for (std::size_t i{}; i != iv.size(); ++i)
-				plain_cipher_text[i] ^= iv[i];
+			fast_xor_assignment(plain_cipher_text,std::span(iv));
 			auto cipher_text(cipher(plain_cipher_text.data()));
 			details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
 			details::my_copy(cipher_text.begin(), cipher_text.end(), plain_cipher_text.data());
@@ -33,8 +32,7 @@ public:
 		else
 		{
 			auto plain(cipher(plain_cipher_text.data()));
-			for (std::size_t i{}; i != iv.size(); ++i)
-				plain[i] ^= iv[i];
+			fast_xor_assignment(plain,std::span(iv));
 			details::my_copy(plain_cipher_text.begin(), plain_cipher_text.end(), iv.data());
 			details::my_copy(plain.begin(), plain.end(), plain_cipher_text.data());
 		}

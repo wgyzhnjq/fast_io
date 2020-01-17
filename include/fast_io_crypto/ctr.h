@@ -23,13 +23,15 @@ public:
 	}
 	inline void operator()(std::span<std::byte, block_size> text)
 	{
-		memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(counter),8);
 		if constexpr((std::endian::little==std::endian::native&&big_endian)||
 			(std::endian::big==std::endian::native&&!big_endian))
-			std::reverse(nonce_block.end()-8,nonce_block.end());
+		{
+			std::uint64_t v{fast_io::details::byte_swap(counter)};
+			memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(v),8);
+		}
+		else
+			memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(counter),8);
 		alignas(16) std::array<std::byte,cipher_type::block_size> res(cipher(nonce_block.data()));
-//		for(std::size_t i{};i!=text.size();++i)
-//			text[i]^=res[i];
 		fast_xor_assignment(text,std::span(res));
 		++counter;
 	}
