@@ -21,7 +21,7 @@ public:
 	{
 		details::my_copy(nc.begin(), nc.end(), nonce_block.data());
 	}
-	inline auto operator()(std::span<std::byte, block_size> text)
+	inline void operator()(std::span<std::byte, block_size> text)
 	{
 		memcpy(nonce_block.data()+cipher_type::block_size-8,std::addressof(counter),8);
 		if constexpr((std::endian::little==std::endian::native&&big_endian)||
@@ -29,9 +29,8 @@ public:
 			std::reverse(nonce_block.end()-8,nonce_block.end());
 		auto res(cipher(nonce_block.data()));
 		for(std::size_t i{};i!=text.size();++i)
-			res[i]^=text[i];
+			text[i]^=res[i];
 		++counter;
-		return res;
 	}
 };
 

@@ -17,9 +17,10 @@ public:
 	[[deprecated("ECB should NEVER EVER be used. The disadvantage of this method is a lack of diffusion. Because ECB encrypts identical plaintext blocks into identical ciphertext blocks, it does not hide data patterns well. In some senses, it doesn't provide serious message confidentiality, and it is not recommended for use in cryptographic protocols at all. https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_Codebook_(ECB)")]] ecb(key_type key):cipher(key)
 	{
 	}
-	inline auto operator()(std::span<std::byte, block_size> text)
+	inline void operator()(std::span<std::byte, block_size> text)
 	{
-		return cipher(text.data());
+		auto ret(cipher(text.data()));
+		memcpy(text.data(),ret.data(),block_size);
 	}
 };
 

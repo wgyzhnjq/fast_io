@@ -20,7 +20,7 @@ public:
 	{
 		details::my_copy_n(iv2.begin(), cipher_type::block_size, iv.data());
 	}
-	inline auto operator()(std::span<std::byte, block_size> plain_cipher_text)
+	inline void operator()(std::span<std::byte, block_size> plain_cipher_text)
 	{
 		if constexpr(Enc)
 		{
@@ -28,7 +28,7 @@ public:
 				plain_cipher_text[i] ^= iv[i];
 			auto cipher_text(cipher(plain_cipher_text.data()));
 			details::my_copy(cipher_text.begin(), cipher_text.end(), iv.data());
-			return cipher_text;
+			details::my_copy(cipher_text.begin(), cipher_text.end(), plain_cipher_text.data());
 		}
 		else
 		{
@@ -36,7 +36,7 @@ public:
 			for (std::size_t i{}; i != iv.size(); ++i)
 				plain[i] ^= iv[i];
 			details::my_copy(plain_cipher_text.begin(), plain_cipher_text.end(), iv.data());
-			return plain;
+			details::my_copy(plain.begin(), plain.end(), plain_cipher_text.data());
 		}
 	}
 };

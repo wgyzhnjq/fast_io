@@ -20,17 +20,13 @@ public:
 	Iter write_proxy(output& out,Iter b, Iter e)
 	{
 		std::span be(std::as_writable_bytes(std::span<char>(std::to_address(b),std::to_address(e))));
+		auto b_s(be.data());
 		for(;block_size<=be.size();)
 		{
-			//if constexpr(std::same_as<std::result_of_t<function_type()>,void>)
-			//	function(std::span<std::byte,block_size>(be));
-			//else
-			{
-				auto ret(function(std::span<std::byte,block_size>(be.data(),block_size)));
-				write(out,ret);
-			}
+			function(std::span<std::byte,block_size>(be.data(),block_size));
 			be=be.subspan(block_size);
 		}
+		write(out,b_s,be.data());
 		return e - be.size() / sizeof(*b);
 	}
 	template<output_stream output, std::contiguous_iterator Iter>
@@ -63,8 +59,9 @@ public:
 		{
 			if (!ireserve(in, block_size))
 				break;
-			auto ret(function(std::span<std::byte, block_size>(reinterpret_cast<std::byte*>(std::to_address(begin(in))), block_size)));
-			details::my_copy_n(ret.data(), block_size, be.data());
+			std::span<std::byte, block_size> s(reinterpret_cast<std::byte*>(std::to_address(begin(in))), block_size);
+			function(s);
+			details::my_copy_n(s.data(), block_size, be.data());
 			be = be.subspan(block_size);
 		}
 		return e - be.size() / sizeof(*b);
