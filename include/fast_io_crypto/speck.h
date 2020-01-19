@@ -33,6 +33,7 @@ struct speck
     static std::size_t constexpr block_size = blocksize;
     static std::size_t constexpr key_size = keysize;
     std::array<uint64_t, rounds + 1> key_schedule{};
+    [[deprecated("Speck algorithm is created by USA National Security Agency (NSA). Use at your own risk.")]]
     constexpr speck(std::span<std::byte const, keysize> key_span)
     {
         std::byte const *key(key_span.data());
