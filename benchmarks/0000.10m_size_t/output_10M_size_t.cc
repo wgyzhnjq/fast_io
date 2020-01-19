@@ -67,6 +67,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,i);
 	}
+#ifndef _MSC_VER
 	{
 	constexpr double dbN(N);
 	fast_io::timer t("obuf_file floating");
@@ -100,6 +101,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(obuf_file,i);
 	}
+#endif
 	{
 	fast_io::timer t("u8obuf_file");
 	fast_io::u8obuf_file u8obuf_file("u8obuf_file.txt");

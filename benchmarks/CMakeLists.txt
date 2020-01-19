@@ -19,9 +19,6 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 
 
-add_executable(compile "./0000.compile/fast_io.cc")
-add_executable(hw "./0001.helloworld/hw.cc")
-add_executable(hw_u8 "./0001.helloworld/hw_u8.cc")
-if (WIN32)
-add_executable(hello_world_win32_box "./0001.helloworld/hello_world_win32_box.cc")
-endif (WIN32)
+add_executable(output_10M_size_t "./0000.10m_size_t/output_10M_size_t.cc")
+
+add_executable(output_10M_double "./0001.10m_double/output_10M_double.cc")
