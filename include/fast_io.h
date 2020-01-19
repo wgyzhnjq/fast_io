@@ -70,3 +70,38 @@ inline constexpr void fprint(Args&& ...args)
 {
 	fprint(fast_io::out,std::forward<Args>(args)...);
 }
+
+
+#ifndef NDEBUG
+
+template<typename T,typename... Args>
+requires (!fast_io::output_stream<T>)&&requires(T&& t,Args&& ...args)
+{
+	print(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+inline constexpr void debug_print(T&& t,Args&& ...args)
+{
+	print(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+
+template<typename T,typename... Args>
+requires (!fast_io::output_stream<T>)&&requires(T&& t,Args&& ...args)
+{
+	println(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+inline constexpr void debug_println(T&& t,Args&& ...args)
+{
+	println(fast_io::out,std::forward<T>(t),std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+requires requires(Args&& ...args)
+{
+	fprint(fast_io::out,std::forward<Args>(args)...);
+}
+inline constexpr void debug_fprint(Args&& ...args)
+{
+	fprint(fast_io::out,std::forward<Args>(args)...);
+}
+
+#endif
