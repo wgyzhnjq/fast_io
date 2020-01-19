@@ -1,64 +1,16 @@
 #pragma once
+#include"win32_library.h"
 
-#include<ws2tcpip.h>
-#include"mswsock.h"
-
-#undef interface			//what a joke. Who did this?
-#undef min			//what a joke. Who did this?
-#undef max			//what a joke. Who did this?
 
 namespace fast_io::sock::details
 {
 namespace
 {
 
-class win32_library
-{
-	HMODULE plib;
-	void closeimpl()
-	{
-		if(plib)
-			::FreeLibrary(plib);
-	}
-public:
-	win32_library(wchar_t const* name):plib(::LoadLibraryW(name))
-	{
-		if(plib==nullptr)
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
-	}
-	win32_library(win32_library const&)=delete;
-	win32_library& operator=(win32_library const&)=delete;
-	win32_library(win32_library&& other) noexcept:plib(other.plib)
-	{
-		other.plib=nullptr;
-	}
-	win32_library& operator=(win32_library&& other) noexcept
-	{
-		if(other.plib!=plib)
-		{
-			closeimpl();
-			plib=other.plib;
-			other.plib=nullptr;
-		}
-		return *this;
-	}
-	auto get() const
-	{
-		return plib;
-	}
-	~win32_library()
-	{
-		closeimpl();
-	}
-};
 
-inline win32_library const ws2_32_dll(L"ws2_32.dll");
+inline fast_io::details::win32_library const ws2_32_dll(L"ws2_32.dll");
 
-inline win32_library const mswsock_dll(L"mswsock.dll");
+inline fast_io::details::win32_library const mswsock_dll(L"mswsock.dll");
 
 using address_family = std::int16_t;
 
