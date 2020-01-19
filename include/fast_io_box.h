@@ -26,12 +26,12 @@ inline
 #if __cpp_constinit >= 201907L
 constinit
 #endif
-fast_io::native_box debug_box("fast io"sv);
+fast_io::native_box debug_box("fast io debugging"sv);
 inline
 #if __cpp_constinit >= 201907L
 constinit
 #endif
-fast_io::wnative_box debug_wbox(L"fast io"sv);
+fast_io::wnative_box debug_wbox(L"fast io debugging"sv);
 
 #endif
 
