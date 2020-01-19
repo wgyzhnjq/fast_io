@@ -1,7 +1,7 @@
 #pragma once
 #include"ryu/ryu.h"
-#include"grisu_exact/grisu_exact.h"
-#include"grisu_exact/grisu_exact_api.h"
+//#include"grisu_exact/grisu_exact.h"
+//#include"grisu_exact/grisu_exact_api.h"
 
 namespace fast_io
 {
@@ -233,44 +233,5 @@ inline void print_define(output& out,T a)
 	write(out,array.data(),details::ryu::output_shortest<false>(array.data(),static_cast<double>(a)));
 }
 
-namespace floating_algorithms
-{
-template<std::floating_point T>
-struct grisu_exact
-{
-	T& reference;
-};
-}
-
-template<std::floating_point T>
-inline constexpr floating_algorithms::grisu_exact<T const> grisu_exact(T const &f){return {f};}
-
-template<output_stream output,std::floating_point T>
-inline void print_define(output& out,floating_algorithms::grisu_exact<T const> a)
-{
-	std::size_t constexpr reserved_size(30);
-	if constexpr(buffer_output_stream<output>)
-	{
-
-		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
-		{
-			if(reserved)
-			{
-				auto start(reserved-reserved_size);
-				orelease(out,reserved-details::grisu_exact::floating_to_chars(static_cast<double>(a.reference),start));
-				return;
-			}
-		}
-		else
-		{
-			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::grisu_exact::floating_to_chars(static_cast<double>(a.reference),start));
-			return;
-		}
-	}
-	std::array<typename output::char_type,reserved_size> array;
-	write(out,array.data(),details::grisu_exact::floating_to_chars(static_cast<double>(a.reference),array.data()));
-}
 
 }

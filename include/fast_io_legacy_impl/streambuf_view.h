@@ -111,7 +111,7 @@ inline auto oreserve(streambuf_view<T>& t,std::size_t size) -> typename T::char_
 {
 	auto& nh(*t.native_handle());
 	auto p(nh.pptr());
-	if(nh.epptr()-p<=size)
+	if(static_cast<std::size_t>(nh.epptr()-p)<=size)
 		return nullptr;
 	nh.pbump(static_cast<int>(size));
 	return p+size;
