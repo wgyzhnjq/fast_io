@@ -3,7 +3,7 @@
 namespace fast_io::details::jiaendu
 {
 
-inline consteval auto calculate_offset()
+inline constexpr auto calculate_offset()
 {
 	std::array<char8_t,1000> gen{};
 	for(std::size_t i(0);i!=10;++i)
@@ -16,7 +16,7 @@ inline consteval auto calculate_offset()
 }
 /*
 template<typename T>
-inline consteval auto calculate_table1()
+inline constexpr auto calculate_table1()
 {
 	std::array<std::array<T,4>,10> gen{};
 	for(char8_t i(0);i!=gen.size();++i)
@@ -26,7 +26,7 @@ inline consteval auto calculate_table1()
 */
 
 template<typename T>
-inline consteval auto calculate_table2()
+inline constexpr auto calculate_table2()
 {
 	std::array<std::array<T,2>,100> gen{};
 	for(char8_t i(0);i!=10;++i)
@@ -40,7 +40,7 @@ inline consteval auto calculate_table2()
 	return gen;
 }
 template<typename T>
-inline consteval auto calculate_table3()
+inline constexpr auto calculate_table3()
 {
 	std::array<std::array<T,4>,1000> gen{};
 	for(char8_t i(0);i!=10;++i)
@@ -58,7 +58,7 @@ inline consteval auto calculate_table3()
 	return gen;
 }
 template<typename T>
-inline consteval auto calculate_table4()
+inline constexpr auto calculate_table4()
 {
 	std::array<std::array<T,4>,10000> gen{};
 	for(char8_t i(0);i!=10;++i)
@@ -78,7 +78,7 @@ inline consteval auto calculate_table4()
 	return gen;
 }
 template<typename T>
-inline consteval auto calculate_table5()
+inline constexpr auto calculate_table5()
 {
 	std::array<std::array<T,4>,1000> gen{};
 	for(char8_t i(0);i!=10;++i)

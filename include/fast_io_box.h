@@ -8,8 +8,16 @@ namespace fast_io
 {
 
 using namespace std::string_view_literals;
-inline constinit fast_io::native_box box("fast io"sv);
-inline constinit fast_io::wnative_box wbox(L"fast io"sv);
+inline
+#if __cpp_constinit >= 201907L
+constinit
+#endif
+fast_io::native_box box("fast io"sv);
+inline
+#if __cpp_constinit >= 201907L
+constinit
+#endif
+fast_io::wnative_box wbox(L"fast io"sv);
 
 }
 

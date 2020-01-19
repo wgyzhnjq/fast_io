@@ -199,9 +199,9 @@ inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 }
 
 template<std::integral ch_type,typename T,std::integral R>
-inline std::common_type_t<off64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
+inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
-	auto ret(::lseek64(h.native_handle(),seek_precondition<off64_t,T,ch_type>(i),static_cast<int>(s)));
+	auto ret(::lseek64(h.native_handle(),seek_precondition<std::int64_t,T,ch_type>(i),static_cast<int>(s)));
 	if(ret==-1)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
