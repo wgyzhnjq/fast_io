@@ -72,6 +72,7 @@ inline constexpr void fprint(Args&& ...args)
 }
 
 
+//Allow debug print
 #ifndef NDEBUG
 
 template<typename T,typename... Args>
