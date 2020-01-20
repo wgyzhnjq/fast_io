@@ -8,7 +8,6 @@ try
 	for(;;)
 	{
 		fast_io::acceptor accept(hd);
-		print(u8"a client connect to this server\n");
 		print(accept,u8"hello world from server\n");
 	}
 }
