@@ -3,8 +3,7 @@
 
 int main()
 {
-	fast_io::tcp_server hd(2000);
-	for(;;)
+	for(fast_io::tcp_server hd(2000);;)
 	try
 	{
 		fast_io::acceptor accept(hd);
