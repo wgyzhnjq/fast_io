@@ -662,7 +662,7 @@ inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	if(!skip_space(in))
 		return false;
-	v.reference=static_cast<std::byte>(details::input_base_number<base,char8_t>(in));
+	v.reference=static_cast<std::byte>(details::input_base_number<char8_t,base>(in));
 	return true;
 }
 
@@ -673,7 +673,7 @@ inline constexpr bool scan_define(input& in,T& a)
 {
 	if(!skip_space(in))
 		return false;
-	a=static_cast<std::byte>(details::input_base_number<base,char8_t>(in));
+	a=static_cast<std::byte>(details::input_base_number<char8_t,10>(in));
 	return true;
 }
 

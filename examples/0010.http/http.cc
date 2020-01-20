@@ -6,7 +6,7 @@
 int main()
 try
 {
-	fast_io::client_buf hd(fast_io::dns_once("www.jgjy.gov.cn"),80,fast_io::sock::type::stream);
+	fast_io::ibuf_tcp_client hd(fast_io::dns_once("www.jgjy.gov.cn"),80);
 	print(hd,u8"GET / HTTP/1.1\r\n"
 		"Host:www.jgjy.gov.cn\r\n"
 		"User-agent:whatever\r\n"

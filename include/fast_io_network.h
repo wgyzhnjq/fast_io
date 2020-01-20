@@ -7,12 +7,12 @@
 namespace fast_io
 {
 using acceptor = basic_acceptor<char>;
-using client = basic_client<char>;
-using acceptor_buf = basic_ibuf<acceptor>;
-using client_buf = basic_ibuf<client>;
-
-using u8acceptor = basic_acceptor<char8_t>;
-using u8client = basic_client<char8_t>;
-using u8acceptor_buf = basic_ibuf<u8acceptor>;
-using u8client_buf = basic_ibuf<u8client>;
+using tcp_client = basic_tcp_client<char>;
+using ibuf_acceptor = basic_ibuf<acceptor>;
+using ibuf_tcp_client = basic_ibuf<tcp_client>;
+/*
+using u8tcp_acceptor = basic_acceptor<char8_t>;
+using u8tcp_client = basic_client<char8_t>;
+using u8tcp_acceptor_buf = basic_ibuf<u8acceptor>;
+using u8tcp_client_buf = basic_ibuf<u8client>;*/
 }
