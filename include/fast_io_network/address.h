@@ -6,7 +6,7 @@ namespace fast_io
 
 struct ipv4
 {
-	std::array<std::byte, 4> storage{};
+	std::array<unsigned char, 4> storage{};
 };
 
 
@@ -62,7 +62,7 @@ inline constexpr void print_define(output& os, ipv4 const &v)
 
 struct ipv6
 {
-	std::array<std::byte, 16> storage{};
+	std::array<unsigned char, 16> storage{};
 };
 inline constexpr std::size_t native_socket_address_size(ipv6 const&)
 {
