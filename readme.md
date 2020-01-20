@@ -18,13 +18,13 @@ Since C++ 20 has not been released. No standard supporting libraries for concept
   7. Unicode/UTF-8 support
   8. Compatible with C stdio/ C++ iostream
   9. Native Handle Interface
-  10. support C style io format (fprint). Basic/Lua/Python/etc format (print, scan). NO LONGER SUPPORTS C++ style io format (<<,>>) since they are bad.
+  10. support C style io format (fprint). Basic/Lua/Python/etc format (print, scan). NO LONGER SUPPORTS C++ style io format (<<,>>) since we have varadics templates now. Using operator overloading incurs more overhead including compilation and runtime. I could not do optimization like avoiding multiple locking.
   11. Compilation time open mode parse. Supports C style open mode and C++ style open mode.
   12. No internal iomanip states (since it creates security issues)
   13. Extremely easy to support custom devices
-  14. No stupid stuff like std::endl
+  14. No easily misused stuff like std::endl
   15. No integrated locale
-  16. No traits_type and EOF shit
+  16. No traits_type and EOF
   17. All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid
   18. Providing RAII for FILE*&POSIX file id
   19. Dynamic Type Support
