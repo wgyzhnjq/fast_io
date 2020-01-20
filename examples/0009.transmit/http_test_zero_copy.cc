@@ -7,8 +7,7 @@ int main()
 try
 #endif
 {
-	fast_io::client_buf hd(fast_io::dns_once("www.jszg.edu.cn"),80,fast_io::sock::type::stream);
-//	static_assert(fast_io::zero_copy_output_stream<fast_io::client_buf>);
+	fast_io::ibuf_tcp_client hd(fast_io::dns_once("www.jszg.edu.cn"),80);
 	fast_io::inative_file request_file("http_request.txt");
 	transmit(hd,request_file);
 	skip_http_header(hd);
