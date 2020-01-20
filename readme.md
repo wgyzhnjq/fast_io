@@ -31,6 +31,8 @@ Since C++ 20 has not been released. No standard supporting libraries for concept
   20. Pipe line support
   21. Zero copy IO
   22. Cryptography (Under construction) to replace openssl
+  23. debugging IO
+  24. GUI debugger (calling win32 apis MessageBox for those who are doing none console programming)
 
 ## Future Plan After C++ 20
   1. Module support
