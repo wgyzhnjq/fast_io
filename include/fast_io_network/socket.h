@@ -142,7 +142,7 @@ inline void unblock(socket& sv)
 #endif
 }
 
-inline void unblock(server& sv)
+inline void unblock(connected_server& sv)
 {
 	unblock(sv.native_handle());
 }
