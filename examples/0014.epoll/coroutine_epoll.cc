@@ -65,9 +65,8 @@ try
 				it->co_handle.resume();
 				iter_swap(it,clients.end()-1);
 				listeners.pop_back();
-			}*/
-			
-/*			case fast_io::epoll::event::out:
+			}
+			case fast_io::epoll::event::out:
 			case fast_io::epoll::event::hup:
 				for(auto it(clients.begin());it!=clients.end();++it)
 					if(*it==ele)
