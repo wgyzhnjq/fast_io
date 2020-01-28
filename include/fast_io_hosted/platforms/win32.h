@@ -149,6 +149,10 @@ public:
 		using std::swap;
 		swap(mhandle,o.mhandle);
 	}
+	constexpr void reset() noexcept
+	{
+		mhandle=nullptr;
+	}
 };
 
 template<std::integral ch_type>

@@ -152,6 +152,10 @@ public:
 		using std::swap;
 		swap(fd,o.fd);
 	}
+	constexpr void reset() noexcept
+	{
+		fd=-1;
+	}
 };
 
 template<std::integral ch_type>

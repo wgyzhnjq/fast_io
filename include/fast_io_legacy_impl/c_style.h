@@ -382,6 +382,8 @@ public:
 			fast_terminate();
 #endif
 	}
+
+
 	basic_c_style_file(std::string_view name,std::string_view mode):T(std::fopen(name.data(),mode.data()))
 	{
 		if(native_handle()==nullptr)
@@ -402,6 +404,33 @@ public:
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
 	}
+
+//fdopen interface
+
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,std::string_view mode):T(::fdopen(posix_handle.native_handle(),mode.data()))
+	{
+		if(native_handle()==nullptr)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		posix_handle.reset();
+	}
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::mode const& m):basic_c_style_file(posix_handle,c_style(m))
+	{
+		if(with_ate(m))
+			seek(*this,0,seekdir::end);
+	}
+	template<std::size_t om>
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::interface_t<om>):basic_c_style_file(posix_handle,open::interface_t<om>::c_style)
+	{
+		if constexpr (with_ate(open::mode(om)))
+			seek(*this,0,seekdir::end);
+	}
+
+
+
 	basic_c_style_file(basic_c_style_file const&)=delete;
 	basic_c_style_file& operator=(basic_c_style_file const&)=delete;
 	basic_c_style_file(basic_c_style_file&& b) noexcept : T(b.native_handle())
