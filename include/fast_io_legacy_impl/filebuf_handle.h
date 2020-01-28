@@ -62,12 +62,12 @@ Hack iostream's internal
 		return handle->_M_file.fd();
 	}
 
-	explicit operator basic_c_style_io_handle_unlocked<char_type>()
+	explicit operator basic_c_io_handle_unlocked<char_type>()
 	{
 		return handle->_M_file.file();
 	}
 
-	explicit operator basic_c_style_io_handle<char_type>()
+	explicit operator basic_c_io_handle<char_type>()
 	{
 		return handle->_M_file.file();
 	}
