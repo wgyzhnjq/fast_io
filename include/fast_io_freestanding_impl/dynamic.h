@@ -35,7 +35,7 @@ private:
 		void write_impl(char_type const* b,char_type const* e) override
 		{
 			if constexpr(output_stream<stm>)
-				send(io,b,e);
+				write(io,b,e);
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
