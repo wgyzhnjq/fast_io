@@ -177,7 +177,11 @@ inline auto constexpr u8c_style(mode const& m)
 		return u8"a+xb"sv;
 	break;
 	default:
-		static_assert(true, u8"unknown open mode");
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown open mode");
+#else
+		fast_terminate();
+#endif
 	}
 }
 inline auto constexpr c_style(mode const& m)
@@ -265,7 +269,11 @@ inline auto constexpr c_style(mode const& m)
 		return "a+xb"sv;
 	break;
 	default:
-		static_assert(true, u8"unknown open mode");
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown open mode");
+#else
+		fast_terminate();
+#endif
 	}
 }
 
@@ -304,7 +312,11 @@ inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
 			case 0x2b:
 			break;
 			default:
-				static_assert(true,u8"unknown C-style open mode");
+#ifdef __cpp_exceptions
+				throw std::runtime_error("unknown C-style open mode");
+#else
+				fast_terminate();
+#endif
 		}
 	return v;
 }
