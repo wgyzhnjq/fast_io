@@ -72,15 +72,15 @@ try
 		println(u8obuf_file_old,fast_io::dec(i));
 	}
 	{
-	fast_io::timer t("c_style_file");
-	fast_io::c_style_file cs_file("c_style.txt","wb");
+	fast_io::timer t("c_file");
+	fast_io::c_file cs_file("c_style.txt","wb");
 	
 	for(std::size_t i(0);i!=N;++i)
 		println(cs_file,i);
 	}
 	{
-	fast_io::timer t("c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs_file("c_style_unlocked.txt","wb");
+	fast_io::timer t("c_file_unlocked");
+	fast_io::c_file_unlocked cs_file("c_unlocked.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs_file,i);
 	}

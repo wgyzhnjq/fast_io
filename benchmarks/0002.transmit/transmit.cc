@@ -33,9 +33,9 @@ try
 		transmit(ob,ib);
 	}
 	{
-		fast_io::timer tm("c_style_file <= ibuf_file");
+		fast_io::timer tm("c_file <= ibuf_file");
 		fast_io::ibuf_file ib("large_file.txt");
-		fast_io::c_style_file csf("large_file_ibuf_to_c_style_file.txt","wb");
+		fast_io::c_file csf("large_file_ibuf_to_c_file.txt","wb");
 		transmit(csf,ib);
 	}
 	{

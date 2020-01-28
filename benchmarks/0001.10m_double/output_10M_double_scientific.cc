@@ -26,13 +26,13 @@ try
 
 	{
 	fast_io::timer t("cstyle file");
-	fast_io::c_style_file cs("csfdb1_sc.txt","wb");
+	fast_io::c_file cs("csfdb1_sc.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,fast_io::scientific(vec[i]));
 	}
 	{
 	fast_io::timer t("cstyle file unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb2_sc.txt","wb");
+	fast_io::c_file_unlocked cs("csfdb2_sc.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,fast_io::scientific(vec[i]));
 	}

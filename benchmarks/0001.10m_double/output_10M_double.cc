@@ -25,14 +25,14 @@ try
 
 	{
 	fast_io::timer t("fprintf");
-	fast_io::c_style_file cs("csfdb.txt","wb");
+	fast_io::c_file cs("csfdb.txt","wb");
 	auto fp(cs.native_handle());
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(fp,"%g\n",vec[i]);
 	}
 	{
 	fast_io::timer t("fprintf checked");
-	fast_io::c_style_file cs("csfdb_checked.txt","wb");
+	fast_io::c_file cs("csfdb_checked.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		fprintf(cs,"%g\n",vec[i]);
 	}
@@ -61,19 +61,19 @@ try
 
 	{
 	fast_io::timer t("cstyle file");
-	fast_io::c_style_file cs("csfdb1.txt","wb");
+	fast_io::c_file cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
 	fast_io::timer t("cstyle file unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb1.txt","wb");
+	fast_io::c_file_unlocked cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
-	fast_io::timer t("c_style_file_unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
+	fast_io::timer t("c_file_unlocked");
+	fast_io::c_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
