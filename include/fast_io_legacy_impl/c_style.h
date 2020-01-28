@@ -399,7 +399,7 @@ public:
 			seek(*this,0,seekdir::end);
 	}
 	template<std::size_t om>
-	basic_c_style_file(std::string_view name,open::interface_t<om>):basic_c_style_file(name,open::interface_t<om>::c_style)
+	basic_c_style_file(std::string_view name,open::interface_t<om>):basic_c_style_file(name,open::c_style_interface_t<om>::mode)
 	{
 		if constexpr (with_ate(open::mode(om)))
 			seek(*this,0,seekdir::end);
@@ -407,7 +407,13 @@ public:
 
 //fdopen interface
 
-	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,std::string_view mode):T(::fdopen(posix_handle.native_handle(),mode.data()))
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,std::string_view mode):T(
+#if defined(__WINNT__) || defined(_MSC_VER)
+			::_fdopen
+#else
+			::fdopen
+#endif
+(posix_handle.native_handle(),mode.data()))
 	{
 		if(native_handle()==nullptr)
 #ifdef __cpp_exceptions
@@ -417,20 +423,27 @@ public:
 #endif
 		posix_handle.reset();
 	}
-	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::mode const& m):basic_c_style_file(posix_handle,c_style(m))
+
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::mode const& m):basic_c_style_file(std::move(posix_handle),c_style(m)){}
+	template<std::size_t om>
+	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::interface_t<om>):basic_c_style_file(std::move(posix_handle),open::c_style_interface_t<om>::mode){}
+
+#if defined(__WINNT__) || defined(_MSC_VER)
+//windows specific. open posix file from win32 io handle
+	basic_c_style_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,std::string_view mode):
+		basic_c_style_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),mode),mode)
 	{
-		if(with_ate(m))
-			seek(*this,0,seekdir::end);
+	}
+	basic_c_style_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open::mode const& m):
+		basic_c_style_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),m),m)
+	{
 	}
 	template<std::size_t om>
-	basic_c_style_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::interface_t<om>):basic_c_style_file(posix_handle,open::interface_t<om>::c_style)
+	basic_c_style_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open::interface_t<om>):
+		basic_c_style_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),open::interface<om>),open::c_style_interface_t<om>::mode)
 	{
-		if constexpr (with_ate(open::mode(om)))
-			seek(*this,0,seekdir::end);
 	}
-
-
-
+#endif
 	basic_c_style_file(basic_c_style_file const&)=delete;
 	basic_c_style_file& operator=(basic_c_style_file const&)=delete;
 	basic_c_style_file(basic_c_style_file&& b) noexcept : T(b.native_handle())

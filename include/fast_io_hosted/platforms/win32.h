@@ -382,12 +382,15 @@ public:
 	}
 	basic_win32_pipe(fast_io::native_interface_t, Args&& ...args)
 	{
-		if(!win32::CreatePipe(static_cast<void**>(static_cast<void*>(pipes.data())),static_cast<void**>(static_cast<void*>(pipes.data()+1)),std::forward<Args>(args)...))
+		std::array<void*,2> a2{pipes.front().native_handle(),pipes.back().native_handle()};
+		if(!win32::CreatePipe(a2.data(),a2.data()+1,std::forward<Args>(args)...))
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
 			fast_terminate();
 #endif
+		pipes.front().native_handle()=a2.front();
+		pipes.back().native_handle()=a2.back();
 	}
 	basic_win32_pipe():basic_win32_pipe(fast_io::native_interface,nullptr,0)
 	{

@@ -15,11 +15,63 @@ namespace fast_io
 	
 namespace details
 {
+#if defined(__WINNT__) || defined(_MSC_VER)
+template<bool wide_char=false>
+inline constexpr int calculate_posix_open_mode_for_win32_handle(open::mode const &om)
+{
+	using namespace open;
+	std::size_t value(om.value);
+	int mode{};
+	if(value&binary.value)
+		value &= ~binary.value;
+	else
+	{
+		if constexpr(wide_char)
+			mode |= _O_WTEXT;
+		else
+			mode |= _O_WTEXT;
+	}
+	switch(value)
+	{
+//Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
+//Read from start;	Failure to open;	"r";	Open a file for reading
+	case in:
+		return mode | O_RDONLY;
+//Destroy contents;	Create new;	"w";	Create a file for writing
+	case out:
+//Read from start;	Error;	"r+";		Open a file for read/write
+	case out|in:
+		return mode;
+//Append to file;	Create new;	"a";	Append to a file
+	case app:
+	case out|app:
+		return mode | O_APPEND;
+//Write to end;	Create new;	"a+";	Open a file for read/write
+	case out|in|app:
+	case in|app:
+		return mode | O_APPEND;
+//Destroy contents;	Error;	"wx";	Create a file for writing
+	default:
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown posix file openmode");
+#else
+		fast_terminate();
+#endif
+	}
+}
+template<std::size_t om>
+struct posix_file_openmode_for_win32_handle
+{
+	static int constexpr mode = calculate_posix_open_mode_for_win32_handle(om);
+};
+#endif
+
+
 inline constexpr int calculate_posix_open_mode(open::mode const &om)
 {
 	using namespace open;
 	std::size_t value(remove_ate_overlapped(om).value);
-	int mode(0);
+	int mode{};
 	if(value&binary.value)
 	{
 #ifdef O_BINARY
@@ -307,6 +359,33 @@ public:
 			seek(*this,0,seekdir::end);
 	}
 	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,fast_io::open::c_style(mode),pm){}
+#if defined(__WINNT__) || defined(_MSC_VER)
+//windows specific. open posix file from win32 io handle
+	template<std::size_t om>
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open::interface_t<om>):
+		basic_posix_io_handle<char_type>(::_open_osfhandle(bit_cast<std::intptr_t>(hd.native_handle()),details::posix_file_openmode_for_win32_handle<om>::mode))
+	{
+		if(native_handle()==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::generic_category());
+#else
+			fast_terminate();
+#endif
+		hd.reset();
+	}
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open::mode const& m):
+		basic_posix_io_handle<char_type>(::_open_osfhandle(bit_cast<std::intptr_t>(hd.native_handle()),details::calculate_posix_open_mode_for_win32_handle(m)))
+	{
+		if(native_handle()==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::generic_category());
+#else
+			fast_terminate();
+#endif
+		hd.reset();
+	}
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,std::string_view mode):basic_posix_file(std::move(hd),fast_io::open::c_style(mode)){}
+#endif
 	~basic_posix_file()
 	{
 		this->close_impl();
@@ -363,16 +442,19 @@ private:
 public:
 	basic_posix_pipe()
 	{
+		std::array<int,2> a2{pipes.front().native_handle(),pipes.back().native_handle()};
 #if defined(__WINNT__) || defined(_MSC_VER)
-		if(_pipe(static_cast<int*>(static_cast<void*>(pipes.data())),1048576,_O_BINARY)==-1)
+		if(_pipe(a2.data(),1048576,_O_BINARY)==-1)
 #else
-		if(::pipe(static_cast<int*>(static_cast<void*>(pipes.data())))==-1)
+		if(::pipe(a2.data())==-1)
 #endif
 #ifdef __cpp_exceptions
 			throw std::system_error(errno,std::generic_category());
 #else
 			fast_terminate();
 #endif
+		pipes.front().native_handle()=a2.front();
+		pipes.back().native_handle()=a2.back();
 	}
 	template<std::size_t om>
 	basic_posix_pipe(open::interface_t<om>):basic_posix_pipe()

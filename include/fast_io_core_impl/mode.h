@@ -314,17 +314,27 @@ template<std::size_t om>
 struct interface_t
 {
 inline static fast_io::open::mode constexpr mode = {om};
-explicit interface_t()=default;
+explicit constexpr interface_t()=default;
+};
+
+template<std::size_t om>
+struct c_style_interface_t
+{
+inline static constexpr auto mode = c_style(om);
+explicit constexpr c_style_interface_t()=default;
 };
 
 template<std::size_t om>
 inline interface_t<om> constexpr interface{};
 
+template<std::size_t om>
+inline c_style_interface_t<om> constexpr c_style_interface{};
+
 }
 
 struct native_interface_t
 {
-	explicit native_interface_t() = default;
+	explicit constexpr native_interface_t() = default;
 };
 inline native_interface_t constexpr native_interface;
 
