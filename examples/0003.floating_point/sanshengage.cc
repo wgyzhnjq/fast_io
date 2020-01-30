@@ -15,6 +15,8 @@ int main()
 	println(u8"团子:",f(300));
 	println(u8"凤九:",f(30000));
 	println(u8"夜华:",f(50000));
+	println(u8"墨渊死时白浅:",f(70000));
+	println(u8"白浅被退婚:",f(90000));
 	println(u8"白浅:",f(142738));
 	println(u8"墨渊，少绾:",f(360000));
 	println(u8"东华:",f(365000));
