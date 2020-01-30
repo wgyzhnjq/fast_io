@@ -26,13 +26,13 @@ try
 		vec.emplace_back(dis(eng));
 	{
 	fast_io::timer t("cstyle file");
-	fast_io::c_style_file cs("csfdb1.txt","wb");
+	fast_io::c_file cs("csfdb1.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}
 	{
 	fast_io::timer t("cstyle file unlocked");
-	fast_io::c_style_file_unlocked cs("csfdb2.txt","wb");
+	fast_io::c_file_unlocked cs("csfdb2.txt","wb");
 	for(std::size_t i(0);i!=N;++i)
 		println(cs,vec[i]);
 	}

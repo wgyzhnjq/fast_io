@@ -177,7 +177,11 @@ inline auto constexpr u8c_style(mode const& m)
 		return u8"a+xb"sv;
 	break;
 	default:
-		static_assert(true, u8"unknown open mode");
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown open mode");
+#else
+		fast_terminate();
+#endif
 	}
 }
 inline auto constexpr c_style(mode const& m)
@@ -265,7 +269,11 @@ inline auto constexpr c_style(mode const& m)
 		return "a+xb"sv;
 	break;
 	default:
-		static_assert(true, u8"unknown open mode");
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown open mode");
+#else
+		fast_terminate();
+#endif
 	}
 }
 
@@ -304,7 +312,11 @@ inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
 			case 0x2b:
 			break;
 			default:
-				static_assert(true,u8"unknown C-style open mode");
+#ifdef __cpp_exceptions
+				throw std::runtime_error("unknown C-style open mode");
+#else
+				fast_terminate();
+#endif
 		}
 	return v;
 }
@@ -314,17 +326,27 @@ template<std::size_t om>
 struct interface_t
 {
 inline static fast_io::open::mode constexpr mode = {om};
-explicit interface_t()=default;
+explicit constexpr interface_t()=default;
+};
+
+template<std::size_t om>
+struct c_style_interface_t
+{
+inline static constexpr auto mode = c_style(om);
+explicit constexpr c_style_interface_t()=default;
 };
 
 template<std::size_t om>
 inline interface_t<om> constexpr interface{};
 
+template<std::size_t om>
+inline c_style_interface_t<om> constexpr c_style_interface{};
+
 }
 
 struct native_interface_t
 {
-	explicit native_interface_t() = default;
+	explicit constexpr native_interface_t() = default;
 };
 inline native_interface_t constexpr native_interface;
 

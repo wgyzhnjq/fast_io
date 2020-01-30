@@ -50,7 +50,7 @@ template<std::unsigned_integral U>
 inline constexpr U big_endian(U u)
 {
 	if constexpr(std::endian::little==std::endian::native)
-		return bit_cast<U>(byte_swap(u));
+		return byte_swap(u);
 	else
 		return u;
 }
