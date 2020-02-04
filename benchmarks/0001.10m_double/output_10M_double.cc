@@ -31,12 +31,6 @@ try
 		fprintf(fp,"%g\n",vec[i]);
 	}
 	{
-	fast_io::timer t("fprintf checked");
-	fast_io::c_file cs("csfdb_checked.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		fprintf(cs,"%g\n",vec[i]);
-	}
-	{
 	fast_io::timer t("ofstream");
 	std::ofstream fout("ofs.txt");
 	for(std::size_t i(0);i!=N;++i)

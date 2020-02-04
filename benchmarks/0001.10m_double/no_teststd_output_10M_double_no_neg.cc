@@ -31,12 +31,6 @@ try
 		println(cs,vec[i]);
 	}
 	{
-	fast_io::timer t("cstyle file unlocked");
-	fast_io::c_file_unlocked cs("csfdb2.txt","wb");
-	for(std::size_t i(0);i!=N;++i)
-		println(cs,vec[i]);
-	}
-	{
 	fast_io::timer t("obuf_file");
 	fast_io::obuf_file obuf_file("obuf_filedb.txt");
 	for(std::size_t i(0);i!=N;++i)
