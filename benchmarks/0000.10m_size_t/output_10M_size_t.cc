@@ -11,6 +11,7 @@
 #include<charconv>
 #ifdef FAST_IO_TEST_FMT
 #include<fmt/format.h>
+#include<fmt/ostream.h>
 #endif
 
 int main()
@@ -151,16 +152,16 @@ try
 	}
 #ifdef FAST_IO_TEST_FMT
 	{
-		fast_io::timer t("fmt");
-		std::ofstream fout("fmt.txt",std::ofstream::binary);
-		for(std::size_t i(0);i!=N;++i)
-			fout<<fmt::format("{}",i)<<'\n';
-	}
-	{
 		fast_io::timer t("fmt obuf_file");
 		fast_io::obuf_file fout("fmt_ob.txt");
 		for(std::size_t i(0);i!=N;++i)
 			println(fout,fmt::format("{}",i));
+	}
+	{
+		fast_io::timer t("fmt2");
+		std::ofstream fout("fmt2.txt",std::ofstream::binary);
+		for(std::size_t i(0);i!=N;++i)
+			fmt::print(fout,"{}\n",i);
 	}
 #endif
 }
