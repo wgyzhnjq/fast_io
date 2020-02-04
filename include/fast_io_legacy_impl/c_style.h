@@ -466,44 +466,6 @@ public:
 	}
 };
 
-template<typename... Args>
-requires requires(std::FILE* fp,Args&& ...args)
-{
-	std::fprintf(fp,std::forward<Args>(args)...);
-}
-inline auto fprintf(c_io_handle& h,Args&& ...args)
-{
-	auto v(std::fprintf(h.native_handle(),std::forward<Args>(args)...));
-// forgetting checking printf/fprintf return value is a common mistake and a huge source of security vulnerability
-	if(v<0)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::system_category());
-#else
-		fast_terminate();
-#endif
-	return v;
-}
-
-
-template<typename... Args>
-requires requires(std::FILE* fp,Args&& ...args)
-{
-	std::fscanf(fp,std::forward<Args>(args)...);
-}
-inline auto fscanf(c_io_handle& h,Args&& ...args)
-{
-	auto v(std::fscanf(h.native_handle(),std::forward<Args>(args)...));
-// forgetting checking scanf/fscanf return value is a common mistake and a huge source of security vulnerability
-	if(v<0)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::system_category());
-#else
-		fast_terminate();
-#endif
-	return v;
-}
-
-
 using c_file = basic_c_file<c_io_handle>;
 using c_file_unlocked = basic_c_file<c_io_handle_unlocked>;
 
