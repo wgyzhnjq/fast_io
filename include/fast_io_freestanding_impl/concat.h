@@ -7,25 +7,28 @@ namespace fast_io
 template<typename T=std::string,typename... Args>
 inline constexpr T concat(Args&& ...args)
 {
-	basic_ostring<T> t;
+	T v;
+	basic_ostring_ref<T> t(v);
 	print(t,std::forward<Args>(args)...);
-	return std::move(t.str());
+	return v;
 }
 
 template<typename T=std::string,typename... Args>
 inline constexpr T concatln(Args&& ...args)
 {
-	basic_ostring<T> t;
+	T v;
+	basic_ostring_ref<T> t(v);
 	println(t,std::forward<Args>(args)...);
-	return std::move(t.str());
+	return v;
 }
 
 template<typename T=std::string,typename... Args>
 inline constexpr T format(std::string_view format,Args&& ...args)
 {
-	basic_ostring<T> t;
+	T v;
+	basic_ostring_ref<T> t(v);
 	fprint(t,format,std::forward<Args>(args)...);
-	return std::move(t.str());
+	return v;
 }
 
 template<typename T,typename... Args>
@@ -40,10 +43,9 @@ inline constexpr void in_place_to(T& t,Args&& ...args)
 template<typename... Args>
 inline constexpr void in_place_to(std::string& t,Args&& ...args)
 {
-	basic_ostring<std::string> os(std::move(t));
+	basic_ostring_ref<std::string> os(t);
 	os.clear();
 	print(os,std::forward<Args>(args)...);
-	t=std::move(os.str());
 }
 
 template<typename T,typename... Args>

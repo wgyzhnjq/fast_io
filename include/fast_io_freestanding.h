@@ -25,4 +25,7 @@ namespace fast_io
 {
 using ostring = basic_ostring<std::string>;
 using u8ostring = basic_ostring<std::u8string>;
+
+using ostring_ref = basic_ostring_ref<std::string>;
+using u8ostring_ref = basic_ostring_ref<std::u8string>;
 }
