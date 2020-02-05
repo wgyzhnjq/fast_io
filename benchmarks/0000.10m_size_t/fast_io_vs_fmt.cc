@@ -25,7 +25,7 @@ int main()
 	{
 	fast_io::timer t("fmt::format");
 	for(std::size_t i{};i!=N;++i)
-		fmt_value+=fmt::format("{}",i).size();
+		fmt_value+=fmt::format_int(i).str().size();
 	}
 	println("fast_io::ostring value:",fast_io_ostr_value,"\nfast_io::concat value:",fast_io_value,"\nfmt::format value:",fmt_value);
 }

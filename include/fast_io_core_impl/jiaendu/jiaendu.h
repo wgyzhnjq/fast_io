@@ -331,7 +331,7 @@ inline void output(outp& out,T t)
 	if constexpr(buffer_output_stream<outp>)
 	{
 		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(reserved)>>)
 		{
 			if(reserved)[[likely]]
 			{
@@ -353,6 +353,28 @@ inline void output(outp& out,T t)
 					orelease(out,reserved_size-p);
 				return;
 			}
+/*			std::size_t const ns(chars_len<10>(t));
+			reserved = oreserve(out,ns);
+			if(reserved)[[likely]]
+			{
+				auto start(reserved-ns);
+				if constexpr(sign)
+				{
+					*start = u8'-';
+					++start;
+				}
+				auto p(output_unsigned(t,start));
+				if constexpr(ln)
+				{
+					start[p]=u8'\n';
+					++p;
+				}
+				if constexpr(sign)
+					orelease(out,(ns-1)-p);
+				else
+					orelease(out,ns-p);
+				return;
+			}*/
 		}
 		else
 		{
