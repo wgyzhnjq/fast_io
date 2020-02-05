@@ -9,7 +9,7 @@ int main()
 	vec.reserve(N);
 	std::random_device device;
 	std::mt19937_64 eng(device());
-	std::uniform_int_distribution<std::size_t> dis(0,std::numeric_limits<std::size_t>::max());
+	std::uniform_int_distribution<std::uint32_t> dis(0,std::numeric_limits<std::uint32_t>::max());
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
 	std::size_t fast_io_ostr_value{};

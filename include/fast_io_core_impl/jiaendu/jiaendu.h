@@ -324,14 +324,28 @@ inline std::size_t output_unsigned_point(U value,Iter str)
 		return output_unsigned(value,str);
 }
 
+template<std::unsigned_integral T>
+requires(sizeof(T)<=8)
+inline constexpr std::size_t cal_max_size()
+{
+	if constexpr(8==sizeof(T))
+		return 20;
+	else if constexpr(4==sizeof(T))
+		return 10;
+	else if constexpr(2==sizeof(T))
+		return 5;
+	else if constexpr(1==sizeof(T))
+		return 3;
+}
+
 template<bool ln=false,bool sign=false,output_stream outp,std::unsigned_integral T>
 inline void output(outp& out,T t)
 {
-	constexpr std::size_t reserved_size(32);
+	constexpr std::size_t reserved_size(cal_max_size<T>()+static_cast<std::size_t>(ln)+static_cast<std::size_t>(sign));
 	if constexpr(buffer_output_stream<outp>)
 	{
 		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(reserved)>>)
+		if constexpr(std::is_pointer_v<decltype(reserved)>)
 		{
 			if(reserved)[[likely]]
 			{
@@ -353,28 +367,6 @@ inline void output(outp& out,T t)
 					orelease(out,reserved_size-p);
 				return;
 			}
-/*			std::size_t const ns(chars_len<10>(t));
-			reserved = oreserve(out,ns);
-			if(reserved)[[likely]]
-			{
-				auto start(reserved-ns);
-				if constexpr(sign)
-				{
-					*start = u8'-';
-					++start;
-				}
-				auto p(output_unsigned(t,start));
-				if constexpr(ln)
-				{
-					start[p]=u8'\n';
-					++p;
-				}
-				if constexpr(sign)
-					orelease(out,(ns-1)-p);
-				else
-					orelease(out,ns-p);
-				return;
-			}*/
 		}
 		else
 		{
