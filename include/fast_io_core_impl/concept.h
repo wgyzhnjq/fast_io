@@ -83,7 +83,7 @@ concept zero_copy_output_stream_impl = requires(T& out)
 
 
 template<typename T>
-concept stream = std::movable<T>&&(details::input_stream_impl<T>||details::output_stream_impl<T>);
+concept stream = details::input_stream_impl<T>||details::output_stream_impl<T>;
 
 template<typename T>
 concept input_stream = stream<T>&&details::input_stream_impl<T>;
