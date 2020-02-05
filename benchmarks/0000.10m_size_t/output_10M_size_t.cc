@@ -153,16 +153,20 @@ try
 #ifdef FAST_IO_TEST_FMT
 	{
 		fast_io::timer t("fmt obuf_file");
-		fast_io::obuf_file fout("fmt_ob.txt");
+		fast_io::obuf_file ob("fmt_ob.txt");
 		for(std::size_t i(0);i!=N;++i)
-			println(fout,fmt::format("{}",i));
+		{
+			auto f=fmt::format_int(i);
+			write(ob,f.data(),f.data()+f.size());
+			put(ob,'\n');
+		}
 	}
-	{
+/*	{
 		fast_io::timer t("fmt2");
 		std::ofstream fout("fmt2.txt",std::ofstream::binary);
 		for(std::size_t i(0);i!=N;++i)
 			fmt::print(fout,"{}\n",i);
-	}
+	}*/
 #endif
 }
 #ifdef __cpp_exceptions
