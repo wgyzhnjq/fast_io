@@ -17,7 +17,7 @@ int main()
 	}
 	std::size_t fast_io_value{};
 	{
-	fast_io::timer t("fast_io::to");
+	fast_io::timer t("fast_io::concat");
 	for(std::size_t i{};i!=N;++i)
 		fast_io_value+=fast_io::concat(i).size();
 	}
@@ -27,5 +27,5 @@ int main()
 	for(std::size_t i{};i!=N;++i)
 		fmt_value+=fmt::format("{}",i).size();
 	}
-	println("fast_io::ostring value:",fast_io_ostr_value,"\nfast_io::to value:",fast_io_value,"\nfmt::format value:",fmt_value);
+	println("fast_io::ostring value:",fast_io_ostr_value,"\nfast_io::concat value:",fast_io_value,"\nfmt::format value:",fmt_value);
 }
