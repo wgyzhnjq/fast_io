@@ -40,5 +40,5 @@ int main()
 	for(std::size_t i{};i!=N;++i)
 		fmt_value+=fmt::format_int(i).str().size();
 	}
-	println("fast_io::ospan value:",fast_io_ospan_value,"fast_io::ostring value:",fast_io_ostr_value,"\nfast_io::concat value:",fast_io_value,"\nfmt::format value:",fmt_value);
+	println("fast_io::ospan value:",fast_io_ospan_value,"\nfast_io::ostring value:",fast_io_ostr_value,"\nfast_io::concat value:",fast_io_value,"\nfmt::format value:",fmt_value);
 }
