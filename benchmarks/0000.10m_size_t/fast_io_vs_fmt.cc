@@ -12,7 +12,7 @@ int main()
 	{
 		print(ostr,i);
 		ostr.clear();
-		fast_io_value+=ostr.str().size();
+		fast_io_ostr_value+=ostr.str().size();
 	}
 	}
 	std::size_t fast_io_value{};
