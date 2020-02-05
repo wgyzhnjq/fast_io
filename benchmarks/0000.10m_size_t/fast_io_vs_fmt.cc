@@ -11,8 +11,8 @@ int main()
 	for(std::size_t i{};i!=N;++i)
 	{
 		print(ostr,i);
-		ostr.clear();
 		fast_io_ostr_value+=ostr.str().size();
+		ostr.clear();
 	}
 	}
 	std::size_t fast_io_value{};
