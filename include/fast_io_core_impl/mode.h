@@ -29,8 +29,9 @@ inline static mode constexpr excl{1<<4};//C++ iostream currently still does not 
 inline static mode constexpr in{1<<5};
 inline static mode constexpr out{1<<6};
 inline static mode constexpr overlapped{1<<7};
-inline static mode constexpr sync{1<<8};
-inline static mode constexpr trunc{1<<9};
+inline static mode constexpr reparse_point{1<<8};
+inline static mode constexpr sync{1<<9};
+inline static mode constexpr trunc{1<<10};
 
 inline constexpr mode operator|(mode const& a,mode const& b)
 {

@@ -10,7 +10,7 @@ namespace details
 struct win32_open_mode
 {
 std::uint32_t dwDesiredAccess{},dwShareMode=1|2;//FILE_SHARE_READ|FILE_SHARE_WRITE
-fast_io::win32::security_attributes *lpSecurityAttributes{nullptr};
+fast_io::win32::security_attributes *lpSecurityAttributes{};
 std::uint32_t dwCreationDisposition{};	//depends on EXCL
 std::uint32_t dwFlagsAndAttributes=128|0x10000000;//FILE_ATTRIBUTE_NORMAL|FILE_FLAG_RANDOM_ACCESS
 };
@@ -54,6 +54,8 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open::mode const &om)
 		mode.dwFlagsAndAttributes|=0x80000000;//FILE_FLAG_WRITE_THROUGH
 	if(value&open::overlapped.value)
 		mode.dwFlagsAndAttributes|=0x40000000;//FILE_FLAG_OVERLAPPED
+	if(value&open::reparse_point.value)
+		mode.dwFlagsAndAttributes|=0x00200000;	//FILE_FLAG_OPEN_REPARSE_POINT
 	return mode;
 }
 

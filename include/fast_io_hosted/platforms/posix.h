@@ -71,14 +71,24 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 {
 	using namespace open;
 	std::size_t value(remove_ate_overlapped(om).value);
-	int mode{};
+	int mode
+	{
+#ifdef O_NOFOLLOW
+		O_NOFOLLOW
+#endif
+	};
+	if(value&reparse_point.value)
+	{
+		mode = {};
+		value &= ~reparse_point.value;
+	}
 	if(value&binary.value)
 	{
 #ifdef O_BINARY
 		mode |= O_BINARY;
 #endif
 		value &= ~binary.value;
-	}
+	}	
 	if(value&excl.value)
 	{
 		mode |= O_CREAT | O_EXCL;
@@ -313,19 +323,19 @@ public:
 	{
 		{
 #if defined(__WINNT__) || defined(_MSC_VER)
-			::_open
+			::_open(
 #else
-			::open
+			::open(AT_FDCWD,
 #endif
-(std::forward<Args>(args)...)}->std::same_as<int>;
+		std::forward<Args>(args)...)}->std::same_as<int>;
 	}
 	basic_posix_file(native_interface_t,Args&& ...args):basic_posix_io_handle<ch_type>(
 #if defined(__WINNT__) || defined(_MSC_VER)
-			::_open
+			::_open(
 #else
-			::open
+			::openat(AT_FDCWD,
 #endif
-(std::forward<Args>(args)...))
+	std::forward<Args>(args)...))
 	{
 		if(native_handle()==-1)
 #ifdef __cpp_exceptions
