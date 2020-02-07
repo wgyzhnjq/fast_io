@@ -325,7 +325,7 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 			::_open(
 #else
-			::open(AT_FDCWD,
+			::openat(AT_FDCWD,
 #endif
 		std::forward<Args>(args)...)}->std::same_as<int>;
 	}
