@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 template<std::integral I>
-[[noreturn]] inline void fast_exit(I ret)
+inline void fast_exit(I ret)
 {
 #if defined(__linux__) && defined(__x86_64__)
 	system_call_no_return<60>(ret);
@@ -13,7 +13,7 @@ template<std::integral I>
 #endif
 }
 
-[[noreturn]] inline void fast_terminate()
+inline void fast_terminate()
 {
 	fast_exit(-1);
 }
