@@ -87,9 +87,10 @@ requires (1<sizeof(return_value_type))
 inline auto system_call(auto p1, auto p2, auto p3, auto p4)
 {
 	return_value_type ret;
-	auto r10 __asm__("r10") = p4;
+	std::uint64_t r10 __asm__("r10") = (std::uint64_t)p4;
 	__asm__ __volatile__
 	(
+	"mov %5, %%r10;"
 	"syscall"
 	: "=a" (ret)
 	//EDI      RSI       RDX
