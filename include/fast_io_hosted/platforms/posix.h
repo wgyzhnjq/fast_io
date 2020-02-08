@@ -157,7 +157,11 @@ protected:
 	void close_impl() noexcept
 	{
 		if(fd!=-1)
+#if defined(__linux__)&&defined(__x86_64__)
+			system_call<3,int>(fd);
+#else
 			close(fd);
+#endif
 	}
 public:
 	using char_type = ch_type;
@@ -236,12 +240,7 @@ inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 		::read
 #endif
 	(h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
-	if(read_bytes==-1)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
-#else
-		fast_terminate();
-#endif
+	system_call_throw_error(read_bytes);
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
@@ -254,13 +253,7 @@ inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 		::write
 #endif
 (h.native_handle(),std::to_address(begin),(end-begin)*sizeof(*begin)));
-
-	if(write_bytes==-1)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
-#else
-		fast_terminate();
-#endif
+	system_call_throw_error(write_bytes);
 	return begin+(write_bytes/sizeof(*begin));
 }
 
@@ -333,16 +326,15 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 			::_open(
 #else
-			::openat(AT_FDCWD,
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<257,int>(AT_FDCWD,
+#else
+		::openat(AT_FDCWD,
+#endif
 #endif
 	std::forward<Args>(args)...))
 	{
-		if(native_handle()==-1)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
-#else
-			fast_terminate();
-#endif
+		system_call_throw_error(native_handle());
 	}
 	template<std::size_t om,perms pm>
 	basic_posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
