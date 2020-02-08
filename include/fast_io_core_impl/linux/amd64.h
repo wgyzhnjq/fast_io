@@ -37,7 +37,7 @@ inline auto system_call(auto p1)
 }
 
 template<std::size_t syscall_number>
-[[noreturn]] void system_call_no_return(auto p1)
+inline void system_call_no_return(auto p1)
 {
 	std::size_t ret;
 	__asm__ __volatile__
