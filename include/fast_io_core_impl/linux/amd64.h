@@ -39,12 +39,13 @@ inline auto system_call(auto p1)
 template<std::size_t syscall_number>
 [[noreturn]] inline void system_call_no_return(auto p1)
 {
+	std::size_t ret;
 	__asm__ __volatile__
 	(
 	"syscall"
 	: "=a" (ret)
 	//EDI      RSI       RDX
-	: "0"(syscall_number)
+	: "0"(syscall_number), "D"(p1)
 	: "rcx", "r11", "memory", "cc"
 	);
 }
