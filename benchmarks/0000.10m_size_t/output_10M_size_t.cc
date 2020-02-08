@@ -112,6 +112,12 @@ try
 		println(u8obuf_file_old,fast_io::dec(i));
 	}
 	{
+	fast_io::timer t("u8obuf_file dynamic");
+	fast_io::u8dynamic_buf dyn(std::in_place_type<fast_io::u8obuf_file>,"u8dynamicbuf.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(dyn,i);
+	}
+	{
 	fast_io::timer t("c_file");
 	fast_io::c_file cs_file("c_style.txt","wb");
 	
