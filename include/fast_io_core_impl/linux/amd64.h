@@ -87,7 +87,7 @@ requires (1<sizeof(return_value_type))
 inline auto system_call(auto p1, auto p2, auto p3, auto p4)
 {
 	return_value_type ret;
-	auto r10 __asm__("r10") = p4;
+	register auto r10 __asm__("r10") = p4;
 	__asm__ __volatile__
 	(
 	"syscall"
@@ -104,8 +104,8 @@ requires (1<sizeof(return_value_type))
 inline auto system_call(auto p1, auto p2, auto p3, auto p4,auto p5)
 {
 	return_value_type ret;
-	auto r10 __asm__("r10") = p4;
-	auto r8 __asm__("r8") = p5;
+	register auto r10 __asm__("r10") = p4;
+	register auto r8 __asm__("r8") = p5;
 	__asm__ __volatile__
 	(
 	"syscall"
@@ -121,9 +121,9 @@ requires (1<sizeof(return_value_type))
 inline auto system_call(auto p1, auto p2, auto p3, auto p4,auto p5,auto p6)
 {
 	return_value_type ret;
-	auto r10 __asm__("r10") = p4;
-	auto r8 __asm__("r8") = p5;
-	auto r9 __asm__("r9") = p6;
+	register auto r10 __asm__("r10") = p4;
+	register auto r8 __asm__("r8") = p5;
+	register auto r9 __asm__("r9") = p6;
 	__asm__ __volatile__
 	(
 	"syscall"
