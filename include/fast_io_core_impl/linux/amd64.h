@@ -129,7 +129,7 @@ inline auto system_call(auto p1, auto p2, auto p3, auto p4,auto p5,auto p6)
 	"syscall"
 	: "=a" (ret)
 	//EDI      RSI       RDX
-	: "0"(syscall_number), "D"(p1), "S"(p2), "d"(p3), "r"((std::uint64_t)r10),"r"((std::uint64_t)r8),"r"((std::uint64_t)r9)
+	: "0"(syscall_number), "D"(p1), "S"(p2), "d"(p3), "r"((std::uint64_t)p4),"r"((std::uint64_t)p5),"r"((std::uint64_t)p6)
 	: "rcx", "r11", "r10", "r8", "r9", "memory", "cc"
 	);
 	return ret;
