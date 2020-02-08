@@ -326,15 +326,21 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 			::_open(
 #else
-#if defined(__linux__)&&defined(__x86_64__)
+/*#if defined(__linux__)&&defined(__x86_64__)
 		system_call<257,int>(AT_FDCWD,
-#else
+#else*/
 		::openat(AT_FDCWD,
-#endif
+//#endif
 #endif
 	std::forward<Args>(args)...))
 	{
-		system_call_throw_error(native_handle());
+	if(native_handle()<0)
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
+//		system_call_throw_error(native_handle());
 	}
 	template<std::size_t om,perms pm>
 	basic_posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
