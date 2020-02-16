@@ -33,6 +33,7 @@ inline bool is_parent(posix_process const& p)
 {
 	return p.id();
 }
+
 namespace details
 {
 template<typename... Args>
@@ -47,6 +48,7 @@ inline void execve_impl(Args&& ...args)
 	(std::forward<Args>(args)...));
 }
 }
+
 inline void posix_exec(std::string path)
 {
 	std::array<char*,2> arr{path.data()};
