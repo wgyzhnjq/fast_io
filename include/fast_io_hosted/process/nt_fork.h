@@ -47,13 +47,23 @@ inline void* nt_fork()
 #else
 		fast_terminate();
 #endif
-	auto RtlCloneUserProcess(bit_cast<std::uint32_t(*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
+	auto RtlCloneUserProcess(bit_cast<std::uint32_t __stdcall (*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
+	auto resume_proc_addr(GetProcAddress(mod,"NtResumeProcess"));
+	if(resume_proc_addr==nullptr)
+#ifdef __cpp_exceptions
+		throw win32_error();
+#else
+		fast_terminate();
+#endif
+	auto NtResumeProcess(bit_cast<std::uint32_t __stdcall (*)(void*)>(resume_proc_addr));
 	rtl_user_process_information process_info{};
-	auto v(RtlCloneUserProcess(/*0x00000001RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED
+
+	auto v(RtlCloneUserProcess(0x00000001|/*0x00000001RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED
 	|*/0x00000002/*RTL_CLONE_PROCESS_FLAGS_INHERIT_HANDLES*/,nullptr,nullptr,nullptr,std::addressof(process_info)));
 	if(v==0/*RTL_CLONE_PARENT*/)
 	{
-	/*
+		if(int w=NtResumeProcess(process_info.process))
+			throw nt_error(w);
 		if(win32::ResumeThread(process_info.thread)==static_cast<std::uint32_t>(-1))
 		{
 #ifdef __cpp_exceptions
@@ -63,14 +73,14 @@ inline void* nt_fork()
 #else
 			fast_terminate();
 #endif
-		}*/
+		}
 		win32::CloseHandle(process_info.thread);
 		return process_info.process;
 	}
 	else if(v==297/*RTL_CLONE_CHILD*/)
 	{
-//		AllocConsole();
-//			throw win32_error();
+		if(!AllocConsole())
+			throw win32_error();
 		return nullptr;
 	}
 #ifdef __cpp_exceptions

@@ -163,6 +163,11 @@ inline bool valid(basic_win32_io_handle<ch_type>& hd)
 	return hd.native_handle();
 }
 
+template<std::integral ch_type>
+inline auto redirect_handle(basic_win32_io_handle<ch_type>& hd)
+{
+	return hd.native_handle();
+}
 
 template<std::integral ch_type>
 inline void swap(basic_win32_io_handle<ch_type>& a,basic_win32_io_handle<ch_type>& b) noexcept

@@ -82,6 +82,17 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 		mode = {};
 		value &= ~reparse_point.value;
 	}
+#ifdef O_CLOEXEC
+	if(value&inherit.value)
+		value &= ~inherit.value;
+	else
+		mode |= O_CLOEXEC;
+#elif _O_NOINHERIT
+	if(value&inherit.value)
+		value &= ~reparse_point.value;
+	else
+		mode |= _O_NOINHERIT;
+#endif
 	if(value&binary.value)
 	{
 #ifdef O_BINARY

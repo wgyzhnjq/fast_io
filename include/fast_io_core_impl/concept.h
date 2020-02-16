@@ -79,11 +79,20 @@ concept zero_copy_output_stream_impl = requires(T& out)
 {
 	zero_copy_out_handle(out);
 };
+
+template<typename T>
+concept redirect_stream_impl = requires(T h)
+{
+	redirect_handle(h);
+};
 }
 
 
 template<typename T>
 concept stream = details::input_stream_impl<T>||details::output_stream_impl<T>;
+
+template<typename T>
+concept redirect_stream = stream<T>&&details::redirect_stream_impl<T>;
 
 template<typename T>
 concept input_stream = stream<T>&&details::input_stream_impl<T>;

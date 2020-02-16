@@ -3,130 +3,85 @@
 namespace fast_io
 {
 
+struct win32_io_observer
+{
+public:
+	void *handle=nullptr;
+	using native_handle_type = void*;
+	template<redirect_stream T>
+	win32_io_observer(T& hd):handle(redirect_handle(hd)){}
+	win32_io_observer()=default;
+};
+
+struct process_io
+{
+	win32_io_observer in,out,err;
+};
 class win32_process
 {
-	void* handle;
-	void close_impl()
-	{
-		if(handle&&handle!=(void*)(-1))
-			win32::CloseHandle(handle);
-	}
+	win32::process_information pinfo{};
 public:
-	using native_handle_t = void*;
-	win32_process():handle(win32::nt_fork()){}
+	using native_handle_type = win32::process_information;
+	win32_process(/*std::string_view path,*/
+		std::string cmdline,
+		process_io io)
+	{
+		win32::startupinfo sup{.hStdInput=io.in.handle,
+		.hStdOutput=io.out.handle,
+		.hStdError=io.err.handle};
+		
+		if(!win32::CreateProcessA(
+			nullptr,cmdline.data(),
+			nullptr,nullptr,true,
+			0x08000000|0x00000080,
+			nullptr,nullptr,std::addressof(sup),std::addressof(pinfo)))
+			throw win32_error();
+	}
 	void detach()
 	{
-		if(handle&&handle!=(void*)(-1))
-			if(!win32::CloseHandle(handle))
-				throw win32_error();
-		handle=(void*)(-1);
+		if(pinfo.hThread)
+		{
+			win32::CloseHandle(pinfo.hThread);
+			pinfo.hThread=nullptr;
+		}
+		if(pinfo.hProcess)
+		{
+			win32::CloseHandle(pinfo.hProcess);
+			pinfo.hProcess=nullptr;
+		}
+	}
+	inline auto& native_handle()
+	{
+		return pinfo;
+	}
+	inline auto const& native_handle() const
+	{
+		return pinfo;
 	}
 	void join()
 	{
-		if(!win32::WaitForSingleObject(handle,-1))
+		if(!win32::WaitForSingleObject(pinfo.hProcess,-1))
 			throw win32_error();
 	}
-	auto native_handle() const
+	win32_process(win32_process const&)=delete;
+	win32_process& operator=(win32_process const&)=delete;
+	win32_process(win32_process&& other) noexcept:pinfo(other.pinfo)
 	{
-		return handle;
-	}
-	win32_process(win32_process const&) = delete;
-	win32_process& operator=(win32_process const&) = delete;
-	win32_process(win32_process&& other) noexcept : handle(other.handle)
-	{
-		other.handle = (void*)(-1);
+		other.pinfo={};
 	}
 	win32_process& operator=(win32_process&& other) noexcept
 	{
-		if(other.handle!=handle)
+		if(std::addressof(other)!=this)
 		{
-			close_impl();
-			handle=other.handle;
-			other.handle = (void*)(-1);
+			detach();
+			pinfo=other.pinfo;
+			other.pinfo={};
 		}
 		return *this;
 	}
 	~win32_process()
 	{
-		close_impl();
+		detach();
 	}
 };
-
-inline bool is_parent(win32_process const& proc)
-{
-	return proc.native_handle()&&(proc.native_handle()!=(void*)(-1));
-}
-inline bool is_child(win32_process const& proc)
-{
-	return !proc.native_handle();
-}
-inline bool has_detached(win32_process const& proc)
-{
-	return proc.native_handle()==(void*)(-1);
-}
-
-class win32_jprocess
-{
-	void* handle;
-	void close_impl()
-	{
-		if(handle&&handle!=(void*)(-1))
-		{
-			win32::WaitForSingleObject(handle,-1);
-			win32::CloseHandle(handle);
-		}
-	}
-public:
-	using native_handle_t = void*;
-	win32_jprocess():handle(win32::nt_fork()){}
-	void detach()
-	{
-		if(handle&&handle!=(void*)(-1))
-			if(!win32::CloseHandle(handle))
-				throw win32_error();
-		handle=(void*)(-1);
-	}
-	void join()
-	{
-		if(!win32::WaitForSingleObject(handle,-1))
-			throw win32_error();
-	}
-	auto native_handle() const
-	{
-		return handle;
-	}
-	win32_jprocess(win32_jprocess const&) = delete;
-	win32_jprocess& operator=(win32_jprocess const&) = delete;
-	win32_jprocess(win32_jprocess&& other) noexcept : handle(other.handle)
-	{
-		other.handle = (void*)(-1);
-	}
-	win32_jprocess& operator=(win32_jprocess&& other) noexcept
-	{
-		if(other.handle!=handle)
-		{
-			close_impl();
-			handle=other.handle;
-			other.handle = (void*)(-1);
-		}
-		return *this;
-	}
-	~win32_jprocess()
-	{
-		close_impl();
-	}
-};
-
-inline bool is_parent(win32_jprocess const& proc)
-{
-	return proc.native_handle()&&(proc.native_handle()!=(void*)(-1));
-}
-inline bool is_child(win32_jprocess const& proc)
-{
-	return !proc.native_handle();
-}
-inline bool has_detached(win32_jprocess const& proc)
-{
-	return proc.native_handle()==(void*)(-1);
-}
 }

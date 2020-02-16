@@ -88,6 +88,41 @@ int __stdcall AllocConsole();
 std::uint32_t __stdcall WaitForSingleObject(void*,std::uint32_t);
 
 std::uint32_t __stdcall ResumeThread(void*);
+
+struct startupinfo
+{
+std::uint32_t cb;
+wchar_t* lpReserved;
+wchar_t* lpDesktop;
+wchar_t* lpTitle;
+std::uint32_t dwX;
+std::uint32_t dwY;
+std::uint32_t dwXSize;
+std::uint32_t dwYSize;
+std::uint32_t dwXCountChars;
+std::uint32_t dwYCountChars;
+std::uint32_t dwFillAttribute;
+std::uint32_t dwFlags;
+std::uint16_t wShowWindow;
+std::uint16_t cbReserved2;
+int* lpReserved2;
+void* hStdInput;
+void* hStdOutput;
+void* hStdError;
+};
+struct process_information
+{
+void* hProcess;
+void* hThread;
+std::uint32_t dwProcessId;
+std::uint32_t dwThreadId;
+};
+int __stdcall CreateProcessA(char const*,char const*,
+void*,void*,int,uint32_t,
+void* lpEnvironment,
+char const* lpCurrentDirectory,
+startupinfo* lpStartupInfo,
+process_information* lpProcessInformation);
 }
 
 }
