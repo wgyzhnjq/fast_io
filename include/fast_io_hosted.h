@@ -13,3 +13,4 @@ For hosted implementations the set of standard library headers required by the C
 #include"fast_io_hosted/omap.h"
 #include"fast_io_hosted/iomutex.h"
 #include"fast_io_hosted/chrono.h"
+#include"fast_io_hosted/process/native.h"
