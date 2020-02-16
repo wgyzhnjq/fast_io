@@ -304,6 +304,15 @@ inline auto zero_copy_out_handle(basic_posix_io_handle<ch_type>& h)
 	return h.native_handle();
 }
 #endif
+template<std::integral ch_type>
+inline auto redirect_handle(basic_posix_io_handle<ch_type>& h)
+{
+#if defined(__WINNT__) || defined(_MSC_VER)
+	return bit_cast<void*>(_get_osfhandle(h.native_handle()));
+#else
+	return h.native_handle();
+#endif
+}
 
 template<std::integral ch_type>
 inline void swap(basic_posix_io_handle<ch_type>& a,basic_posix_io_handle<ch_type>& b) noexcept

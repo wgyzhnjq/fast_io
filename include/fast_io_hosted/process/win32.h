@@ -26,14 +26,17 @@ public:
 		std::string cmdline,
 		process_io io)
 	{
-		win32::startupinfo sup{.hStdInput=io.in.handle,
+		win32::startupinfo sup{.cb=sizeof(win32::startupinfo),
+		.dwFlags=0x00000100,//|0x00000001,
+//		.wShowWindow=0x00000001,
+		.hStdInput=io.in.handle,
 		.hStdOutput=io.out.handle,
 		.hStdError=io.err.handle};
 		
 		if(!win32::CreateProcessA(
 			nullptr,cmdline.data(),
 			nullptr,nullptr,true,
-			0x08000000|0x00000080,
+			0x00000080,
 			nullptr,nullptr,std::addressof(sup),std::addressof(pinfo)))
 			throw win32_error();
 	}

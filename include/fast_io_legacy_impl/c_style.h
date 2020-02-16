@@ -37,6 +37,16 @@ public:
 #endif
 };
 
+template<std::integral ch_type>
+inline auto redirect_handle(basic_c_io_handle_unlocked<ch_type>& h)
+{
+#if defined(__WINNT__) || defined(_MSC_VER)
+	return bit_cast<void*>(_get_osfhandle(_fileno(h.native_handle())));
+#else
+	return fileno_unlocked(h.native_handle());
+#endif
+}
+
 using c_io_handle_unlocked = basic_c_io_handle_unlocked<char>;
 
 /*
@@ -465,7 +475,15 @@ public:
 		close_impl();
 	}
 };
-
+template<std::integral ch_type>
+inline auto redirect_handle(basic_c_io_handle<ch_type>& h)
+{
+#if defined(__WINNT__) || defined(_MSC_VER)
+	return bit_cast<void*>(_get_osfhandle(_fileno(h.native_handle())));
+#else
+	return fileno(h.native_handle());
+#endif
+}
 using c_file = basic_c_file<c_io_handle>;
 using c_file_unlocked = basic_c_file<c_io_handle_unlocked>;
 

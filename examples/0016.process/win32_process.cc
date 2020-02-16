@@ -1,16 +1,20 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
+#include"../../include/fast_io_legacy.h"
+#include<thread>
 
 int main()
 try
 {
-	fast_io::pipe pipe;
+//	fast_io::pipe pipe;
+//	print("create process before");
+//	fast_io::onative_file onf("b.txt");
 	fast_io::win32_process process("g++ --version",
-			{.out=pipe.out(),
+			{.out=fast_io::out,
 			.err=fast_io::err});
-	pipe.in().close();
+//	pipe.out().close();
+//	transmit(fast_io::out,pipe);
 	process.join();
-	transmit(fast_io::out,pipe);
 }
 catch(std::exception const& e)
 {
