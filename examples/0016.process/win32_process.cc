@@ -4,7 +4,6 @@
 int main()
 try
 {
-	static_assert(fast_io::redirect_stream<fast_io::win32_io_handle>);
 	fast_io::pipe pipe;
 	fast_io::win32_process process("g++ --version",
 			{.out=pipe.out(),
