@@ -166,30 +166,29 @@ protected:
 public:
 	using char_type = ch_type;
 	using native_handle_type = int;
-	native_handle_type& native_handle()
-	{
-		return fd;
-	}
-	constexpr basic_posix_io_handle() = default;
+
+	constexpr basic_posix_io_handle():fd(-1){}
 	constexpr basic_posix_io_handle(int fdd):fd(fdd){}
-	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(dup(dp.fd))
-	{
-		if(fd<0)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
+	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<32,int>
 #else
-			fast_terminate();
+		dup
 #endif
+(dp.fd))
+	{
+		system_call_throw_error(fd);
 	}
 	basic_posix_io_handle& operator=(basic_posix_io_handle const& dp)
 	{
-		auto newfd(dup2(dp.fd,fd));
-		if(newfd<0)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
+		auto newfd(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<33,int>
 #else
-			fast_terminate();
+		dup2
 #endif
+(dp.fd,fd));
+		system_call_throw_error(newfd);
 		fd=newfd;
 		return *this;
 	}

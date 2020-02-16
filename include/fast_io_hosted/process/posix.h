@@ -1,9 +1,12 @@
 #pragma once
 
-extern "C" char **environ;
+
 namespace fast_io
 {
-
+namespace details
+{
+extern "C" char **environ;
+}
 class posix_process
 {
 	pid_t pid;
@@ -19,11 +22,11 @@ public:
 	{
 		system_call_throw_error(pid);
 	}
-	inline auto id() const
+	inline auto native_handle() const
 	{
 		return pid;
 	}
-	void wait()
+	void join()
 	{
 		system_call_throw_error(
 	#if defined(__linux__)&&defined(__x86_64__)
@@ -37,14 +40,14 @@ public:
 
 inline bool is_child(posix_process const& p)
 {
-	return !p.id();
+	return !p.native_handle();
 }
 inline bool is_parent(posix_process const& p)
 {
-	return p.id();
+	return p.native_handle();
 }
 
-class posix_waiting_process
+class posix_jprocess
 {
 	pid_t pid;
 	void close_impl()
@@ -70,11 +73,11 @@ public:
 	{
 		system_call_throw_error(pid);
 	}
-	inline auto id() const
+	inline auto native_handle() const
 	{
 		return pid;
 	}
-	inline void wait()
+	inline void join()
 	{
 		system_call_throw_error(
 	#if defined(__linux__)&&defined(__x86_64__)
@@ -111,15 +114,15 @@ public:
 };
 inline bool is_child(posix_waiting_process const& p)
 {
-	return !p.id();
+	return !p.native_handle();
 }
 inline bool is_parent(posix_waiting_process const& p)
 {
-	return 0<p.id();
+	return 0<p.native_handle();
 }
 inline bool has_detached(posix_waiting_process const& p)
 {
-	return p.id()<0;
+	return p.native_handle()<0;
 }
 
 namespace details
@@ -140,7 +143,7 @@ inline void execve_impl(Args&& ...args)
 inline void posix_exec(std::string path)
 {
 	std::array<char*,2> arr{path.data()};
-	details::execve_impl(path.data(),arr.data(),environ);
+	details::execve_impl(path.data(),arr.data(),details::environ);
 }
 
 namespace details
@@ -169,7 +172,7 @@ inline void posix_exec_impl(std::ranges::contiguous_range auto& temp,
 		args.begin(),
 		args.end(),
 		temp.data()+1);
-	execve_impl(path.data(),temp.data(),environ);
+	execve_impl(path.data(),temp.data(),details::environ);
 }
 }
 
