@@ -11,7 +11,8 @@ try
 		fast_io::posix_exec("/usr/local/bin/gcc",{"-v"});
 	}
 	pipe.out().close();
-	transmit(fast_io::out,pipe);
+	fast_io::onative_file onv("pipe.txt");
+	transmit(onv,pipe);
 }
 catch(std::exception const& e)
 {
