@@ -11,7 +11,7 @@ try
 		pipe.in().close();
 		fast_io::out=pipe.out();
 		pipe.out().close();
-		fast_io::posix_exec("/usr/local/bin/gcc",{"--version"});
+		fast_io::posix_exec("/mnt/d/msys64/mingw64/bin/gcc",{"--version"});
 	}
 	pipe.out().close();
 	fast_io::onative_file onv("pipe.txt");

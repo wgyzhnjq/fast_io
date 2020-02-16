@@ -378,10 +378,10 @@ private:
 	native_handle_type pipes;
 public:
 	template<typename ...Args>
-	requires requires(Args&& ...args)
+/*	requires requires(Args&& ...args)
 	{
 		{win32::CreatePipe(static_cast<void**>(static_cast<void*>(pipes.data())),static_cast<void**>(static_cast<void*>(pipes.data()+1)),std::forward<Args>(args)...)}->std::same_as<int>;
-	}
+	}*/
 	basic_win32_pipe(fast_io::native_interface_t, Args&& ...args)
 	{
 		std::array<void*,2> a2{pipes.front().native_handle(),pipes.back().native_handle()};
