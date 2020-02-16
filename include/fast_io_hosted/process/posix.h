@@ -19,7 +19,7 @@ public:
 	{
 		system_call_throw_error(pid);
 	}
-	inline auto id()
+	inline auto id() const
 	{
 		return pid;
 	}
