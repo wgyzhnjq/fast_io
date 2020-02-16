@@ -11,11 +11,11 @@ public:
 	using native_handle_t = pid_t;
 	posix_process():pid(
 #if defined(__linux__)&&defined(__x86_64__)
-	system_call<57,pid_t>(
+	system_call<57,pid_t>
 #else
-	fork()
+	fork
 #endif
-)
+())
 	{
 		system_call_throw_error(pid);
 	}
