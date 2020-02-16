@@ -59,15 +59,17 @@ namespace details
 {
 
 template<std::contiguous_iterator Iter>
-inline void deal_with_paramters(Iter begin,Iter end,std::ranges::contiguous_range auto& paramaters)
+inline void deal_with_paramters(
+	Iter begin,
+	Iter end,
+	std::contiguous_iterator auto output)
 {
-	auto ptr(temp.data());
 	for(;begin!=end;++begin)
 	{
-		*ptr=begin->data();
-		++ptr;
+		*output=begin->data();
+		++output;
 	}
-	*ptr={};
+	*output={};
 }
 
 inline void posix_exec_impl(std::ranges::contiguous_range auto& temp,
@@ -75,7 +77,10 @@ inline void posix_exec_impl(std::ranges::contiguous_range auto& temp,
 	std::ranges::contiguous_range auto& args)
 {
 	temp.front()=path.data();
-	deal_with_paramters(temp.begin()+1,temp.end(),args);
+	deal_with_paramters(
+		args.begin(),
+		args.end(),
+		temp.data()+1);
 	execve_impl(path.data(),temp.data(),environ);
 }
 }
