@@ -12,7 +12,7 @@ try
 		fast_io::out=pipe.out();
 		fast_io::err=pipe.out();
 		pipe.out().close();
-		fast_io::posix_exec("gcc",{"--version"});
+		fast_io::posix_exec("/usr/local/bin/gcc",{"-v"});
 	}
 	pipe.out().close();
 	fast_io::onative_file onv("pipe.txt");
