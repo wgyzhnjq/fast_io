@@ -5,7 +5,7 @@ try
 {
 	fast_io::posix_process process;
 	if(is_child(process))
-		posix_exec("gcc","-v");
+		fast_io::posix_exec("gcc","-v");
 	wait(process);
 }
 catch(std::exception const& e)
