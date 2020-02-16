@@ -9,6 +9,8 @@ try
 	if(is_child(process))
 	{
 		pipe.in().close();
+		fast_io::out=pipe.out();
+		pipe.out().close();
 		fast_io::posix_exec("/usr/local/bin/gcc",{"-v"});
 	}
 	pipe.out().close();
