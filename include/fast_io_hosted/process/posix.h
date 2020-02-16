@@ -70,7 +70,7 @@ inline void deal_with_paramters(Iter begin,Iter end,std::ranges::contiguous_rang
 	*ptr={};
 }
 
-inline void posix_exec_impl(std::contiguous_range auto& temp,
+inline void posix_exec_impl(std::ranges::contiguous_range auto& temp,
 	std::string& path,
 	std::ranges::contiguous_range auto& args)
 {
