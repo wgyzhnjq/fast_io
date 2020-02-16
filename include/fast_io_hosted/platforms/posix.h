@@ -232,6 +232,14 @@ public:
 	{
 		fd=-1;
 	}
+	constexpr auto& native_handle() noexcept
+	{
+		return fd;
+	}
+	constexpr auto& native_handle() const noexcept
+	{
+		return fd;
+	}
 };
 
 template<std::integral ch_type>
