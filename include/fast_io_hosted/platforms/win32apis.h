@@ -86,6 +86,8 @@ void* __stdcall GetModuleHandleW(wchar_t const*);
 int __stdcall AllocConsole();
 
 std::uint32_t __stdcall WaitForSingleObject(void*,std::uint32_t);
+
+std::uint32_t __stdcall ResumeThread(void*);
 }
 
 }

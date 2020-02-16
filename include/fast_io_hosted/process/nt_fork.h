@@ -1,5 +1,5 @@
 #pragma once
-
+//https://github.com/kaniini/win32-fork/blob/master/fork.c
 namespace fast_io::win32
 {
 
@@ -49,17 +49,28 @@ inline void* nt_fork()
 #endif
 	auto RtlCloneUserProcess(bit_cast<std::uint32_t(*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
 	rtl_user_process_information process_info{};
-	auto v(RtlCloneUserProcess(0x00000001/*RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED*/
-	|0x00000002/*RTL_CLONE_PROCESS_FLAGS_INHERIT_HANDLES*/,nullptr,nullptr,nullptr,std::addressof(process_info)));
+	auto v(RtlCloneUserProcess(/*0x00000001RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED
+	|*/0x00000002/*RTL_CLONE_PROCESS_FLAGS_INHERIT_HANDLES*/,nullptr,nullptr,nullptr,std::addressof(process_info)));
 	if(v==0/*RTL_CLONE_PARENT*/)
 	{
+	/*
+		if(win32::ResumeThread(process_info.thread)==static_cast<std::uint32_t>(-1))
+		{
+#ifdef __cpp_exceptions
+			win32::CloseHandle(process_info.thread);
+			win32::CloseHandle(process_info.process);
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
+		}*/
 		win32::CloseHandle(process_info.thread);
 		return process_info.process;
 	}
 	else if(v==297/*RTL_CLONE_CHILD*/)
 	{
-		if(!AllocConsole())
-			throw win32_error();
+//		AllocConsole();
+//			throw win32_error();
 		return nullptr;
 	}
 #ifdef __cpp_exceptions
