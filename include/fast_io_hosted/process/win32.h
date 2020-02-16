@@ -60,6 +60,10 @@ inline bool is_child(win32_process const& proc)
 {
 	return !proc.native_handle();
 }
+inline bool has_detached(win32_process const& proc)
+{
+	return proc.native_handle()!=(void*)(-1);
+}
 
 class win32_jprocess
 {
@@ -121,5 +125,8 @@ inline bool is_child(win32_jprocess const& proc)
 {
 	return !proc.native_handle();
 }
-
+inline bool has_detached(win32_jprocess const& proc)
+{
+	return proc.native_handle()!=(void*)(-1);
+}
 }

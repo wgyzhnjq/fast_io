@@ -40,16 +40,16 @@ inline void* nt_fork()
 #else
 		fast_terminate();
 #endif
-	auto proc_addr(GetProcAddress(mod,"ZwCloneUserProcess"));
+	auto proc_addr(GetProcAddress(mod,"RtlCloneUserProcess"));
 	if(proc_addr==nullptr)
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
 		fast_terminate();
 #endif
-	auto ZwCloneUserProcess(bit_cast<std::uint32_t(*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
+	auto RtlCloneUserProcess(bit_cast<std::uint32_t(*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
 	rtl_user_process_information process_info{};
-	auto v(ZwCloneUserProcess(0x00000001/*RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED*/
+	auto v(RtlCloneUserProcess(0x00000001/*RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED*/
 	|0x00000002/*RTL_CLONE_PROCESS_FLAGS_INHERIT_HANDLES*/,nullptr,nullptr,nullptr,std::addressof(process_info)));
 	if(v==0/*RTL_CLONE_PARENT*/)
 	{

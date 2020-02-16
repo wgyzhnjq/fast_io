@@ -5,13 +5,13 @@ int main()
 try
 {
 	fast_io::native_pipe pipe;
-	fast_io::posix_waiting_process process;
+	fast_io::jprocess process;
 	if(is_child(process))
 	{
 		pipe.in().close();
 		fast_io::out=pipe.out();
 		pipe.out().close();
-		fast_io::posix_exec("/usr/local/bin/gcc",{"--version"});
+		fast_io::posix_exec("gcc",{"--version"});
 	}
 	pipe.out().close();
 	fast_io::onative_file onv("pipe.txt");
