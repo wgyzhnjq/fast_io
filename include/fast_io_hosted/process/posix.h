@@ -58,7 +58,7 @@ inline void posix_exec(std::string path)
 namespace details
 {
 
-template<std::contiguous_iterator>
+template<std::contiguous_iterator Iter>
 inline void deal_with_paramters(Iter begin,Iter end,std::ranges::contiguous_range auto& paramaters)
 {
 	auto ptr(temp.data());
