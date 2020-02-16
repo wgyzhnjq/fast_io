@@ -27,9 +27,9 @@ public:
 	{
 		system_call_throw_error(
 	#if defined(__linux__)&&defined(__x86_64__)
-		system_call<61,int>(pid,nullptr,0,nullptr);
+		system_call<61,int>(pid,nullptr,0,nullptr)
 	#else
-		waitpid(pid,nullptr,0);
+		waitpid(pid,nullptr,0)
 	#endif
 		);
 	}
@@ -78,9 +78,9 @@ public:
 	{
 		system_call_throw_error(
 	#if defined(__linux__)&&defined(__x86_64__)
-		system_call<61,int>(pid,nullptr,0,nullptr);
+		system_call<61,int>(pid,nullptr,0,nullptr)
 	#else
-		waitpid(pid,nullptr,0);
+		waitpid(pid,nullptr,0)
 	#endif
 		);
 	}
