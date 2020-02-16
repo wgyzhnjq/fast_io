@@ -130,11 +130,12 @@ inline void posix_exec(std::string_view path,std::ranges::sized_range auto& para
 */
 inline void wait(posix_process const& p)
 {
-	if(waitpid(p.id(),nullptr,0)<0)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+	system_call_throw_error(
+#if defined(__linux__)&&defined(__x86_64__)
+	system_call<61,int>(p.id(),nullptr,0,nullptr)
 #else
-		fast_terminate();
+	waitpid(p.id(),nullptr,0)
 #endif
+	);
 }
 }
