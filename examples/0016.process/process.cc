@@ -3,10 +3,9 @@
 int main()
 try
 {
-	fast_io::posix_process process;
+	fast_io::posix_waiting_process process;
 	if(is_child(process))
 		fast_io::posix_exec("/usr/local/bin/gcc",{"-v"});
-	wait(process);
 }
 catch(std::exception const& e)
 {

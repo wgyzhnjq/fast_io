@@ -23,6 +23,16 @@ public:
 	{
 		return pid;
 	}
+	void wait()
+	{
+		system_call_throw_error(
+	#if defined(__linux__)&&defined(__x86_64__)
+		system_call<61,int>(pid,nullptr,0,nullptr)
+	#else
+		waitpid(pid,nullptr,0)
+	#endif
+		);
+	}
 };
 
 inline bool is_child(posix_process const& p)
@@ -32,6 +42,84 @@ inline bool is_child(posix_process const& p)
 inline bool is_parent(posix_process const& p)
 {
 	return p.id();
+}
+
+class posix_waiting_process
+{
+	pid_t pid;
+	void close_impl()
+	{
+		if(0<pid)
+		{
+	#if defined(__linux__)&&defined(__x86_64__)
+		system_call<61,int>(pid,nullptr,0,nullptr)
+	#else
+		waitpid(pid,nullptr,0)
+	#endif
+		}
+	}
+public:
+	using native_handle_t = pid_t;
+	posix_waiting_process():pid(
+#if defined(__linux__)&&defined(__x86_64__)
+	system_call<57,pid_t>
+#else
+	fork
+#endif
+())
+	{
+		system_call_throw_error(pid);
+	}
+	inline auto id() const
+	{
+		return pid;
+	}
+	inline void wait()
+	{
+		system_call_throw_error(
+	#if defined(__linux__)&&defined(__x86_64__)
+		system_call<61,int>(pid,nullptr,0,nullptr)
+	#else
+		waitpid(pid,nullptr,0)
+	#endif
+		);
+	}
+	inline void detach()
+	{
+		pid=-1;
+	}
+	posix_waiting_process(posix_waiting_process const&)=delete;
+	posix_waiting_process& operator=(posix_waiting_process const&)=delete;
+	posix_waiting_process(posix_waiting_process&& bmv) noexcept:pid(bmv.pid)
+	{
+		bmv.pid=-1;
+	}
+	posix_waiting_process& operator=(posix_waiting_process&& bmv) noexcept
+	{
+		if(pid!=bmv.pid)
+		{
+			close_impl();
+			pid=bmv.pid;
+			bmv.pid=-1;
+		}
+		return *this;
+	}
+	~posix_waiting_process()
+	{
+		close_impl();
+	}
+};
+inline bool is_child(posix_waiting_process const& p)
+{
+	return !p.id();
+}
+inline bool is_parent(posix_waiting_process const& p)
+{
+	return 0<p.id();
+}
+inline bool has_detached(posix_waiting_process const& p)
+{
+	return p.id()<0;
 }
 
 namespace details
@@ -133,14 +221,4 @@ inline void posix_exec(std::string_view path,std::ranges::sized_range auto& para
 	}
 }
 */
-inline void wait(posix_process const& p)
-{
-	system_call_throw_error(
-#if defined(__linux__)&&defined(__x86_64__)
-	system_call<61,int>(p.id(),nullptr,0,nullptr)
-#else
-	waitpid(p.id(),nullptr,0)
-#endif
-	);
-}
 }
