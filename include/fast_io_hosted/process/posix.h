@@ -43,7 +43,7 @@ inline void execve_impl(Args&& ...args)
 		system_call<59,int>
 #else
 		::execve
-#else
+#endif
 	(std::forward<Args>(args)...));
 }
 }
