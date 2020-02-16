@@ -13,9 +13,9 @@ namespace fast_io
 {
 
 #if defined(__WINNT__) || defined(_MSC_VER)
-inline constexpr std::uint32_t native_stdin_number(win32_stdin_number);
-inline constexpr std::uint32_t native_stdout_number(win32_stdout_number);
-inline constexpr std::uint32_t native_stderr_number(win32_stderr_number);
+inline constexpr auto native_stdin_number(win32_stdin_number);
+inline constexpr auto native_stdout_number(win32_stdout_number);
+inline constexpr auto native_stderr_number(win32_stderr_number);
 using native_file = win32_file;
 using native_io_handle = win32_io_handle;
 using native_pipe_unique = win32_pipe_unique;
@@ -27,9 +27,9 @@ using u8native_pipe = u8win32_pipe;
 using native_file_map = win32_file_map;
 
 #else
-inline constexpr std::uint32_t native_stdin_number(posix_stdin_number);
-inline constexpr std::uint32_t native_stdout_number(posix_stdout_number);
-inline constexpr std::uint32_t native_stderr_number(posix_stderr_number);
+inline constexpr auto native_stdin_number(posix_stdin_number);
+inline constexpr auto native_stdout_number(posix_stdout_number);
+inline constexpr auto native_stderr_number(posix_stderr_number);
 
 using native_file = posix_file;
 using native_io_handle = posix_io_handle;
