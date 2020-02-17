@@ -2,7 +2,7 @@
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_network.h"
 
-int main(int argc,char** argv)
+int main()
 {
 	fast_io::onative_file log("log.txt");
 	for(fast_io::tcp_server hd(2000);;)
