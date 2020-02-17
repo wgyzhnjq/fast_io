@@ -3,21 +3,6 @@
 namespace fast_io
 {
 
-struct win32_io_observer
-{
-public:
-	void *handle=nullptr;
-	using native_handle_type = void*;
-	template<redirect_stream T>
-	win32_io_observer(T& hd):handle(redirect_handle(hd)){}
-	win32_io_observer()=default;
-};
-
-struct process_io
-{
-	win32_io_observer in,out,err;
-};
-
 namespace details
 {
 

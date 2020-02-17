@@ -1,22 +1,7 @@
 #pragma once
-#include<variant>
 
 namespace fast_io
 {
-struct posix_io_observer
-{
-public:
-	using native_handle_type = std::variant<std::monostate,int,std::array<int,2>>;
-	native_handle_type handle;
-	template<redirect_stream T>
-	posix_io_observer(T& hd):handle(redirect_handle(hd)){}
-	posix_io_observer()=default;
-};
-
-struct process_io
-{
-	posix_io_observer in,out,err;
-};
 
 namespace details
 {
@@ -46,7 +31,7 @@ inline void my_close(int fd)
 }
 
 template<int number,bool parent=false>
-inline void redirect(posix_io_observer& ob)
+inline void redirect(io_observer& ob)
 {
 	std::visit([](auto&& arg)
 	{
@@ -78,7 +63,7 @@ inline void redirect(posix_io_observer& ob)
 				my_close(arg.back());
 			}
 		}
-	},ob.handle);
+	},ob.variant);
 }
 
 template<bool is_child>
