@@ -46,7 +46,7 @@ public:
 			throw win32_error();
 	}
 	basic_win32_process(std::string_view path,
-				std::span<std::string_view> args,
+				std::vector<std::string_view> args,
 				process_io io)
 	{
 /*		std::string cmdline(path.data(),path.data()+path.size());
@@ -122,6 +122,10 @@ public:
 	auto id() const
 	{
 		return pinfo.dwProcessId;
+	}
+	auto thread_id() const
+	{
+		return pinfo.dwThreadId;
 	}
 };
 }
