@@ -20,13 +20,14 @@ struct process_io
 
 namespace details
 {
+
 template<bool jn=false>
 class basic_win32_process
 {
 	win32::process_information pinfo{};
 public:
 	using native_handle_type = win32::process_information;
-	basic_win32_process(/*std::string_view path,*/
+	basic_win32_process(native_interface_t,/*std::string_view path,*/
 		std::string cmdline,
 		process_io io)
 	{
@@ -43,6 +44,22 @@ public:
 			0x00000080,
 			nullptr,nullptr,std::addressof(sup),std::addressof(pinfo)))
 			throw win32_error();
+	}
+	basic_win32_process(std::string_view path,
+				std::span<std::string_view> args,
+				process_io io)
+	{
+/*		std::string cmdline(path.data(),path.data()+path.size());
+		std::vector<std::string> vec;
+		vec.reserve(args.size()+1);
+		vec.emplace_back(cmdline);
+		for(auto const& e : args)
+			vec.emplace_back(e.data(),e.data()+e.size());
+		std::vector<char*> vec2;
+		vec2.reserve(vec.size()+1);
+		for(auto const& e : vec)
+			vec2.emplace_back(vec.data());*/
+		
 	}
 	void detach()
 	{
@@ -69,11 +86,8 @@ public:
 	{
 		if(static_cast<std::uint32_t>(0xFFFFFFFF)==win32::WaitForSingleObject(pinfo.hProcess,-1))
 			throw win32_error();
-		if constexpr(jn)
-		{
-			win32::CloseHandle(pinfo.hProcess);
-			pinfo.hProcess={};
-		}
+		win32::CloseHandle(pinfo.hProcess);
+		pinfo.hProcess={};
 	}
 	basic_win32_process(basic_win32_process const&)=delete;
 	basic_win32_process& operator=(basic_win32_process const&)=delete;
