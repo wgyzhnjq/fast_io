@@ -10,10 +10,10 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 		void*
 #else
-		int*
+		int
 #endif
 ;
-	using variant_type = std::variant<std::monostate,native_handle_type,std::array<native_handle_type,2>>;
+	using variant_type = std::variant<std::monostate,native_handle_type,std::array<int*,2>>;
 	variant_type variant;
 	template<redirect_stream T>
 	io_observer(T& hd):variant(redirect_handle(hd)){}
