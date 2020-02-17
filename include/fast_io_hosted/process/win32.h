@@ -17,12 +17,16 @@ struct process_io
 {
 	win32_io_observer in,out,err;
 };
-class win32_process
+
+namespace details
+{
+template<bool jn=false>
+class basic_win32_process
 {
 	win32::process_information pinfo{};
 public:
 	using native_handle_type = win32::process_information;
-	win32_process(/*std::string_view path,*/
+	basic_win32_process(/*std::string_view path,*/
 		std::string cmdline,
 		process_io io)
 	{
@@ -65,26 +69,46 @@ public:
 	{
 		if(static_cast<std::uint32_t>(0xFFFFFFFF)==win32::WaitForSingleObject(pinfo.hProcess,-1))
 			throw win32_error();
+		if constexpr(jn)
+		{
+			win32::CloseHandle(pinfo.hProcess);
+			pinfo.hProcess={};
+		}
 	}
-	win32_process(win32_process const&)=delete;
-	win32_process& operator=(win32_process const&)=delete;
-	win32_process(win32_process&& other) noexcept:pinfo(other.pinfo)
+	basic_win32_process(basic_win32_process const&)=delete;
+	basic_win32_process& operator=(basic_win32_process const&)=delete;
+	basic_win32_process(basic_win32_process&& other) noexcept:pinfo(other.pinfo)
 	{
 		other.pinfo={};
 	}
-	win32_process& operator=(win32_process&& other) noexcept
+	basic_win32_process& operator=(basic_win32_process&& other) noexcept
 	{
 		if(std::addressof(other)!=this)
 		{
+			if constexpr(jn)
+			{
+				if(pinfo.hProcess)
+					win32::WaitForSingleObject(pinfo.hProcess,-1);
+			}
 			detach();
 			pinfo=other.pinfo;
 			other.pinfo={};
 		}
 		return *this;
 	}
-	~win32_process()
+	~basic_win32_process()
 	{
+		if constexpr(jn)
+		{
+			if(pinfo.hProcess)
+				win32::WaitForSingleObject(pinfo.hProcess,-1);
+		}
 		detach();
 	}
 };
+}
+
+using win32_process = details::basic_win32_process<false>;
+using win32_jprocess = details::basic_win32_process<true>;
+
 }

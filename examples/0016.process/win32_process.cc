@@ -7,12 +7,11 @@ int main()
 try
 {
 	fast_io::native_pipe pipe;
-	fast_io::win32_process process("g++ --version",
+	fast_io::win32_jprocess process("g++ --version",
 			{.out=pipe.out(),
 			.err=fast_io::err});
 	pipe.out().close();
 	transmit(fast_io::out,pipe);
-	process.join();
 }
 catch(fast_io::win32_error const& e)
 {
