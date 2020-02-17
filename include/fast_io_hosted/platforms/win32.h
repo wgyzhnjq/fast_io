@@ -511,6 +511,13 @@ inline auto write(basic_win32_pipe<ch_type>& h,Iter begin,Iter end)
 }
 
 template<std::integral ch_type>
+inline std::array<void*,2> redirect_handle(basic_win32_pipe<ch_type>& hd)
+{
+	return {hd.in().native_handle(),hd.out().native_handle()};
+}
+
+
+template<std::integral ch_type>
 inline constexpr void flush(basic_win32_pipe<ch_type>&){}
 
 using win32_io_handle=basic_win32_io_handle<char>;

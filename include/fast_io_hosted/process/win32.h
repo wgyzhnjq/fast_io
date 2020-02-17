@@ -6,45 +6,99 @@ namespace fast_io
 namespace details
 {
 
+inline void append_to_cmdline(std::string& cmdline,std::string_view str)
+{
+	bool has_space{};
+	for(auto const& e : str)
+		if(e==u8' ')
+		{
+			has_space=true;
+			cmdline.push_back(u8'\"');
+			break;
+		}
+	for(auto const& e : str)
+	{
+		if(e==u8'|')
+			cmdline.push_back(u8'^');
+		else if(e=='\"')
+			cmdline.push_back(u8'\\');
+		cmdline.push_back(e);
+	}
+	if(has_space)
+		cmdline.push_back(u8'\"');
+}
+template<int number>
+inline void* redirect_to_std_handle(io_observer& ob)
+{
+	return std::visit([](auto&& arg)
+	{
+		using T = std::decay_t<decltype(arg)>;
+		if constexpr(std::same_as<T,void*>)
+		{
+			return arg;
+		}
+		else if constexpr(std::same_as<T,std::array<void*,2>>)
+		{
+			if constexpr(number==0)
+				return arg.front();
+			else
+				return arg.back();
+		}
+		else if constexpr(std::same_as<T,std::monostate>)
+		{
+			if constexpr(number==0)
+				return fast_io::win32::GetStdHandle(win32_stdin_number);
+			else if constexpr(number==1)
+				return fast_io::win32::GetStdHandle(win32_stdout_number);
+			else
+				return fast_io::win32::GetStdHandle(win32_stderr_number);
+		}
+	},ob.variant);
+}
+
 template<bool jn=false>
 class basic_win32_process
 {
 	win32::process_information pinfo{};
 public:
 	using native_handle_type = win32::process_information;
-	basic_win32_process(native_interface_t,/*std::string_view path,*/
+/*
+	basic_win32_process(native_interface_t,std::string_view path,
 		std::string cmdline,
 		process_io io)
 	{
-		win32::startupinfo sup{.cb=sizeof(win32::startupinfo),
-		.dwFlags=0x00000100,//|0x00000001,
-//		.wShowWindow=0x00000001,
-		.hStdInput=io.in.handle,
-		.hStdOutput=io.out.handle,
-		.hStdError=io.err.handle};
-		
 		if(!win32::CreateProcessA(
 			nullptr,cmdline.data(),
 			nullptr,nullptr,true,
 			0x00000080,
 			nullptr,nullptr,std::addressof(sup),std::addressof(pinfo)))
 			throw win32_error();
-	}
+	}*/
 	basic_win32_process(std::string_view path,
 				std::vector<std::string_view> args,
 				process_io io)
 	{
-/*		std::string cmdline(path.data(),path.data()+path.size());
-		std::vector<std::string> vec;
-		vec.reserve(args.size()+1);
-		vec.emplace_back(cmdline);
-		for(auto const& e : args)
-			vec.emplace_back(e.data(),e.data()+e.size());
-		std::vector<char*> vec2;
-		vec2.reserve(vec.size()+1);
-		for(auto const& e : vec)
-			vec2.emplace_back(vec.data());*/
-		
+		std::string pth(path.data(),path.data()+path.size());
+		std::string cmdline;//(path.data(),path.data()+path.size());
+		append_to_cmdline(cmdline,path);
+		for(auto iter(args.cbegin());iter!=args.cend();++iter)
+		{
+//			if(iter!=args.cbegin())
+			cmdline.push_back(u8' ');
+			append_to_cmdline(cmdline,*iter);
+		}
+		win32::startupinfo sup{.cb=sizeof(win32::startupinfo),
+		.dwFlags=0x00000100,//|0x00000001,
+//		.wShowWindow=0x00000001,
+		.hStdInput=redirect_to_std_handle<0>(io.in),
+		.hStdOutput=redirect_to_std_handle<1>(io.out),
+		.hStdError=redirect_to_std_handle<2>(io.err)};
+		if(!win32::CreateProcessA(
+			pth.c_str(),cmdline.data(),
+			nullptr,nullptr,true,
+			0x00000080,
+			nullptr,nullptr,std::addressof(sup),std::addressof(pinfo)))
+			throw win32_error();
 	}
 	void detach()
 	{
