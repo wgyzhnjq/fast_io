@@ -8,8 +8,7 @@ try
 {
 	fast_io::native_pipe pipe;
 	fast_io::win32_jprocess process("g++ --version",
-			{.out=pipe.out(),
-			.err=fast_io::err});
+			{.out=pipe.out(),.err=fast_io::err});
 	pipe.out().close();
 	transmit(fast_io::out,pipe);
 }
