@@ -22,7 +22,7 @@ namespace details
 {
 template<typename... Args>
 requires(sizeof...(Args)==2)
-inline auto my_dup2(Args&& ..args)
+inline auto my_dup2(Args&& ...args)
 {
 	int new_fd(
 #if defined(__linux__)&&defined(__x86_64__)
