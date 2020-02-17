@@ -1,16 +1,11 @@
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
-#include"../../include/fast_io_legacy.h"
-#include<thread>
 
 int main()
 try
 {
 	fast_io::native_pipe pipe;
-	fast_io::win32_jprocess process(fast_io::native_interface,
-			"g++ --version",
-			{.out=pipe.out(),.err=fast_io::err});
-	pipe.out().close();
+	fast_io::jprocess process("/usr/local/bin/g++",{"--version"},{.out=pipe});
 	transmit(fast_io::out,pipe);
 	println("Process ID:",process.id());
 }

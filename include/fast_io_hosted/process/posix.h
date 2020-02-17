@@ -56,9 +56,9 @@ inline void redirect(posix_io_observer& ob)
 			if constexpr(std::same_as<T,std::array<int,2>>)
 			{
 				if constexpr(number==0)
-					my_close(arg.back());
-				else
 					my_close(arg.front());
+				else
+					my_close(arg.back());
 			}
 		}
 		else
@@ -83,7 +83,7 @@ inline void redirect(posix_io_observer& ob)
 
 template<bool is_child>
 inline void prepare_for_exec(std::string_view& path,
-				std::span<std::string_view>& args,
+				std::vector<std::string_view>& args,
 				process_io& io)
 {
 if constexpr(is_child)
@@ -93,7 +93,8 @@ if constexpr(is_child)
 	redirect<2>(io.err);
 	std::string p(path.data(),path.data()+path.size());
 	std::vector<std::string> vec;
-	vec.reserve(args.size());
+	vec.reserve(args.size()+1);
+	vec.emplace_back(p);
 	for(auto const& e : args)
 		vec.emplace_back(e.data(),e.data()+e.size());
 	posix_exec(std::move(p),std::move(vec));
@@ -123,7 +124,7 @@ public:
 		system_call_throw_error(pid);
 	}
 	posix_process(std::string_view path,
-				std::span<std::string_view> args,
+				std::vector<std::string_view> args,
 				process_io io):posix_process(native_interface)
 	{
 		if(!pid)
@@ -148,6 +149,10 @@ public:
 		waitpid(pid,nullptr,0)
 	#endif
 		);
+	}
+	inline auto id() const
+	{
+		return pid;
 	}
 };
 
@@ -192,7 +197,7 @@ public:
 		system_call_throw_error(pid);
 	}
 	posix_jprocess(std::string_view path,
-				std::span<std::string_view> args,
+				std::vector<std::string_view> args,
 				process_io io):posix_jprocess(native_interface)
 	{
 		if(!pid)
@@ -237,6 +242,10 @@ public:
 	~posix_jprocess()
 	{
 		close_impl();
+	}
+	inline auto id() const
+	{
+		return pid;
 	}
 };
 inline bool is_child(posix_jprocess const& p)

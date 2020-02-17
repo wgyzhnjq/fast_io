@@ -5,7 +5,7 @@ int main()
 try
 {
 	fast_io::native_pipe pipe;
-	fast_io::posix_jprocess process;
+	fast_io::posix_jprocess process(fast_io::native_interface);
 	if(is_child(process))
 	{
 		pipe.in().close();

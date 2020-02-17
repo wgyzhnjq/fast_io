@@ -545,6 +545,12 @@ inline void flush(basic_posix_pipe<ch_type>&)
 //			throw std::system_error(errno,std::generic_category());
 }
 
+template<std::integral ch_type>
+inline std::array<int,2> redirect_handle(basic_posix_pipe<ch_type>& h)
+{
+	return {h.in().native_handle(),h.out().native_handle()};
+}
+
 #ifdef __linux__
 template<std::integral ch_type>
 inline auto zero_copy_in_handle(basic_posix_pipe<ch_type>& h)
