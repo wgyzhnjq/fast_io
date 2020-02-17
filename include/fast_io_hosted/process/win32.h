@@ -105,6 +105,10 @@ public:
 		}
 		detach();
 	}
+	auto id() const
+	{
+		return pinfo.dwProcessId;
+	}
 };
 }
 

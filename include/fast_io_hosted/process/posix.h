@@ -35,6 +35,10 @@ public:
 	#endif
 		);
 	}
+	auto id() const
+	{
+		return pid;
+	}
 };
 
 inline bool is_child(posix_process const& p)
@@ -110,6 +114,10 @@ public:
 			bmv.pid=-1;
 		}
 		return *this;
+	}
+	auto id() const
+	{
+		return pid;
 	}
 	~posix_jprocess()
 	{
