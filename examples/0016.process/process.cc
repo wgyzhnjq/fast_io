@@ -5,7 +5,8 @@ int main()
 try
 {
 	fast_io::native_pipe pipe;
-	fast_io::jprocess process("/usr/local/bin/g++",{"--version"},{.out=pipe});
+	fast_io::jprocess process("/usr/local/bin/g++",
+		{"--version"},{.out=pipe});
 	transmit(fast_io::out,pipe);
 	println("Process ID:",process.id());
 }

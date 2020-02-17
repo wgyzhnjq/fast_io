@@ -6,7 +6,7 @@
 
 namespace fast_io
 {
-//using pipe = io_wrapper<native_pipe>;
+using ibuf_pipe = basic_ibuf<native_pipe>;
 
 using inative_file = input_file_wrapper<native_file>;
 using onative_file = output_file_wrapper<native_file>;
