@@ -63,7 +63,7 @@ public:
 	}
 	void join()
 	{
-		if(!win32::WaitForSingleObject(pinfo.hProcess,-1))
+		if(static_cast<std::uint32_t>(0xFFFFFFFF)==win32::WaitForSingleObject(pinfo.hProcess,-1))
 			throw win32_error();
 	}
 	win32_process(win32_process const&)=delete;

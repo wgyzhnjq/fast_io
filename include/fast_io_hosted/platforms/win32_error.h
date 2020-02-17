@@ -31,7 +31,7 @@ class win32_error : public std::runtime_error
 	std::uint32_t ec;
 public:
 	explicit win32_error(std::uint32_t error = win32::GetLastError()):std::runtime_error(format_get_last_error(error)),ec(error){}
-	auto get() const noexcept
+	auto code() const noexcept
 	{
 		return ec;
 	}

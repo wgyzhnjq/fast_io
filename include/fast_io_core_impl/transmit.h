@@ -27,6 +27,8 @@ inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp)
 		for(std::array<unsigned char,65536> array;;)
 		{
 			auto p(read(inp,array.data(),array.data()+array.size()));
+			if(p==array.data())
+				return transmitted_bytes;
 			std::size_t transmitted_this_round(p-array.data());
 			transmitted_bytes+=transmitted_this_round;
 			write(outp,array.data(),p);
@@ -73,6 +75,8 @@ inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp,
 			if(bytes<b)
 				b=bytes;
 			auto p(read(inp,array.data(),array.data()+b));
+			if(p==array.data())
+				return transmitted_bytes;
 			std::size_t read_bytes(p-array.data());
 			write(outp,array.data(),p);
 			transmitted_bytes+=read_bytes;

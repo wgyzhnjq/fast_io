@@ -6,15 +6,18 @@
 int main()
 try
 {
-//	fast_io::pipe pipe;
-//	print("create process before");
-//	fast_io::onative_file onf("b.txt");
+	fast_io::native_pipe pipe;
 	fast_io::win32_process process("g++ --version",
-			{.out=fast_io::out,
+			{.out=pipe.out(),
 			.err=fast_io::err});
-//	pipe.out().close();
-//	transmit(fast_io::out,pipe);
+	pipe.out().close();
+	transmit(fast_io::out,pipe);
 	process.join();
+}
+catch(fast_io::win32_error const& e)
+{
+	println(fast_io::err,e.code()," ",e);
+	return 1;
 }
 catch(std::exception const& e)
 {

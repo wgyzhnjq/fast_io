@@ -491,6 +491,7 @@ public:
 		pipes.front().native_handle()=a2.front();
 		pipes.back().native_handle()=a2.back();
 	}
+/*
 	template<std::size_t om>
 	basic_posix_pipe(open::interface_t<om>):basic_posix_pipe()
 	{
@@ -500,7 +501,7 @@ public:
 			pipes.front().close();
 		if constexpr ((om&~open::in.value)&&!(om&~open::out.value))
 			pipes.back().close();
-	}
+	}*/
 	auto& native_handle()
 	{
 		return pipes;
