@@ -51,16 +51,19 @@ inline void redirect(io_observer& ob)
 			if constexpr(std::same_as<T,int>)
 			{
 				my_dup2(arg,number);
-				my_close(arg);
 			}
 			else if constexpr(std::same_as<T,std::array<int,2>>)
 			{
 				if constexpr(number==0)
+				{
 					my_dup2(arg.front(),number);
+					my_close(arg.back());
+				}
 				else
+				{
 					my_dup2(arg.back(),number);
-				my_close(arg.front());
-				my_close(arg.back());
+					my_close(arg.front());
+				}
 			}
 		}
 	},ob.variant);
