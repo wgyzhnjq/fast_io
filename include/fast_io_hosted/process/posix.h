@@ -88,9 +88,9 @@ inline void prepare_for_exec(std::string_view& path,
 {
 if constexpr(is_child)
 {
-	redirect<0>(io.in.handle);
-	redirect<1>(io.out.handle);
-	redirect<2>(io.err.handle);
+	redirect<0>(io.in);
+	redirect<1>(io.out);
+	redirect<2>(io.err);
 	std::string p(path.data(),path.data()+path.size());
 	std::vector<std::string> vec;
 	vec.reserve(args.data());
@@ -100,9 +100,9 @@ if constexpr(is_child)
 }
 else
 {
-	redirect<0,true>(io.in.handle);
-	redirect<1,true>(io.out.handle);
-	redirect<2,true>(io.err.handle);
+	redirect<0,true>(io.in);
+	redirect<1,true>(io.out);
+	redirect<2,true>(io.err);
 }
 }
 }
