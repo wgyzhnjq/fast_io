@@ -135,8 +135,10 @@ inline constexpr decltype(auto) orelease(io_ref<out>& t)
 {
 	orelease(*t);
 }
-
-
-
+template<redirect_stream T>
+inline constexpr decltype(auto) redirect_handle(io_ref<T>& t)
+{
+	return redirect_handle(*t);
+}
 
 }

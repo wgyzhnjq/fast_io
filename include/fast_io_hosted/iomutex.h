@@ -84,5 +84,9 @@ inline void swap(basic_iomutex<T>& a,basic_iomutex<T>& b) noexcept
 {
 	a.swap(b);
 }
-
+template<redirect_stream T>
+inline constexpr decltype(auto) redirect_handle(basic_iomutex<T>& t)
+{
+	return redirect_handle(t.native_handle());
+}
 }

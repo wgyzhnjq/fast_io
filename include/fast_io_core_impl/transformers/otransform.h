@@ -262,5 +262,9 @@ inline constexpr auto seek(otransform<output,func,ch_type,sz,rac>& in,Args&& ...
 	in.position={};
 	return in.seek_proxy(in.handle.first,std::forward<Args>(args)...);
 }
-
+template<redirect_stream output,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr decltype(auto) redirect_handle(otransform<output,func,ch_type,sz,rac>& t)
+{
+	return redirect_handle(t.native_handle());
+}
 }

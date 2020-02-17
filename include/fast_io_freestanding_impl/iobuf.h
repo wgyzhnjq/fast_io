@@ -187,6 +187,12 @@ inline constexpr decltype(auto) oreserve(basic_ibuf<Ihandler,Buf>& ib,I i)
 	return oreserve(ib.native_handle(),i);
 }
 
+template<redirect_stream Ihandler,typename Buf>
+inline constexpr decltype(auto) redirect_handle(basic_ibuf<Ihandler,Buf>& ib)
+{
+	return redirect_handle(ib.native_handle());
+}
+
 template<buffer_output_stream Ihandler,typename Buf,std::integral I>
 inline constexpr decltype(auto) orelease(basic_ibuf<Ihandler,Buf>& ib,I i)
 {
@@ -548,6 +554,12 @@ inline constexpr decltype(auto) zero_copy_in_handle(basic_obuf<Ohandler,Buf>& ob
 {
 	return zero_copy_in_handle(ob.native_handle());
 }
+template<redirect_stream Ohandler,typename Buf>
+inline constexpr decltype(auto) redirect_handle(basic_obuf<Ohandler,Buf>& ob)
+{
+	return redirect_handle(ob.native_handle());
+}
+
 template<io_stream ioh,typename bf=basic_buf_handler<typename ioh::char_type>>
 using basic_iobuf=basic_obuf<basic_ibuf<ioh,bf>,bf>;
 

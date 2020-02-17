@@ -206,5 +206,9 @@ inline constexpr bool ireserve(itransform<input,func,ch_type,sz,rac>& ib,std::si
 		return details::itransform_ireserve_internal(ib,n);
 	return true;
 }
-
+template<redirect_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline constexpr decltype(auto) redirect_handle(itransform<input,func,ch_type,sz,rac>& t)
+{
+	return redirect_handle(t.native_handle());
+}
 }
