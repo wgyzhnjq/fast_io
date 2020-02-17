@@ -10,13 +10,12 @@ try
 	{
 		pipe.in().close();
 		fast_io::out=pipe.out();
-		fast_io::err=pipe.out();
 		pipe.out().close();
-		fast_io::posix_exec("/usr/local/bin/gcc",{"-v"});
+		fast_io::posix_exec("/usr/local/bin/g++",{"--version"});
 	}
 	pipe.out().close();
-	fast_io::onative_file onv("pipe.txt");
-	transmit(onv,pipe);
+	transmit(fast_io::out,pipe);
+	println("Process ID:",process.id());
 }
 catch(std::exception const& e)
 {

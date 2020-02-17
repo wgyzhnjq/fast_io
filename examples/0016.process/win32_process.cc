@@ -11,11 +11,7 @@ try
 			{.out=pipe.out(),.err=fast_io::err});
 	pipe.out().close();
 	transmit(fast_io::out,pipe);
-}
-catch(fast_io::win32_error const& e)
-{
-	println(fast_io::err,e.code()," ",e);
-	return 1;
+	println("Process ID:",process.id());
 }
 catch(std::exception const& e)
 {
