@@ -546,9 +546,10 @@ inline void flush(basic_posix_pipe<ch_type>&)
 }
 
 template<std::integral ch_type>
-inline std::array<int,2> redirect_handle(basic_posix_pipe<ch_type>& h)
+inline std::array<int*,2> redirect_handle(basic_posix_pipe<ch_type>& h)
 {
-	return {h.in().native_handle(),h.out().native_handle()};
+	return {std::addressof(h.in().native_handle()),
+		std::addressof(h.out().native_handle())};
 }
 
 #ifdef __linux__

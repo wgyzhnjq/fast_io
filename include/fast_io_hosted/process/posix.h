@@ -38,12 +38,18 @@ inline void redirect(io_observer& ob)
 		using T = std::decay_t<decltype(arg)>;
 		if constexpr(parent)
 		{
-			if constexpr(std::same_as<T,std::array<int,2>>)
+			if constexpr(std::same_as<T,std::array<int*,2>>)
 			{
 				if constexpr(number==0)
-					my_close(arg.front());
+				{
+					my_close(*arg.front());
+					*arg.front()=-1;
+				}
 				else
-					my_close(arg.back());
+				{
+					my_close(*arg.back());
+					*arg.back()=-1;
+				}
 			}
 		}
 		else
@@ -52,17 +58,17 @@ inline void redirect(io_observer& ob)
 			{
 				my_dup2(arg,number);
 			}
-			else if constexpr(std::same_as<T,std::array<int,2>>)
+			else if constexpr(std::same_as<T,std::array<int*,2>>)
 			{
 				if constexpr(number==0)
 				{
-					my_dup2(arg.front(),number);
-					my_close(arg.back());
+					my_dup2(*arg.front(),number);
+					my_close(*arg.back());
 				}
 				else
 				{
-					my_dup2(arg.back(),number);
-					my_close(arg.front());
+					my_dup2(*arg.back(),number);
+					my_close(*arg.front());
 				}
 			}
 		}
