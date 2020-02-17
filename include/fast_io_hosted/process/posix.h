@@ -46,9 +46,9 @@ inline void my_close(int fd)
 }
 
 template<int number,bool parent=false>
-inline void redirect(posix_io_observer& fd)
+inline void redirect(posix_io_observer& ob)
 {
-	std::visit(fd.handle,[](auto&& arg)
+	std::visit([](auto&& arg)
 	{
 		using T = std::decay_t<decltype(arg)>;
 		if constexpr(parent)
@@ -78,7 +78,7 @@ inline void redirect(posix_io_observer& fd)
 				my_close(arg.back());
 			}
 		}
-	});
+	},ob.handle);
 }
 
 template<bool is_child>
@@ -93,7 +93,7 @@ if constexpr(is_child)
 	redirect<2>(io.err);
 	std::string p(path.data(),path.data()+path.size());
 	std::vector<std::string> vec;
-	vec.reserve(args.data());
+	vec.reserve(args.size());
 	for(auto const& e : args)
 		vec.emplace_back(e.data(),e.data()+e.size());
 	posix_exec(std::move(p),std::move(vec));
