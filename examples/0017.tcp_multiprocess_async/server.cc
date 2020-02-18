@@ -8,6 +8,6 @@ int main()
 	for(fast_io::tcp_server hd(2000);;)
 	{
 		fast_io::acceptor accept(hd);
-		fast_io::process proc("./server_child_process",{},{.in=accept,.out=accept,.err=log});
+		fast_io::process proc("server_child_process.exe",{},{.in=accept,.out=accept,.err=log});
 	}
 }

@@ -158,7 +158,7 @@ inline Iter write(basic_connected_socket<async>& soc,Iter begin,Iter end)
 template<bool async>
 inline auto redirect_handle(basic_connected_socket<async>& soc)
 {
-	return soc.native_handle();
+	return bit_cast<void*>(soc.native_handle());
 }
 
 template<bool async=false>

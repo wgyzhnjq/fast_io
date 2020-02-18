@@ -123,6 +123,11 @@ void* lpEnvironment,
 char const* lpCurrentDirectory,
 startupinfo* lpStartupInfo,
 process_information* lpProcessInformation);
+
+
+int __stdcall GetHandleInformation(void*,std::uint32_t*);
+int __stdcall SetHandleInformation(void*,std::uint32_t,std::uint32_t);
 }
+
 
 }

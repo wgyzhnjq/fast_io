@@ -38,5 +38,4 @@ inline void thread_pool_accept_callback(server_type& server,Func&& func)
 	}
 }
 
-#endif
 }

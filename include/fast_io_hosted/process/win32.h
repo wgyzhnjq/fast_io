@@ -56,6 +56,40 @@ inline void* redirect_to_std_handle(io_observer& ob)
 	},ob.variant);
 }
 
+class priviledge_guard
+{
+	void* hobject{};
+	std::uint32_t dw_flags{};
+public:
+	priviledge_guard(void* hd)
+	{
+		std::uint32_t dw_flags{};
+		if(!fast_io::win32::GetHandleInformation(hd,std::addressof(dw_flags)))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
+		if(!(dw_flags&1))
+		{
+			if(!fast_io::win32::SetHandleInformation(hd,1,1))
+#ifdef __cpp_exceptions
+				throw win32_error();
+#else
+				fast_terminate();
+#endif
+			hobject=hd;
+		}
+	}
+	priviledge_guard(priviledge_guard const&)=delete;
+	priviledge_guard& operator=(priviledge_guard const&)=delete;
+	~priviledge_guard()
+	{
+//		if(hobject)
+//			fast_io::win32::SetHandleInformation(hobject,1,0);
+	}
+};
+
 template<bool jn=false>
 class basic_win32_process
 {
@@ -79,11 +113,12 @@ public:
 				process_io io)
 	{
 		std::string pth(path.data(),path.data()+path.size());
+		if(1<pth.size()&&pth.front()==u8'.'&&pth[1]==u8'/')
+			pth.erase(pth.begin(),pth.begin()+2);
 		std::string cmdline;//(path.data(),path.data()+path.size());
 		append_to_cmdline(cmdline,path);
 		for(auto iter(args.cbegin());iter!=args.cend();++iter)
 		{
-//			if(iter!=args.cbegin())
 			cmdline.push_back(u8' ');
 			append_to_cmdline(cmdline,*iter);
 		}
@@ -93,6 +128,9 @@ public:
 		.hStdInput=redirect_to_std_handle<0>(io.in),
 		.hStdOutput=redirect_to_std_handle<1>(io.out),
 		.hStdError=redirect_to_std_handle<2>(io.err)};
+		priviledge_guard stdin_guard(sup.hStdInput),
+		stdout_guard(sup.hStdOutput),
+		stderr_guard(sup.hStdError);
 		if(!win32::CreateProcessA(
 			pth.c_str(),cmdline.data(),
 			nullptr,nullptr,true,
