@@ -529,6 +529,12 @@ inline constexpr auto seek(basic_obuf<Ohandler,Buf>& ob,Args&& ...args)
 	return seek(ob.native_handle(),std::forward<Args>(args)...);
 }
 
+template<input_stream Ohandler,typename Buf,std::contiguous_iterator Iter>
+inline constexpr auto read(basic_obuf<Ohandler,Buf>& ob,Iter begin,Iter end)
+{
+	return read(ob.native_handle(),begin,end);
+}
+
 template<output_stream Ohandler,typename Buf>
 [[nodiscard]] inline constexpr auto oreserve(basic_obuf<Ohandler,Buf>& ob,std::size_t size) -> decltype(ob.obuffer.curr)
 {
