@@ -3,6 +3,7 @@
 #include"../../include/fast_io_network.h"
 
 int main(int argc,char** argv)
+try
 {
 	if(argc!=2)
 	{
@@ -20,4 +21,8 @@ int main(int argc,char** argv)
 	{
 	}
 	});
+}
+catch(std::exception const& e)
+{
+	println(fast_io::err,e);
 }

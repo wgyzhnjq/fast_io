@@ -87,8 +87,7 @@ if constexpr(is_child)
 	redirect<2>(io.err);
 	std::string p(path.data(),path.data()+path.size());
 	std::vector<std::string> vec;
-	vec.reserve(args.size()+1);
-	vec.emplace_back(p);
+	vec.reserve(args.size());
 	for(auto const& e : args)
 		vec.emplace_back(e.data(),e.data()+e.size());
 	posix_exec(std::move(p),std::move(vec));

@@ -1,9 +1,17 @@
 #include"../../include/fast_io_hosted.h"
 #include"../../include/fast_io_device.h"
+#include"../../include/fast_io.h"
 
 int main()
+try
 {
 	fast_io::onative_file log("log.txt");
+	std::vector<fast_io::jprocess> vec;
 	for(std::size_t i(2000);i!=3500;++i)
-		fast_io::process proc("./server",{fast_io::concat(i)},{.err=log});
+		vec.emplace_back(fast_io::jprocess("./server",{fast_io::concat(2000)},{.err=log}));
+}
+catch(std::exception const& e)
+{
+	println(fast_io::err,e);
+	return 1;
 }
