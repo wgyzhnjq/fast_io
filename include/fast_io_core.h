@@ -26,6 +26,10 @@
 #include<cstring>		//for memcpy
 #include<bit>			//for std::endian, std::rotl and std::bit_cast etc
 
+#ifdef __cpp_coroutines
+#include<coroutine>		//coroutine is freestanding
+#endif
+
 //fast_io core
 #include"fast_io_core_impl/concept.h"
 #include"fast_io_core_impl/eof.h"

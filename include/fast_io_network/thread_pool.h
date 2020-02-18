@@ -8,7 +8,7 @@ https://www.youtube.com/watch?v=c1gO9aB9nbs&t=3166s
 CppCon 2014: Herb Sutter "Lock-Free Programming (or, Juggling Razor Blades), Part I"
 */
 template<std::movable acceptor_type,std::size_t size=900,typename server_type,typename Func>
-inline void thread_pool_accept(server_type& server,Func&& func)
+inline void thread_pool_accept_callback(server_type& server,Func&& func)
 {
 	std::vector<std::thread> pool;
 	pool.reserve(size);
@@ -38,4 +38,37 @@ inline void thread_pool_accept(server_type& server,Func&& func)
 	}
 }
 
+#if __cpp_coroutines >= 201902L
+struct task
+{
+struct promise_type
+{
+auto get_return_object() { return task{}; }
+auto initial_suspend() { return std::suspend_never{}; }
+auto final_suspend() { return std::suspend_never{}; }
+void unhandled_exception() { std::terminate(); }
+void return_void() {}
+};
+};
+
+template<typename server_type,typename acceptor_type>
+class basic_thread_pool_awaitable
+{
+	server_type* pserver;
+	acceptor_type* pacceptor;
+public:
+	constexpr basic_thread_pool_awaitable(server_type& serv):pserver(std::addressof(serv)){}
+	bool await_ready() const { return false; }
+	acceptor_type& await_resume() { return *pacceptor; }
+	void await_suspend(std::coroutine_handle<> handle)
+	{
+		auto f([handle, this](acceptor_type& acc)
+		{
+			pacceptor = std::addressof(acc);
+			handle.resume();
+		});
+		thread_pool_accept_callback<acceptor_type>(*pserver,f);
+	}
+};
+#endif
 }
