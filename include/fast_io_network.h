@@ -1,6 +1,8 @@
 #pragma once
 
 //fast_io_network.h deals with sockets
+#include<thread>
+#include<condition_variable>
 #include"fast_io_hosted.h"
 #include"fast_io_network/network.h"
 
