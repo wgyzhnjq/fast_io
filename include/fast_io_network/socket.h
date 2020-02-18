@@ -3,6 +3,7 @@
 namespace fast_io
 {
 
+
 template<bool async=false>
 class basic_socket
 {
@@ -29,8 +30,59 @@ public:
 	basic_socket(sock::family family,sock::type const &type,sock::protocal const &protocal = sock::protocal::none):
 		handle(sock::details::socket(static_cast<sock::details::address_family>(family),static_cast<int>(type),static_cast<int>(protocal))){}
 	auto& native_handle() {return handle;}
-	basic_socket(basic_socket const&) = delete;
-	basic_socket& operator=(basic_socket const&) = delete;
+	basic_socket(basic_socket const& other)
+#if defined(__WINNT__) || defined(_MSC_VER)
+	{
+		auto const current_process(win32::GetCurrentProcess());
+		void* new_handle{};
+		if(!win32::DuplicateHandle(current_process,bit_cast<void*>(other.handle),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
+		handle=bit_cast<sock::details::socket_type>(new_handle);
+	}
+#else
+	:handle(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<32,int>
+#else
+		dup
+#endif
+	(other.handle))
+	{
+		system_call_throw_error(handle);
+	}
+#endif
+	
+	basic_socket& operator=(basic_socket const& other)
+	{
+#if defined(__WINNT__) || defined(_MSC_VER)
+		auto const current_process(win32::GetCurrentProcess());
+		void* new_handle{};
+		if(!win32::DuplicateHandle(current_process,bit_cast<void*>(other.handle),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+#ifdef __cpp_exceptions
+			throw win32_error();
+#else
+			fast_terminate();
+#endif
+		if(handle)
+			fast_io::win32::CloseHandle(handle);
+		handle=bit_cast<sock::details::socket_type>(new_handle);
+#else
+		auto newfd(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<33,int>
+#else
+		dup2
+#endif
+(other.fd,fd));
+		system_call_throw_error(newfd);
+		fd=newfd;
+#endif
+		return *this;
+	}
 	basic_socket(basic_socket && soc) noexcept:handle(soc.handle)
 	{
 		soc.handle = sock::details::invalid_socket;

@@ -180,6 +180,7 @@ public:
 #else
 			fast_terminate();
 #endif
+		close_impl();
 		mhandle=new_handle;
 		return *this;
 	}
