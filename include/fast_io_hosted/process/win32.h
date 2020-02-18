@@ -113,8 +113,10 @@ public:
 				process_io io)
 	{
 		std::string pth(path.data(),path.data()+path.size());
-		if(1<pth.size()&&pth.front()==u8'.'&&pth[1]==u8'/')
+		if(pth.starts_with("./"))
 			pth.erase(pth.begin(),pth.begin()+2);
+		if(!pth.ends_with(".exe"))
+			pth.append(".exe");
 		std::string cmdline;//(path.data(),path.data()+path.size());
 		append_to_cmdline(cmdline,path);
 		for(auto iter(args.cbegin());iter!=args.cend();++iter)

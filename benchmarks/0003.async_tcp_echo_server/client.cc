@@ -1,15 +1,20 @@
 #include"../../include/fast_io_network.h"
 #include"../../include/fast_io_device.h"
+#include"../../include/fast_io.h"
 
-int main()
+int main(int argc,char** argv)
 {
-	//impossible to stop
-	fast_io::basic_obuf<fast_io::tcp_client> hd(fast_io::ipv4{127,0,0,1},2000);
-	std::jthread jt([h=hd.native_handle()]() mutable
+	if(argc!=2)
 	{
-		fast_io::obuf_file obf("client.txt");
-		transmit(obf,h);
-	});
-	for(std::size_t i{};i!=10000000;++i)
-		println(hd,i);
+		print(fast_io::err,"Usage: ",*argv," <port>\n");
+		return 1;
+	}
+	std::size_t port(fast_io::to<std::size_t>(argv[1]));
+	std::vector<std::jthread> jth;	
+	for(std::size_t i{};i!=1000;++i)
+		jth.emplace_back([port]()
+		{
+			fast_io::tcp_client hd(fast_io::ipv4{127,0,0,1},port);
+			fast_io::transmit(hd,hd);
+		});
 }
