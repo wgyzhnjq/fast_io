@@ -85,8 +85,8 @@ public:
 	priviledge_guard& operator=(priviledge_guard const&)=delete;
 	~priviledge_guard()
 	{
-//		if(hobject)
-//			fast_io::win32::SetHandleInformation(hobject,1,0);
+		if(hobject)
+			fast_io::win32::SetHandleInformation(hobject,1,0);
 	}
 };
 
@@ -128,6 +128,7 @@ public:
 		.hStdInput=redirect_to_std_handle<0>(io.in),
 		.hStdOutput=redirect_to_std_handle<1>(io.out),
 		.hStdError=redirect_to_std_handle<2>(io.err)};
+
 		priviledge_guard stdin_guard(sup.hStdInput),
 		stdout_guard(sup.hStdOutput),
 		stderr_guard(sup.hStdError);
