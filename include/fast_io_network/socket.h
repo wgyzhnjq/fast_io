@@ -77,9 +77,9 @@ public:
 #else
 		dup2
 #endif
-(other.fd,fd));
+(other.handle,handle));
 		system_call_throw_error(newfd);
-		fd=newfd;
+		handle=newfd;
 #endif
 		return *this;
 	}
