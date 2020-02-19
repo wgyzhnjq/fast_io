@@ -357,8 +357,7 @@ inline constexpr F input_floating(input& in)
 				|static_cast<mantissa_type>(static_cast<mantissa_type>(0x7ffull) << floating_trait::mantissa_bits));
 	}
 	bool trailing_zeros{};
-	using std::log2p1;
-	signed_exponent_type e2(static_cast<signed_exponent_type>(log2p1(mantissa))+m10e-(2+floating_trait::mantissa_bits));
+	signed_exponent_type e2(static_cast<signed_exponent_type>(std::bit_width(mantissa))+m10e-(2+floating_trait::mantissa_bits));
 	mantissa_type m2{};
 	if(m10e<0)
 	{
@@ -373,7 +372,7 @@ inline constexpr F input_floating(input& in)
 		m2=mul_shift(mantissa,pow5<F,true>::split[m10e],e2-m10e-pow5bits(m10e)+floating_trait::pow5_bitcount);
 		trailing_zeros = e2 < m10e || multiple_of_power_of_2(mantissa, e2 - m10e);
 	}
-	exponent_type ieee_e2(e2 + (floating_trait::bias-1) + log2p1(m2));
+	exponent_type ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
 	if(ieee_e2<0)
 		ieee_e2=0;
 	if(0x7fe<ieee_e2)[[unlikely]]
