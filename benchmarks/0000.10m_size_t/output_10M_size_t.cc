@@ -175,7 +175,7 @@ try
 	}
 	{
 		fast_io::timer t("fmt::format");
-		std::ofstream fout("fmt2.txt",std::ofstream::binary);
+		std::ofstream fout("fmt3.txt",std::ofstream::binary);
 		for(std::size_t i(0);i!=N;++i)
 			fout<<fmt::format("{}\n",i);
 	}
