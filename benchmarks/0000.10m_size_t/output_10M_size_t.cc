@@ -158,7 +158,7 @@ try
 	}
 #ifdef FAST_IO_TEST_FMT
 	{
-		fast_io::timer t("fmt obuf_file");
+		fast_io::timer t("fmt::format_int obuf_file");
 		fast_io::obuf_file ob("fmt_ob.txt");
 		for(std::size_t i(0);i!=N;++i)
 		{
@@ -167,12 +167,18 @@ try
 			put(ob,'\n');
 		}
 	}
-/*	{
-		fast_io::timer t("fmt2");
+	{
+		fast_io::timer t("fmt::print");
 		std::ofstream fout("fmt2.txt",std::ofstream::binary);
 		for(std::size_t i(0);i!=N;++i)
 			fmt::print(fout,"{}\n",i);
-	}*/
+	}
+	{
+		fast_io::timer t("fmt::format");
+		std::ofstream fout("fmt3.txt",std::ofstream::binary);
+		for(std::size_t i(0);i!=N;++i)
+			fout<<fmt::format("{}\n",i);
+	}
 #endif
 }
 #ifdef __cpp_exceptions
