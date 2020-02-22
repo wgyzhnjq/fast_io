@@ -1,4 +1,4 @@
-	.file	"hw.c"
+	.file	"printf.c"
 	.text
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
