@@ -6,4 +6,4 @@ extern "C" void _start() noexcept
 	fast_io::fast_exit(0);
 }
 
-//g++ -o helloworld_linux helloworld_linux.cc -Ofast -std=c++2a -s -flto -fno-exceptions -fno-rtti -DNDEBUG
+//g++ -o helloworld_linux helloworld_linux.cc -Ofast -std=c++2a -s -flto -fno-exceptions -fno-rtti -DNDEBUG -ffreestanding -nostdlib
