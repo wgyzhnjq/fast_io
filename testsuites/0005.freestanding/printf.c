@@ -7,6 +7,6 @@ int main()
 		abort();
 }
 
-// gcc -o hw hw.c -Ofast -flto -Ofast -DNDEBUG
+// gcc -o hw hw.c -flto -Ofast -DNDEBUG -s
 // no static linking
-//binary size: 18kb
+//binary size: 15kb
