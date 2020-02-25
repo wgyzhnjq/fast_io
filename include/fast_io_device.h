@@ -12,10 +12,10 @@ using inative_file = input_file_wrapper<native_file>;
 using onative_file = output_file_wrapper<native_file>;
 using ionative_file = io_file_wrapper<native_file>;
 
-using sync_file = basic_sync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::string>>;
-using fsync_file = basic_fsync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::string>>;
+using sync_file = basic_sync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::string>>;
+using fsync_file = basic_fsync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::string>>;
 
-using omap_file = basic_omap<basic_file_wrapper<native_file,fast_io::open::trunc|fast_io::open::in|fast_io::open::out|fast_io::open::binary>,native_file_map>;
+using omap_file = basic_omap<basic_file_wrapper<native_file,open_mode::trunc|open_mode::in|open_mode::out|open_mode::binary>,native_file_map>;
 
 using sync_file_mutex = basic_iomutex<sync_file>;
 using fsync_file_mutex = basic_iomutex<fsync_file>;
@@ -37,8 +37,8 @@ using u8inative_file = input_file_wrapper<u8native_file>;
 using u8onative_file = output_file_wrapper<u8native_file>;
 using u8ionative_file = io_file_wrapper<u8native_file>;
 
-using u8sync_file = basic_sync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::u8string>>;
-using u8fsync_file = basic_fsync<basic_file_wrapper<native_file,fast_io::open::app|fast_io::open::binary>,basic_ostring<std::u8string>>;
+using u8sync_file = basic_sync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::u8string>>;
+using u8fsync_file = basic_fsync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::u8string>>;
 
 using u8sync_file_mutex = basic_iomutex<u8sync_file>;
 using u8fsync_file_mutex = basic_iomutex<u8fsync_file>;

@@ -3,230 +3,126 @@
 namespace fast_io
 {
 
-namespace open
+enum class open_mode:std::uint32_t
 {
-
-struct mode
-{
-	std::size_t value;
-	constexpr operator std::size_t() const
-	{
-		return value;
-	}
-	constexpr mode& operator|=(mode const& b)
-	{
-		value|=b.value;
-		return *this;
-	}
-	constexpr mode(std::size_t val=0):value(val){}
+none = 0,
+app = 1 << 0,
+archive = 1 << 1,
+ate = 1 << 2,
+binary = 1 << 3,
+compressed = 1 << 4,
+delete_on_close = 1 << 5,
+direct = 1 << 6,
+directory = 1 << 7,
+encrypted = 1 << 8,
+excl = 1 << 9,
+follow = 1 << 10,
+hidden = 1 << 11,
+in = 1 << 12,
+inherit = 1 << 13,
+no_atime = 1 << 14,
+no_atty = 1 << 15,
+no_block = 1 << 16,
+no_recall = 1 << 17,
+normal = 1 << 18,
+offline = 1 << 19,
+out = 1 << 20,
+posix_semantics = 1 << 21,
+sequential_scan = 1 << 22,
+session_aware = 1 << 23,
+sync = 1 << 24,
+system = 1 << 25,
+temprorary = 1 << 26,
+trunc = 1 << 27
 };
 
-inline static mode constexpr app{1};
-inline static mode constexpr ate{1<<1};
-inline static mode constexpr binary{1<<2};
-inline static mode constexpr direct{1<<3};
-inline static mode constexpr excl{1<<4};//C++ iostream currently still does not support "x"
-inline static mode constexpr in{1<<5};
-inline static mode constexpr inherit{1<<6};
-inline static mode constexpr out{1<<7};
-inline static mode constexpr overlapped{1<<8};
-inline static mode constexpr reparse_point{1<<9};
-inline static mode constexpr sync{1<<10};
-inline static mode constexpr trunc{1<<11};
-
-inline constexpr mode operator|(mode const& a,mode const& b)
+constexpr open_mode operator&(open_mode x, open_mode y) noexcept
 {
-	auto temp(a);
-	temp|=b;
-	return temp;
+using utype = typename std::underlying_type<open_mode>::type;
+return static_cast<open_mode>(static_cast<utype>(x) & static_cast<utype>(y));
 }
 
-inline constexpr mode remove_ate(mode const& m)
+constexpr open_mode operator|(open_mode x, open_mode y) noexcept
 {
-	return {m.value&~ate.value};
-}
-inline constexpr mode remove_ate_overlapped(mode const& m)
-{
-	return {m.value&~ate.value&~overlapped.value};
+using utype = typename std::underlying_type<open_mode>::type;
+return static_cast<open_mode>(static_cast<utype>(x) | static_cast<utype>(y));
 }
 
-inline constexpr mode remove_binary(mode const& m)
+constexpr open_mode operator^(open_mode x, open_mode y) noexcept
 {
-	return {m.value&~binary.value};
+using utype = typename std::underlying_type<open_mode>::type;
+return static_cast<open_mode>(static_cast<utype>(x) ^ static_cast<utype>(y));
 }
 
-inline constexpr bool with_ate(mode const& m)
+constexpr open_mode operator~(open_mode x) noexcept
 {
-	return m.value&ate.value;
-}
-inline constexpr bool with_binary(mode const& m)
-{
-	return m.value&binary.value;
+using utype = typename std::underlying_type<open_mode>::type;
+return static_cast<open_mode>(~static_cast<utype>(x));
 }
 
-inline constexpr mode remove_direct(mode const& m)
+inline constexpr open_mode& operator&=(open_mode& x, open_mode y) noexcept{return x=x&y;}
+
+inline constexpr open_mode& operator|=(open_mode& x, open_mode y) noexcept{return x=x|y;}
+
+inline constexpr open_mode& operator^=(open_mode& x, open_mode y) noexcept{return x=x^y;}
+
+template<open_mode pm>
+struct open_interface_t
 {
-	return {m.value&~direct.value};
+inline constexpr static open_mode value{pm};
+};
+
+template<open_mode pm>
+inline constexpr open_interface_t<pm> open_interface{};
+
+inline constexpr open_mode c_supported(open_mode m) noexcept
+{
+constexpr auto c_supported_values{open_mode::binary|open_mode::excl|open_mode::out
+|open_mode::app|open_mode::in|open_mode::trunc};
+return m&c_supported_values;
 }
 
-inline constexpr bool with_direct(mode const& m)
-{
-	return m.value&direct.value;
-}
-
-inline constexpr mode remove_sync(mode const& m)
-{
-	return {m.value&~sync.value};
-}
-
-inline constexpr bool with_sync(mode const& m)
-{
-	return m.value&sync.value;
-}
-
-inline constexpr mode remove_ate_direct_sync(mode const& m)
-{
-	return {m.value&~ate.value&~direct.value&~sync.value};
-}
-inline constexpr mode remove_ate_binary_direct_sync(mode const& m)
-{
-	return {m.value&~ate.value&~binary.value&~direct.value&~sync.value};
-}
-
-
-inline auto constexpr u8c_style(mode const& m)
+inline auto constexpr to_c_mode(open_mode const& m)
 {
 	using namespace std::string_view_literals;
-	switch(remove_ate_direct_sync(m))
+	switch(c_supported(m))
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
-	case in:
-		return u8"r"sv;
-//Destroy contents;	Create new;	"w";	Create a file for writing
-	case out:
-	case out|trunc:
-		return u8"w"sv;
-//Append to file;	Create new;	"a";	Append to a file
-	case app:
-	case out|app:
-		return u8"a"sv;
-//Read from start;	Error;	"r+";		Open a file for read/write
-	case out|in:
-		return u8"r+"sv;
-//Destroy contents;	Create new;	"w+";	Create a file for read/write
-	case out|in|trunc:
-		return u8"w+"sv;
-//Write to end;	Create new;	"a+";	Open a file for read/write
-	case out|in|app:
-	case in|app:
-		return u8"a+"sv;
-//Destroy contents;	Error;	"wx";	Create a file for writing
-	case out|excl:
-	case out|trunc|excl:
-		return u8"wx"sv;
-//Append to file;	Error;	"ax";	Append to a file
-	case app|excl:
-	case out|app|excl:
-		return u8"ax"sv;
-//Destroy contents;	Error;	"w+x";	Create a file for read/write
-	case out|in|trunc|excl:
-		return u8"w+x"sv;
-//Write to end;	Error;	"a+x";	Open a file for read/write
-	case out|in|app|excl:
-	case in|app|excl:
-		return u8"a+x"sv;
-	break;
-	
-//binary support
-
-//Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
-//Read from start;	Failure to open;	"rb";	Open a file for reading
-	case in|binary:
-		return u8"rb"sv;
-//Destroy contents;	Create new;	"wb";	Create a file for writing
-	case out|binary:
-	case out|trunc|binary:
-		return u8"wb"sv;
-//Append to file;	Create new;	"ab";	Append to a file
-	case app|binary:
-	case out|app|binary:
-		return u8"ab"sv;
-//Read from start;	Error;	"r+b";		Open a file for read/write
-	case out|in|binary:
-		return u8"r+b"sv;
-//Destroy contents;	Create new;	"w+b";	Create a file for read/write
-	case out|in|trunc|binary:
-		return u8"w+b"sv;
-//Write to end;	Create new;	"a+b";	Open a file for read/write
-	case out|in|app|binary:
-	case in|app|binary:
-		return u8"a+b"sv;
-//Destroy contents;	Error;	"wxb";	Create a file for writing
-	case out|excl|binary:
-	case out|trunc|excl|binary:
-		return u8"wxb"sv;
-//Append to file;	Error;	"axb";	Append to a file
-	case app|excl|binary:
-	case out|app|excl|binary:
-		return u8"axb"sv;
-//Destroy contents;	Error;	"w+xb";	Create a file for read/write
-	case out|in|trunc|excl|binary:
-		return u8"w+xb"sv;
-//Write to end;	Error;	"a+xb";	Open a file for read/write
-	case out|in|app|excl|binary:
-	case in|app|excl|binary:
-		return u8"a+xb"sv;
-	break;
-	default:
-#ifdef __cpp_exceptions
-		throw std::runtime_error("unknown open mode");
-#else
-		fast_terminate();
-#endif
-	}
-}
-inline auto constexpr c_style(mode const& m)
-{
-	using namespace std::string_view_literals;
-	switch(remove_ate_direct_sync(m))
-	{
-//Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
-//Read from start;	Failure to open;	"r";	Open a file for reading
-	case in:
+	case open_mode::in:
 		return "r"sv;
 //Destroy contents;	Create new;	"w";	Create a file for writing
-	case out:
-	case out|trunc:
+	case open_mode::out:
+	case open_mode::out|open_mode::trunc:
 		return "w"sv;
 //Append to file;	Create new;	"a";	Append to a file
-	case app:
-	case out|app:
+	case open_mode::app:
+	case open_mode::out|open_mode::app:
 		return "a"sv;
 //Read from start;	Error;	"r+";		Open a file for read/write
-	case out|in:
+	case open_mode::out|open_mode::in:
 		return "r+"sv;
 //Destroy contents;	Create new;	"w+";	Create a file for read/write
-	case out|in|trunc:
+	case open_mode::out|open_mode::in|open_mode::trunc:
 		return "w+"sv;
 //Write to end;	Create new;	"a+";	Open a file for read/write
-	case out|in|app:
-	case in|app:
+	case open_mode::out|open_mode::in|open_mode::app:
+	case open_mode::in|open_mode::app:
 		return "a+"sv;
 //Destroy contents;	Error;	"wx";	Create a file for writing
-	case out|excl:
-	case out|trunc|excl:
+	case open_mode::out|open_mode::excl:
+	case open_mode::out|open_mode::trunc|open_mode::excl:
 		return "wx"sv;
 //Append to file;	Error;	"ax";	Append to a file
-	case app|excl:
-	case out|app|excl:
+	case open_mode::app|open_mode::excl:
+	case open_mode::out|open_mode::app|open_mode::excl:
 		return "ax"sv;
 //Destroy contents;	Error;	"w+x";	Create a file for read/write
-	case out|in|trunc|excl:
+	case open_mode::out|open_mode::in|open_mode::trunc|open_mode::excl:
 		return "w+x"sv;
 //Write to end;	Error;	"a+x";	Open a file for read/write
-	case out|in|app|excl:
-	case in|app|excl:
+	case open_mode::out|open_mode::in|open_mode::app|open_mode::excl:
+	case open_mode::in|open_mode::app|open_mode::excl:
 		return "a+x"sv;
 	break;
 	
@@ -234,40 +130,40 @@ inline auto constexpr c_style(mode const& m)
 
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"rb";	Open a file for reading
-	case in|binary:
+	case open_mode::in|open_mode::binary:
 		return "rb"sv;
 //Destroy contents;	Create new;	"wb";	Create a file for writing
-	case out|binary:
-	case out|trunc|binary:
+	case open_mode::out|open_mode::binary:
+	case open_mode::out|open_mode::trunc|open_mode::binary:
 		return "wb"sv;
 //Append to file;	Create new;	"ab";	Append to a file
-	case app|binary:
-	case out|app|binary:
+	case open_mode::app|open_mode::binary:
+	case open_mode::out|open_mode::app|open_mode::binary:
 		return "ab"sv;
 //Read from start;	Error;	"r+b";		Open a file for read/write
-	case out|in|binary:
+	case open_mode::out|open_mode::in|open_mode::binary:
 		return "r+b"sv;
 //Destroy contents;	Create new;	"w+b";	Create a file for read/write
-	case out|in|trunc|binary:
+	case open_mode::out|open_mode::in|open_mode::trunc|open_mode::binary:
 		return "w+b"sv;
 //Write to end;	Create new;	"a+b";	Open a file for read/write
-	case out|in|app|binary:
-	case in|app|binary:
+	case open_mode::out|open_mode::in|open_mode::app|open_mode::binary:
+	case open_mode::in|open_mode::app|open_mode::binary:
 		return "a+b"sv;
 //Destroy contents;	Error;	"wxb";	Create a file for writing
-	case out|excl|binary:
-	case out|trunc|excl|binary:
+	case open_mode::out|open_mode::excl|open_mode::binary:
+	case open_mode::out|open_mode::trunc|open_mode::excl|open_mode::binary:
 		return "wxb"sv;
 //Append to file;	Error;	"axb";	Append to a file
-	case app|excl|binary:
-	case out|app|excl|binary:
+	case open_mode::app|open_mode::excl|open_mode::binary:
+	case open_mode::out|open_mode::app|open_mode::excl|open_mode::binary:
 		return "axb"sv;
 //Destroy contents;	Error;	"w+xb";	Create a file for read/write
-	case out|in|trunc|excl|binary:
+	case open_mode::out|open_mode::in|open_mode::trunc|open_mode::excl|open_mode::binary:
 		return "w+xb"sv;
 //Write to end;	Error;	"a+xb";	Open a file for read/write
-	case out|in|app|excl|binary:
-	case in|app|excl|binary:
+	case open_mode::out|open_mode::in|open_mode::app|open_mode::excl|open_mode::binary:
+	case open_mode::in|open_mode::app|open_mode::excl|open_mode::binary:
 		return "a+xb"sv;
 	break;
 	default:
@@ -280,10 +176,10 @@ inline auto constexpr c_style(mode const& m)
 }
 
 template<std::integral ch_type>
-inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
+inline auto constexpr from_c_mode(std::basic_string_view<ch_type> csm)
 {
-	mode v{};
-	bool extended(false);
+	open_mode v{};
+	bool extended{};
 	for(auto const& e : csm)
 		if(e==0x2b)
 			extended=true;
@@ -291,25 +187,25 @@ inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
 		switch(e)
 		{
 			case u8'a':
-				v|=app;
+				v|=open_mode::app;
 				if(extended)
-					v|=in|out;
+					v|=open_mode::in|open_mode::out;
 			break;
 			case u8'b':
-				v|=binary;
+				v|=open_mode::binary;
 			break;
 			case 0x72:
-				v|=in;
+				v|=open_mode::in;
 				if(extended)
-					v|=out;
+					v|=open_mode::out;
 			break;
 			case 0x77:
-				v|=out;
+				v|=open_mode::out;
 				if(extended)
-					v|=in|trunc;
+					v|=open_mode::in|open_mode::trunc;
 			break;
 			case 0x78:
-				v|=excl;
+				v|=open_mode::excl;
 			break;
 			case 0x2b:
 			break;
@@ -322,35 +218,10 @@ inline auto constexpr c_style(std::basic_string_view<ch_type> csm)
 		}
 	return v;
 }
-
-
-template<std::size_t om>
-struct interface_t
-{
-inline static fast_io::open::mode constexpr mode = {om};
-explicit constexpr interface_t()=default;
-};
-
-template<std::size_t om>
-struct c_style_interface_t
-{
-inline static constexpr auto mode = c_style(om);
-explicit constexpr c_style_interface_t()=default;
-};
-
-template<std::size_t om>
-inline interface_t<om> constexpr interface{};
-
-template<std::size_t om>
-inline c_style_interface_t<om> constexpr c_style_interface{};
-
-}
-
 struct native_interface_t
 {
 	explicit constexpr native_interface_t() = default;
 };
 inline native_interface_t constexpr native_interface;
-
 
 }

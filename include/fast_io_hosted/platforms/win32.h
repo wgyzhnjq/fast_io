@@ -8,7 +8,7 @@ namespace fast_io
 namespace details
 {
 
-template<std::size_t inherit=0>
+template<bool inherit=false>
 inline void* create_file_a_impl(char const* lpFileName,
 std::uint32_t dwDesiredAccess,
 std::uint32_t dwShareMode,
@@ -61,50 +61,94 @@ struct win32_open_mode
 std::uint32_t dwDesiredAccess{};
 std::uint32_t dwShareMode{1|2};//FILE_SHARE_READ|FILE_SHARE_WRITE
 std::uint32_t dwCreationDisposition{};	//depends on EXCL
-std::uint32_t dwFlagsAndAttributes=128|0x10000000;//FILE_ATTRIBUTE_NORMAL|FILE_FLAG_RANDOM_ACCESS
+std::uint32_t dwFlagsAndAttributes{};//=128|0x10000000;//FILE_ATTRIBUTE_NORMAL|FILE_FLAG_RANDOM_ACCESS
 };
 
-
-inline constexpr win32_open_mode calculate_win32_open_mode(open::mode const &om)
+inline constexpr win32_open_mode calculate_win32_open_mode(open_mode value)
 {
-	using namespace open;
-	std::size_t value(remove_ate(om).value);
+	value&=~open_mode::ate;
 	win32_open_mode mode;
-	if(value&open::app.value)
+	if((value&open_mode::app)!=open_mode::none)
 		mode.dwDesiredAccess|=4;//FILE_APPEND_DATA
-	else if(value&open::out.value)
+	else if((value&open_mode::out)!=open_mode::none)
 		mode.dwDesiredAccess|=0x40000000;//GENERIC_WRITE
-	if(value&open::in.value)
+	if((value&open_mode::in)!=open_mode::none)
 		mode.dwDesiredAccess|=0x80000000;//GENERIC_READ
-	if(value&open::excl.value)
+	if((value&open_mode::excl)!=open_mode::none)
 	{
 		mode.dwCreationDisposition=1;//	CREATE_NEW
-		if(value&open::trunc.value)
+		if((value&open_mode::trunc)!=open_mode::none)
 #ifdef __cpp_exceptions
-			throw std::runtime_error("cannot create new while truncating existed file");
+			throw std::system_error(make_error_code(std::errc::invalid_argument));
 #else
 			fast_terminate();
 #endif
 	}
-	else if (value&open::trunc.value)
+	else if ((value&open_mode::trunc)!=open_mode::none)
 		mode.dwCreationDisposition=2;//CREATE_ALWAYS
-	else if(!(value&open::in.value))
+	else if((value&open_mode::in)==open_mode::none)
 	{
-		if(value&open::app.value)
+		if((value&open_mode::app)==open_mode::none)
 			mode.dwCreationDisposition=4;//OPEN_ALWAYS
 		else
 			mode.dwCreationDisposition=2;//CREATE_ALWAYS
 	}
 	else
 		mode.dwCreationDisposition=3;//OPEN_EXISTING
-	if(value&open::direct.value)
+	if((value&open_mode::direct)!=open_mode::none)
 		mode.dwFlagsAndAttributes|=0x20000000;//FILE_FLAG_NO_BUFFERING
-	if(value&open::sync.value)
+	if((value&open_mode::sync)!=open_mode::none)
 		mode.dwFlagsAndAttributes|=0x80000000;//FILE_FLAG_WRITE_THROUGH
-	if(value&open::overlapped.value)
+	if((value&open_mode::no_block)!=open_mode::none)
 		mode.dwFlagsAndAttributes|=0x40000000;//FILE_FLAG_OVERLAPPED
-	if(value&open::reparse_point.value)
+	if((value&open_mode::follow)!=open_mode::none)
 		mode.dwFlagsAndAttributes|=0x00200000;	//FILE_FLAG_OPEN_REPARSE_POINT
+	if((value&open_mode::directory)!=open_mode::none)
+		mode.dwFlagsAndAttributes|=0x02000000;	//FILE_FLAG_BACKUP_SEMANTICS
+	bool set_normal{true};
+	if((value&open_mode::archive)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x20;		//FILE_ATTRIBUTE_ARCHIVE
+		set_normal={};
+	}
+	if((value&open_mode::encrypted)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x4000;		//FILE_ATTRIBUTE_ENCRYPTED
+		set_normal={};
+	}
+	if((value&open_mode::hidden)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x2;			//FILE_ATTRIBUTE_HIDDEN
+		set_normal={};
+	}
+	if((value&open_mode::compressed)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x800;		//FILE_ATTRIBUTE_COMPRESSED
+		set_normal={};
+	}
+	if((value&open_mode::system)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x4;							//FILE_ATTRIBUTE_SYSTEM
+		set_normal={};
+	}
+	if((value&open_mode::offline)!=open_mode::none)
+	{
+		mode.dwFlagsAndAttributes|=0x1000;						//FILE_ATTRIBUTE_OFFLINE
+		set_normal={};
+	}
+	if(set_normal)[[likely]]
+		mode.dwFlagsAndAttributes|=0x80;						//FILE_ATTRIBUTE_NORMAL
+	if((value&open_mode::sequential_scan)==open_mode::none)
+		mode.dwFlagsAndAttributes|=0x10000000;		//FILE_FLAG_RANDOM_ACCESS
+	else
+		mode.dwFlagsAndAttributes|=0x08000000;		//FILE_FLAG_SEQUENTIAL_SCAN
+	if((value&open_mode::no_recall)!=open_mode::none)
+		mode.dwFlagsAndAttributes|=0x00100000;					//FILE_FLAG_OPEN_NO_RECALL
+	if((value&open_mode::posix_semantics)!=open_mode::none)
+		mode.dwFlagsAndAttributes|=0x01000000;					//FILE_FLAG_POSIX_SEMANTICS
+	if((value&open_mode::session_aware)!=open_mode::none)
+		mode.dwFlagsAndAttributes|=0x00800000;					//FILE_FLAG_SESSION_AWARE
+
 	return mode;
 }
 
@@ -115,20 +159,20 @@ inline constexpr std::uint32_t dw_flag_attribute_with_perms(std::uint32_t dw_fla
 	return dw_flags_and_attributes;
 }
 
-inline constexpr win32_open_mode calculate_win32_open_mode_with_perms(open::mode const &om,perms pm)
+inline constexpr win32_open_mode calculate_win32_open_mode_with_perms(open_mode om,perms pm)
 {
 	auto m(calculate_win32_open_mode(om));
 	m.dwFlagsAndAttributes=dw_flag_attribute_with_perms(m.dwFlagsAndAttributes,pm);
 	return m;
 }
 
-template<std::size_t om,perms pm>
+template<open_mode om,perms pm>
 struct win32_file_openmode
 {
 	inline static constexpr win32_open_mode mode = calculate_win32_open_mode_with_perms(om,pm);
 };
 
-template<std::size_t om>
+template<open_mode om>
 struct win32_file_openmode_single
 {
 	inline static constexpr win32_open_mode mode = calculate_win32_open_mode(om);
@@ -306,45 +350,54 @@ public:
 #endif
 	}
 
-	template<std::size_t om,perms pm>
-	basic_win32_file(std::string_view filename,open::interface_t<om>,perms_interface_t<pm>):
+	template<open_mode om,perms pm>
+	basic_win32_file(std::string_view filename,open_interface_t<om>,perms_interface_t<pm>):
 				basic_win32_io_handle<char_type>(
-				details::create_file_a_impl<om&open::inherit.value>(filename.data(),
+				details::create_file_a_impl<(om&open_mode::inherit)!=open_mode::none>(filename.data(),
 				details::win32_file_openmode<om,pm>::mode.dwDesiredAccess,
 				details::win32_file_openmode<om,pm>::mode.dwShareMode,
 				details::win32_file_openmode<om,pm>::mode.dwCreationDisposition,
 				details::win32_file_openmode<om,pm>::mode.dwFlagsAndAttributes)
 				)
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	template<std::size_t om>
-	basic_win32_file(std::string_view filename,open::interface_t<om>):basic_win32_io_handle<char_type>(
-				details::create_file_a_impl<om&open::inherit.value>(filename.data(),
+	template<open_mode om>
+	basic_win32_file(std::string_view filename,open_interface_t<om>):basic_win32_io_handle<char_type>(
+				details::create_file_a_impl<(om&open_mode::inherit)!=open_mode::none>(filename.data(),
 				details::win32_file_openmode_single<om>::mode.dwDesiredAccess,
 				details::win32_file_openmode_single<om>::mode.dwShareMode,
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
 				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes))
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	template<std::size_t om>
-	basic_win32_file(std::string_view filename,open::interface_t<om>,perms p):basic_win32_io_handle<char_type>(
-				details::create_file_a_impl<om&open::inherit.value>(filename.data(),
+	template<open_mode om>
+	basic_win32_file(std::string_view filename,open_interface_t<om>,perms p):basic_win32_io_handle<char_type>(
+				details::create_file_a_impl<(om&open_mode::inherit)!=open_mode::none>(filename.data(),
 				details::win32_file_openmode_single<om>::mode.dwDesiredAccess,
 				details::win32_file_openmode_single<om>::mode.dwShareMode,
 				details::win32_file_openmode_single<om>::mode.dwCreationDisposition,
 				details::dw_flag_attribute_with_perms(details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,p)))
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	basic_win32_file(std::string_view filename,open::mode const& m,perms pm=static_cast<perms>(420)):basic_win32_io_handle<char_type>(nullptr)
+	basic_win32_file(std::string_view filename,open_mode om,perms pm=static_cast<perms>(420)):basic_win32_io_handle<char_type>(nullptr)
 	{
-		auto const mode(details::calculate_win32_open_mode_with_perms(m,pm));
-		if(m&open::inherit.value)
+		auto const mode(details::calculate_win32_open_mode_with_perms(om,pm));
+		if((om&open_mode::inherit)==open_mode::none)
+		{
+			native_handle()=details::create_file_a_impl
+			(filename.data(),
+			mode.dwDesiredAccess,
+			mode.dwShareMode,
+			mode.dwCreationDisposition,
+			mode.dwFlagsAndAttributes);
+		}
+		else
 		{
 			native_handle()=details::create_file_a_impl<true>
 				(filename.data(),
@@ -353,19 +406,11 @@ public:
 				mode.dwCreationDisposition,
 				mode.dwFlagsAndAttributes);
 		}
-		else
-		{
-				native_handle()=details::create_file_a_impl
-				(filename.data(),
-				mode.dwDesiredAccess,
-				mode.dwShareMode,
-				mode.dwCreationDisposition,
-				mode.dwFlagsAndAttributes);
-		}
-		if(with_ate(m))
+		if ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	basic_win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_win32_file(file,fast_io::open::c_style(mode),pm){}
+	basic_win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):
+		basic_win32_file(file,fast_io::from_c_mode(mode),pm){}
 
 	~basic_win32_file()
 	{

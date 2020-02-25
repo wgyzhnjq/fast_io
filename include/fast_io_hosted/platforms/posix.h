@@ -124,6 +124,13 @@ inline constexpr int calculate_posix_open_mode(open::mode const &om)
 #endif
 		value &= ~sync.value;
 	}
+	if(value&directory.value)
+	{
+#ifdef O_DIRECTORY
+		mode |= O_DIRECTORY;
+#endif
+		value &= ~directory.value;
+	}
 	switch(value)
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation

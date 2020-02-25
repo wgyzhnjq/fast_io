@@ -62,7 +62,7 @@ inline perms& operator^=(perms& x, perms y) noexcept{return x=x^y;}
 template<perms pm>
 struct perms_interface_t
 {
-inline constexpr static fast_io::open::mode permission = {pm};
+inline constexpr static perms permission = {pm};
 explicit constexpr perms_interface_t()=default;
 };
 
