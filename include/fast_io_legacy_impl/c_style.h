@@ -71,6 +71,10 @@ public:
 		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
 	}
 #endif
+	constexpr void reset() noexcept
+	{
+		fp=nullptr;
+	}
 };
 
 template<std::integral ch_type>
@@ -422,7 +426,7 @@ inline void flush(c_io_handle& cfhd)
 }
 
 template<typename T,std::integral U>
-inline void seek(c_io_handle& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
+inline auto seek(c_io_handle& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 {
 	if(std::fseek(cfhd.native_handle(),seek_precondition<long,T,typename c_io_handle::char_type>(i),static_cast<int>(s)))
 #ifdef __cpp_exceptions
@@ -430,12 +434,20 @@ inline void seek(c_io_handle& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 #else
 		fast_terminate();
 #endif
+	auto val(std::ftell(cfhd.native_handle()));
+	if(val<0)
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::system_category());
+#else
+		fast_terminate();
+#endif
+	return val;
 }
 
 template<std::integral U>
-inline void seek(c_io_handle& cfhd,U i,seekdir s=seekdir::beg)
+inline auto seek(c_io_handle& cfhd,U i,seekdir s=seekdir::beg)
 {
-	seek(cfhd,seek_type<typename c_io_handle::char_type>,i,s);
+	return seek(cfhd,seek_type<typename c_io_handle::char_type>,i,s);
 }
 
 template<typename T,

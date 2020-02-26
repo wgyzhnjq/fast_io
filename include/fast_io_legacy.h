@@ -13,6 +13,9 @@
 #include"fast_io_legacy_impl/streambuf_view.h"
 #include"fast_io_legacy_impl/streambuf_handle.h"
 #include"fast_io_legacy_impl/filebuf_handle.h"
+#ifdef __GLIBCXX__
+#include"fast_io_legacy_impl/fstream_file.h"
+#endif
 
 namespace fast_io
 {
@@ -24,7 +27,5 @@ inline c_io_handle c_stderr(stderr);
 
 
 //inline stream_view cpp_clog(std::clog);
-
-
 }
 }

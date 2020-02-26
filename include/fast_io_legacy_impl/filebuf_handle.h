@@ -128,6 +128,4 @@ inline void orelease(basic_filebuf_handle<T,Traits>& hd,std::size_t size)
 {
 	hd.handle->pbump(-static_cast<int>(size));
 }
-
-
 }
