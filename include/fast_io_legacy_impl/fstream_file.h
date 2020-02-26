@@ -54,11 +54,15 @@ public:
 	template<open_mode om>
 	basic_stream_file(c_io_handle_type&& ciohd,open_interface_t<om>):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),
-		hd(bcf.native_handle(),details::fstream_open_mode<om>::value),
+		hd(bcf.native_handle(),details::fstream_open_mode<om>::value,65536),
 		stm(std::addressof(hd))
 	{
 		if(!stm)
+#ifdef __cpp_exceptions
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+#else
+			fast_terminate();
+#endif
 		std::setbuf(bcf.native_handle(),nullptr);
 	}
 
@@ -66,14 +70,22 @@ public:
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),details::calculate_fstream_file_open_mode(om)),stm(std::addressof(hd))
 	{
 		if(!stm)
+#ifdef __cpp_exceptions
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+#else
+			fast_terminate();
+#endif
 		std::setbuf(bcf.native_handle(),nullptr);
 	}
 	basic_stream_file(c_io_handle_type&& ciohd,std::string_view om):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),from_c_mode(om)),stm(std::addressof(hd))
 	{
 		if(!stm)
+#ifdef __cpp_exceptions
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+#else
+			fast_terminate();
+#endif
 		std::setbuf(bcf.native_handle(),nullptr);
 	}
 
