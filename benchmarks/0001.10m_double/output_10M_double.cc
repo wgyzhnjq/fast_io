@@ -92,11 +92,10 @@ try
 	}
 #endif
 	{
-	fast_io::timer t("stream_view");
-	std::ofstream fout("smvdb.txt",std::ofstream::binary);
-	fast_io::filebuf_handle stm_v(fout);
+	fast_io::timer t("ostream_file");
+	fast_io::ostream_file osf("smfdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(stm_v,vec[i]);
+		println(osf,i);
 	}
 #ifdef _MSC_VER
 	{
