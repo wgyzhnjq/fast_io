@@ -95,7 +95,7 @@ try
 	fast_io::timer t("ostream_file");
 	fast_io::ostream_file osf("smfdb.txt");
 	for(std::size_t i(0);i!=N;++i)
-		println(osf,i);
+		println(osf,vec[i]));
 	}
 #ifdef _MSC_VER
 	{
