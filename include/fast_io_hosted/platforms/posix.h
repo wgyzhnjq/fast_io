@@ -20,16 +20,15 @@ template<bool wide_char=false>
 inline constexpr int calculate_posix_open_mode_for_win32_handle(open_mode value)
 {
 	int mode{};
-	if((value&open_mode::binary)==open_mode::none)
-		value &= ~open_mode::binary;
-	else
+	if((value&open_mode::binary)!=open_mode::none)
 	{
 		if constexpr(wide_char)
 			mode |= _O_WTEXT;
 		else
-			mode |= _O_WTEXT;
+			mode |= _O_TEXT;
 	}
-	switch(value)
+	constexpr auto supported_values{open_mode::out|open_mode::app|open_mode::in};
+	switch(supported_values&value)
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
@@ -74,59 +73,66 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #endif
 	};
 	if((value&open_mode::follow)!=open_mode::none)
-	{
 		mode = {};
-		value &= ~open_mode::follow;
-	}
+	if((value&open_mode::inherit)==open_mode::none)
 #ifdef O_CLOEXEC
-	if((value&open_mode::inherit)!=open_mode::none)
-		value &= ~open_mode::inherit;
-	else
 		mode |= O_CLOEXEC;
 #elif _O_NOINHERIT
-	if((value&open_mode::inherit)!=open_mode::none)
-		value &= ~open_mode::follow;
-	else
 		mode |= _O_NOINHERIT;
 #endif
-	if((value&open_mode::binary)!=open_mode::none)
-	{
 #ifdef O_BINARY
+	if((value&open_mode::binary)!=open_mode::none)
 		mode |= O_BINARY;
 #endif
-		value &= ~open_mode::binary;
-	}
 	if((value&open_mode::excl)!=open_mode::none)
-	{
 		mode |= O_CREAT | O_EXCL;
-		value &= ~open_mode::excl;
-	}
 	if((value&open_mode::trunc)!=open_mode::none)
-	{
 		mode |= O_TRUNC;
-		value &= ~open_mode::trunc;
-	}
-	if((value&open_mode::direct)!=open_mode::none)
-	{
 #ifdef O_DIRECT
+	if((value&open_mode::direct)!=open_mode::none)
 		mode |= O_DIRECT;
 #endif
-		value &= ~open_mode::direct;
-	}
-	if((value&open_mode::sync)!=open_mode::none)
-	{
+
 #ifdef O_SYNC
+	if((value&open_mode::sync)!=open_mode::none)
 		mode |= O_SYNC;
 #endif
-		value &= ~open_mode::sync;
-	}
 	if((value&open_mode::directory)!=open_mode::none)
-	{
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
+#elif __cpp_exceptions
+		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+#else
+		fast_terminate();
 #endif
-		value &= ~open_mode::directory;
-	}
+
+#ifdef O_NOCTTY
+	if((value&open_mode::no_ctty)!=open_mode::none)
+		mode |= O_NOCTTY;
+#endif
+#ifdef O_NOATIME
+	if((value&open_mode::no_atime)!=open_mode::none)
+		mode |= O_NOATIME;
+#endif
+	if((value&open_mode::no_block)!=open_mode::none)
+#ifdef O_NONBLOCK
+		mode |= O_NONBLOCK;
+#elif __cpp_exceptions
+		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+#else
+		fast_terminate();
+#endif
+
+#ifdef _O_TEMPORARY
+	if((value&open_mode::temprorary)!=open_mode::none)
+		mode |= _O_TEMPORARY;
+#endif
+#ifdef _O_SEQUENTIAL
+	if((value&open_mode::sequential_scan)!=open_mode::none)
+		mode |= _O_SEQUENTIAL;
+	else
+		mode |= _O_RANDOM;
+#endif
 	switch(c_supported(value))
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
@@ -373,31 +379,6 @@ public:
 #endif*/
 		system_call_throw_error(native_handle());
 	}
-	template<open_mode om,perms pm>
-	basic_posix_file(std::string_view file,open_interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
-	{
-		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
-	}
-	template<open_mode om>
-	basic_posix_file(std::string_view file,open_interface_t<om>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(436))
-	{
-		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
-	}
-	template<open_mode om>
-	basic_posix_file(std::string_view file,open_interface_t<om>,perms pm):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
-	{
-		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
-	}
-	//potential support modification prv in the future
-	basic_posix_file(std::string_view file,open_mode om,perms pm=static_cast<perms>(436)):basic_posix_file(native_interface,file.data(),details::calculate_posix_open_mode(om),static_cast<mode_t>(pm))
-	{
-		if((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
-	}
-	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(436)):basic_posix_file(file,from_c_mode(mode),pm){}
 #if defined(__WINNT__) || defined(_MSC_VER)
 //windows specific. open posix file from win32 io handle
 	template<open_mode om>
@@ -424,6 +405,40 @@ public:
 		hd.reset();
 	}
 	basic_posix_file(basic_win32_io_handle<char_type>&& hd,std::string_view mode):basic_posix_file(std::move(hd),from_c_mode(mode)){}
+	template<open_mode om,typename... Args>
+	basic_posix_file(std::string_view file,open_interface_t<om>,Args&& ...args):
+		basic_posix_file(basic_win32_file<char_type>(file,open_interface<om>,std::forward<Args>(args)...),open_interface<om>)
+	{}
+	template<typename... Args>
+	basic_posix_file(std::string_view file,open_mode om,Args&& ...args):
+		basic_posix_file(basic_win32_file<char_type>(file,om,std::forward<Args>(args)...),om)
+	{}
+#else
+	template<open_mode om,perms pm>
+	basic_posix_file(std::string_view file,open_interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	{
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
+			seek(*this,0,seekdir::end);
+	}
+	template<open_mode om>
+	basic_posix_file(std::string_view file,open_interface_t<om>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(436))
+	{
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
+			seek(*this,0,seekdir::end);
+	}
+	template<open_mode om>
+	basic_posix_file(std::string_view file,open_interface_t<om>,perms pm):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	{
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
+			seek(*this,0,seekdir::end);
+	}
+	//potential support modification prv in the future
+	basic_posix_file(std::string_view file,open_mode om,perms pm=static_cast<perms>(436)):basic_posix_file(native_interface,file.data(),details::calculate_posix_open_mode(om),static_cast<mode_t>(pm))
+	{
+		if((om&open_mode::ate)!=open_mode::none)
+			seek(*this,0,seekdir::end);
+	}
+	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(436)):basic_posix_file(file,from_c_mode(mode),pm){}
 #endif
 	~basic_posix_file()
 	{
