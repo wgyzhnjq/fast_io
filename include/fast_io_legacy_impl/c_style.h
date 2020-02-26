@@ -117,7 +117,11 @@ inline Iter read(c_io_handle_unlocked& cfhd,Iter begin,Iter end)
 	(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
 	if(r==count||std::feof(cfhd.native_handle()))
 		return begin+r;
+#ifdef __cpp_exceptions
 	throw std::system_error(errno,std::generic_category());
+#else
+	fast_terminate();
+#endif
 }
 
 template<std::contiguous_iterator Iter>
