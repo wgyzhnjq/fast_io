@@ -97,15 +97,16 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 	if((value&open_mode::sync)!=open_mode::none)
 		mode |= O_SYNC;
 #endif
+/*
 	if((value&open_mode::directory)!=open_mode::none)
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
 #elif __cpp_exceptions
-		throw std::runtime_error("directory not supported");
+		throw std::system_error(make_error_code(std::errc::operation_not_supported));
 #else
 		fast_terminate();
 #endif
-
+*/
 #ifdef O_NOCTTY
 	if((value&open_mode::no_ctty)!=open_mode::none)
 		mode |= O_NOCTTY;
@@ -118,7 +119,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_NONBLOCK
 		mode |= O_NONBLOCK;
 #elif __cpp_exceptions
-		throw std::runtime_error("non block not supported");
+		throw std::system_error(make_error_code(std::errc::operation_not_supported));
 #else
 		fast_terminate();
 #endif
@@ -133,7 +134,8 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 	else
 		mode |= _O_RANDOM;
 #endif
-	switch(c_supported(value))
+	constexpr auto supported_values{open_mode::out|open_mode::app|open_mode::in};
+	switch(value&supported_values)
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
@@ -156,7 +158,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::runtime_error("unknown open mode");
+		throw std::system_error(make_error_code(std::errc::invalid_argument));
 #else
 		fast_terminate();
 #endif
