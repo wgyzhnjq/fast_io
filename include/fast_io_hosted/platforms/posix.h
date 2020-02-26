@@ -101,7 +101,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
 #elif __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+		throw std::system_error(ENOTSUP,std::generic_category());
 #else
 		fast_terminate();
 #endif
