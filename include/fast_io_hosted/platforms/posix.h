@@ -17,13 +17,11 @@ namespace details
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 template<bool wide_char=false>
-inline constexpr int calculate_posix_open_mode_for_win32_handle(open::mode const &om)
+inline constexpr int calculate_posix_open_mode_for_win32_handle(open_mode value)
 {
-	using namespace open;
-	std::size_t value(om.value);
 	int mode{};
-	if(value&binary.value)
-		value &= ~binary.value;
+	if((value&open_mode::binary)==open_mode::none)
+		value &= ~open_mode::binary;
 	else
 	{
 		if constexpr(wide_char)
@@ -35,31 +33,31 @@ inline constexpr int calculate_posix_open_mode_for_win32_handle(open::mode const
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
-	case in:
+	case open_mode::in:
 		return mode | O_RDONLY;
 //Destroy contents;	Create new;	"w";	Create a file for writing
-	case out:
+	case open_mode::out:
 //Read from start;	Error;	"r+";		Open a file for read/write
-	case out|in:
+	case open_mode::out|open_mode::in:
 		return mode;
 //Append to file;	Create new;	"a";	Append to a file
-	case app:
-	case out|app:
+	case open_mode::app:
+	case open_mode::out|open_mode::app:
 		return mode | O_APPEND;
 //Write to end;	Create new;	"a+";	Open a file for read/write
-	case out|in|app:
-	case in|app:
+	case open_mode::out|open_mode::in|open_mode::app:
+	case open_mode::in|open_mode::app:
 		return mode | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::runtime_error("unknown posix file openmode");
+		throw std::system_error(make_error_code(std::errc::invalid_argument));
 #else
 		fast_terminate();
 #endif
 	}
 }
-template<std::size_t om>
+template<open_mode om>
 struct posix_file_openmode_for_win32_handle
 {
 	static int constexpr mode = calculate_posix_open_mode_for_win32_handle(om);
@@ -67,100 +65,98 @@ struct posix_file_openmode_for_win32_handle
 #endif
 
 
-inline constexpr int calculate_posix_open_mode(open::mode const &om)
+inline constexpr int calculate_posix_open_mode(open_mode value)
 {
-	using namespace open;
-	std::size_t value(remove_ate_overlapped(om).value);
 	int mode
 	{
 #ifdef O_NOFOLLOW
 		O_NOFOLLOW
 #endif
 	};
-	if(value&reparse_point.value)
+	if((value&open_mode::follow)!=open_mode::none)
 	{
 		mode = {};
-		value &= ~reparse_point.value;
+		value &= ~open_mode::follow;
 	}
 #ifdef O_CLOEXEC
-	if(value&inherit.value)
-		value &= ~inherit.value;
+	if((value&open_mode::inherit)!=open_mode::none)
+		value &= ~open_mode::inherit;
 	else
 		mode |= O_CLOEXEC;
 #elif _O_NOINHERIT
-	if(value&inherit.value)
-		value &= ~reparse_point.value;
+	if((value&open_mode::inherit)!=open_mode::none)
+		value &= ~open_mode::follow;
 	else
 		mode |= _O_NOINHERIT;
 #endif
-	if(value&binary.value)
+	if((value&open_mode::binary)!=open_mode::none)
 	{
 #ifdef O_BINARY
 		mode |= O_BINARY;
 #endif
-		value &= ~binary.value;
-	}	
-	if(value&excl.value)
+		value &= ~open_mode::binary;
+	}
+	if((value&open_mode::excl)!=open_mode::none)
 	{
 		mode |= O_CREAT | O_EXCL;
-		value &= ~excl.value;
+		value &= ~open_mode::excl;
 	}
-	if(value&trunc.value)
+	if((value&open_mode::trunc)!=open_mode::none)
 	{
 		mode |= O_TRUNC;
-		value &= ~trunc.value;
+		value &= ~open_mode::trunc;
 	}
-	if(value&direct.value)
+	if((value&open_mode::direct)!=open_mode::none)
 	{
 #ifdef O_DIRECT
 		mode |= O_DIRECT;
 #endif
-		value &= ~direct.value;
+		value &= ~open_mode::direct;
 	}
-	if(value&sync.value)
+	if((value&open_mode::sync)!=open_mode::none)
 	{
 #ifdef O_SYNC
 		mode |= O_SYNC;
 #endif
-		value &= ~sync.value;
+		value &= ~open_mode::sync;
 	}
-	if(value&directory.value)
+	if((value&open_mode::directory)!=open_mode::none)
 	{
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
 #endif
-		value &= ~directory.value;
+		value &= ~open_mode::directory;
 	}
-	switch(value)
+	switch(c_supported(value))
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
-	case in:
+	case open_mode::in:
 		return mode | O_RDONLY;
 //Destroy contents;	Create new;	"w";	Create a file for writing
-	case out:
+	case open_mode::out:
 		return mode | O_WRONLY | O_CREAT | O_TRUNC;
 //Append to file;	Create new;	"a";	Append to a file
-	case app:
-	case out|app:
+	case open_mode::app:
+	case open_mode::out|open_mode::app:
 		return mode | O_WRONLY | O_CREAT | O_APPEND;
 //Read from start;	Error;	"r+";		Open a file for read/write
-	case out|in:
+	case open_mode::out|open_mode::in:
 		return mode | O_RDWR;
 //Write to end;	Create new;	"a+";	Open a file for read/write
-	case out|in|app:
-	case in|app:
+	case open_mode::out|open_mode::in|open_mode::app:
+	case open_mode::in|open_mode::app:
 		return mode | O_RDWR | O_CREAT | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::runtime_error("unknown posix file openmode");
+		throw std::system_error(make_error_code(std::errc::invalid_argument));
 #else
 		fast_terminate();
 #endif
 	}
 }
-template<std::size_t om>
+template<open_mode om>
 struct posix_file_openmode
 {
 	static int constexpr mode = calculate_posix_open_mode(om);
@@ -285,13 +281,14 @@ inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 template<std::integral ch_type,typename T,std::integral R>
 inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
-	auto ret(::lseek64(h.native_handle(),seek_precondition<std::int64_t,T,ch_type>(i),static_cast<int>(s)));
-	if(ret==-1)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+	auto ret(
+#if defined(__linux__)&&defined(__x86_64__)
+		system_call<8,std::ptrdiff_t>
 #else
-		fast_terminate();
+		::lseek64
 #endif
+		(h.native_handle(),seek_precondition<std::int64_t,T,ch_type>(i),static_cast<int>(s)));
+	system_call_throw_error(ret);
 	return ret;
 }
 template<std::integral ch_type,std::integral R>
@@ -376,35 +373,35 @@ public:
 #endif*/
 		system_call_throw_error(native_handle());
 	}
-	template<std::size_t om,perms pm>
-	basic_posix_file(std::string_view file,open::interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	template<open_mode om,perms pm>
+	basic_posix_file(std::string_view file,open_interface_t<om>,perms_interface_t<pm>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	template<std::size_t om>
-	basic_posix_file(std::string_view file,open::interface_t<om>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
+	template<open_mode om>
+	basic_posix_file(std::string_view file,open_interface_t<om>):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(420))
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	template<std::size_t om>
-	basic_posix_file(std::string_view file,open::interface_t<om>,perms pm):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
+	template<open_mode om>
+	basic_posix_file(std::string_view file,open_interface_t<om>,perms pm):basic_posix_file(native_interface,file.data(),details::posix_file_openmode<om>::mode,static_cast<mode_t>(pm))
 	{
-		if constexpr (with_ate(open::mode(om)))
+		if constexpr ((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
 	//potential support modification prv in the future
-	basic_posix_file(std::string_view file,open::mode const& m,perms pm=static_cast<perms>(420)):basic_posix_file(native_interface,file.data(),details::calculate_posix_open_mode(m),static_cast<mode_t>(pm))
+	basic_posix_file(std::string_view file,open_mode om,perms pm=static_cast<perms>(420)):basic_posix_file(native_interface,file.data(),details::calculate_posix_open_mode(om),static_cast<mode_t>(pm))
 	{
-		if(with_ate(m))
+		if((om&open_mode::ate)!=open_mode::none)
 			seek(*this,0,seekdir::end);
 	}
-	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,fast_io::open::c_style(mode),pm){}
+	basic_posix_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):basic_posix_file(file,from_c_mode(mode),pm){}
 #if defined(__WINNT__) || defined(_MSC_VER)
 //windows specific. open posix file from win32 io handle
-	template<std::size_t om>
-	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open::interface_t<om>):
+	template<open_mode om>
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open_interface_t<om>):
 		basic_posix_io_handle<char_type>(::_open_osfhandle(bit_cast<std::intptr_t>(hd.native_handle()),details::posix_file_openmode_for_win32_handle<om>::mode))
 	{
 		if(native_handle()==-1)
@@ -415,7 +412,7 @@ public:
 #endif
 		hd.reset();
 	}
-	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open::mode const& m):
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open_mode m):
 		basic_posix_io_handle<char_type>(::_open_osfhandle(bit_cast<std::intptr_t>(hd.native_handle()),details::calculate_posix_open_mode_for_win32_handle(m)))
 	{
 		if(native_handle()==-1)
@@ -426,7 +423,7 @@ public:
 #endif
 		hd.reset();
 	}
-	basic_posix_file(basic_win32_io_handle<char_type>&& hd,std::string_view mode):basic_posix_file(std::move(hd),fast_io::open::c_style(mode)){}
+	basic_posix_file(basic_win32_io_handle<char_type>&& hd,std::string_view mode):basic_posix_file(std::move(hd),from_c_mode(mode)){}
 #endif
 	~basic_posix_file()
 	{
@@ -498,17 +495,6 @@ public:
 		pipes.front().native_handle()=a2.front();
 		pipes.back().native_handle()=a2.back();
 	}
-/*
-	template<std::size_t om>
-	basic_posix_pipe(open::interface_t<om>):basic_posix_pipe()
-	{
-		auto constexpr omb(om&~open::binary.value);
-		static_assert(omb==open::in.value||omb==open::out.value||omb==(open::in.value|open::out.value),u8"pipe open mode must be in or out");
-		if constexpr (!(om&~open::in.value)&&(om&~open::out.value))
-			pipes.front().close();
-		if constexpr ((om&~open::in.value)&&!(om&~open::out.value))
-			pipes.back().close();
-	}*/
 	auto& native_handle()
 	{
 		return pipes;
