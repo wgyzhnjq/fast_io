@@ -236,7 +236,7 @@ inline void seek(c_io_handle_unlocked& cfhd,U i,seekdir s=seekdir::beg)
 	seek(cfhd,seek_type<char>,i,s);
 }
 
-/*
+
 
 //Exploiting the library internal implementation for performance since the stdio.h performance is SO TERRIBLE
 #ifdef __MINGW32__
@@ -272,7 +272,7 @@ inline void orelease(c_io_handle_unlocked& cfhd,std::size_t n)
 	cfhd.native_handle()->_IO_write_ptr-=n;
 }
 #endif
-*/
+
 class c_io_lock_guard;
 
 template<std::integral ch_type>
@@ -396,7 +396,7 @@ inline void write(c_io_handle& cfhd,Iter begin,Iter end)
 #endif
 }
 
-/*
+
 inline void put(c_io_handle& cfhd,typename c_io_handle::char_type ch)
 {
 	if(std::fputc(ch,cfhd.native_handle())==EOF)
@@ -406,7 +406,7 @@ inline void put(c_io_handle& cfhd,typename c_io_handle::char_type ch)
 		fast_terminate();
 #endif
 }
-*/
+
 inline void flush(c_io_handle& cfhd)
 {
 	if(std::fflush(cfhd.native_handle()))
