@@ -156,6 +156,12 @@ try
 		for(std::size_t i(0);i!=N;++i)
 			println(fout,fast_io::concat(i));
 	}
+	{
+	fast_io::timer t("ostream_file");
+	fast_io::ostream_file osf("smf.txt");
+	for(std::size_t i(0);i!=N;++i)
+		println(osf,i);
+	}
 #ifdef FAST_IO_TEST_FMT
 	{
 		fast_io::timer t("fmt::format_int obuf_file");
