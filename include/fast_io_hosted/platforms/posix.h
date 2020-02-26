@@ -156,7 +156,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::invalid_argument));
+		throw std::system_error(EINVAL,std::generic_category());
 #else
 		fast_terminate();
 #endif
