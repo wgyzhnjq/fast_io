@@ -144,13 +144,6 @@ try
 		println(obuf_file,i);
 	}
 	{
-	fast_io::timer t("fbh");
-	std::ofstream pf("fbh.txt",std::ofstream::binary);
-	fast_io::filebuf_handle hd(pf);
-	for(std::size_t i(0);i!=N;++i)
-		println(hd,i);
-	}
-	{
 		fast_io::timer t("fast_io::concat");
 		fast_io::obuf_file fout("concat.txt");
 		for(std::size_t i(0);i!=N;++i)
