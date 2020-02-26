@@ -101,7 +101,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
 #elif __cpp_exceptions
-		throw std::system_error(ENOTSUP,std::generic_category());
+		throw std::runtime_error("directory not supported");
 #else
 		fast_terminate();
 #endif
@@ -118,7 +118,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_NONBLOCK
 		mode |= O_NONBLOCK;
 #elif __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+		throw std::runtime_error("non block not supported");
 #else
 		fast_terminate();
 #endif
@@ -156,7 +156,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::system_error(EINVAL,std::generic_category());
+		throw std::runtime_error("unknown open mode");
 #else
 		fast_terminate();
 #endif
