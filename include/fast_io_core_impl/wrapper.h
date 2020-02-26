@@ -23,9 +23,9 @@ public:
 		T(file,open_interface<interface_mode>,perms_interface<pm>){}
 	constexpr basic_file_wrapper(std::string_view file):
 		T(file,open_interface<interface_mode>){}
-	constexpr basic_file_wrapper(std::string_view file,open_mode m,perms p=static_cast<perms>(420)):
+	constexpr basic_file_wrapper(std::string_view file,open_mode m,perms p=static_cast<perms>(436)):
 		T(file,m|interface_mode,p){}
-	constexpr basic_file_wrapper(std::string_view file,std::string_view mode,perms p=static_cast<perms>(420)):
+	constexpr basic_file_wrapper(std::string_view file,std::string_view mode,perms p=static_cast<perms>(436)):
 		basic_file_wrapper(file,fast_io::from_c_mode(mode),p){}
 	constexpr basic_file_wrapper(std::string_view file,perms pm):T(file,open_interface<interface_mode>,pm){}
 };
