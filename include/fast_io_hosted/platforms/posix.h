@@ -229,7 +229,14 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(fd));
+		auto os_handle(_get_osfhandle(fd));
+		if(os_handle==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
 	}
 #endif
 	constexpr void swap(basic_posix_io_handle& o) noexcept
@@ -412,6 +419,10 @@ public:
 	template<typename... Args>
 	basic_posix_file(std::string_view file,open_mode om,Args&& ...args):
 		basic_posix_file(basic_win32_file<char_type>(file,om,std::forward<Args>(args)...),om)
+	{}
+	template<typename... Args>
+	basic_posix_file(std::string_view file,std::string_view mode,Args&& ...args):
+		basic_posix_file(basic_win32_file<char_type>(file,mode,std::forward<Args>(args)...),mode)
 	{}
 #else
 	template<open_mode om,perms pm>

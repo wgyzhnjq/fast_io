@@ -1,12 +1,20 @@
 #pragma once
 #include<cstdio>
+#include<cwchar>
 
 namespace fast_io
 {
 
+namespace details
+{
+template<open_mode om>
+struct c_open_mode
+{
+inline static constexpr std::string_view value=to_c_mode(om);
+};
+}
 
 template<std::integral ch_type>
-requires (std::same_as<ch_type,char>||std::same_as<ch_type,wchar_t>)
 class basic_c_io_handle_unlocked
 {
 	std::FILE *fp;
@@ -21,18 +29,46 @@ public:
 	}
 	explicit operator basic_posix_io_handle<char_type>() const
 	{
-		return static_cast<basic_posix_io_handle<char_type>>(
+
+		auto fd(
 #if defined(__WINNT__) || defined(_MSC_VER)
 	_fileno(fp)
 #else
 	::fileno_unlocked(fp)
 #endif
 );
+		if(fd<0)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return static_cast<basic_posix_io_handle<char_type>>(fd);
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(_fileno(fp)));
+		auto fd(
+#if defined(__WINNT__) || defined(_MSC_VER)
+	_fileno(fp)
+#else
+	::fileno_unlocked(fp)
+#endif
+);
+		if(fd<0)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		auto os_handle(_get_osfhandle(fd));
+		if(os_handle==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
 	}
 #endif
 };
@@ -103,7 +139,7 @@ inline void write(c_io_handle_unlocked& cfhd,Iter begin,Iter end)
 		fast_terminate();
 #endif
 }
-
+/*
 template<bool err=false>
 inline auto get(c_io_handle_unlocked& cfhd)
 {
@@ -160,7 +196,7 @@ inline void put(c_io_handle_unlocked& cfhd,typename c_io_handle_unlocked::char_t
 		fast_terminate();
 #endif
 }
-
+*/
 inline void flush(c_io_handle_unlocked& cfhd)
 {
 	if(
@@ -200,6 +236,7 @@ inline void seek(c_io_handle_unlocked& cfhd,U i,seekdir s=seekdir::beg)
 	seek(cfhd,seek_type<char>,i,s);
 }
 
+/*
 
 //Exploiting the library internal implementation for performance since the stdio.h performance is SO TERRIBLE
 #ifdef __MINGW32__
@@ -235,7 +272,7 @@ inline void orelease(c_io_handle_unlocked& cfhd,std::size_t n)
 	cfhd.native_handle()->_IO_write_ptr-=n;
 }
 #endif
-
+*/
 class c_io_lock_guard;
 
 template<std::integral ch_type>
@@ -253,18 +290,45 @@ public:
 	}
 	explicit operator basic_posix_io_handle<char_type>() const
 	{
-		return static_cast<basic_posix_io_handle<char_type>>(
+		auto fd(
 #if defined(__WINNT__) || defined(_MSC_VER)
 	_fileno(fp)
 #else
 	::fileno(fp)
 #endif
 );
+		if(fd<0)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return static_cast<basic_posix_io_handle<char_type>>(fd);
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_handle<char_type>() const
 	{
-		return static_cast<basic_win32_io_handle<char_type>>(_get_osfhandle(_fileno(fp)));
+		auto fd(
+#if defined(__WINNT__) || defined(_MSC_VER)
+	_fileno(fp)
+#else
+	::fileno(fp)
+#endif
+);
+		if(fd<0)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		auto os_handle(_get_osfhandle(fd));
+		if(os_handle==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
 	}
 #endif
 };
@@ -332,7 +396,7 @@ inline void write(c_io_handle& cfhd,Iter begin,Iter end)
 #endif
 }
 
-
+/*
 inline void put(c_io_handle& cfhd,typename c_io_handle::char_type ch)
 {
 	if(std::fputc(ch,cfhd.native_handle())==EOF)
@@ -342,7 +406,7 @@ inline void put(c_io_handle& cfhd,typename c_io_handle::char_type ch)
 		fast_terminate();
 #endif
 }
-
+*/
 inline void flush(c_io_handle& cfhd)
 {
 	if(std::fflush(cfhd.native_handle()))
@@ -370,7 +434,10 @@ inline void seek(c_io_handle& cfhd,U i,seekdir s=seekdir::beg)
 	seek(cfhd,seek_type<typename c_io_handle::char_type>,i,s);
 }
 
-template<typename T>
+template<typename T,
+	bool buffer=true,
+	bool use_fwide=false>
+requires (!use_fwide||std::same_as<typename T::native_handle,wchar_t>)
 class basic_c_file:public T
 {
 	void close_impl() noexcept
@@ -380,20 +447,10 @@ class basic_c_file:public T
 	}
 public:
 	using T::native_handle;
-	using T::char_type;
-	using T::native_handle_type;
-	template<typename ...Args>
-	basic_c_file(native_interface_t,Args&& ...args):T(std::fopen(std::forward<Args>(args)...))
-	{
-		if(native_handle()==nullptr)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
-	}
+	using char_type=T::char_type;
+	using native_handle_type=T::native_handle_type;
 
-
+/*
 	basic_c_file(std::string_view name,std::string_view mode):T(std::fopen(name.data(),mode.data()))
 	{
 		if(native_handle()==nullptr)
@@ -403,18 +460,11 @@ public:
 			fast_terminate();
 #endif
 	}
-	basic_c_file(std::string_view file,open::mode const& m):basic_c_file(file,c_style(m))
+	basic_c_file(std::string_view file,open_mode const& m):basic_c_file(file,c_style(m))
 	{
 		if(with_ate(m))
 			seek(*this,0,seekdir::end);
-	}
-	template<std::size_t om>
-	basic_c_file(std::string_view name,open::interface_t<om>):basic_c_file(name,open::c_style_interface_t<om>::mode)
-	{
-		if constexpr (with_ate(open::mode(om)))
-			seek(*this,0,seekdir::end);
-	}
-
+	}*/
 //fdopen interface
 
 	basic_c_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,std::string_view mode):T(
@@ -432,11 +482,34 @@ public:
 			fast_terminate();
 #endif
 		posix_handle.reset();
+
+		if(native_handle()==nullptr)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		if constexpr(use_fwide)
+		{
+			if(fwide(native_handle(),1)<=0)
+#ifdef __cpp_exceptions
+			{
+				std::fclose(native_handle());
+				throw std::system_error(std::make_error_code(std::errc::io_error));
+			}
+#else
+				fast_terminate();
+#endif
+		}
+		if constexpr(!buffer)
+			std::setbuf(native_handle(),nullptr);
 	}
 
-	basic_c_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::mode const& m):basic_c_file(std::move(posix_handle),c_style(m)){}
-	template<std::size_t om>
-	basic_c_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open::interface_t<om>):basic_c_file(std::move(posix_handle),open::c_style_interface_t<om>::mode){}
+	basic_c_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open_mode om):
+		basic_c_file(std::move(posix_handle),to_c_mode(om)){}
+	template<open_mode om>
+	basic_c_file(basic_posix_io_handle<typename T::char_type>&& posix_handle,open_interface_t<om>):
+		basic_c_file(std::move(posix_handle),details::c_open_mode<om>::value){}
 
 #if defined(__WINNT__) || defined(_MSC_VER)
 //windows specific. open posix file from win32 io handle
@@ -444,16 +517,32 @@ public:
 		basic_c_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),mode),mode)
 	{
 	}
-	basic_c_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open::mode const& m):
-		basic_c_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),m),m)
+	basic_c_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open_mode om):
+		basic_c_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),om),to_c_mode(om))
 	{
 	}
-	template<std::size_t om>
-	basic_c_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open::interface_t<om>):
-		basic_c_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),open::interface<om>),open::c_style_interface_t<om>::mode)
+	template<open_mode om>
+	basic_c_file(basic_win32_io_handle<typename T::char_type>&& win32_handle,open_interface_t<om>):
+		basic_c_file(basic_posix_file<typename T::char_type>(std::move(win32_handle),open_interface<om>),
+			details::c_open_mode<om>::value)//open::c_style_interface_t<om>::mode)
 	{
 	}
 #endif
+
+	template<open_mode om,typename... Args>
+	basic_c_file(std::string_view file,open_interface_t<om>,Args&& ...args):
+		basic_c_file(basic_posix_file<typename T::char_type>(file,open_interface<om>,std::forward<Args>(args)...),
+			open_interface<om>)
+	{}
+	template<typename... Args>
+	basic_c_file(std::string_view file,open_mode om,Args&& ...args):
+		basic_c_file(basic_posix_file<typename T::char_type>(file,om,std::forward<Args>(args)...),om)
+	{}
+	template<typename... Args>
+	basic_c_file(std::string_view file,std::string_view mode,Args&& ...args):
+		basic_c_file(basic_posix_file<typename T::char_type>(file,mode,std::forward<Args>(args)...),mode)
+	{}
+
 	basic_c_file(basic_c_file const&)=delete;
 	basic_c_file& operator=(basic_c_file const&)=delete;
 	basic_c_file(basic_c_file&& b) noexcept : T(b.native_handle())
