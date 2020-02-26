@@ -59,6 +59,7 @@ public:
 	{
 		if(!stm)
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+		std::setbuf(bcf.native_handle(),nullptr);
 	}
 
 	basic_stream_file(c_io_handle_type&& ciohd,open_mode om):
@@ -66,12 +67,14 @@ public:
 	{
 		if(!stm)
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+		std::setbuf(bcf.native_handle(),nullptr);
 	}
 	basic_stream_file(c_io_handle_type&& ciohd,std::string_view om):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),from_c_mode(om)),stm(std::addressof(hd))
 	{
 		if(!stm)
 			throw std::system_error(std::make_error_code(std::errc::io_error));
+		std::setbuf(bcf.native_handle(),nullptr);
 	}
 
 	template<open_mode om>
@@ -87,13 +90,13 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 	template<open_mode om>
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_interface_t<om>):
-		basic_stream_file(basic_posix_io_handle<char_type>(std::move(ciohd),open_interface<om>),open_interface<om>){}
+		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),open_interface<om>),open_interface<om>){}
 
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_mode om):
-		basic_stream_file(basic_posix_io_handle<char_type>(std::move(ciohd),om),om){}
+		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),om),om){}
 
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,std::string_view om):
-		basic_stream_file(basic_posix_io_handle<char_type>(std::move(ciohd),om),om){}
+		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),om),om){}
 #endif
 
 	template<open_mode om,typename... Args>
@@ -177,13 +180,15 @@ public:
 template<typename fstream_type,std::contiguous_iterator Iter>
 inline Iter read(basic_stream_file<fstream_type>& cfhd,Iter begin,Iter end)
 {
-	return read(cfhd.c_file(),begin,end);
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	return read(buf,begin,end);
 }
 
 template<typename fstream_type,std::contiguous_iterator Iter>
 inline auto write(basic_stream_file<fstream_type>& cfhd,Iter begin,Iter end)
 {
-	return write(cfhd.c_file(),begin,end);
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	return write(buf,begin,end);
 }
 
 template<typename fstream_type>
@@ -194,48 +199,30 @@ inline void flush(basic_stream_file<fstream_type>& cfhd)
 template<typename fstream_type>
 inline auto oreserve(basic_stream_file<fstream_type>& cfhd,std::size_t n)
 {
-	using c_file_type = basic_stream_file<fstream_type>::c_file_type;
-	if constexpr(fast_io::buffer_output_stream<c_file_type>)
-		return oreserve(cfhd.c_file(),n);
-	else
-	{
-		streambuf_view buf(std::addressof(cfhd.filebuf()));
-		return oreserve(buf,n);
-	}
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	return oreserve(buf,n);
 }
 
 template<typename fstream_type>
 inline void orelease(basic_stream_file<fstream_type>& cfhd,std::size_t n)
 {
-	using c_file_type = basic_stream_file<fstream_type>::c_file_type;
-	if constexpr(fast_io::buffer_output_stream<c_file_type>)
-		orelease(cfhd.c_file(),n);
-	else
-	{
-		streambuf_view buf(std::addressof(cfhd.filebuf()));
-		orelease(buf,n);
-	}
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	orelease(buf,n);
 }
 
 template<typename fstream_type>
 inline void put(basic_stream_file<fstream_type>& cfhd,typename basic_stream_file<fstream_type>::char_type ch)
 {
-	using c_file_type = basic_stream_file<fstream_type>::c_file_type;
-	if constexpr(fast_io::character_output_stream<c_file_type>)
-		put(cfhd.c_file(),ch);
-	else
-	{
-		streambuf_view buf(std::addressof(cfhd.filebuf()));
-		put(buf,ch);
-	}
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	put(buf,ch);
 }
-
+/*
 template<typename fstream_type,typename... Args>
 inline auto seek(basic_stream_file<fstream_type>& cfhd,Args&& ...args)
 {
 	return seek(cfhd.c_file(),std::forward<Args>(args)...);
 }
-
+*/
 template<typename fstream_type>
 requires zero_copy_input_stream<typename basic_stream_file<fstream_type>::c_file_type>
 inline auto zero_copy_in_handle(basic_stream_file<fstream_type>& h)
@@ -248,6 +235,13 @@ requires zero_copy_output_stream<typename basic_stream_file<fstream_type>::c_fil
 inline auto zero_copy_out_handle(basic_stream_file<fstream_type>& h)
 {
 	return zero_copy_out_handle(h.c_file());
+}
+
+template<typename fstream_type>
+requires redirect_stream<typename basic_stream_file<fstream_type>::c_file_type>
+inline auto redirect_handle(basic_stream_file<fstream_type>& h)
+{
+	return redirect_handle(h.c_file());
 }
 
 using stream_file = basic_stream_file<std::iostream>;

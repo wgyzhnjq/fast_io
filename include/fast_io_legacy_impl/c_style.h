@@ -81,9 +81,9 @@ template<std::integral ch_type>
 inline auto redirect_handle(basic_c_io_handle_unlocked<ch_type>& h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
-	return bit_cast<void*>(_get_osfhandle(_fileno(h.native_handle())));
+	return static_cast<basic_win32_io_handle<ch_type>>(h).native_handle();
 #else
-	return fileno_unlocked(h.native_handle());
+	return static_cast<basic_posix_io_handle<ch_type>>(h).native_handle();
 #endif
 }
 
@@ -208,7 +208,7 @@ inline void put(c_io_handle_unlocked& cfhd,typename c_io_handle_unlocked::char_t
 inline void flush(c_io_handle_unlocked& cfhd)
 {
 	if(
-#if defined(__WINNT__) || defined(_MSC_VER)
+#if defined(_MSC_VER)
 		_fflush_nolock
 #elif defined(_POSIX_SOURCE)
 		fflush_unlocked
@@ -584,9 +584,9 @@ template<std::integral ch_type>
 inline auto redirect_handle(basic_c_io_handle<ch_type>& h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
-	return bit_cast<void*>(_get_osfhandle(_fileno(h.native_handle())));
+	return static_cast<basic_win32_io_handle<ch_type>>(h).native_handle();
 #else
-	return fileno(h.native_handle());
+	return static_cast<basic_posix_io_handle<ch_type>>(h).native_handle();
 #endif
 }
 using c_file = basic_c_file<c_io_handle>;
