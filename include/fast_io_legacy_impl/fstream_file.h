@@ -102,13 +102,13 @@ public:
 #if defined(__WINNT__) || defined(_MSC_VER)
 	template<open_mode om>
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_interface_t<om>):
-		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),open_interface<om>),open_interface<om>){}
+		basic_stream_file(c_file_type(std::move(ciohd),open_interface<om>),open_interface<om>){}
 
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_mode om):
-		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),om),om){}
+		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 
 	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,std::string_view om):
-		basic_stream_file(basic_posix_file<char_type>(std::move(ciohd),om),om){}
+		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 #endif
 
 	template<open_mode om,typename... Args>
