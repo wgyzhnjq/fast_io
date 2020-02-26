@@ -21,7 +21,7 @@ inline constexpr int calculate_posix_open_mode_for_win32_handle(open_mode value)
 {
 	int mode{};
 	if((value&open_mode::binary)==open_mode::none)
-		mode = _O_BINARY
+		mode = _O_BINARY;
 	else
 	{
 		if constexpr(wide_char)
