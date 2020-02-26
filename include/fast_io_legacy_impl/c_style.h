@@ -177,7 +177,7 @@ inline auto get(c_io_handle_unlocked& cfhd)
 	else
 		return std::char_traits<typename c_io_handle_unlocked::char_type>::to_char_type(ch);
 }
-
+*/
 inline void put(c_io_handle_unlocked& cfhd,typename c_io_handle_unlocked::char_type ch)
 {
 	if(
@@ -196,7 +196,7 @@ inline void put(c_io_handle_unlocked& cfhd,typename c_io_handle_unlocked::char_t
 		fast_terminate();
 #endif
 }
-*/
+
 inline void flush(c_io_handle_unlocked& cfhd)
 {
 	if(
