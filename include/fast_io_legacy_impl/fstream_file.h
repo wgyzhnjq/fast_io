@@ -216,13 +216,15 @@ inline void put(basic_stream_file<fstream_type>& cfhd,typename basic_stream_file
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	put(buf,ch);
 }
-/*
+
 template<typename fstream_type,typename... Args>
 inline auto seek(basic_stream_file<fstream_type>& cfhd,Args&& ...args)
 {
+	cfhd.native_handle().flush();
+	cfhd.native_handle().clear();
 	return seek(cfhd.c_file(),std::forward<Args>(args)...);
 }
-*/
+
 template<typename fstream_type>
 requires zero_copy_input_stream<typename basic_stream_file<fstream_type>::c_file_type>
 inline auto zero_copy_in_handle(basic_stream_file<fstream_type>& h)
