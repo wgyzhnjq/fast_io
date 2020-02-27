@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 template<stream stm,typename traits_tp = std::char_traits<typename stm::char_type>>
-class fast_io_basic_streambuf:public std::basic_streambuf<typename traits_tp::char_type,traits_tp>
+class fast_io_basic_streambuf final:public std::basic_streambuf<typename traits_tp::char_type,traits_tp>
 {
 public:
 	using native_handle_type = stm;
