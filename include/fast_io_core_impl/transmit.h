@@ -24,7 +24,7 @@ inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp)
 	}
 	else
 	{
-		for(std::array<unsigned char,65536> array;;)
+		for(alignas(65536) std::array<unsigned char,65536> array;;)
 		{
 			auto p(read(inp,array.data(),array.data()+array.size()));
 			if(p==array.data())
@@ -69,7 +69,7 @@ inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp,
 	}
 	else
 	{
-		for(std::array<std::byte,65536> array;bytes;)
+		for(alignas(65536) std::array<unsigned char,65536> array;bytes;)
 		{
 			std::size_t b(array.size());
 			if(bytes<b)

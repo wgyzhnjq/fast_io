@@ -189,7 +189,7 @@ int main(int argc,char** argv)
         for (unsigned int i = 0; i < times; ++i)
         {
             total += measure::ms(it->second,args[2].c_str(), dest.c_str(), inBuffer);
-            ::unlink(dest.c_str());
+//            ::unlink(dest.c_str());
         }
 		println("Average ", args[1], " I/O took: " , total / times);
     }
