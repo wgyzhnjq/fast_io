@@ -154,13 +154,13 @@ inline Iter write(basic_connected_socket<async>& soc,Iter begin,Iter end)
 {
 	return begin+(sock::details::send(soc.native_handle(),std::to_address(begin),static_cast<int>((end-begin)*sizeof(*begin)),0)/sizeof(*begin));
 }
-
+#if !(defined(__WINNT__) && defined(_MSC_VER))
 template<bool async>
 inline auto redirect_handle(basic_connected_socket<async>& soc)
 {
 	return bit_cast<void*>(soc.native_handle());
 }
-
+#endif
 template<bool async=false>
 class basic_connected_server
 {
