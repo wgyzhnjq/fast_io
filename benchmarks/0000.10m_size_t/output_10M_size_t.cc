@@ -149,12 +149,14 @@ try
 		for(std::size_t i(0);i!=N;++i)
 			println(fout,fast_io::concat(i));
 	}
+#ifdef __GLIBCXX__
 	{
 	fast_io::timer t("ostream_file");
 	fast_io::ostream_file osf("smf.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(osf,i);
 	}
+#endif
 	{
 	fast_io::timer t("fast_io_streambuf");
 	fast_io::fast_io_streambuf<fast_io::obuf_file> strmbf("fast_io_streambuf.txt");

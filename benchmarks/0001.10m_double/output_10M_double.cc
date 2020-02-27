@@ -91,12 +91,14 @@ try
 		println(obuf_file,fast_io::int_hint(vec[i]));
 	}
 #endif
+#ifdef __GLIBCXX__
 	{
 	fast_io::timer t("ostream_file");
 	fast_io::ostream_file osf("smfdb.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(osf,vec[i]);
 	}
+#endif
 #ifdef _MSC_VER
 	{
 		fast_io::timer t("charconv");
