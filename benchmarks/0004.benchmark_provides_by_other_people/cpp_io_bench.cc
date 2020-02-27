@@ -5,6 +5,10 @@
 #include<map>
 #include<vector>
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 struct measure
 {
 template<typename F, typename ...Args>
