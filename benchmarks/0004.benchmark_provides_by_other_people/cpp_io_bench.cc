@@ -11,9 +11,9 @@ template<typename F, typename ...Args>
 static auto ms(F func, Args&&... args)
 {
 	auto start = std::chrono::high_resolution_clock::now();
-	func(std::forward<Args>(args)...);
+	func->second(std::forward<Args>(args)...);
 	auto stop = std::chrono::high_resolution_clock::now();
-	
+	println(func->first,"\t",stop-start);	
 	return stop - start;
 }
 };
@@ -105,7 +105,6 @@ void testCppIO2(const char* inFile, const char* outFile, std::vector<char>&)
 
 void testPosixIO(const char* inFile, const char* outFile, std::vector<char>& inBuffer)
 {
-	fast_io::timer timer("PosixIO");
     int in = ::open(inFile, O_RDONLY | O_BINARY);
     if (in < 0)
     {
@@ -155,9 +154,9 @@ int main(int argc,char** argv)
 #if defined(__WINNT__) || defined(_MSC_VER)		
 		"fast_io_win32_file, "
 #endif
-		"fast_io_posix_file, fast_io_c_file_unlocked, fast_io_c_file "
+		"fast_io_posix_file, fast_io_c_file_unlocked, fast_io_c_file, fast_io_obuf_file"
 #ifdef __GLIBCXX__
-",fast_io_stream_file"
+", fast_io_stream_file"
 #endif
 ") in_file number_of_times");
         return 1;
@@ -171,7 +170,8 @@ int main(int argc,char** argv)
 #endif
 	{"fast_io_posix_file",test_fast_io<fast_io::posix_file,fast_io::posix_file>},
 	{"fast_io_c_file_unlocked",test_fast_io<fast_io::c_file_unlocked,fast_io::c_file_unlocked>},
-	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>}
+	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>},
+	{"fast_io_obuf_file",test_fast_io<fast_io::obuf_file,fast_io::obuf_file>}
 #ifdef __GLIBCXX__
 	,{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}
 #endif
@@ -183,13 +183,14 @@ int main(int argc,char** argv)
         std::vector<char> inBuffer(1024 * 1024);
         
         auto dest = args[2] + ".copy";
+        ::unlink(dest.c_str());
         const auto times = std::stoul(args[3]);
         decltype(std::chrono::high_resolution_clock::now()-std::chrono::high_resolution_clock::now())
 			total{};
         for (unsigned int i = 0; i < times; ++i)
         {
-            total += measure::ms(it->second,args[2].c_str(), dest.c_str(), inBuffer);
-//            ::unlink(dest.c_str());
+            total += measure::ms(it,args[2].c_str(), dest.c_str(), inBuffer);
+            ::unlink(dest.c_str());
         }
 		println("Average ", args[1], " I/O took: " , total / times);
     }
