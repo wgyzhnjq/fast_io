@@ -4,6 +4,20 @@
 #include"../../include/fast_io_legacy.h"
 #include<map>
 #include<vector>
+
+struct measure
+{
+template<typename F, typename ...Args>
+static auto ms(F func, Args&&... args)
+{
+	auto start = std::chrono::high_resolution_clock::now();
+	func(std::forward<Args>(args)...);
+	auto stop = std::chrono::high_resolution_clock::now();
+	
+	return stop - start;
+}
+};
+
 void testCFileIO(const char* inFile, const char* outFile, std::vector<char>& inBuffer)
 {
     FILE* in = ::fopen(inFile, "rb");
@@ -137,18 +151,31 @@ int main(int argc,char** argv)
     std::vector<std::string> args(argv, argv + argc);
     if (args.size() != 4)
     {
-        println("Usage: ", args[0], " copy_method (c, posix, c++) in_file number_of_times");
+        println("Usage: ", args[0], " copy_method (c, posix, c++, c++2, "
+#if defined(__WINNT__) || defined(_MSC_VER)		
+		"fast_io_win32_file, "
+#endif
+		"fast_io_posix_file, fast_io_c_file_unlocked, fast_io_c_file "
+#ifdef __GLIBCXX__
+",fast_io_stream_file"
+#endif
+") in_file number_of_times");
         return 1;
     }
 
     typedef std::map<std::string, std::function<void (const char*, const char*, std::vector<char>&)>> FuncMap;
     FuncMap funcMap { {"c", testCFileIO}, {"posix", testPosixIO}, {"c++", testCppIO},
 	{"c++2", testCppIO2},
+#if defined(__WINNT__) || defined(_MSC_VER)
 	{"fast_io_win32_file",test_fast_io<fast_io::win32_file,fast_io::win32_file>},
+#endif
 	{"fast_io_posix_file",test_fast_io<fast_io::posix_file,fast_io::posix_file>},
 	{"fast_io_c_file_unlocked",test_fast_io<fast_io::c_file_unlocked,fast_io::c_file_unlocked>},
-	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>},
-	{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}};
+	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>}
+#ifdef __GLIBCXX__
+	,{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}
+#endif
+};
 
     auto it = funcMap.find(args[1]);
     if (it != funcMap.end())
@@ -157,13 +184,14 @@ int main(int argc,char** argv)
         
         auto dest = args[2] + ".copy";
         const auto times = std::stoul(args[3]);
-        
-        fast_io::timer timer(args[1]);
+        decltype(std::chrono::high_resolution_clock::now()-std::chrono::high_resolution_clock::now())
+			total{};
         for (unsigned int i = 0; i < times; ++i)
         {
-            it->second(args[2].c_str(), dest.c_str(), inBuffer);
+            total += measure::ms(it->second,args[2].c_str(), dest.c_str(), inBuffer);
             ::unlink(dest.c_str());
         }
+		println("Average ", args[1], " I/O took: " , total / times , "s");
     }
     else
     {
