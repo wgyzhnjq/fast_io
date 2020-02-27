@@ -155,6 +155,16 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(osf,i);
 	}
+	{
+	fast_io::timer t("fast_io_streambuf");
+	fast_io::fast_io_streambuf<fast_io::obuf_file> strmbf("fast_io_streambuf.txt");
+	std::ostream osm(std::addressof(strmbf));
+	for(std::size_t i(0);i!=N;++i)
+	{
+		osm<<i;
+		put(strmbf.native_handle(),'\n');
+	}
+	}
 #ifdef FAST_IO_TEST_FMT
 	{
 		fast_io::timer t("fmt::format_int obuf_file");
