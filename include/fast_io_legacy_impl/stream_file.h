@@ -205,7 +205,8 @@ inline auto write(basic_stream_file<fstream_type>& cfhd,Iter begin,Iter end)
 template<typename fstream_type>
 inline void flush(basic_stream_file<fstream_type>& cfhd)
 {
-	return flush(cfhd.c_file());
+	streambuf_view buf(std::addressof(cfhd.filebuf()));
+	return flush(buf);
 }
 template<typename fstream_type>
 inline auto oreserve(basic_stream_file<fstream_type>& cfhd,std::size_t n)
