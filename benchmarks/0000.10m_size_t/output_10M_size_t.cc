@@ -158,13 +158,12 @@ try
 	}
 #endif
 	{
-	fast_io::timer t("fast_io_streambuf");
-	fast_io::fast_io_streambuf<fast_io::obuf_file> strmbf("fast_io_streambuf.txt");
-	std::ostream osm(std::addressof(strmbf));
+	fast_io::timer t("iostream_type");
+	fast_io::iostream_type<fast_io::obuf_file> osm("fast_io_streambuf.txt");
 	for(std::size_t i(0);i!=N;++i)
 	{
 		osm<<i;
-		put(strmbf.native_handle(),'\n');
+		put(osm.native_handle(),'\n');
 	}
 	}
 #ifdef FAST_IO_TEST_FMT

@@ -17,9 +17,13 @@ public:
 	template<typename... Args>
 	requires std::constructible_from<native_handle_type,Args...>
 	fast_io_stream_base(Args&& ...args):handle(std::forward<Args>(args)...){}
-	constexpr auto& native_handle()
+	constexpr auto& streambuf_handle()
 	{
 		return handle;
+	}
+	constexpr auto& native_handle()
+	{
+		return handle.native_handle();
 	}
 };
 
@@ -39,7 +43,7 @@ public:
 	requires std::constructible_from<native_handle_type,Args...>
 	fast_io_basic_stream(Args&& ...args):
 		stream_base_type(std::forward<Args>(args)...),
-		stream_type(std::addressof(this->native_handle())){}
+		stream_type(std::addressof(this->streambuf_handle())){}
 };
 
 
