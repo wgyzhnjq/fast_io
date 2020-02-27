@@ -53,14 +53,18 @@ template<io_stream hd_type,typename traits_type = std::char_traits<typename hd_t
 using fast_io_iostream=fast_io_basic_stream<hd_type,std::basic_iostream<typename traits_type::char_type,traits_type>>;
 
 template<stream hd_type>
-using iostream_reference_t=std::conditional_t<io_stream<hd_type>,fast_io_iostream<io_ref<hd_type>>,
+using iostream_type=std::conditional_t<io_stream<hd_type>,fast_io_iostream<hd_type>,
+std::conditional_t<input_stream<hd_type>,fast_io_istream<hd_type>,fast_io_ostream<hd_type>>>;
+
+template<stream hd_type>
+using iostream_reference_type=std::conditional_t<io_stream<hd_type>,fast_io_iostream<io_ref<hd_type>>,
 std::conditional_t<input_stream<hd_type>,
 fast_io_istream<io_ref<hd_type>>,
 fast_io_ostream<io_ref<hd_type>>
 >>;
 
 template<stream hd_type>
-inline iostream_reference_t<hd_type> iostream_ref(hd_type& ref)
+inline iostream_reference_type<hd_type> iostream_ref(hd_type& ref)
 {
 	return ref;
 }
