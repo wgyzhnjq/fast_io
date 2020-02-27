@@ -103,7 +103,7 @@ inline void write(streambuf_view<T>& t,Iter begin,Iter end)
 template<typename T>
 inline void flush(streambuf_view<T>& t)
 {
-	t.native_handle()->sync();
+	t.native_handle()->overflow();
 }
 
 template<typename T>
