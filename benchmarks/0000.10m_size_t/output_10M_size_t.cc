@@ -156,6 +156,13 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(osf,i);
 	}
+
+	{
+	fast_io::timer t("ostream_file text");
+	fast_io::stream_file osf("smf_text.txt",fast_io::open_interface<fast_io::open_mode::out>);
+	for(std::size_t i(0);i!=N;++i)
+		println(osf,i);
+	}
 #endif
 	{
 	fast_io::timer t("iostream_type");
