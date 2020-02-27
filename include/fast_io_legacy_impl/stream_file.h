@@ -66,7 +66,7 @@ public:
 	}
 
 	basic_stream_file(c_io_handle_type&& ciohd,open_mode om):
-		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),details::calculate_fstream_file_open_mode(om)),stm(std::addressof(hd))
+		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),details::calculate_fstream_file_open_mode(om),65536),stm(std::addressof(hd))
 	{
 		if(!stm)
 #ifdef __cpp_exceptions
@@ -77,7 +77,7 @@ public:
 		std::setbuf(bcf.native_handle(),nullptr);
 	}
 	basic_stream_file(c_io_handle_type&& ciohd,std::string_view om):
-		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),from_c_mode(om)),stm(std::addressof(hd))
+		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),from_c_mode(om),65536),stm(std::addressof(hd))
 	{
 		if(!stm)
 #ifdef __cpp_exceptions
