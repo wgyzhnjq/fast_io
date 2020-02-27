@@ -13,9 +13,9 @@ inline void test(std::string_view text)
 
 int main()
 {
-	test<fast_io::posix_file>("posix.txt");
 	test<fast_io::c_file_unlocked>("c_file_unlocked.txt");
 	test<fast_io::c_file>("c_file.txt");
+	test<fast_io::posix_file>("posix.txt");
 	test<fast_io::stream_file>("stream_file.txt");
 #if defined(__WINNT__) || defined(_MSC_VER)
 	test<fast_io::win32_file>("win32.txt");
