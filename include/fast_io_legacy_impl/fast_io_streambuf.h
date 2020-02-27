@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 template<stream stm,typename traits_tp = std::char_traits<typename stm::char_type>>
-class fast_io_streambuf final:public std::basic_streambuf<typename traits_tp::char_type,traits_tp>
+class fast_io_basic_streambuf:public std::basic_streambuf<typename traits_tp::char_type,traits_tp>
 {
 public:
 	using native_handle_type = stm;
@@ -29,7 +29,7 @@ private:
 public:
 	template<typename... Args>
 	requires std::constructible_from<stm,Args...>
-	fast_io_streambuf(Args&& ...args):sm(std::forward<Args>(args)...){}
+	fast_io_basic_streambuf(Args&& ...args):sm(std::forward<Args>(args)...){}
 	constexpr auto& native_handle()
 	{
 		return sm;
