@@ -85,6 +85,18 @@ concept redirect_stream_impl = requires(T h)
 {
 	redirect_handle(h);
 };
+
+template<typename T>
+concept memory_map_input_stream_impl = requires(T& in)
+{
+	memory_map_in_handle(in);
+};
+
+template<typename T>
+concept memory_map_output_stream_impl = requires(T& out)
+{
+	memory_map_out_handle(out);
+};
 }
 
 
@@ -145,6 +157,15 @@ concept zero_copy_output_stream = output_stream<T>&&details::zero_copy_output_st
 
 template<typename T>
 concept zero_copy_io_stream = zero_copy_input_stream<T>&&zero_copy_output_stream<T>;
+
+template<typename T>
+concept memory_map_input_stream = input_stream<T>&&details::memory_map_input_stream_impl<T>;
+
+template<typename T>
+concept memory_map_output_stream = output_stream<T>&&details::memory_map_output_stream_impl<T>;
+
+template<typename T>
+concept memory_map_io_stream = memory_map_input_stream<T>&&memory_map_output_stream<T>;
 
 template<typename input,typename T>
 concept scanable=input_stream<input>&&requires(input& in,T&& t)
