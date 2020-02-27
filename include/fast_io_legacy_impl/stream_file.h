@@ -53,7 +53,7 @@ public:
 	template<open_mode om>
 	basic_stream_file(c_io_handle_type&& ciohd,open_interface_t<om>):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),
-		hd(bcf.native_handle(),details::fstream_open_mode<om>::value),
+		hd(bcf.native_handle(),details::fstream_open_mode<om>::value,65536),
 		stm(std::addressof(hd))
 	{
 		if(!stm)
