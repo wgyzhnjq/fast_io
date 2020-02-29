@@ -20,17 +20,17 @@ struct io_aligned_allocator
 };
 
 template<typename CharT,std::size_t buffer_size = ((
-//#if defined(__WINNT__) || defined(_MSC_VER)
+#if defined(__WINNT__) || defined(_MSC_VER)
 1048576
-//#else
-//65536
-//#endif
+#else
+65536
+#endif
 <sizeof(CharT))?1:
-//#if defined(__WINNT__) || defined(_MSC_VER)
+#if defined(__WINNT__) || defined(_MSC_VER)
 1048576
-//#else
-//65536
-//#endif
+#else
+65536
+#endif
 /sizeof(CharT)),typename Allocator = io_aligned_allocator<CharT>>
 class basic_buf_handler
 {
