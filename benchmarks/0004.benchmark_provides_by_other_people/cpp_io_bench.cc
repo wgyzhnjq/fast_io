@@ -175,7 +175,7 @@ int main(int argc,char** argv)
 	{"fast_io_posix_file",test_fast_io<fast_io::posix_file,fast_io::posix_file>},
 	{"fast_io_c_file_unlocked",test_fast_io<fast_io::c_file_unlocked,fast_io::c_file_unlocked>},
 	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>},
-	{"fast_io_ibuf_file",test_fast_io<fast_io::ibuf_file,fast_io::win32_file>}
+	{"fast_io_ibuf_file",test_fast_io<fast_io::ibuf_file,fast_io::native_file>}
 #ifdef __GLIBCXX__
 	,{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}
 #endif
