@@ -51,7 +51,7 @@ void* Tail;
 std::uint32_t  TailLength;
 };
 
-void* __stdcall CreateFileMappingA(void*,security_attributes*,std::uint32_t,std::uint32_t,std::uint32_t,char const*);
+void* __stdcall CreateFileMappingW(void*,security_attributes*,std::uint32_t,std::uint32_t,std::uint32_t,wchar_t const*);
 
 void* __stdcall MapViewOfFile(void*,std::uint32_t,std::uint32_t,std::uint32_t,std::size_t);
 
@@ -127,6 +127,8 @@ process_information* lpProcessInformation);
 
 int __stdcall GetHandleInformation(void*,std::uint32_t*);
 int __stdcall SetHandleInformation(void*,std::uint32_t,std::uint32_t);
+int __stdcall GetFileSizeEx(void*,std::uint64_t*);
+
 }
 
 

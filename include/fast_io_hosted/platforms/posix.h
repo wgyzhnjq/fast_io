@@ -191,8 +191,8 @@ public:
 	using char_type = ch_type;
 	using native_handle_type = int;
 
-	constexpr basic_posix_io_handle():fd(-1){}
-	constexpr basic_posix_io_handle(int fdd):fd(fdd){}
+	constexpr explicit basic_posix_io_handle():fd(-1){}
+	constexpr explicit basic_posix_io_handle(int fdd):fd(fdd){}
 	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(
 #if defined(__linux__)&&defined(__x86_64__)
 		system_call<32,int>
@@ -716,15 +716,15 @@ inline std::conditional_t<report_einval,std::pair<std::uintmax_t,bool>,std::uint
 
 inline constexpr posix_io_handle posix_stdin()
 {
-	return posix_stdin_number;
+	return posix_io_handle(posix_stdin_number);
 }
 inline constexpr posix_io_handle posix_stdout()
 {
-	return posix_stdout_number;
+	return posix_io_handle(posix_stdout_number);
 } 
 inline constexpr posix_io_handle posix_stderr()
 {
-	return posix_stderr_number;
+	return posix_io_handle(posix_stderr_number);
 }
 
 }

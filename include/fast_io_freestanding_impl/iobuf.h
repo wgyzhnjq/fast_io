@@ -3,7 +3,7 @@
 namespace fast_io
 {
 
-template<typename T,std::size_t alignment=16384>
+template<typename T,std::size_t alignment=4096>
 struct io_aligned_allocator
 {
 	using value_type = T;
@@ -19,7 +19,7 @@ struct io_aligned_allocator
 	}
 };
 
-template<typename CharT,std::size_t buffer_size = ((65536<sizeof(CharT))?1:65536/sizeof(CharT)),typename Allocator = io_aligned_allocator<CharT>>
+template<typename CharT,std::size_t buffer_size = ((1048576<sizeof(CharT))?1:1048576/sizeof(CharT)),typename Allocator = io_aligned_allocator<CharT>>
 class basic_buf_handler
 {
 	Allocator alloc;
@@ -295,7 +295,7 @@ inline constexpr auto seek(basic_ibuf<Ihandler,Buf>& ib,std::intmax_t u=0,seekdi
 
 
 template<zero_copy_input_stream Ihandler,typename Buf>
-inline constexpr auto zero_copy_in_handle(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr decltype(auto) zero_copy_in_handle(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return zero_copy_in_handle(ib.native_handle());
 }
@@ -306,6 +306,11 @@ inline constexpr decltype(auto) zero_copy_out_handle(basic_ibuf<Ohandler,Buf>& i
 	return zero_copy_out_handle(ib.native_handle());
 }
 
+template<memory_map_input_stream Ihandler,typename Buf>
+inline constexpr decltype(auto) memory_map_in_handle(basic_ibuf<Ihandler,Buf>& handle)
+{
+	return memory_map_in_handle(handle.native_handle());
+}
 
 template<output_stream Ohandler,typename Buf=basic_buf_handler<typename Ohandler::char_type>>
 class basic_obuf
@@ -560,10 +565,17 @@ inline constexpr decltype(auto) zero_copy_in_handle(basic_obuf<Ohandler,Buf>& ob
 {
 	return zero_copy_in_handle(ob.native_handle());
 }
+
 template<redirect_stream Ohandler,typename Buf>
 inline constexpr decltype(auto) redirect_handle(basic_obuf<Ohandler,Buf>& ob)
 {
 	return redirect_handle(ob.native_handle());
+}
+
+template<memory_map_input_stream Ihandler,typename Buf>
+inline constexpr decltype(auto) memory_map_in_handle(basic_obuf<Ihandler,Buf>& handle)
+{
+	return memory_map_in_handle(handle.native_handle());
 }
 
 template<io_stream ioh,typename bf=basic_buf_handler<typename ioh::char_type>>

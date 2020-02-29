@@ -70,7 +70,7 @@ public:
 	using native_handle_type = void*;
 	template<std::integral ch_type>
 	win32_file_mapping(basic_win32_file<ch_type>& bf,file_map_attribute attr,std::size_t size):
-	handle(win32::CreateFileMappingA(
+	handle(win32::CreateFileMappingW(
 	bf.native_handle(),nullptr,static_cast<std::uint32_t>(attr),size>>32,static_cast<std::uint32_t>(size),nullptr))
 	{
 		if(handle==nullptr)

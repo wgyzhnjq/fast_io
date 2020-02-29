@@ -107,6 +107,9 @@ inline constexpr std::uintmax_t zero_copy_transmit_impl(output& outp,input& inp,
 }
 #endif
 
+template<output_stream output,memory_map_input_stream input,typename... Args>
+inline std::pair<bool,std::uintmax_t> memory_map_transmit_impl(output& outp,input& inp,Args&& ...args);
+
 template<output_stream output,input_stream input,typename... Args>
 inline constexpr auto transmit_impl(output& outp,input& inp,Args&& ...args)
 {
@@ -138,6 +141,14 @@ inline constexpr auto transmit_impl(output& outp,input& inp,Args&& ...args)
 #else
 			return zero_copy_transmit<false>(outp,inp,0,std::forward<Args>(args)...);
 #endif
+		}
+		else if constexpr(memory_map_input_stream<input>)
+		{
+			auto [succ,size]=memory_map_transmit_impl(outp,inp,std::forward<Args>(args)...);
+			if(succ)
+				return size;
+			else
+				return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);
 		}
 		else
 			return bufferred_transmit_impl(outp,inp,std::forward<Args>(args)...);

@@ -9,6 +9,10 @@
 #include"posix_mapping.h"
 #endif
 
+#if defined(__WINNT__) || defined(_MSC_VER)
+#include"win32_transmit.h"
+#endif
+
 namespace fast_io
 {
 
@@ -45,15 +49,15 @@ using native_file_map = posix_file_map;
 
 inline native_io_handle native_stdin()
 {
-	return native_stdin_number;
+	return native_io_handle(native_stdin_number);
 }
 inline native_io_handle native_stdout()
 {
-	return native_stdout_number;
+	return native_io_handle(native_stdout_number);
 } 
 inline native_io_handle native_stderr()
 {
-	return native_stderr_number;
+	return native_io_handle(native_stderr_number);
 }
 
 }

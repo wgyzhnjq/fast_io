@@ -197,12 +197,12 @@ protected:
 		if(mhandle)
 			fast_io::win32::CloseHandle(mhandle);
 	}
-	basic_win32_io_handle() = default;
 public:
+	explicit basic_win32_io_handle():mhandle((void*) (std::intptr_t)-1){}
 	using char_type = ch_type;
-	basic_win32_io_handle(native_handle_type handle):
+	explicit constexpr basic_win32_io_handle(native_handle_type handle):
 		mhandle(handle){}
-	basic_win32_io_handle(std::uint32_t dw):
+	explicit basic_win32_io_handle(std::uint32_t dw):
 		mhandle(fast_io::win32::GetStdHandle(dw)){}
 	void close()
 	{
@@ -317,6 +317,7 @@ inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 	}
 	return begin+numberOfBytesRead;
 }
+
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 {
@@ -330,6 +331,13 @@ inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 #endif
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
+/*
+template<std::integral ch_type>
+inline auto memory_map_in_handle(basic_win32_io_handle<ch_type>& handle)
+{
+	return handle.native_handle();
+}
+*/
 template<std::integral ch_type>
 inline constexpr void flush(basic_win32_io_handle<ch_type>&){}
 
@@ -567,7 +575,6 @@ inline std::array<void*,2> redirect_handle(basic_win32_pipe<ch_type>& hd)
 	return {hd.in().native_handle(),hd.out().native_handle()};
 }
 
-
 template<std::integral ch_type>
 inline constexpr void flush(basic_win32_pipe<ch_type>&){}
 
@@ -588,17 +595,17 @@ inline constexpr std::uint32_t win32_stderr_number(-12);
 
 inline win32_io_handle win32_stdin()
 {
-	return win32_stdin_number;
+	return win32_io_handle(win32_stdin_number);
 }
 
 inline win32_io_handle win32_stdout()
 {
-	return win32_stdout_number;
+	return win32_io_handle(win32_stdout_number);
 }
 
 inline win32_io_handle win32_stderr()
 {
-	return win32_stderr_number;
+	return win32_io_handle(win32_stderr_number);
 }
 
 }

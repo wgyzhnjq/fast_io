@@ -141,4 +141,10 @@ inline constexpr decltype(auto) redirect_handle(io_ref<T>& t)
 	return redirect_handle(*t);
 }
 
+template<memory_map_input_stream T>
+inline constexpr decltype(auto) redirect_handle(io_ref<T>& t)
+{
+	return memory_map_in_handle(*t);
+}
+
 }
