@@ -2,7 +2,7 @@
 
 namespace fast_io
 {
-template<typename T,typename M>
+template<typename T,typename M,std::size_t init_mem_size=UINT32_MAX>
 class basic_omap
 {
 public:
@@ -28,7 +28,7 @@ public:
 	using char_type = char;//only char is allowed for punning
 	template<typename ...Args>
 	requires std::constructible_from<native_handle_type,Args...>
-	basic_omap(Args&& ...args):hd(std::forward<Args>(args)...),fm(hd,fast_io::file_map_attribute::write_copy,16384)
+	basic_omap(Args&& ...args):hd(std::forward<Args>(args)...),fm(hd,fast_io::file_map_attribute::read_write,init_mem_size)
 	{
 	}
 	auto& native_handle()
@@ -76,7 +76,7 @@ inline std::size_t size(basic_omap<T,M>& om)
 template<typename T,typename M>
 inline void reserve(basic_omap<T,M>& om,std::size_t trunc)
 {
-	om.map_handle()=M(om.native_handle(),fast_io::file_map_attribute::write_copy,trunc);
+	om.map_handle()=M(om.native_handle(),fast_io::file_map_attribute::read_write,trunc);
 	if(trunc<om.current_position)
 		om.current_position=trunc;
 }

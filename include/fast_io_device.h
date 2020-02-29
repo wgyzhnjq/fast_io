@@ -15,7 +15,7 @@ using ionative_file = io_file_wrapper<native_file>;
 using sync_file = basic_sync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::string>>;
 using fsync_file = basic_fsync<basic_file_wrapper<native_file,open_mode::app|open_mode::binary>,basic_ostring<std::string>>;
 
-using omap_file = basic_omap<basic_file_wrapper<native_file,open_mode::trunc|open_mode::in|open_mode::out|open_mode::binary>,native_file_map>;
+using omap_file = basic_omap<basic_file_wrapper<native_file,open_mode::trunc|open_mode::out|open_mode::binary>,native_file_map>;
 
 using sync_file_mutex = basic_iomutex<sync_file>;
 using fsync_file_mutex = basic_iomutex<fsync_file>;
