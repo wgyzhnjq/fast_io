@@ -10,7 +10,7 @@ inline void test(std::string_view text)
 	for(std::size_t i{};i!=N;++i)
 		println(file,i);
 }
-
+/*
 inline void test_omap()
 {
 	constexpr std::size_t N=10000000;
@@ -18,7 +18,7 @@ inline void test_omap()
 	fast_io::omap_file pf("om.txt",	fast_io::open_interface<fast_io::open_mode::trunc|fast_io::open_mode::in|fast_io::open_mode::out|fast_io::open_mode::binary>);
 	for(std::size_t i{};i!=N;++i)
 		println(pf,i);
-}
+}*/
 
 int main()
 {
@@ -32,5 +32,5 @@ int main()
 	test<fast_io::win32_file>("win32.txt");
 	test<fast_io::win32_file,fast_io::open_mode::out|fast_io::open_mode::binary|fast_io::open_mode::sequential_scan>("win32_scan.txt");
 #endif
-	test_omap();
+//	test_omap();
 }
