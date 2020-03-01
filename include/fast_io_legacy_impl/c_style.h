@@ -509,10 +509,10 @@ public:
 #endif
 		if constexpr(use_fwide)
 		{
-			if(fwide(native_handle(),1)<=0)
+			if(fwide(this->native_handle(),1)<=0)
 #ifdef __cpp_exceptions
 			{
-				std::fclose(native_handle());
+				std::fclose(this->native_handle());
 				throw std::system_error(std::make_error_code(std::errc::io_error));
 			}
 #else
@@ -523,25 +523,25 @@ public:
 			std::setbuf(native_handle(),nullptr);
 	}
 
-	basic_c_file_impl(basic_posix_io_handle<typename T::char_type>&& posix_handle,open_mode om):
+	basic_c_file_impl(basic_posix_io_handle<char_type>&& posix_handle,open_mode om):
 		basic_c_file_impl(std::move(posix_handle),to_c_mode(om)){}
 	template<open_mode om>
-	basic_c_file_impl(basic_posix_io_handle<typename T::char_type>&& posix_handle,open_interface_t<om>):
+	basic_c_file_impl(basic_posix_io_handle<char_type>&& posix_handle,open_interface_t<om>):
 		basic_c_file_impl(std::move(posix_handle),details::c_open_mode<om>::value){}
 
 #if defined(__WINNT__) || defined(_MSC_VER)
 //windows specific. open posix file from win32 io handle
-	basic_c_file_impl(basic_win32_io_handle<typename T::char_type>&& win32_handle,std::string_view mode):
-		basic_c_file_impl(basic_posix_file<typename T::char_type>(std::move(win32_handle),mode),mode)
+	basic_c_file_impl(basic_win32_io_handle<char_type>&& win32_handle,std::string_view mode):
+		basic_c_file_impl(basic_posix_file<char_type>(std::move(win32_handle),mode),mode)
 	{
 	}
-	basic_c_file_impl(basic_win32_io_handle<typename T::char_type>&& win32_handle,open_mode om):
-		basic_c_file_impl(basic_posix_file<typename T::char_type>(std::move(win32_handle),om),to_c_mode(om))
+	basic_c_file_impl(basic_win32_io_handle<char_type>&& win32_handle,open_mode om):
+		basic_c_file_impl(basic_posix_file<char_type>(std::move(win32_handle),om),to_c_mode(om))
 	{
 	}
 	template<open_mode om>
-	basic_c_file_impl(basic_win32_io_handle<typename T::char_type>&& win32_handle,open_interface_t<om>):
-		basic_c_file_impl(basic_posix_file<typename T::char_type>(std::move(win32_handle),open_interface<om>),
+	basic_c_file_impl(basic_win32_io_handle<char_type>&& win32_handle,open_interface_t<om>):
+		basic_c_file_impl(basic_posix_file<char_type>(std::move(win32_handle),open_interface<om>),
 			details::c_open_mode<om>::value)//open::c_style_interface_t<om>::mode)
 	{
 	}
@@ -560,7 +560,14 @@ public:
 	basic_c_file_impl(std::string_view file,std::string_view mode,Args&& ...args):
 		basic_c_file_impl(basic_posix_file<typename T::char_type>(file,mode,std::forward<Args>(args)...),mode)
 	{}
-
+	basic_c_file_impl(basic_c_file_impl const&)=delete;
+	basic_c_file_impl& operator=(basic_c_file_impl const&)=delete;
+	constexpr basic_c_file_impl(basic_c_file_impl&& b) noexcept :T(std::move(b)){}
+	basic_c_file_impl& operator=(basic_c_file_impl&& b) noexcept
+	{
+		static_cast<T&>(*this)=std::move(b);
+		return *this;
+	}
 	~basic_c_file_impl()
 	{
 		this->close_impl();

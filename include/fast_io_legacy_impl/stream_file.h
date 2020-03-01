@@ -33,13 +33,13 @@ struct fstream_open_mode
 }
 
 
-template<typename fstream_type>
-requires std::same_as<typename fstream_type::char_type,typename fstream_type::traits_type::char_type>
+template<typename stream_type>
+requires std::same_as<typename stream_type::char_type,typename stream_type::traits_type::char_type>
 class basic_stream_file
 {
 public:
-	using char_type = typename fstream_type::char_type;
-	using traits_type = typename fstream_type::traits_type;
+	using char_type = typename stream_type::char_type;
+	using traits_type = typename stream_type::traits_type;
 	using filebuf_type =
 #ifdef __GLIBCXX__
 __gnu_cxx::stdio_filebuf
@@ -53,9 +53,9 @@ std::basic_filebuf
 private:
 	c_file_type bcf;
 	filebuf_type hd;
-	fstream_type stm;
+	stream_type stm;
 public:
-	using native_handle_type = fstream_type;
+	using native_handle_type = stream_type;
 	template<open_mode om>
 	basic_stream_file(c_io_handle_type&& ciohd,open_interface_t<om>):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),
@@ -177,72 +177,72 @@ public:
 #endif
 };
 
-template<typename fstream_type,std::contiguous_iterator Iter>
-inline Iter read(basic_stream_file<fstream_type>& cfhd,Iter begin,Iter end)
+template<typename stream_type,std::contiguous_iterator Iter>
+inline Iter read(basic_stream_file<stream_type>& cfhd,Iter begin,Iter end)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	return read(buf,begin,end);
 }
 
-template<typename fstream_type,std::contiguous_iterator Iter>
-inline auto write(basic_stream_file<fstream_type>& cfhd,Iter begin,Iter end)
+template<typename stream_type,std::contiguous_iterator Iter>
+inline auto write(basic_stream_file<stream_type>& cfhd,Iter begin,Iter end)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	return write(buf,begin,end);
 }
 
-template<typename fstream_type>
-inline void flush(basic_stream_file<fstream_type>& cfhd)
+template<typename stream_type>
+inline void flush(basic_stream_file<stream_type>& cfhd)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	return flush(buf);
 }
-template<typename fstream_type>
-inline auto oreserve(basic_stream_file<fstream_type>& cfhd,std::size_t n)
+template<typename stream_type>
+inline auto oreserve(basic_stream_file<stream_type>& cfhd,std::size_t n)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	return oreserve(buf,n);
 }
 
-template<typename fstream_type>
-inline void orelease(basic_stream_file<fstream_type>& cfhd,std::size_t n)
+template<typename stream_type>
+inline void orelease(basic_stream_file<stream_type>& cfhd,std::size_t n)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	orelease(buf,n);
 }
 
-template<typename fstream_type>
-inline void put(basic_stream_file<fstream_type>& cfhd,typename basic_stream_file<fstream_type>::char_type ch)
+template<typename stream_type>
+inline void put(basic_stream_file<stream_type>& cfhd,typename basic_stream_file<stream_type>::char_type ch)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
 	put(buf,ch);
 }
 
-template<typename fstream_type,typename... Args>
-inline auto seek(basic_stream_file<fstream_type>& cfhd,Args&& ...args)
+template<typename stream_type,typename... Args>
+inline auto seek(basic_stream_file<stream_type>& cfhd,Args&& ...args)
 {
 	cfhd.native_handle().flush();
 	cfhd.native_handle().clear();
 	return seek(cfhd.c_file(),std::forward<Args>(args)...);
 }
 
-template<typename fstream_type>
-requires zero_copy_input_stream<typename basic_stream_file<fstream_type>::c_file_type>
-inline auto zero_copy_in_handle(basic_stream_file<fstream_type>& h)
+template<typename stream_type>
+requires zero_copy_input_stream<typename basic_stream_file<stream_type>::c_file_type>
+inline auto zero_copy_in_handle(basic_stream_file<stream_type>& h)
 {
 	return zero_copy_in_handle(h.c_file());
 }
 
-template<typename fstream_type>
-requires zero_copy_output_stream<typename basic_stream_file<fstream_type>::c_file_type>
-inline auto zero_copy_out_handle(basic_stream_file<fstream_type>& h)
+template<typename stream_type>
+requires zero_copy_output_stream<typename basic_stream_file<stream_type>::c_file_type>
+inline auto zero_copy_out_handle(basic_stream_file<stream_type>& h)
 {
 	return zero_copy_out_handle(h.c_file());
 }
 
-template<typename fstream_type>
-requires redirect_stream<typename basic_stream_file<fstream_type>::c_file_type>
-inline auto redirect_handle(basic_stream_file<fstream_type>& h)
+template<typename stream_type>
+requires redirect_stream<typename basic_stream_file<stream_type>::c_file_type>
+inline auto redirect_handle(basic_stream_file<stream_type>& h)
 {
 	return redirect_handle(h.c_file());
 }

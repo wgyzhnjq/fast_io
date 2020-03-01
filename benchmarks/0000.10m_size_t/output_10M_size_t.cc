@@ -150,7 +150,7 @@ try
 			println(fout,fast_io::concat(i));
 	}
 #if defined(__GLIBCXX__) || defined(_MSC_VER)
-/*
+
 	{
 	fast_io::timer t("ostream_file");
 	fast_io::ostream_file osf("smf.txt");
@@ -164,7 +164,7 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(osf,i);
 	}
-*/
+
 #endif
 
 	{
