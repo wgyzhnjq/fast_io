@@ -13,8 +13,10 @@
 #include"fast_io_legacy_impl/stream_view.h"
 #include"fast_io_legacy_impl/streambuf_view.h"
 #include"fast_io_legacy_impl/streambuf_handle.h"
+#ifdef __GLIBCXX__
 #include"fast_io_legacy_impl/fast_io_streambuf.h"
 #include"fast_io_legacy_impl/fast_io_iostream.h"
+#endif
 #include"fast_io_legacy_impl/filebuf_handle.h"
 #if defined (__GLIBCXX__) || defined (_MSC_VER)
 #include"fast_io_legacy_impl/stream_file.h"

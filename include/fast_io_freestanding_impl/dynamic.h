@@ -14,8 +14,8 @@ private:
 		virtual char_type* read_impl(char_type*,char_type*) = 0;
 		virtual void write_impl(char_type const*,char_type const*) = 0;
 		virtual void flush_impl() = 0;
-		virtual char_type* oreserve_impl(std::size_t) = 0;
-		virtual void orelease_impl(std::size_t) = 0;
+//		virtual char_type* oreserve_impl(std::size_t) = 0;
+//		virtual void orelease_impl(std::size_t) = 0;
 		virtual base* clone() = 0;
 		virtual ~base() = default;
 	};
@@ -46,7 +46,7 @@ private:
 			else
 				throw std::system_error(EPERM,std::generic_category());
 		}
-		char_type* oreserve_impl(std::size_t sz) override
+/*		char_type* oreserve_impl(std::size_t sz) override
 		{
 			if constexpr(buffer_output_stream<stm>)
 			{
@@ -62,7 +62,7 @@ private:
 		{
 			if constexpr(buffer_output_stream<stm>)
 				orelease(io,sz);
-		}
+		}*/
 		base* clone() override
 		{
 			if constexpr(std::copyable<stm>)
@@ -146,7 +146,7 @@ inline void write(basic_dynamic_base<char_type>& io,Iter b,Iter e)
 	io.opaque_base_pointer()->write_impl(static_cast<char_type const*>(static_cast<void const*>(std::to_address(b))),
 			static_cast<char_type const*>(static_cast<void const*>(std::to_address(e))));
 }
-
+/*
 template<std::integral char_type>
 inline auto oreserve(basic_dynamic_base<char_type>& io,std::size_t sz)
 {
@@ -158,7 +158,7 @@ inline void orelease(basic_dynamic_base<char_type>& io,std::size_t sz)
 {
 	return io.opaque_base_pointer()->orelease_impl(sz);
 }
-
+*/
 template<std::integral char_type>
 inline void flush(basic_dynamic_base<char_type>& io) { return io.opaque_base_pointer()->flush_impl();}
 

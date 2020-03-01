@@ -149,7 +149,7 @@ try
 		for(std::size_t i(0);i!=N;++i)
 			println(fout,fast_io::concat(i));
 	}
-#ifdef __GLIBCXX__
+#if defined(__GLIBCXX__) || defined(_MSC_VER)
 	{
 	fast_io::timer t("ostream_file");
 	fast_io::ostream_file osf("smf.txt");
@@ -164,6 +164,7 @@ try
 		println(osf,i);
 	}
 #endif
+#ifdef __GLIBCXX__
 	{
 	fast_io::timer t("iostream_type");
 	fast_io::iostream_type<fast_io::obuf_file> osm("fast_io_streambuf.txt");
@@ -173,6 +174,7 @@ try
 		put(osm.native_handle(),'\n');
 	}
 	}
+#endif
 #ifdef FAST_IO_TEST_FMT
 	{
 		fast_io::timer t("fmt::format_int obuf_file");
