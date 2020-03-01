@@ -114,23 +114,24 @@ public:
 
 template<std::integral ch_type>
 requires (redirect_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) redirect_handle(basic_mfc_file<ch_type>& hd)
+inline decltype(auto) redirect_handle(basic_mfc_io_handle<ch_type>& hd)
 {
-	return redirect_handle(static_cast<basic_win32_io_handle>(hd));
-}
-template<std::integral ch_type>
-requires (zero_copy_in_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) zero_copy_in_handle(basic_mfc_file<ch_type>& hd)
-{
-	return zero_copy_in_handle(static_cast<basic_win32_io_handle>(hd));
-}
-template<std::integral ch_type>
-requires (zero_copy_out_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) zero_copy_out_handle(basic_mfc_file<ch_type>& hd)
-{
-	return zero_copy_out_handle(static_cast<basic_win32_io_handle>(hd));
+	return redirect_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
 }
 
+template<std::integral ch_type>
+requires (zero_copy_input_stream<basic_win32_io_handle<ch_type>>)
+inline decltype(auto) zero_copy_in_handle(basic_mfc_io_handle<ch_type>& hd)
+{
+	return zero_copy_in_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
+}
+
+template<std::integral ch_type>
+requires (zero_copy_output_stream<basic_win32_io_handle<ch_type>>)
+inline decltype(auto) zero_copy_out_handle(basic_mfc_io_handle<ch_type>& hd)
+{
+	return zero_copy_out_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
+}
 using mfc_io_handle=basic_mfc_io_handle<char>;
 using mfc_file=basic_mfc_file<char>;
 using u8mfc_io_handle=basic_mfc_io_handle<char8_t>;

@@ -2,6 +2,7 @@
 #include"../timer.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_legacy.h"
+#include"../../include/fast_io_third_party.h"
 #include<map>
 #include<vector>
 #include<functional>
@@ -163,6 +164,9 @@ int main(int argc,char** argv)
 #if defined(__GLIBCXX__) || defined(_MSC_VER)
 ", fast_io_stream_file"
 #endif
+#ifdef _AFXDLL
+", fast_io_mfc_file"
+#endif
 ") in_file number_of_times");
         return 1;
     }
@@ -179,6 +183,9 @@ int main(int argc,char** argv)
 	{"fast_io_ibuf_file",test_fast_io<fast_io::ibuf_file,fast_io::native_file>}
 #if defined(__GLIBCXX__) || defined(_MSC_VER)
 	,{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}
+#endif
+#ifdef _AFXDLL
+    ,{"fast_io_mfc_file",test_fast_io<fast_io::mfc_file,fast_io::mfc_file>}
 #endif
 };
 
