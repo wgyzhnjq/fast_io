@@ -1,6 +1,7 @@
 #include"../timer.h"
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_legacy.h"
+#include"../../include/fast_io_third_party.h"
 
 template<fast_io::stream stm,fast_io::open_mode om=fast_io::open_mode::out|fast_io::open_mode::binary,std::size_t N=10000000>
 inline void test(std::string_view text)
@@ -31,6 +32,9 @@ int main()
 #if defined(__WINNT__) || defined(_MSC_VER)
 	test<fast_io::win32_file>("win32.txt");
 	test<fast_io::win32_file,fast_io::open_mode::out|fast_io::open_mode::binary|fast_io::open_mode::sequential_scan>("win32_scan.txt");
+#endif
+#ifdef _AFXDLL
+	test<fast_io::mfc_file>("mfc.txt");
 #endif
 //	test_omap();
 }
