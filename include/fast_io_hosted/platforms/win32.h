@@ -304,7 +304,11 @@ template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 {
 	std::uint32_t numberOfBytesRead{};
-	if(!win32::ReadFile(handle.native_handle(),std::to_address(begin),static_cast<std::uint32_t>((end-begin)*sizeof(*begin)),std::addressof(numberOfBytesRead),nullptr))
+	std::size_t to_read((end-begin)*sizeof(*begin));
+	if constexpr(4<sizeof(std::size_t))
+		if(static_cast<std::size_t>(UINT32_MAX)<to_read)
+			to_read=static_cast<std::size_t>(UINT32_MAX);
+	if(!win32::ReadFile(handle.native_handle(),std::to_address(begin),static_cast<std::uint32_t>(to_read),std::addressof(numberOfBytesRead),nullptr))
 	{
 		auto err(win32::GetLastError());
 		if(err==109)
@@ -321,9 +325,12 @@ inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 {
-	auto nNumberOfBytesToWrite(static_cast<std::uint32_t>((cend-cbegin)*sizeof(*cbegin)));
+	std::size_t to_write((cend-cbegin)*sizeof(*cbegin));
+	if constexpr(4<sizeof(std::size_t))
+		if(static_cast<std::size_t>(UINT32_MAX)<to_write)
+			to_write=static_cast<std::size_t>(UINT32_MAX);
 	std::uint32_t numberOfBytesWritten;
-	if(!win32::WriteFile(handle.native_handle(),std::to_address(cbegin),nNumberOfBytesToWrite,std::addressof(numberOfBytesWritten),nullptr))
+	if(!win32::WriteFile(handle.native_handle(),std::to_address(cbegin),static_cast<std::uint32_t>(to_write),std::addressof(numberOfBytesWritten),nullptr))
 #ifdef __cpp_exceptions
 		throw win32_error();
 #else
