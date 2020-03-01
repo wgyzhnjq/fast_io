@@ -12,7 +12,7 @@ public:
 	using char_type = typename traits_type::char_type;
 private:
 	native_handle_type sm;
-	std::streamsize xsputn(char_type const* s, std::streamsize count) requires(output_stream<native_handle_type>) override
+	std::streamsize xsputn(char_type const* s, std::streamsize count) requires(output_stream<native_handle_type>)
 	{
 		if constexpr(!std::same_as<decltype(write(sm,s,s+count)),void>)
 			return static_cast<std::streamsize>(write(sm,s,s+count)-s);
@@ -22,7 +22,7 @@ private:
 			return count;
 		}
 	}
-	std::streamsize xsgetn(char_type* s, std::streamsize count) requires(input_stream<native_handle_type>) override
+	std::streamsize xsgetn(char_type* s, std::streamsize count) requires(input_stream<native_handle_type>)
 	{
 		return static_cast<std::streamsize>(read(sm,s,s+count)-s);
 	}

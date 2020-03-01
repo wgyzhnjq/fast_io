@@ -164,7 +164,7 @@ try
 		println(osf,i);
 	}
 #endif
-#ifdef __GLIBCXX__
+
 	{
 	fast_io::timer t("iostream_type");
 	fast_io::iostream_type<fast_io::obuf_file> osm("fast_io_streambuf.txt");
@@ -174,7 +174,6 @@ try
 		put(osm.native_handle(),'\n');
 	}
 	}
-#endif
 #ifdef FAST_IO_TEST_FMT
 	{
 		fast_io::timer t("fmt::format_int obuf_file");

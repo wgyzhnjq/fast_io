@@ -462,7 +462,7 @@ class basic_c_file:public T
 			std::fclose(native_handle());
 	}
 public:
-	using typename T::native_handle;
+	using T::native_handle;
 	using char_type=typename T::char_type;
 	using native_handle_type=typename T::native_handle_type;
 

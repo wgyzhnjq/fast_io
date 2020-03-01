@@ -42,7 +42,7 @@ public:
 	using traits_type = typename fstream_type::traits_type;
 	using filebuf_type =
 #ifdef __GLIBCXX__
-__gnu_cxx::stdio_filebuf;
+__gnu_cxx::stdio_filebuf
 #elif defined(_MSC_VER)
 std::basic_filebuf
 #endif
