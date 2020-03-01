@@ -134,13 +134,8 @@ inline decltype(auto) zero_copy_out_handle(basic_mfc_file<ch_type>& hd)
 
 using mfc_io_handle=basic_mfc_io_handle<char>;
 using mfc_file=basic_mfc_file<char>;
-using imfc_file=input_file_wrapper<mfc_file>;
-using omfc_file=output_file_wrapper<mfc_file>;
-using iomfc_file=io_file_wrapper<mfc_file>;
-
-using ibuf_mfc_file = basic_ibuf<imfc_file>;
-using obuf_mfc_file = basic_obuf<omfc_file>;
-using iobuf_mfc_file = basic_obuf<basic_ibuf<iomfc_file>>;
+using u8mfc_io_handle=basic_mfc_io_handle<char8_t>;
+using u8mfc_file=basic_mfc_file<char8_t>;
 
 
 }
