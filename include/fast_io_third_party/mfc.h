@@ -1,5 +1,4 @@
 #pragma once
-#include<afx.h>
 
 namespace fast_io
 {
