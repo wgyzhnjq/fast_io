@@ -48,8 +48,8 @@ std::basic_filebuf
 #endif
 <char_type,traits_type>;
 
-	using c_io_handle_type = basic_c_io_handle_unlocked<char_type>;
-	using c_file_type = basic_c_file<c_io_handle_type>;
+	using c_io_observer_type = basic_c_io_observer_unlocked<char_type>;
+	using c_file_type = basic_c_file<c_io_observer_type>;
 private:
 	c_file_type bcf;
 	filebuf_type hd;
@@ -57,7 +57,7 @@ private:
 public:
 	using native_handle_type = fstream_type;
 	template<open_mode om>
-	basic_stream_file(c_io_handle_type&& ciohd,open_interface_t<om>):
+	basic_stream_file(c_io_observer_type&& ciohd,open_interface_t<om>):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),
 		hd(bcf.native_handle()
 #ifdef __GLIBCXX__
@@ -77,7 +77,7 @@ public:
 #endif
 	}
 
-	basic_stream_file(c_io_handle_type&& ciohd,open_mode om):
+	basic_stream_file(c_io_observer_type&& ciohd,open_mode om):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle()
 #ifdef __GLIBCXX__
 ,details::calculate_fstream_file_open_mode(om),65536
@@ -94,7 +94,7 @@ public:
 		std::setbuf(bcf.native_handle(),nullptr);
 #endif
 	}
-	basic_stream_file(c_io_handle_type&& ciohd,std::string_view om):
+	basic_stream_file(c_io_observer_type&& ciohd,std::string_view om):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle()
 #ifdef __GLIBCXX__
 ,from_c_mode(om),65536
@@ -111,24 +111,24 @@ public:
 	}
 
 	template<open_mode om>
-	basic_stream_file(basic_posix_io_handle<char_type>&& ciohd,open_interface_t<om>):
+	basic_stream_file(basic_posix_io_observer<char_type>&& ciohd,open_interface_t<om>):
 		basic_stream_file(c_file_type(std::move(ciohd),open_interface<om>),open_interface<om>){}
 
-	basic_stream_file(basic_posix_io_handle<char_type>&& ciohd,open_mode om):
+	basic_stream_file(basic_posix_io_observer<char_type>&& ciohd,open_mode om):
 		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 
-	basic_stream_file(basic_posix_io_handle<char_type>&& ciohd,std::string_view om):
+	basic_stream_file(basic_posix_io_observer<char_type>&& ciohd,std::string_view om):
 		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 
 #if defined(__WINNT__) || defined(_MSC_VER)
 	template<open_mode om>
-	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_interface_t<om>):
+	basic_stream_file(basic_win32_io_observer<char_type>&& ciohd,open_interface_t<om>):
 		basic_stream_file(c_file_type(std::move(ciohd),open_interface<om>),open_interface<om>){}
 
-	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,open_mode om):
+	basic_stream_file(basic_win32_io_observer<char_type>&& ciohd,open_mode om):
 		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 
-	basic_stream_file(basic_win32_io_handle<char_type>&& ciohd,std::string_view om):
+	basic_stream_file(basic_win32_io_observer<char_type>&& ciohd,std::string_view om):
 		basic_stream_file(c_file_type(std::move(ciohd),om),om){}
 #endif
 
@@ -159,53 +159,20 @@ public:
 	{
 		return hd;
 	}
-
-	explicit operator basic_c_io_handle_unlocked<char_type>() const
+	explicit operator basic_c_io_observer_unlocked<char_type>() const
 	{
 		return bcf.native_handle();
 	}
-	explicit operator basic_posix_io_handle<char_type>() const
+	explicit operator basic_posix_io_observer<char_type>() const
 	{
-
-		auto fd(
-#if defined(__WINNT__) || defined(_MSC_VER)
-	_fileno(bcf.native_handle())
-#else
-	::fileno_unlocked(bcf.native_handle())
-#endif
-);
-		if(fd<0)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
-		return static_cast<basic_posix_io_handle<char_type>>(fd);
+		return static_cast<basic_posix_io_observer<char_type>>(
+			static_cast<basic_c_io_observer_unlocked<char_type>>(*this));
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
-	explicit operator basic_win32_io_handle<char_type>() const
+	explicit operator basic_win32_io_observer<char_type>() const
 	{
-		auto fd(
-#if defined(__WINNT__) || defined(_MSC_VER)
-	_fileno(bcf.native_handle())
-#else
-	::fileno_unlocked(bcf.native_handle())
-#endif
-);
-		if(fd<0)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
-		auto os_handle(_get_osfhandle(fd));
-		if(os_handle==-1)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
-		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
+		return static_cast<basic_win32_io_observer<char_type>>(
+			static_cast<basic_posix_io_observer<char_type>>(*this));
 	}
 #endif
 };

@@ -172,36 +172,69 @@ struct posix_file_openmode
 	static int constexpr mode = calculate_posix_open_mode(om);
 };
 }
+template<std::integral ch_type>
+class basic_posix_io_observer
+{
+public:
+	using char_type = ch_type;
+	using native_handle_type = int;
+	native_handle_type fd=-1;
+	constexpr auto& native_handle() noexcept
+	{
+		return fd;
+	}
+	constexpr auto& native_handle() const noexcept
+	{
+		return fd;
+	}
+
+	constexpr void reset() noexcept
+	{
+		fd=-1;
+	}
+#if defined(__WINNT__) || defined(_MSC_VER)
+	explicit operator basic_win32_io_observer<char_type>() const
+	{
+		auto os_handle(_get_osfhandle(fd));
+		if(os_handle==-1)
+#ifdef __cpp_exceptions
+			throw std::system_error(errno,std::system_category());
+#else
+			fast_terminate();
+#endif
+		return {os_handle};
+	}
+#endif
+};
 
 template<std::integral ch_type>
-class basic_posix_io_handle
+class basic_posix_io_handle:public basic_posix_io_observer<ch_type>
 {
-	int fd;
 protected:
 	void close_impl() noexcept
 	{
-		if(fd!=-1)
+		if(this->native_handle()!=-1)
 #if defined(__linux__)&&defined(__x86_64__)
-			system_call<3,int>(fd);
+			system_call<3,int>(this->native_handle());
 #else
-			close(fd);
+			close(this->native_handle());
 #endif
 	}
 public:
 	using char_type = ch_type;
 	using native_handle_type = int;
 
-	constexpr explicit basic_posix_io_handle():fd(-1){}
-	constexpr explicit basic_posix_io_handle(int fdd):fd(fdd){}
-	basic_posix_io_handle(basic_posix_io_handle const& dp):fd(
+	constexpr explicit basic_posix_io_handle()=default;
+	constexpr explicit basic_posix_io_handle(int fdd):basic_posix_io_observer<ch_type>{fdd}{}
+	basic_posix_io_handle(basic_posix_io_handle const& dp):basic_posix_io_observer<ch_type>{
 #if defined(__linux__)&&defined(__x86_64__)
 		system_call<32,int>
 #else
 		dup
 #endif
-(dp.fd))
+(dp.native_handle())}
 	{
-		system_call_throw_error(fd);
+		system_call_throw_error(this->native_handle());
 	}
 	basic_posix_io_handle& operator=(basic_posix_io_handle const& dp)
 	{
@@ -211,65 +244,39 @@ public:
 #else
 		dup2
 #endif
-(dp.fd,fd));
+(dp.native_handle(),this->native_handle()));
 		system_call_throw_error(newfd);
-		fd=newfd;
+		this->native_handle()=newfd;
 		return *this;
 	}
-	constexpr basic_posix_io_handle(basic_posix_io_handle&& b) noexcept : basic_posix_io_handle(b.fd)
+	constexpr basic_posix_io_handle(basic_posix_io_handle&& b) noexcept : basic_posix_io_handle(b.native_handle())
 	{
-		b.fd = -1;
+		b.native_handle() = -1;
 	}
 	basic_posix_io_handle& operator=(basic_posix_io_handle&& b) noexcept
 	{
-		if(std::addressof(b)!=this)
+		if(b.native_handle()!=this->native_handle())
 		{
 			close_impl();
-			fd=b.fd;
-			b.fd = -1;
+			this->native_handle()=b.native_handle();
+			b.native_handle() = -1;
 		}
 		return *this;
 	}
-#if defined(__WINNT__) || defined(_MSC_VER)
-	explicit operator basic_win32_io_handle<char_type>() const
+	void reset()
 	{
-		auto os_handle(_get_osfhandle(fd));
-		if(os_handle==-1)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
-		return static_cast<basic_win32_io_handle<char_type>>(os_handle);
-	}
-#endif
-	constexpr void swap(basic_posix_io_handle& o) noexcept
-	{
-		using std::swap;
-		swap(fd,o.fd);
-	}
-	constexpr void reset() noexcept
-	{
-		fd=-1;
-	}
-	constexpr auto& native_handle() noexcept
-	{
-		return fd;
-	}
-	constexpr auto& native_handle() const noexcept
-	{
-		return fd;
+		this->native_handle()=-1;
 	}
 };
 
 template<std::integral ch_type>
-inline bool valid(basic_posix_io_handle<ch_type>& h)
+inline bool valid(basic_posix_io_observer<ch_type>& h)
 {
 	return h.native_handle()!=-1;
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
+inline Iter read(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
 {
 	auto read_bytes(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -282,7 +289,7 @@ inline Iter read(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
+inline Iter write(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
 {
 	auto write_bytes(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -296,7 +303,7 @@ inline Iter write(basic_posix_io_handle<ch_type>& h,Iter begin,Iter end)
 }
 
 template<std::integral ch_type,typename T,std::integral R>
-inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_handle<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
+inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_observer<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
 	auto ret(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -309,12 +316,12 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_handle<
 	return ret;
 }
 template<std::integral ch_type,std::integral R>
-inline auto seek(basic_posix_io_handle<ch_type>& h,R i=0,seekdir s=seekdir::cur)
+inline auto seek(basic_posix_io_observer<ch_type>& h,R i=0,seekdir s=seekdir::cur)
 {
 	return seek(h,seek_type<ch_type>,i,s);
 }
 template<std::integral ch_type>
-inline void flush(basic_posix_io_handle<ch_type>&)
+inline void flush(basic_posix_io_observer<ch_type>&)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
@@ -323,18 +330,18 @@ inline void flush(basic_posix_io_handle<ch_type>&)
 
 #ifdef __linux__
 template<std::integral ch_type>
-inline auto zero_copy_in_handle(basic_posix_io_handle<ch_type>& h)
+inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type>& h)
 {
 	return h.native_handle();
 }
 template<std::integral ch_type>
-inline auto zero_copy_out_handle(basic_posix_io_handle<ch_type>& h)
+inline auto zero_copy_out_handle(basic_posix_io_observer<ch_type>& h)
 {
 	return h.native_handle();
 }
 #endif
 template<std::integral ch_type>
-inline auto redirect_handle(basic_posix_io_handle<ch_type>& h)
+inline auto redirect_handle(basic_posix_io_observer<ch_type>& h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	return bit_cast<void*>(_get_osfhandle(h.native_handle()));
@@ -344,7 +351,7 @@ inline auto redirect_handle(basic_posix_io_handle<ch_type>& h)
 }
 
 template<std::integral ch_type>
-inline void swap(basic_posix_io_handle<ch_type>& a,basic_posix_io_handle<ch_type>& b) noexcept
+inline void swap(basic_posix_io_observer<ch_type>& a,basic_posix_io_observer<ch_type>& b) noexcept
 {
 	a.swap(b);
 }
@@ -359,6 +366,7 @@ public:
 	using char_type = ch_type;
 	using native_handle_type = basic_posix_io_handle<char_type>::native_handle_type;
 	using basic_posix_io_handle<ch_type>::native_handle;
+	constexpr basic_posix_file() = default;
 	template<typename ...Args>
 	requires requires(Args&& ...args)
 	{
@@ -462,7 +470,7 @@ public:
 };
 
 template<std::integral ch_type>
-inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
+inline void truncate(basic_posix_io_observer<ch_type>& h,std::size_t size)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	auto err(_chsize_s(h.native_handle(),size));
@@ -480,8 +488,8 @@ inline void truncate(basic_posix_file<ch_type>& h,std::size_t size)
 		fast_terminate();
 #endif
 #endif
-
 }
+
 template<std::integral ch_type>
 class basic_posix_pipe_unique:public basic_posix_io_handle<ch_type>
 {
@@ -588,11 +596,13 @@ inline auto zero_copy_out_handle(basic_posix_pipe<ch_type>& h)
 }
 #endif
 
+using posix_io_observer=basic_posix_io_observer<char>;
 using posix_io_handle=basic_posix_io_handle<char>;
 using posix_file=basic_posix_file<char>;
 using posix_pipe_unique=basic_posix_pipe_unique<char>;
 using posix_pipe=basic_posix_pipe<char>;
 
+using u8posix_io_observer=basic_posix_io_observer<char8_t>;
 using u8posix_io_handle=basic_posix_io_handle<char8_t>;
 using u8posix_file=basic_posix_file<char8_t>;
 using u8posix_pipe_unique=basic_posix_pipe_unique<char8_t>;

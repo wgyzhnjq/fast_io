@@ -51,26 +51,26 @@ Hack iostream's internal
 	basic_filebuf_handle(std::basic_fstream<ch_type,Traits>& w):
 		handle(static_cast<filebuf_pub<std::basic_filebuf<ch_type,Traits>>*>(w.rdbuf())){}
 #ifdef __GLIBCXX__
-#ifdef __WINNT__
-	explicit operator basic_win32_io_handle<char_type>()
+	explicit operator basic_c_io_observer_unlocked<char_type>() const
 	{
-		return _get_osfhandle(handle->_M_file.fd());
+		return {handle->_M_file.file()};
+	}
+	explicit operator basic_c_io_observer<char_type>() const
+	{
+		return {handle->_M_file.file()};
+	}
+
+	explicit operator basic_posix_io_observer<char_type>() const
+	{
+		return static_cast<basic_c_io_observer_unlocked<char_type>>(*this);
+	}
+#ifdef __WINNT__
+	explicit operator basic_win32_io_observer<char_type>() const
+	{
+		return static_cast<basic_posix_io_observer<char_type>>(*this);
 	}
 #endif
-	explicit operator basic_posix_io_handle<char_type>()
-	{
-		return handle->_M_file.fd();
-	}
 
-	explicit operator basic_c_io_handle_unlocked<char_type>()
-	{
-		return handle->_M_file.file();
-	}
-
-	explicit operator basic_c_io_handle<char_type>()
-	{
-		return handle->_M_file.file();
-	}
 #endif
 };
 

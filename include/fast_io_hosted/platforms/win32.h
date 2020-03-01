@@ -183,36 +183,46 @@ struct win32_file_openmode_single
 	inline static constexpr win32_open_mode mode = calculate_win32_open_mode(om);
 };
 }
-
 template<std::integral ch_type>
-class basic_win32_io_handle
+class basic_win32_io_observer
 {
 public:
 	using native_handle_type = void*;
-private:
-	native_handle_type mhandle;
+	using char_type = ch_type;
+	native_handle_type handle=nullptr;
+	constexpr auto& native_handle() noexcept
+	{
+		return handle;
+	}
+	constexpr auto& native_handle() const noexcept
+	{
+		return handle;
+	}
+};
+
+template<std::integral ch_type>
+class basic_win32_io_handle:public basic_win32_io_observer<ch_type>
+{
+public:
+	using native_handle_type = void*;
+	using char_type = ch_type;
 protected:
 	void close_impl()
 	{
-		if(mhandle)
-			fast_io::win32::CloseHandle(mhandle);
+		if(this->native_handle())
+			fast_io::win32::CloseHandle(this->native_handle());
 	}
 public:
-	explicit basic_win32_io_handle():mhandle((void*) (std::intptr_t)-1){}
-	using char_type = ch_type;
+	explicit constexpr basic_win32_io_handle()=default;
 	explicit constexpr basic_win32_io_handle(native_handle_type handle):
-		mhandle(handle){}
+		basic_win32_io_observer<ch_type>{handle}{}
 	explicit basic_win32_io_handle(std::uint32_t dw):
-		mhandle(fast_io::win32::GetStdHandle(dw)){}
-	void close()
-	{
-		close_impl();
-		mhandle=nullptr;
-	}
+		basic_win32_io_observer<ch_type>{fast_io::win32::GetStdHandle(dw)}
+	{}
 	basic_win32_io_handle(basic_win32_io_handle const& other)
 	{
 		auto const current_process(win32::GetCurrentProcess());
-		if(!win32::DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(mhandle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+		if(!win32::DuplicateHandle(current_process,other.native_handle(),current_process,std::addressof(this->native_handle()), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
@@ -223,65 +233,45 @@ public:
 	{
 		auto const current_process(win32::GetCurrentProcess());
 		void* new_handle{};
-		if(!win32::DuplicateHandle(current_process,other.mhandle,current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
+		if(!win32::DuplicateHandle(current_process,other.native_handle(),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
 #ifdef __cpp_exceptions
 			throw win32_error();
 #else
 			fast_terminate();
 #endif
 		close_impl();
-		mhandle=new_handle;
+		this->native_handle()=new_handle;
 		return *this;
 	}
-	basic_win32_io_handle(basic_win32_io_handle&& b) noexcept:mhandle(b.mhandle)
+	constexpr basic_win32_io_handle(basic_win32_io_handle&& b) noexcept:
+		basic_win32_io_observer<ch_type>(b.native_handle())
 	{
-		b.mhandle=nullptr;
+		b.native_handle()=nullptr;
 	}
 	basic_win32_io_handle& operator=(basic_win32_io_handle&& b) noexcept
 	{
 		if(std::addressof(b)!=this)
 		{
 			close_impl();
-			mhandle = b.mhandle;
-			b.mhandle=nullptr;
+			this->native_handle() = b.native_handle();
+			b.native_handle()=nullptr;
 		}
 		return *this;
 	}
-	native_handle_type& native_handle()
-	{
-		return mhandle;
-	}
-	inline void swap(basic_win32_io_handle& o) noexcept
-	{
-		using std::swap;
-		swap(mhandle,o.mhandle);
-	}
 	constexpr void reset() noexcept
 	{
-		mhandle=nullptr;
+		this->native_handle()=nullptr;
 	}
 };
 
 template<std::integral ch_type>
-inline bool valid(basic_win32_io_handle<ch_type>& hd)
+inline auto redirect_handle(basic_win32_io_observer<ch_type>& hd)
 {
 	return hd.native_handle();
-}
-
-template<std::integral ch_type>
-inline auto redirect_handle(basic_win32_io_handle<ch_type>& hd)
-{
-	return hd.native_handle();
-}
-
-template<std::integral ch_type>
-inline void swap(basic_win32_io_handle<ch_type>& a,basic_win32_io_handle<ch_type>& b) noexcept
-{
-	a.swap(b);
 }
 
 template<std::integral ch_type,typename T,std::integral U>
-inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_handle<ch_type>& handle,seek_type_t<T>,U i=0,seekdir s=seekdir::cur)
+inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_observer<ch_type>& handle,seek_type_t<T>,U i=0,seekdir s=seekdir::cur)
 {
 	std::int64_t distance_to_move_high{};
 	std::int64_t seekposition{seek_precondition<std::int64_t,T,ch_type>(i)};
@@ -295,13 +285,13 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_handle<
 }
 
 template<std::integral ch_type,std::integral U>
-inline auto seek(basic_win32_io_handle<ch_type>& handle,U i=0,seekdir s=seekdir::cur)
+inline auto seek(basic_win32_io_observer<ch_type>& handle,U i=0,seekdir s=seekdir::cur)
 {
 	return seek(handle,seek_type<ch_type>,i,s);
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
+inline Iter read(basic_win32_io_observer<ch_type>& handle,Iter begin,Iter end)
 {
 	std::uint32_t numberOfBytesRead{};
 	std::size_t to_read((end-begin)*sizeof(*begin));
@@ -323,7 +313,7 @@ inline Iter read(basic_win32_io_handle<ch_type>& handle,Iter begin,Iter end)
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
+inline Iter write(basic_win32_io_observer<ch_type>& handle,Iter cbegin,Iter cend)
 {
 	std::size_t to_write((cend-cbegin)*sizeof(*cbegin));
 	if constexpr(4<sizeof(std::size_t))
@@ -340,13 +330,13 @@ inline Iter write(basic_win32_io_handle<ch_type>& handle,Iter cbegin,Iter cend)
 }
 /*
 template<std::integral ch_type>
-inline auto memory_map_in_handle(basic_win32_io_handle<ch_type>& handle)
+inline auto memory_map_in_handle(basic_win32_io_observer<ch_type>& handle)
 {
 	return handle.native_handle();
 }
 */
 template<std::integral ch_type>
-inline constexpr void flush(basic_win32_io_handle<ch_type>&){}
+inline constexpr void flush(basic_win32_io_observer<ch_type>&){}
 
 template<std::integral ch_type>
 class basic_win32_file:public basic_win32_io_handle<ch_type>
@@ -584,12 +574,13 @@ inline std::array<void*,2> redirect_handle(basic_win32_pipe<ch_type>& hd)
 
 template<std::integral ch_type>
 inline constexpr void flush(basic_win32_pipe<ch_type>&){}
-
+using win32_io_observer=basic_win32_io_observer<char>;
 using win32_io_handle=basic_win32_io_handle<char>;
 using win32_file=basic_win32_file<char>;
 using win32_pipe_unique=basic_win32_pipe_unique<char>;
 using win32_pipe=basic_win32_pipe<char>;
 
+using u8win32_io_observer=basic_win32_io_observer<char8_t>;
 using u8win32_io_handle=basic_win32_io_handle<char8_t>;
 using u8win32_file=basic_win32_file<char8_t>;
 using u8win32_pipe_unique=basic_win32_pipe_unique<char8_t>;
@@ -602,17 +593,17 @@ inline constexpr std::uint32_t win32_stderr_number(-12);
 
 inline win32_io_handle win32_stdin()
 {
-	return win32_io_handle(win32_stdin_number);
+	return win32_io_handle{win32_stdin_number};
 }
 
 inline win32_io_handle win32_stdout()
 {
-	return win32_io_handle(win32_stdout_number);
+	return win32_io_handle{win32_stdout_number};
 }
 
 inline win32_io_handle win32_stderr()
 {
-	return win32_io_handle(win32_stderr_number);
+	return win32_io_handle{win32_stderr_number};
 }
 
 }

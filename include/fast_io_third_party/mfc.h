@@ -4,14 +4,25 @@ namespace fast_io
 {
 
 template<std::integral T>
-class basic_mfc_io_handle
+class basic_mfc_io_handle:public mfc_io_observer
 {
-	CFile* handle=nullptr;
 public:
 	using char_type = T;
 	using native_handle_type = CFile*;
-	basic_mfc_io_handle()=default;
-	basic_mfc_io_handle(native_handle_type cf):handle(cf){}
+	native_handle_type phandle=nullptr;
+
+	explicit operator basic_win32_io_observer<char_type>() const
+	{
+		return {static_cast<void*>(handle)};
+	}
+};
+
+
+template<std::integral T>
+class basic_mfc_io_handle
+{
+public:
+
 	basic_mfc_io_handle(basic_mfc_io_handle const& mcf):handle(mcf.handle->Duplicate()){}
 	basic_mfc_io_handle& operator=(basic_mfc_io_handle const& mcf)
 	{
@@ -33,10 +44,6 @@ public:
 			mcf.handle=nullptr;
 		}
 		return *this;
-	}
-	explicit operator basic_win32_io_handle<char_type>() const
-	{
-		return basic_win32_io_handle<char_type>(static_cast<void*>(handle));
 	}
 	native_handle_type native_handle() noexcept
 	{
@@ -113,27 +120,29 @@ public:
 };
 
 template<std::integral ch_type>
-requires (redirect_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) redirect_handle(basic_mfc_io_handle<ch_type>& hd)
+requires (redirect_stream<basic_win32_io_observer<ch_type>>)
+inline decltype(auto) redirect_handle(basic_mfc_io_observer<ch_type>& hd)
 {
-	return redirect_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
+	return redirect_handle(static_cast<basic_win32_io_observer<ch_type>>(hd));
 }
 
 template<std::integral ch_type>
-requires (zero_copy_input_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) zero_copy_in_handle(basic_mfc_io_handle<ch_type>& hd)
+requires (zero_copy_input_stream<basic_win32_io_observer<ch_type>>)
+inline decltype(auto) zero_copy_in_handle(basic_mfc_io_observer<ch_type>& hd)
 {
-	return zero_copy_in_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
+	return zero_copy_in_handle(static_cast<basic_win32_io_observer<ch_type>>(hd));
 }
 
 template<std::integral ch_type>
-requires (zero_copy_output_stream<basic_win32_io_handle<ch_type>>)
-inline decltype(auto) zero_copy_out_handle(basic_mfc_io_handle<ch_type>& hd)
+requires (zero_copy_output_stream<basic_win32_io_observer<ch_type>>)
+inline decltype(auto) zero_copy_out_handle(basic_mfc_io_observer<ch_type>& hd)
 {
-	return zero_copy_out_handle(static_cast<basic_win32_io_handle<ch_type>>(hd));
+	return zero_copy_out_handle(static_cast<basic_win32_io_observer<ch_type>>(hd));
 }
+using mfc_io_observer=basic_mfc_io_observer<char>;
 using mfc_io_handle=basic_mfc_io_handle<char>;
 using mfc_file=basic_mfc_file<char>;
+using u8mfc_io_observer=basic_mfc_io_observer<char8_t>;
 using u8mfc_io_handle=basic_mfc_io_handle<char8_t>;
 using u8mfc_file=basic_mfc_file<char8_t>;
 
