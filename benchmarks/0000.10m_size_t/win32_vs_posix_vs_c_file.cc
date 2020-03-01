@@ -25,7 +25,7 @@ int main()
 	test<fast_io::c_file_unlocked>("c_file_unlocked.txt");
 	test<fast_io::c_file>("c_file.txt");
 	test<fast_io::posix_file>("posix.txt");
-#ifdef __GLIBCXX__
+#if defined (__GLIBCXX__) || defined(_MSC_VER)
 	test<fast_io::stream_file>("stream_file.txt");
 #endif
 #if defined(__WINNT__) || defined(_MSC_VER)
