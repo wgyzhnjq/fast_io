@@ -160,7 +160,7 @@ int main(int argc,char** argv)
 		"fast_io_win32_file, "
 #endif
 		"fast_io_posix_file, fast_io_c_file_unlocked, fast_io_c_file, fast_io_ibuf_file"
-#ifdef __GLIBCXX__
+#if defined(__GLIBCXX__) || defined(_MSC_VER)
 ", fast_io_stream_file"
 #endif
 ") in_file number_of_times");
@@ -177,7 +177,7 @@ int main(int argc,char** argv)
 	{"fast_io_c_file_unlocked",test_fast_io<fast_io::c_file_unlocked,fast_io::c_file_unlocked>},
 	{"fast_io_c_file",test_fast_io<fast_io::c_file,fast_io::c_file>},
 	{"fast_io_ibuf_file",test_fast_io<fast_io::ibuf_file,fast_io::native_file>}
-#ifdef __GLIBCXX__
+#if defined(__GLIBCXX__) || defined(_MSC_VER)
 	,{"fast_io_stream_file",test_fast_io<fast_io::stream_file,fast_io::stream_file>}
 #endif
 };
