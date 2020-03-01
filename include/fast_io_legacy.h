@@ -16,7 +16,7 @@
 #include"fast_io_legacy_impl/fast_io_streambuf.h"
 #include"fast_io_legacy_impl/fast_io_iostream.h"
 #include"fast_io_legacy_impl/filebuf_handle.h"
-#ifdef __GLIBCXX__
+#if defined (__GLIBCXX__) || defined (_MSC_VER)
 #include"fast_io_legacy_impl/stream_file.h"
 #endif
 

@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace fast_io
 {
 
@@ -41,7 +40,14 @@ class basic_stream_file
 public:
 	using char_type = typename fstream_type::char_type;
 	using traits_type = typename fstream_type::traits_type;
-	using filebuf_type = __gnu_cxx::stdio_filebuf<char_type,traits_type>;
+	using filebuf_type =
+#ifdef __GLIBCXX__
+__gnu_cxx::stdio_filebuf;
+#elif defined(_MSC_VER)
+std::basic_filebuf
+#endif
+<char_type,traits_type>;
+
 	using c_io_handle_type = basic_c_io_handle_unlocked<char_type>;
 	using c_file_type = basic_c_file<c_io_handle_type>;
 private:
@@ -53,20 +59,30 @@ public:
 	template<open_mode om>
 	basic_stream_file(c_io_handle_type&& ciohd,open_interface_t<om>):
 		bcf(std::move(static_cast<c_file_type&&>(ciohd))),
-		hd(bcf.native_handle(),details::fstream_open_mode<om>::value,65536),
-		stm(std::addressof(hd))
+		hd(bcf.native_handle()
+#ifdef __GLIBCXX__
+,details::fstream_open_mode<om>::value,65536
+#endif
+),stm(std::addressof(hd))
 	{
+		stm.rdbuf(std::addressof(hd));
 		if(!stm)
 #ifdef __cpp_exceptions
 			throw std::system_error(std::make_error_code(std::errc::io_error));
 #else
 			fast_terminate();
 #endif
+#ifdef __GLIBCXX__
 		std::setbuf(bcf.native_handle(),nullptr);
+#endif
 	}
 
 	basic_stream_file(c_io_handle_type&& ciohd,open_mode om):
-		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),details::calculate_fstream_file_open_mode(om),65536),stm(std::addressof(hd))
+		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle()
+#ifdef __GLIBCXX__
+,details::calculate_fstream_file_open_mode(om),65536
+#endif
+),stm(std::addressof(hd))
 	{
 		if(!stm)
 #ifdef __cpp_exceptions
@@ -74,10 +90,16 @@ public:
 #else
 			fast_terminate();
 #endif
+#ifdef __GLIBCXX__
 		std::setbuf(bcf.native_handle(),nullptr);
+#endif
 	}
 	basic_stream_file(c_io_handle_type&& ciohd,std::string_view om):
-		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle(),from_c_mode(om),65536),stm(std::addressof(hd))
+		bcf(std::move(static_cast<c_file_type&&>(ciohd))),hd(bcf.native_handle()
+#ifdef __GLIBCXX__
+,from_c_mode(om),65536
+#endif
+),stm(std::addressof(hd))
 	{
 		if(!stm)
 #ifdef __cpp_exceptions
