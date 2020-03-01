@@ -572,6 +572,12 @@ public:
 	{
 		this->close_impl();
 	}
+	constexpr native_handle_type release() noexcept
+	{
+		auto temp{this->native_handle()};
+		this->detach();
+		return temp;
+	}
 };
 
 }

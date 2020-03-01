@@ -502,6 +502,12 @@ public:
 		this->close_impl();
 		native_handle() = -1;
 	}
+	constexpr native_handle_type release() noexcept
+	{
+		auto temp{this->native_handle()};
+		this->detach();
+		return temp;
+	}
 	~basic_posix_pipe_unique()
 	{
 		this->close_impl();

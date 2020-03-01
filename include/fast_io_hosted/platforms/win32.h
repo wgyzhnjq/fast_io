@@ -427,10 +427,16 @@ public:
 	}
 	basic_win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):
 		basic_win32_file(file,fast_io::from_c_mode(mode),pm){}
-
 	~basic_win32_file()
 	{
 		this->close_impl();
+	}
+
+	constexpr native_handle_type release() noexcept
+	{
+		auto temp{this->native_handle()};
+		this->detach();
+		return temp;
 	}
 };
 
