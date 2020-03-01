@@ -462,9 +462,9 @@ class basic_c_file:public T
 			std::fclose(native_handle());
 	}
 public:
-	using T::native_handle;
-	using char_type=T::char_type;
-	using native_handle_type=T::native_handle_type;
+	using typename T::native_handle;
+	using char_type=typename T::char_type;
+	using native_handle_type=typename T::native_handle_type;
 
 /*
 	basic_c_file(std::string_view name,std::string_view mode):T(std::fopen(name.data(),mode.data()))

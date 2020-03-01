@@ -4,6 +4,7 @@
 #include"../../include/fast_io_legacy.h"
 #include<map>
 #include<vector>
+#include<functional>
 
 #ifndef O_BINARY
 #define O_BINARY 0
