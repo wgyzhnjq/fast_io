@@ -345,6 +345,8 @@ public:
 	using char_type=ch_type;
 	using native_handle_type = basic_win32_io_handle<ch_type>::native_handle_type;
 	using basic_win32_io_handle<ch_type>::native_handle;
+	explicit constexpr basic_win32_file()=default;
+	explicit constexpr basic_win32_file(native_handle_type handle) noexcept:basic_win32_io_handle<ch_type>(handle){}
 	template<typename ...Args>
 	requires requires(Args&& ...args)
 	{

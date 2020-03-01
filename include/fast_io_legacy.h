@@ -17,16 +17,16 @@
 #include"fast_io_legacy_impl/fast_io_iostream.h"
 #include"fast_io_legacy_impl/filebuf_handle.h"
 #if defined (__GLIBCXX__) || defined (_MSC_VER)
-#include"fast_io_legacy_impl/stream_file.h"
+//#include"fast_io_legacy_impl/stream_file.h"
 #endif
 
 namespace fast_io
 {
 inline namespace
 {
-inline c_io_observer c_stdin{stdin};
-inline c_io_observer c_stdout{stdout};
-inline c_io_observer c_stderr{stderr};
+inline c_io_handle c_stdin{stdin};
+inline c_io_handle c_stdout{stdout};
+inline c_io_handle c_stderr{stderr};
 
 
 //inline stream_view cpp_clog(std::clog);
