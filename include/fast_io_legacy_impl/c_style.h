@@ -318,7 +318,7 @@ inline auto mutex(c_io_observer& h)
 
 inline auto unlocked_handle(c_io_observer& h)
 {
-	return c_io_observer_unlocked(h.native_handle());
+	return c_io_observer_unlocked{h.native_handle()};
 }
 
 class c_io_lock_guard

@@ -4,59 +4,69 @@ namespace fast_io
 {
 
 template<std::integral T>
-class basic_mfc_io_handle:public mfc_io_observer
+class basic_mfc_io_observer
 {
 public:
 	using char_type = T;
 	using native_handle_type = CFile*;
 	native_handle_type phandle=nullptr;
-
+	explicit constexpr operator bool() const noexcept
+	{
+		return phandle;
+	}
 	explicit operator basic_win32_io_observer<char_type>() const
 	{
 		return {static_cast<void*>(handle)};
+	}
+	constexpr auto& native_handle() const noexcept
+	{
+		return phandle;
+	}
+	constexpr auto& native_handle() noexcept
+	{
+		return phandle;
 	}
 };
 
 
 template<std::integral T>
-class basic_mfc_io_handle
+class basic_mfc_io_handle:public basic_mfc_io_observer<T>
 {
 public:
-
-	basic_mfc_io_handle(basic_mfc_io_handle const& mcf):handle(mcf.handle->Duplicate()){}
+	using char_type = T;
+	using native_handle_type = CFile*;
+	basic_mfc_io_handle()=default;
+	basic_mfc_io_handle(native_handle_type hd):basic_mfc_io_observer<T>{hd}{}
+	basic_mfc_io_handle(basic_mfc_io_handle const& mcf):basic_mfc_io_observer<T>{mcf.native_handle()->Duplicate()}{}
 	basic_mfc_io_handle& operator=(basic_mfc_io_handle const& mcf)
 	{
-		auto temp{mcf.handle->Duplicate()};
-		delete handle;
-		handle=temp.handle;
+		auto temp{mcf.native_handle()->Duplicate()};
+		delete this->native_handle();
+		this->native_handle()=temp;
 		return *this;
 	}
-	basic_mfc_io_handle(basic_mfc_io_handle&& mcf) noexcept:handle(mcf.handle)
+	basic_mfc_io_handle(basic_mfc_io_handle&& mcf) noexcept:basic_mfc_io_observer<T>{mcf.native_handle()}
 	{
-		mcf.handle=nullptr;
+		mcf.native_handle()=nullptr;
 	}
 	basic_mfc_io_handle& operator=(basic_mfc_io_handle&& mcf) noexcept
 	{
-		if(mcf.handle!=handle)
+		if(mcf.native_handle()!=handle)
 		{
 			delete handle;
-			handle=mcf.handle;
-			mcf.handle=nullptr;
+			this->native_handle()=mcf.native_handle();
+			mcf.native_handle()=nullptr;
 		}
 		return *this;
 	}
-	native_handle_type native_handle() noexcept
+	constexpr void detach() noexcept
 	{
-		return handle;
-	}
-	constexpr void reset() noexcept
-	{
-		handle=nullptr;
+		this->native_handle()=nullptr;
 	}
 };
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline Iter write(basic_mfc_io_handle<T>& hd,Iter begin,Iter end)
+inline Iter write(basic_mfc_io_observer<T>& hd,Iter begin,Iter end)
 {
 	std::size_t const to_write{(end-begin)*sizeof(*begin)};
 	if constexpr(sizeof(std::size_t)>4)
@@ -72,13 +82,13 @@ inline Iter write(basic_mfc_io_handle<T>& hd,Iter begin,Iter end)
 }
 
 template<std::integral T>
-inline void flush(basic_mfc_io_handle<T>& hd)
+inline void flush(basic_mfc_io_observer<T>& hd)
 {
 	hd.native_handle()->Flush();
 }
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline Iter read(basic_mfc_io_handle<T>& hd,Iter begin,Iter end)
+inline Iter read(basic_mfc_io_observer<T>& hd,Iter begin,Iter end)
 {
 	std::size_t to_read{(end-begin)*sizeof(*begin)};
 	if constexpr(sizeof(std::size_t)>4)
@@ -94,12 +104,15 @@ class basic_mfc_file:public basic_mfc_io_handle<T>
 public:
 	using char_type = T;
 	using native_handle_type = CFile*;
+	basic_mfc_file()=default;
+	basic_mfc_file(native_handle_type hd):basic_mfc_io_handle<T>(hd){}
 	basic_mfc_file(native_interface_t,native_handle_type val):basic_mfc_io_handle<T>(val){}
 	template<typename... Args>
+	requires(sizeof...(Args)!=0)
 	basic_mfc_file(basic_win32_io_handle<char_type>&& hd,Args&& ...):
 		basic_mfc_io_handle<T>(new CFile(hd.native_handle()))
 	{
-		hd.reset();
+		hd.detach();
 	}
 	template<open_mode om,typename... Args>
 	basic_mfc_file(std::string_view file,open_interface_t<om>,Args&& ...args):
