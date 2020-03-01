@@ -28,6 +28,10 @@ public:
 	{
 		return fp;
 	}
+	explicit operator bool() const noexcept
+	{
+		return fp;
+	}
 	explicit operator basic_posix_io_observer<char_type>() const
 	{
 
@@ -52,10 +56,6 @@ public:
 		return static_cast<basic_win32_io_observer<char_type>>(static_cast<basic_posix_io_observer<char_type>>(*this));
 	}
 #endif
-	constexpr void reset() noexcept
-	{
-		fp=nullptr;
-	}
 };
 
 template<std::integral ch_type>
@@ -280,6 +280,10 @@ public:
 	{
 		return fp;
 	}
+	explicit operator bool() const noexcept
+	{
+		return fp;
+	}
 	explicit operator basic_posix_io_observer<char_type>() const
 	{
 		auto fd(
@@ -445,7 +449,7 @@ public:
 		}
 		return *this;
 	}
-	constexpr void reset() noexcept
+	constexpr void detach() noexcept
 	{
 		this->native_handle() = nullptr;
 	}
@@ -495,7 +499,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		posix_handle.reset();
+		posix_handle.detach();
 
 		if(native_handle()==nullptr)
 #ifdef __cpp_exceptions

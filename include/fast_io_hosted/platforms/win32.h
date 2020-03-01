@@ -198,6 +198,10 @@ public:
 	{
 		return handle;
 	}
+	explicit constexpr operator bool() const noexcept
+	{
+		return handle;
+	}
 };
 
 template<std::integral ch_type>
@@ -258,7 +262,7 @@ public:
 		}
 		return *this;
 	}
-	constexpr void reset() noexcept
+	constexpr void detach() noexcept
 	{
 		this->native_handle()=nullptr;
 	}

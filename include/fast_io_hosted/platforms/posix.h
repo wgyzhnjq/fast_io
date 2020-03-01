@@ -187,10 +187,9 @@ public:
 	{
 		return fd;
 	}
-
-	constexpr void reset() noexcept
+	explicit constexpr operator bool() const noexcept
 	{
-		fd=-1;
+		return fd!=-1;
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_observer<char_type>() const
@@ -263,7 +262,7 @@ public:
 		}
 		return *this;
 	}
-	void reset()
+	void detach()
 	{
 		this->native_handle()=-1;
 	}
@@ -411,7 +410,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		hd.reset();
+		hd.detach();
 	}
 	basic_posix_file(basic_win32_io_handle<char_type>&& hd,open_mode m):
 		basic_posix_io_handle<char_type>(::_open_osfhandle(bit_cast<std::intptr_t>(hd.native_handle()),details::calculate_posix_open_mode_for_win32_handle(m)))
@@ -422,7 +421,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		hd.reset();
+		hd.detach();
 	}
 	basic_posix_file(basic_win32_io_handle<char_type>&& hd,std::string_view mode):basic_posix_file(std::move(hd),from_c_mode(mode)){}
 	template<open_mode om,typename... Args>
