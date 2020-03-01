@@ -39,17 +39,6 @@ public:
 	{
 		return basic_win32_io_handle<char_type>(static_cast<void*>(handle));
 	}
-/*
-	explicit operator basic_c_io_handle<char_type>() const requires(std::same_as<hd_type,CStdioFile>)
-	{
-		return basic_c_io_handle<char_type>(handle->m_pStream);
-	}
-
-	explicit operator basic_c_io_handle<char_type>() const requires(std::same_as<hd_type,CStdioFile>)
-	{
-		return basic_c_io_handle<char_type>(handle->m_pStream);
-	}
-*/
 	native_handle_type native_handle() noexcept
 	{
 		return handle;
