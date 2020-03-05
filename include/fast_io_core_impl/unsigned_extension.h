@@ -25,11 +25,11 @@ struct basic_unsigned_extension
 
 	inline constexpr bool operator[](std::size_t n) const
 	{
-		return (static_cast<char8_t const*>(static_cast<void const*>(this))[n / 8] >> (n % 8)) & 1;
+		return (static_cast<char unsigned const*>(static_cast<void const*>(this))[n / 8] >> (n % 8)) & 1;
 	}
 	inline constexpr bool front() const
 	{
-		return (*static_cast<char8_t const*>(static_cast<void const*>(this)))&1;
+		return (*static_cast<char unsigned const*>(static_cast<void const*>(this)))&1;
 	}
 	inline explicit constexpr operator T() const
 	{

@@ -81,7 +81,7 @@ concept zero_copy_output_stream_impl = requires(T& out)
 };
 
 template<typename T>
-concept redirect_stream_impl = requires(T h)
+concept redirect_stream_impl = requires(T& h)
 {
 	redirect_handle(h);
 };
@@ -97,6 +97,12 @@ concept memory_map_output_stream_impl = requires(T& out)
 {
 	memory_map_out_handle(out);
 };
+
+template<typename T>
+concept status_stream = requires(T stm)
+{
+	{typename T::status_type}
+}
 }
 
 
