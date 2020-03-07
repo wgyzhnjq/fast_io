@@ -1,19 +1,8 @@
 #pragma once
 
 
-namespace fast_io::crypto::speck
+namespace fast_io::crypto::rc6
 {
-
-namespace details
-{
-
-template<typename T> T get_P();
-inline constexpr template<> std::uint32_t get_P(){return 0xB7E15163;}
-
-template<typename T> T get_Q();
-inline constexpr template<> std::uint32_t get_Q(){return 0x9E3779B9;}
-
-}
 
 template<bool encrypt, std::size_t keysize, std::size_t rounds = 20>
 struct rc6
@@ -26,9 +15,9 @@ struct rc6
 	{
 		std::span<std::uint32_t, keysize / 4> tmp_key;
 		memcpy(tmp_key.data(), key_span.data(), keysize);
-        key_schedule[0] = details::get_P<std::uint32_t>();
+        key_schedule[0] = 0xB7E15163;
         for (std::size_t i(1); i != 2 * rounds + 4; ++i) {
-            key_schedule[i] = key_schedule[i - 1] + get_Q<std::uint32_t>();
+            key_schedule[i] = key_schedule[i - 1] + 0x9E3779B9;
         }
 
         std::uint32_t A{}, B{};

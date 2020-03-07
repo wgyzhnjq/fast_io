@@ -98,11 +98,11 @@ concept memory_map_output_stream_impl = requires(T& out)
 	memory_map_out_handle(out);
 };
 
-template<typename T>
+/*template<typename T>
 concept status_stream = requires(T stm)
 {
-	{typename T::status_type}
-}
+	{typename T::status_type};
+}*/
 }
 
 
