@@ -93,6 +93,11 @@ struct rc6
 using rc6_enc_128 = rc6<true, 16>;
 using rc6_dec_128 = rc6<false, 16>;
 
+using rc6_enc_192 = rc6<true, 24>;
+using rc6_dec_192 = rc6<false, 24>;
+
+using rc6_enc_256 = rc6<true, 32>;
+using rc6_dec_256 = rc6<false, 32>;
 
 }
 
