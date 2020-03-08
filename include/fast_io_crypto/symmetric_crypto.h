@@ -7,6 +7,7 @@
 #include "ctr.h"
 #include "speck.h"
 #include "aes.h"
+#include "rc6.h"
 
 /*namespace fast_io::crypto
 {

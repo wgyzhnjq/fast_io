@@ -32,7 +32,7 @@ public:
 		else
 		{
 			auto plain(cipher(plain_cipher_text.data()));
-			fast_xor_assignment(plain,std::span(iv));
+			fast_xor_assignment(std::span(plain),std::span(iv));
 			details::my_copy(plain_cipher_text.begin(), plain_cipher_text.end(), iv.data());
 			details::my_copy(plain.begin(), plain.end(), plain_cipher_text.data());
 		}
