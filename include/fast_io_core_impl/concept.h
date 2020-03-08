@@ -36,9 +36,10 @@ concept mutex_stream_impl = requires(T& t)
 };
 /*
 template<typename T>
-concept character_input_stream_impl = requires(T& in)
+concept character_input_stream_impl = requires(T& in,typename T::char_type ch)
 {
 	get(in);
+	unget(in,ch);
 };
 */
 template<typename T>
