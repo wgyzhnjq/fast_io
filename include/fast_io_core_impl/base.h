@@ -393,27 +393,17 @@ inline constexpr bool is_space(T const u)
 	}
 }
 
-template<std::integral intg>
-requires (sizeof(intg)<=8)
+template<std::integral intg,char8_t base>
+requires (sizeof(intg)<=8&&2<=base&&base<=36)
 inline constexpr std::size_t get_max_size()
 {
-	if constexpr(sizeof(intg)==8)
-	{
-		if constexpr(std::signed_integral<intg>)
-			return 19;
-		else
-			return 20;
-	}
-	else if constexpr(sizeof(intg)==4)
-		return 10;
-	else if constexpr(sizeof(intg)==2)
-		return 5;
-	else if constexpr(sizeof(intg)==1)
-		return 3;
+	std::size_t i{};
+	for(auto v(std::numeric_limits<intg>::max());v;++i)
+		v/=base;
+	return i;
 }
 
-
-template<std::integral T,char8_t base,buffer_input_stream input>
+template<std::integral T,char8_t base,bool no_dec=false,buffer_input_stream input>
 inline constexpr T input_base_number(input& in)
 {
 	using unsigned_char_type = std::make_unsigned_t<typename input::char_type>;
@@ -424,16 +414,36 @@ inline constexpr T input_base_number(input& in)
 		std::size_t length{};
 		for(unsigned_char_type ch : igenerator(in))
 		{
-			unsigned_char_type const e(ch-u8'0');
-			if(9<e)[[unlikely]]
-				break;
-			t*=10;
-			t+=e;
+			if constexpr(base<=10)
+			{
+				unsigned_char_type const e(static_cast<unsigned_char_type>(ch)-u8'0');
+				if(base<=e)[[unlikely]]
+					break;
+				t*=base;
+				t+=e;
+			}
+			else
+			{
+				unsigned_char_type e(static_cast<unsigned_char_type>(ch)-u8'0');
+				constexpr char8_t bm10{base-10};
+				if(e<=10)
+				{
+					t*=base;
+					t+=e;
+				}
+				else if(static_cast<unsigned_char_type>(e-=17)<bm10||static_cast<unsigned_char_type>(e-=32)<bm10)
+				{
+					t*=base;
+					t+=e+10;
+				}
+				else[[unlikely]]
+					break;
+			}
 			++length;
 		}
-		constexpr std::size_t max_size{get_max_size<unsigned_t>()};
+		constexpr std::size_t max_size{get_max_size<unsigned_t,base>()};
 		if(max_size<=length)[[unlikely]]
-			if((max_size<length)|(t<10))[[unlikely]]
+			if((max_size<length)|(t<=base))[[unlikely]]
 #ifdef __cpp_exceptions
 				throw std::overflow_error("unsigned overflow");
 #else
@@ -453,17 +463,37 @@ inline constexpr T input_base_number(input& in)
 			++it;
 		for(;it!=ed;++it)
 		{
-			unsigned_char_type const e(static_cast<unsigned_char_type>(*it)-u8'0');
-			if(9<e)[[unlikely]]
-				break;
-			t*=10;
-			t+=e;
+			if constexpr(base<=10)
+			{
+				unsigned_char_type const e(static_cast<unsigned_char_type>(*it)-u8'0');
+				if(base<=e)[[unlikely]]
+					break;
+				t*=base;
+				t+=e;
+			}
+			else
+			{
+				unsigned_char_type e(static_cast<unsigned_char_type>(*it)-u8'0');
+				constexpr char8_t bm10{base-10};
+				if(e<=10)
+				{
+					t*=base;
+					t+=e;
+				}
+				else if(static_cast<unsigned_char_type>(e-=17)<bm10||static_cast<unsigned_char_type>(e-=32)<bm10)
+				{
+					t*=base;
+					t+=e+10;
+				}
+				else[[unlikely]]
+					break;
+			}
 			++length;
 		}
-		constexpr std::size_t max_size{get_max_size<T>()};
+		constexpr std::size_t max_size{get_max_size<T,base>()};
 		if(max_size<=length)[[unlikely]]
 		{
-			if((max_size<length)|(t<10))[[unlikely]]
+			if((max_size<length)|(t<=base))[[unlikely]]
 #ifdef __cpp_exceptions
 				throw std::overflow_error("signed overflow");
 #else
