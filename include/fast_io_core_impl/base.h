@@ -394,7 +394,7 @@ inline constexpr bool is_space(T const u)
 }
 
 template<std::integral intg,char8_t base>
-requires (sizeof(intg)<=8&&2<=base&&base<=36)
+requires (2<=base&&base<=36)
 inline constexpr std::size_t get_max_size()
 {
 	std::size_t i{};
