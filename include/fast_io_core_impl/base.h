@@ -465,13 +465,13 @@ inline constexpr T input_base_number(input& in)
 		{
 			if((max_size<length)|(t<10))[[unlikely]]
 #ifdef __cpp_exceptions
-				throw std::overflow_error("unsigned overflow");
+				throw std::overflow_error("signed overflow");
 #else
 				fast_terminate();
 #endif
 			if(static_cast<unsigned_t>(static_cast<unsigned_t>(std::numeric_limits<T>::max())+sign)<t)
 #ifdef __cpp_exceptions
-				throw std::overflow_error("unsigned overflow");
+				throw std::overflow_error("signed overflow");
 #else
 				fast_terminate();
 #endif
