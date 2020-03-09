@@ -15,13 +15,14 @@ try
 {
 	std::size_t constexpr N(10000000);
 	std::vector<std::size_t> v(N);
+	std::vector<std::ptrdiff_t> v2(N);
+
 	{
 	fast_io::timer t("std::FILE*");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt","rb"),fclose);
 	for(std::size_t i(0);i!=N;++i)
 		auto const ret(fscanf(fp.get(),"%zu",v.data()+i));
 	}
-	std::vector<std::size_t> v2(v);
 /*	{
 	cqw::timer t("std::FILE* with 1048576 buffer size + _IOFBF (Full buffering) tag");
 	std::unique_ptr<std::FILE,decltype(fclose)*> fp(std::fopen("cfilestar.txt",u8"rb"),fclose);
@@ -49,15 +50,24 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		scan(view,v[i]);
 	}*/
+	
 	{
 	fast_io::timer t("ibuf");
 	fast_io::ibuf_file ibuf_file("cfilestar.txt");
-	fast_io::obuf_file obuf_file("res.txt");
 	for(std::size_t i(0);i!=N;++i)
 	{
 		scan(ibuf_file,v[i]);
 	}
 	}
+	{
+	fast_io::timer t("ibuf_sign");
+	fast_io::ibuf_file ibuf_file("cfilestar.txt");
+	for(std::size_t i(0);i!=N;++i)
+	{
+		scan(ibuf_file,v2[i]);
+	}
+	}
+
 	{
 	fast_io::timer t("ibuf_mutex");
 	fast_io::ibuf_file_mutex ibuf_file("cfilestar.txt");

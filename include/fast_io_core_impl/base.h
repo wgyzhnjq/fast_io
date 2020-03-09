@@ -393,14 +393,34 @@ inline constexpr bool is_space(T const u)
 	}
 }
 
+template<std::integral intg>
+requires (sizeof(intg)<=8)
+inline constexpr std::size_t get_max_size()
+{
+	if constexpr(sizeof(intg)==8)
+	{
+		if constexpr(std::signed_integral<intg>)
+			return 19;
+		else
+			return 20;
+	}
+	else if constexpr(sizeof(intg)==4)
+		return 10;
+	else if constexpr(sizeof(intg)==2)
+		return 5;
+	else if constexpr(sizeof(intg)==1)
+		return 3;
+}
+
+
 template<std::integral T,char8_t base,buffer_input_stream input>
 inline constexpr T input_base_number(input& in)
 {
 	using unsigned_char_type = std::make_unsigned_t<typename input::char_type>;
-	using unsigned_t = std::make_unsigned_t<T>;
+	using unsigned_t = std::make_unsigned_t<std::remove_cvref_t<T>>;
 	if constexpr(std::unsigned_integral<T>)
 	{
-		T t{};
+		unsigned_t t{};
 		std::size_t length{};
 		for(unsigned_char_type ch : igenerator(in))
 		{
@@ -411,133 +431,54 @@ inline constexpr T input_base_number(input& in)
 			t+=e;
 			++length;
 		}
-		if(21<=length)[[unlikely]]
-			if((21<length)|(t<10))[[unlikely]]
+		constexpr std::size_t max_size{get_max_size<unsigned_t>()};
+		if(max_size<=length)[[unlikely]]
+			if((max_size<length)|(t<10))[[unlikely]]
+#ifdef __cpp_exceptions
 				throw std::overflow_error("unsigned overflow");
+#else
+				fast_terminate();
+#endif
 		return t;
-
-/*		unsigned_char_type fr(front(in));
-		if(fr==0x2b)[[unlikely]]
-			fr=next_unsigned(in);
-		if constexpr(base<=10)
-		{
-			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
-			#ifdef __cpp_exceptions
-				throw std::runtime_error("illegal input");
-			#else
-				fast_terminate();
-			#endif
-			T t(fr);
-			for(;;)
-			{
-				auto f(next_unsigned<2>(in));
-				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
-					break;
-				t=t*base+f;
-			}
-			return t;
-		}
-		else
-		{
-			constexpr unsigned_char_type bm10(base-10);
-			T t{};
-			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
-				t=fr;
-			else if(static_cast<unsigned_char_type>(fr-=17)<bm10||static_cast<unsigned_char_type>(fr-=32)<bm10)
-				t=fr+10;
-			else[[unlikely]]
-			#ifdef __cpp_exceptions
-				throw std::runtime_error("illegal input");
-			#else
-				fast_terminate();
-			#endif
-			for(;;)
-			{
-				auto f(next_unsigned<2>(in));
-				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
-					t=t*base+f;
-				else if(static_cast<unsigned_char_type>(f-=17)<bm10||static_cast<unsigned_char_type>(f-=32)<bm10)
-					t=t*base+(f+10);
-				else[[unlikely]]
-					break;
-			}
-			return t;	
-		}*/
 	}
 	else
 	{
-		unsigned_char_type fr(front(in));
-		bool const sign(fr==0x2d);
-		if(sign||fr==0x2b)
-			fr=next_unsigned(in);
-		if constexpr(base<=10)
+		unsigned_t t{};
+		std::size_t length{};
+		auto ig{igenerator(in)};
+		auto it{begin(ig)};
+		auto ed{end(ig)};
+		auto const sign{*it=='-'};
+		if(sign)
+			++it;
+		for(;it!=ed;++it)
 		{
-			if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(fr-=0x30))
-			#ifdef __cpp_exceptions
-				throw std::runtime_error("illegal input");
-			#else
-				fast_terminate();
-			#endif
-			unsigned_t t(fr);
-			for(;;)
-			{
-				auto f(next_unsigned<2>(in));
-				if(static_cast<unsigned_char_type>(base)<=static_cast<unsigned_char_type>(f-=0x30))
-					break;
-				t=t*base+f;
-			}
-			if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<t)
-			#ifdef __cpp_exceptions
-				throw std::overflow_error("signed overflow");
-			#else
-				fast_terminate();
-			#endif
-			if(sign)
-			{
-				if(t==0x1+static_cast<unsigned_t>(std::numeric_limits<T>::max()))
-					return std::numeric_limits<T>::min();
-				return -static_cast<T>(t);
-			}
-			return t;
+			unsigned_char_type const e(static_cast<unsigned_char_type>(*it)-u8'0');
+			if(9<e)[[unlikely]]
+				break;
+			t*=10;
+			t+=e;
+			++length;
 		}
-		else
+		constexpr std::size_t max_size{get_max_size<T>()};
+		if(max_size<=length)[[unlikely]]
 		{
-			constexpr unsigned_char_type bm10(base-10);
-			unsigned_t t{};
-			if(static_cast<unsigned_char_type>(fr-=0x30)<static_cast<unsigned_char_type>(10))
-				t=fr;
-			else if(static_cast<unsigned_char_type>(fr-=17)<bm10||static_cast<unsigned_char_type>(fr-=32)<bm10)
-				t=fr+10;
-			else[[unlikely]]
-			#ifdef __cpp_exceptions
-				throw std::runtime_error("illegal input");
-			#else
+			if((max_size<length)|(t<10))[[unlikely]]
+#ifdef __cpp_exceptions
+				throw std::overflow_error("unsigned overflow");
+#else
 				fast_terminate();
-			#endif
-			for(;;)
-			{
-				auto f(next_unsigned<2>(in));
-				if(static_cast<unsigned_char_type>(f-=0x30)<static_cast<unsigned_char_type>(10))
-					t=add_overflow(mul_overflow(t,base),f);
-				else if(static_cast<unsigned_char_type>(f-=17)<bm10||static_cast<unsigned_char_type>(f-=32)<bm10)
-					t=add_overflow(mul_overflow(t,base),f+10);
-				else[[unlikely]]
-					break;
-			}
-			if(static_cast<unsigned_t>(std::numeric_limits<T>::max())+static_cast<unsigned_t>(sign)<t)
-			#ifdef __cpp_exceptions
-				throw std::overflow_error("signed overflow");
-			#else
+#endif
+			if(static_cast<unsigned_t>(static_cast<unsigned_t>(std::numeric_limits<T>::max())+sign)<t)
+#ifdef __cpp_exceptions
+				throw std::overflow_error("unsigned overflow");
+#else
 				fast_terminate();
-			#endif
-			if(sign)
-			{
-				if(t==0x1+static_cast<unsigned_t>(std::numeric_limits<T>::max()))
-					return std::numeric_limits<T>::min();
-				return -static_cast<T>(t);
-			}
-			return t;
+#endif
 		}
+		if(sign)
+			return -static_cast<T>(t);
+		return static_cast<T>(t);
 	}
 }
 
