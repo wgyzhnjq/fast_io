@@ -401,13 +401,19 @@ inline constexpr T input_base_number(input& in)
 	if constexpr(std::unsigned_integral<T>)
 	{
 		T t{};
+		std::size_t length{};
 		for(unsigned_char_type ch : igenerator(in))
 		{
 			unsigned_char_type const e(ch-u8'0');
-			if(9<e)
+			if(9<e)[[unlikely]]
 				break;
-			t=t*10+e;
+			t*=10;
+			t+=e;
+			++length;
 		}
+		if(21<=length)[[unlikely]]
+			if((21<length)|(t<10))[[unlikely]]
+				throw std::overflow_error("unsigned overflow");
 		return t;
 
 /*		unsigned_char_type fr(front(in));
