@@ -4,11 +4,107 @@
 namespace fast_io
 {
 
+namespace details
+{
+template<typename T>
+class basic_istring_view_generator
+{
+public:
+	using string_view_type = T;
+	T* ptr_s={};
+};
+
+template<typename T>
+class basic_istring_view_iterator
+{
+public:
+	T* ptr_s={};
+	constexpr auto operator->() noexcept
+	{
+		return ptr_s->data();
+	}
+	constexpr auto& operator*() noexcept
+	{
+		return ptr_s->front();
+	}
+};
+
+template<typename T>
+inline constexpr basic_istring_view_iterator<T>& operator++(basic_istring_view_iterator<T>& gen) noexcept
+{
+	gen.ptr_s->remove_prefix(1);
+	return gen;
+}
+template<typename T>
+inline constexpr void operator++(basic_istring_view_iterator<T>& gen,int) noexcept
+{
+	gen.ptr_s->remove_prefix(1);
+}
+
+template<typename T>
+inline constexpr bool operator==(std::default_sentinel_t, basic_istring_view_iterator<T> const& b)
+{
+	return b.ptr_s->empty();
+}
+
+template<typename T>
+inline constexpr bool operator==(basic_istring_view_iterator<T> const& b, std::default_sentinel_t)
+{
+	return b.ptr_s->empty();
+}
+
+template<typename T>
+inline constexpr bool operator!=(std::default_sentinel_t s, basic_istring_view_iterator<T> const& b)
+{
+	return !(s==b);
+}
+
+template<typename T>
+inline constexpr bool operator!=(basic_istring_view_iterator<T> const& b, std::default_sentinel_t s)
+{
+	return !(s==b);
+}
+
+template<typename T>
+inline constexpr basic_istring_view_iterator<T> begin(basic_istring_view_generator<T>& gen)
+{
+	return {gen.ptr_s};
+}
+template<typename T>
+inline constexpr std::default_sentinel_t end(basic_istring_view_generator<T>& gen)
+{
+	return {};
+}
+template<typename T>
+inline constexpr basic_istring_view_iterator<T> cbegin(basic_istring_view_generator<T> const& gen)
+{
+	return {gen.ptr_s};
+}
+template<typename T>
+inline constexpr std::default_sentinel_t cend(basic_istring_view_generator<T> const& gen)
+{
+	return {};
+}
+template<typename T>
+inline constexpr basic_istring_view_iterator<T> begin(basic_istring_view_generator<T> const& gen)
+{
+	return {gen.ptr_s};
+}
+template<typename T>
+inline constexpr std::default_sentinel_t end(basic_istring_view_generator<T> const& gen)
+{
+	return {};
+}
+
+
+}
+
 template< typename T>
 class basic_istring_view
 {
-	T s;
 public:
+	T s;
+	using string_view_type = T;
 	using char_type = typename T::value_type;
 	template<typename ...Args>
 	requires std::constructible_from<T,Args...>
@@ -21,6 +117,12 @@ public:
 };
 
 template<typename T>
+inline constexpr details::basic_istring_view_generator<T> igenerator(basic_istring_view<T>& isv) noexcept
+{
+	return {std::addressof(isv.str())};
+}
+
+template<typename T>
 [[nodiscard]] inline constexpr auto begin(basic_istring_view<T>& isv)
 {
 	return isv.str().begin();
@@ -31,6 +133,8 @@ template<typename T>
 {
 	return isv.str().end();
 }
+
+
 
 template<typename T>
 inline constexpr bool iflush(basic_istring_view<T>& is)
