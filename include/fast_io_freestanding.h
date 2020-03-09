@@ -20,6 +20,10 @@
 #include"fast_io_freestanding_impl/send_receive.h"
 #include"fast_io_freestanding_impl/natural.h"
 //#include"fast_io_freestanding_impl/ucs.h"
+#ifdef __cpp_coroutines
+#include<coroutine>		//coroutine is freestanding
+#include"fast_io_freestanding_impl/generator.h"
+#endif
 
 namespace fast_io
 {
