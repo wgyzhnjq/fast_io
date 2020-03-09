@@ -458,6 +458,8 @@ inline constexpr T input_base_number(input& in)
 		auto ig{igenerator(in)};
 		auto it{begin(ig)};
 		auto ed{end(ig)};
+		if(it==ed)
+			return {};
 		auto const sign{*it=='-'};
 		if(sign)
 			++it;
