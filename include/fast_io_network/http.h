@@ -63,6 +63,7 @@ template<buffer_input_stream input>
 inline void scan_define(input& in,basic_http_status<typename input::char_type>& s)
 {
 	scan(in,s.version,s.code);
+	skip_line(in);
 }
 
 template<buffer_output_stream output>
@@ -85,8 +86,6 @@ inline generator<http_header_line<typename input::char_type>> scan_http_header(i
 	}
 	else
 	{
-		if(skip_line(in)<2)
-			co_return;
 		for(std::basic_string<typename input::char_type> str;;)
 		{
 			scan(in,line(str));

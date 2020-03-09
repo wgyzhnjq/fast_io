@@ -57,7 +57,7 @@ inline constexpr std::uintmax_t bufferred_transmit_impl(output& outp,input& inp,
 				std::size_t transmitted_this_round((e-b)*sizeof(*b));
 				if(bytes<=transmitted_this_round)
 				{
-					write(outp,b,bytes);
+					write(outp,b,b+bytes);
 					return transmitted_bytes+transmitted_this_round;
 				}
 				else
@@ -175,7 +175,7 @@ inline constexpr void print_define(output& outp,manip::transmission<input,sz_typ
 template<output_stream output,input_stream input,std::integral sz_type>
 inline constexpr void print_define(output& outp,manip::transmission_with_size<input,sz_type> ref)
 {
-	ref.transmitted=static_cast<sz_type>(details::transmit_impl(outp,ref.reference,ref.bytes));
+	ref.transmitted=static_cast<sz_type>(details::transmit_impl(outp,ref.reference,ref.size));
 }
 
 template<output_stream output,input_stream input,std::integral sz_type>
