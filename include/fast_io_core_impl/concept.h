@@ -34,14 +34,13 @@ concept mutex_stream_impl = requires(T& t)
 	mutex(t);
 	unlocked_handle(t);
 };
-/*
+
 template<typename T>
-concept character_input_stream_impl = requires(T& in,typename T::char_type ch)
+concept character_input_stream_impl = requires(T& in)
 {
-	get(in);
-	unget(in,ch);
+	igenerator(in);
 };
-*/
+
 template<typename T>
 concept character_output_stream_impl = requires(T& out,typename T::char_type ch)
 {
@@ -133,16 +132,16 @@ concept random_access_stream = stream<T>&&details::random_access_stream_impl<T>;
 
 template<typename T>
 concept io_stream = input_stream<T>&&output_stream<T>;
-/*
+
 template<typename T>
 concept character_input_stream = input_stream<T>&&details::character_input_stream_impl<T>;
-*/
+
 template<typename T>
 concept character_output_stream = output_stream<T>&&details::character_output_stream_impl<T>;
-/*
+
 template<typename T>
 concept character_io_stream = character_input_stream<T>&&character_output_stream<T>;
-*/
+
 template<typename T>
 concept mutex_io_stream = mutex_input_stream<T>&&mutex_output_stream<T>;
 

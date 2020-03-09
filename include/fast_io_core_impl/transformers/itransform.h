@@ -121,6 +121,21 @@ inline constexpr bool iflush(itransform<input,func,ch_type,sz,rac>& in)
 	return in.position_end;
 }
 
+
+template<output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
+inline generator<ch_type> igenerator(itransform<input,func,ch_type,sz,rac>& in)
+{
+	for(;;)
+	{
+		for(;in.position!=in.position_end;++in.position)
+			co_yield in.buffer[in.position];
+		in.position_end=in.handle.second.read_proxy(in.handle.first,in.buffer.data(),in.buffer.data()+in.buffer.size())-in.buffer.data();
+		in.position={};
+		if(!in.position_end)
+			break;
+	}
+}
+
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr auto begin(itransform<input,func,ch_type,sz,rac>& in)
 {

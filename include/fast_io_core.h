@@ -69,4 +69,5 @@
 #include"fast_io_core_impl/flush.h"
 
 // Transformers
+#include"fast_io_core_impl/generator.h"
 #include"fast_io_core_impl/transformers/transformers.h"

@@ -181,6 +181,22 @@ inline constexpr basic_ibuf<Ihandler,Buf>& operator+=(basic_ibuf<Ihandler,Buf>& 
 	return ib;
 }
 
+template<input_stream Ihandler,typename Buf>
+inline generator<typename Ihandler::char_type> igenerator(basic_ibuf<Ihandler,Buf>& ib)
+{
+	for(;;)
+	{
+		for(;ib.ibuffer.curr!=ib.ibuffer.end;++ib.ibuffer.curr)
+			co_yield *ib.ibuffer.curr;
+		if(ib.ibuffer.end==nullptr)
+			ib.ibuffer.init_space();
+		ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg,ib.ibuffer.beg+Buf::size);
+		ib.ibuffer.curr=ib.ibuffer.beg;
+		if(ib.ibuffer.end==ib.ibuffer.beg)
+			break;
+	}
+}
+
 template<output_stream Ihandler,typename Buf>
 inline constexpr void flush(basic_ibuf<Ihandler,Buf>& ib)
 {

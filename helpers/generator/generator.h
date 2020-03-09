@@ -55,6 +55,7 @@ public:
 #endif
 	}
 };
+class generator_sentinel{};
 
 template<typename T>
 class generator_iterator
@@ -87,24 +88,24 @@ public:
 };
 
 template<typename T>
-inline constexpr bool operator==(std::default_sentinel_t, generator_iterator<T> const& b) noexcept
+inline constexpr bool operator==(generator_sentinel, generator_iterator<T> const& b) noexcept
 {
 	return b.handle.done();
 }
 
 template<typename T>
-inline constexpr bool operator==(generator_iterator<T> const& b,std::default_sentinel_t) noexcept
+inline constexpr bool operator==(generator_iterator<T> const& b,generator_sentinel) noexcept
 {
 	return b.handle.done();
 }
 template<typename T>
-inline constexpr bool operator!=(std::default_sentinel_t s, generator_iterator<T> const& b) noexcept
+inline constexpr bool operator!=(generator_sentinel s, generator_iterator<T> const& b) noexcept
 {
 	return !(s==b);
 }
 
 template<typename T>
-inline constexpr bool operator!=(generator_iterator<T> const& b,std::default_sentinel_t s) noexcept
+inline constexpr bool operator!=(generator_iterator<T> const& b,generator_sentinel s) noexcept
 {
 	return !(s==b);
 }
@@ -127,6 +128,7 @@ class [[nodiscard]] generator
 public:
 	using promise_type = details::generator_promise<T>;
 	std::coroutine_handle<promise_type> handle;
+	constexpr generator(nullptr_t)=delete;
 	constexpr generator(std::coroutine_handle<promise_type> v):handle(v){}
 	constexpr generator(generator const&) noexcept=delete;
 	constexpr generator& operator=(generator const&) noexcept=delete;
@@ -141,7 +143,7 @@ inline constexpr details::generator_iterator<T> begin(generator<T>& gen)
 	return {gen.handle};
 }
 template<typename T>
-inline constexpr std::default_sentinel_t end(generator<T>& gen)
+inline constexpr details::generator_sentinel end(generator<T>& gen)
 {
 	return {};
 }
@@ -151,7 +153,7 @@ inline constexpr details::generator_iterator<T> cbegin(generator<T> const& gen)
 	return {gen.handle};
 }
 template<typename T>
-inline constexpr std::default_sentinel_t cend(generator<T> const& gen)
+inline constexpr details::generator_sentinel cend(generator<T> const& gen)
 {
 	return {};
 }
@@ -161,7 +163,7 @@ inline constexpr details::generator_iterator<T> begin(generator<T> const& gen)
 	return {gen.handle};
 }
 template<typename T>
-inline constexpr std::default_sentinel_t end(generator<T> const& gen)
+inline constexpr details::generator_sentinel end(generator<T> const& gen)
 {
 	return {};
 }
