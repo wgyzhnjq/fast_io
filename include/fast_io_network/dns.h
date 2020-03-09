@@ -10,7 +10,7 @@ namespace details
 	{
 		addrinfo *ptr;
 	};
-	struct dns_sentinal
+	struct dns_sentinel
 	{
 	};
 	inline constexpr bool operator==(dns_iterator const& a, dns_iterator const& b)
@@ -21,19 +21,19 @@ namespace details
 	{
 		return !(a==b);
 	}
-	inline constexpr bool operator==(dns_sentinal, dns_iterator const& b)
+	inline constexpr bool operator==(dns_sentinel, dns_iterator const& b)
 	{
 		return b.ptr == nullptr;
 	}
-	inline constexpr bool operator==(dns_iterator const& b, dns_sentinal)
+	inline constexpr bool operator==(dns_iterator const& b, dns_sentinel)
 	{
 		return b.ptr == nullptr;
 	}
-	inline constexpr bool operator!=(dns_sentinal, dns_iterator const& b)
+	inline constexpr bool operator!=(dns_sentinel, dns_iterator const& b)
 	{
 		return b.ptr != nullptr;
 	}
-	inline constexpr bool operator!=(dns_iterator const& b, dns_sentinal)
+	inline constexpr bool operator!=(dns_iterator const& b, dns_sentinel)
 	{
 		return b.ptr != nullptr;
 	}
@@ -142,13 +142,13 @@ inline constexpr auto begin(basic_dns<fam> & d)
 }
 
 template<fast_io::sock::family fam>
-inline constexpr details::dns_sentinal end(basic_dns<fam> const& d)
+inline constexpr details::dns_sentinel end(basic_dns<fam> const& d)
 {
 	return {};
 }
 
 template<fast_io::sock::family fam>
-inline constexpr details::dns_sentinal cend(basic_dns<fam> const& d)
+inline constexpr details::dns_sentinel cend(basic_dns<fam> const& d)
 {
 	return {};
 }
