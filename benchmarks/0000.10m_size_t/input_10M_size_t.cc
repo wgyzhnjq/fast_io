@@ -52,8 +52,11 @@ try
 	{
 	fast_io::timer t("ibuf");
 	fast_io::ibuf_file ibuf_file("cfilestar.txt");
+	fast_io::obuf_file obuf_file("res.txt");
 	for(std::size_t i(0);i!=N;++i)
+	{
 		scan(ibuf_file,v[i]);
+	}
 	}
 	{
 	fast_io::timer t("ibuf_mutex");

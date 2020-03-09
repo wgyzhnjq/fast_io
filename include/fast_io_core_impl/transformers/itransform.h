@@ -121,7 +121,7 @@ inline constexpr bool iflush(itransform<input,func,ch_type,sz,rac>& in)
 	return in.position_end;
 }
 
-
+/*
 template<output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline generator<ch_type> igenerator(itransform<input,func,ch_type,sz,rac>& in)
 {
@@ -135,7 +135,7 @@ inline generator<ch_type> igenerator(itransform<input,func,ch_type,sz,rac>& in)
 			break;
 	}
 }
-
+*/
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr auto begin(itransform<input,func,ch_type,sz,rac>& in)
 {

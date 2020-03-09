@@ -18,7 +18,7 @@ public:
 	using const_reference = std::remove_reference_t<T> const&;
 	using pointer = value_type*;
 	using const_pointer = value_type const*;
-	pointer ptr{};
+	element_type ptr{};
 #ifdef __cpp_exceptions
 	std::exception_ptr ex_ptr;
 #endif
@@ -26,11 +26,12 @@ public:
 
 	constexpr std::suspend_always initial_suspend() const noexcept { return {}; }
 	constexpr std::suspend_always final_suspend() const noexcept { return {}; }
-	template<typename U>
-	requires std::same_as<std::remove_reference_t<U>,std::remove_reference_t<T>>
-	constexpr std::suspend_always yield_value(U&& value) noexcept
+//	template<typename U>
+//	requires std::same_as<std::remove_reference_t<U>,std::remove_reference_t<T>>
+	constexpr std::suspend_always yield_value(T value) noexcept
 	{
-		ptr = std::addressof(value);
+		ptr=value;
+//		ptr = std::addressof(value);
 		return {};
 	}
 	constexpr void unhandled_exception() noexcept
@@ -63,7 +64,7 @@ public:
 	using coroutine_handle_type = std::coroutine_handle<generator_promise<T>>;
 	using iterator_category = std::output_iterator_tag;
 	coroutine_handle_type handle{};
-
+/*
 	inline constexpr auto operator->()
 	{
 		handle.resume();
@@ -73,15 +74,15 @@ public:
 #endif
 		return handle.promise().ptr;
 	}
-
-	inline constexpr auto& operator*()
+*/
+	inline constexpr auto operator*()
 	{
 		handle.resume();
 #ifdef __cpp_exceptions
 		if (handle.done())
 			handle.promise().rethrow_if_exception();
 #endif
-		return *(handle.promise().ptr);
+		return handle.promise().ptr;
 	}
 
 };

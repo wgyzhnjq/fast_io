@@ -181,20 +181,141 @@ inline constexpr basic_ibuf<Ihandler,Buf>& operator+=(basic_ibuf<Ihandler,Buf>& 
 	return ib;
 }
 
-template<input_stream Ihandler,typename Buf>
-inline generator<typename Ihandler::char_type> igenerator(basic_ibuf<Ihandler,Buf>& ib)
+namespace details
 {
-	for(;;)
+
+template<input_stream Ihandler,typename Buf>
+class basic_ibuf_generator
+{
+public:
+	basic_ibuf<Ihandler,Buf>* ptr_s={};
+};
+
+template<input_stream Ihandler,typename Buf>
+class basic_ibuf_iterator
+{
+public:
+	basic_ibuf<Ihandler,Buf>* ptr_s={};
+	using iterator_category = std::input_iterator_tag;
+	constexpr auto operator->() noexcept
 	{
-		for(;ib.ibuffer.curr!=ib.ibuffer.end;++ib.ibuffer.curr)
-			co_yield *ib.ibuffer.curr;
-		if(ib.ibuffer.end==nullptr)
-			ib.ibuffer.init_space();
-		ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg,ib.ibuffer.beg+Buf::size);
-		ib.ibuffer.curr=ib.ibuffer.beg;
-		if(ib.ibuffer.end==ib.ibuffer.beg)
-			break;
+		return ptr_s->ibuffer.curr;
 	}
+	constexpr auto& operator*() noexcept
+	{
+		return *ptr_s->ibuffer.curr;
+	}
+};
+
+template<input_stream Ihandler,typename Buf>
+constexpr void fresh_ibuf(basic_ibuf_iterator<Ihandler,Buf>& gen) noexcept
+{
+	auto& ib(gen.ptr_s->ibuffer);
+	if(ib.end==nullptr)
+		ib.init_space();
+	ib.end=read(gen.ptr_s->ih,ib.beg,ib.beg+Buf::size);
+	ib.curr=ib.beg;
+	if(ib.end==ib.beg)
+	{
+		gen.ptr_s=nullptr;
+		return;
+	}
+	++ib.curr;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr basic_ibuf_iterator<Ihandler,Buf>& operator++(basic_ibuf_iterator<Ihandler,Buf>& gen)
+{
+	if(gen.ptr_s->ibuffer.curr==gen.ptr_s->ibuffer.end)[[unlikely]]
+	{
+		fresh_ibuf(gen);
+		return gen;
+	}
+	++gen.ptr_s->ibuffer.curr;
+	return gen;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr void operator++(basic_ibuf_iterator<Ihandler,Buf>& gen,int)
+{
+	static_cast<void>(operator++(gen));
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr bool operator!=(std::default_sentinel_t, basic_ibuf_iterator<Ihandler,Buf> const& b)
+{
+	return b.ptr_s;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr bool operator==(std::default_sentinel_t, basic_ibuf_generator<Ihandler,Buf> const& b)
+{
+	return !b.ptr_s;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr bool operator!=(basic_ibuf_iterator<Ihandler,Buf> const& b, std::default_sentinel_t)
+{
+	return b.ptr_s;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr bool operator==(basic_ibuf_iterator<Ihandler,Buf> const& b, std::default_sentinel_t)
+{
+	return !b.ptr_s;
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr basic_ibuf_iterator<Ihandler,Buf> begin(basic_ibuf_generator<Ihandler,Buf>& gen)
+{
+	return {gen.ptr_s};
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr std::default_sentinel_t end(basic_ibuf_generator<Ihandler,Buf>& gen)
+{
+	return {};
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr basic_ibuf_iterator<Ihandler,Buf> cbegin(basic_ibuf_generator<Ihandler,Buf> const& gen)
+{
+	return {gen.ptr_s};
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr std::default_sentinel_t cend(basic_ibuf_generator<Ihandler,Buf> const& gen)
+{
+	return {};
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr basic_ibuf_iterator<Ihandler,Buf> begin(basic_ibuf_generator<Ihandler,Buf> const& gen)
+{
+	return {gen.ptr_s};
+}
+template<input_stream Ihandler,typename Buf>
+inline constexpr std::default_sentinel_t end(basic_ibuf_generator<Ihandler,Buf> const& gen)
+{
+	return {};
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr details::basic_ibuf_generator<Ihandler,Buf> igenerator_prepare(basic_ibuf<Ihandler,Buf>& ib)
+{
+	if(ib.ibuffer.end==nullptr)
+		ib.ibuffer.init_space();
+	ib.ibuffer.end=read(ib.ih,ib.ibuffer.beg,ib.ibuffer.beg+Buf::size);
+	ib.ibuffer.curr=ib.ibuffer.beg;
+	if(ib.ibuffer.end==ib.ibuffer.beg)
+		return {};
+	return {std::addressof(ib)};
+}
+
+}
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr details::basic_ibuf_generator<Ihandler,Buf> igenerator(basic_ibuf<Ihandler,Buf>& ib)
+{
+	if(ib.ibuffer.curr==ib.ibuffer.end)	[[unlikely]]
+		return details::igenerator_prepare(ib);
+	return {std::addressof(ib)};
 }
 
 template<output_stream Ihandler,typename Buf>

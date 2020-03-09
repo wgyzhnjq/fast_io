@@ -400,7 +400,17 @@ inline constexpr T input_base_number(input& in)
 	using unsigned_t = std::make_unsigned_t<T>;
 	if constexpr(std::unsigned_integral<T>)
 	{
-		unsigned_char_type fr(front(in));
+		T t{};
+		for(unsigned_char_type ch : igenerator(in))
+		{
+			unsigned_char_type const e(ch-u8'0');
+			if(9<e)
+				break;
+			t=t*10+e;
+		}
+		return t;
+
+/*		unsigned_char_type fr(front(in));
 		if(fr==0x2b)[[unlikely]]
 			fr=next_unsigned(in);
 		if constexpr(base<=10)
@@ -446,7 +456,7 @@ inline constexpr T input_base_number(input& in)
 					break;
 			}
 			return t;	
-		}
+		}*/
 	}
 	else
 	{
