@@ -31,6 +31,79 @@ inline constexpr auto scan_http_header(input& in)
 		results.emplace(std::move(a),std::move(b));
 	}
 }*/
+template<std::integral ch_type>
+struct http_header_line
+{
+	std::basic_string_view<ch_type> key;
+	std::basic_string_view<ch_type> value;
+};
+
+template<std::integral ch_type>
+struct basic_http_status
+{
+	std::basic_string<ch_type> version;
+	std::size_t code{};
+};
+
+using http_status = basic_http_status<char>;
+using u8http_status = basic_http_status<char8_t>;
+
+namespace details
+{
+template<typename T>
+inline constexpr bool fastisspacerev2(T ch)
+{
+	std::make_unsigned_t<T> e(ch);
+	e-=9;
+	return e<5;
+}
+}
+
+template<buffer_input_stream input>
+inline void scan_define(input& in,basic_http_status<typename input::char_type>& s)
+{
+	scan(in,s.version,s.code);
+}
+
+template<buffer_output_stream output>
+inline void print_define(output& out,basic_http_status<typename output::char_type> const& s)
+{
+	print(out,s.version," ",s.code);
+}
+
+#ifdef __cpp_coroutines
+
+template<input_stream input>
+requires (buffer_input_stream<input>||mutex_input_stream<input>)
+inline generator<http_header_line<typename input::char_type>> scan_http_header(input& in)
+{
+	if constexpr(mutex_input_stream<input>)
+	{
+		typename input::lock_guard_type lg{mutex(in)};
+		decltype(auto) uh{unlocked_handle(in)};
+		return scan_http_header(uh);
+	}
+	else
+	{
+		if(skip_line(in)<2)
+			co_return;
+		for(std::basic_string<typename input::char_type> str;;)
+		{
+			scan(in,line(str));
+			if(str.size()<2)
+				co_return;
+			auto sz{str.find(u8':')};
+			if(sz==std::string::npos)
+				throw std::runtime_error("unknown http header line");
+			std::size_t i{sz+1};
+			for(;i!=str.size()&&i==u8' ';++i);
+			co_yield http_header_line<typename input::char_type>{
+			std::basic_string_view<typename input::char_type>(str.data(),sz),
+			std::basic_string_view<typename input::char_type>(str.cbegin()+i,str.cend())};
+		}
+	}
+}
+#endif
 template<buffer_input_stream input>
 inline constexpr void skip_http_header(input& in)
 {

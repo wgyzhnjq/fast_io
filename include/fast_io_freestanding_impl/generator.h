@@ -77,11 +77,6 @@ public:
 */
 	inline constexpr auto operator*()
 	{
-		handle.resume();
-#ifdef __cpp_exceptions
-		if (handle.done())
-			handle.promise().rethrow_if_exception();
-#endif
 		return handle.promise().ptr;
 	}
 
@@ -113,11 +108,21 @@ inline constexpr bool operator!=(generator_iterator<T> const& b,std::default_sen
 template<typename T>
 inline constexpr generator_iterator<T>& operator++(generator_iterator<T>& b)
 {
+	b.handle.resume();
+#ifdef __cpp_exceptions
+	if (b.handle.done())
+		b.handle.promise().rethrow_if_exception();
+#endif
 	return b;
 }
 template<typename T>
 inline constexpr void operator++(generator_iterator<T>& b,int)
 {
+	b.handle.resume();
+#ifdef __cpp_exceptions
+	if (b.handle.done())
+		b.handle.promise().rethrow_if_exception();
+#endif
 }
 
 }
@@ -139,6 +144,11 @@ public:
 template<typename T>
 inline constexpr details::generator_iterator<T> begin(generator<T>& gen)
 {
+	gen.handle.resume();
+#ifdef __cpp_exceptions
+	if (gen.handle.done())
+		gen.handle.promise().rethrow_if_exception();
+#endif
 	return {gen.handle};
 }
 template<typename T>
@@ -149,6 +159,11 @@ inline constexpr std::default_sentinel_t end(generator<T>& gen)
 template<typename T>
 inline constexpr details::generator_iterator<T> cbegin(generator<T> const& gen)
 {
+	gen.handle.resume();
+#ifdef __cpp_exceptions
+	if (gen.handle.done())
+		gen.handle.promise().rethrow_if_exception();
+#endif
 	return {gen.handle};
 }
 template<typename T>
@@ -159,6 +174,11 @@ inline constexpr std::default_sentinel_t cend(generator<T> const& gen)
 template<typename T>
 inline constexpr details::generator_iterator<T> begin(generator<T> const& gen)
 {
+	gen.handle.resume();
+#ifdef __cpp_exceptions
+	if (gen.handle.done())
+		gen.handle.promise().rethrow_if_exception();
+#endif
 	return {gen.handle};
 }
 template<typename T>

@@ -113,6 +113,12 @@ struct whole
 };
 
 template<typename T>
+struct line
+{
+	T& reference;
+};
+
+template<typename T>
 struct no_decoration
 {
 	T& reference;
@@ -268,6 +274,9 @@ inline constexpr manip::utc_chinese<T const> utc_chinese(T const &f){return {f};
 
 template<typename T>
 inline constexpr manip::whole<T> whole(T &f){return {f};}
+
+template<typename T>
+inline constexpr manip::line<T> line(T &f){return {f};}
 
 template<typename T>
 inline constexpr manip::int_hint<T> integer_hint(T &f){return {f};}

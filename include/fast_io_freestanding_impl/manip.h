@@ -29,7 +29,7 @@ inline bool scan_define(input& in,std::basic_string<typename input::char_type> &
 		}
 		if(!iflush(in))
 			return true;
-		str.reserve(str.capacity()<<1);
+		str.reserve(str.size()<<1);
 		i=begin(in);
 	}
 }
@@ -42,8 +42,49 @@ inline void scan_define(input& in,manip::whole<std::basic_string<typename input:
 		r.reference.append(begin(in),end(in));
 		if(!iflush(in))
 			return;
-		r.reference.reserve(r.reference.capacity()<<1);
+		r.reference.reserve(r.reference.size()<<1);
 	}
+}
+
+template<buffer_input_stream input>
+inline bool scan_define(input& in,manip::line<std::basic_string<typename input::char_type>> ref)
+{
+	auto gen{igenerator(in)};
+	auto i{begin(gen)};
+	auto e{end(gen)};
+	if(i==e)
+		return false;
+	ref.reference.clear();
+	for(;i!=e;++i)
+	{
+		if(*i==u8'\n')
+		{
+			++i;
+			return true;
+		}
+		ref.reference.push_back(*i);
+	}
+	return true;
+/*	auto i(begin(in));
+	auto e(end(in));
+	if(i==e)
+		return false;
+	for(ref.reference.clear();;)
+	{
+		auto i(begin(in));
+		auto e(end(in));
+		auto j(i);
+		for(;j!=e&&*j!=u8'\n';++j);
+		ref.reference.append(i,j);
+		if(j!=e)
+		{
+			in+=j-i+1;
+			return false;
+		}
+		if(!iflush(in))
+			return false;
+		ref.reference.reserve(ref.reference.size()<<1);
+	}*/
 }
 
 /*template<character_input_stream input>
