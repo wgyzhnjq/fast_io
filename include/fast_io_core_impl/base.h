@@ -352,7 +352,7 @@ inline constexpr bool operator()(T ch)
 	}
 }
 };
-
+/*
 template<std::integral T,std::integral T1>
 inline constexpr T mul_overflow(T a,T1 b)
 {
@@ -378,7 +378,7 @@ inline constexpr T add_overflow(T a,T1 b)
 #endif
 	return t;
 }
-
+*/
 template<std::integral T>
 inline constexpr bool is_space(T const u)
 {
