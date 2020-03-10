@@ -195,7 +195,7 @@ template<typename stream_type>
 inline void flush(basic_stream_file<stream_type>& cfhd)
 {
 	streambuf_view buf(std::addressof(cfhd.filebuf()));
-	return flush(buf);
+	flush(buf);
 }
 template<typename stream_type>
 inline auto oreserve(basic_stream_file<stream_type>& cfhd,std::size_t n)
