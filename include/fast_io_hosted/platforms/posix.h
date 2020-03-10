@@ -491,35 +491,11 @@ inline void truncate(basic_posix_io_observer<ch_type>& h,std::size_t size)
 }
 
 template<std::integral ch_type>
-class basic_posix_pipe_unique:public basic_posix_io_handle<ch_type>
-{
-public:
-	using char_type=ch_type;
-	using native_handle_type = int;
-	using basic_posix_io_handle<ch_type>::native_handle;
-	void close()
-	{
-		this->close_impl();
-		native_handle() = -1;
-	}
-	constexpr native_handle_type release() noexcept
-	{
-		auto temp{this->native_handle()};
-		this->detach();
-		return temp;
-	}
-	~basic_posix_pipe_unique()
-	{
-		this->close_impl();
-	}
-};
-
-template<std::integral ch_type>
 class basic_posix_pipe
 {
 public:
 	using char_type = ch_type;
-	using native_handle_type = std::array<basic_posix_pipe_unique<ch_type>,2>;
+	using native_handle_type = std::array<basic_posix_file<ch_type>,2>;
 private:
 	native_handle_type pipes;
 public:
@@ -605,13 +581,11 @@ inline auto zero_copy_out_handle(basic_posix_pipe<ch_type>& h)
 using posix_io_observer=basic_posix_io_observer<char>;
 using posix_io_handle=basic_posix_io_handle<char>;
 using posix_file=basic_posix_file<char>;
-using posix_pipe_unique=basic_posix_pipe_unique<char>;
 using posix_pipe=basic_posix_pipe<char>;
 
 using u8posix_io_observer=basic_posix_io_observer<char8_t>;
 using u8posix_io_handle=basic_posix_io_handle<char8_t>;
 using u8posix_file=basic_posix_file<char8_t>;
-using u8posix_pipe_unique=basic_posix_pipe_unique<char8_t>;
 using u8posix_pipe=basic_posix_pipe<char8_t>;
 
 inline int constexpr posix_stdin_number = 0;

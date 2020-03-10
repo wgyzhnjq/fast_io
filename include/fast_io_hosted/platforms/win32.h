@@ -459,46 +459,11 @@ inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
 }
 
 template<std::integral ch_type>
-class basic_win32_pipe_unique:public basic_win32_io_handle<ch_type>
-{
-public:
-	using char_type=ch_type;
-	using basic_win32_io_handle<ch_type>::native_handle_type;
-	using basic_win32_io_handle<ch_type>::native_handle;
-	void close()
-	{
-		this->close_impl();
-		native_handle() = nullptr;
-	}
-	basic_win32_pipe_unique()=default;
-/*	win32_pipe_unique(win32_pipe_unique const&)=delete;
-	win32_pipe_unique& operator=(win32_pipe_unique const&)=delete;
-	win32_pipe_unique(win32_pipe_unique&& b) noexcept:win32_io_handle(b.native_handle())
-	{
-		b.native_handle()=nullptr;
-	}
-	win32_pipe_unique& operator=(win32_pipe_unique&& b) noexcept
-	{
-		if(std::addressof(b)!=this)
-		{
-			close_impl();
-			native_handle() = b.native_handle();
-			b.native_handle()=nullptr;
-		}
-		return *this;
-	}*/
-	~basic_win32_pipe_unique()
-	{
-		this->close_impl();
-	}
-};
-
-template<std::integral ch_type>
 class basic_win32_pipe
 {
 public:
 	using char_type = ch_type;
-	using native_handle_type = std::array<basic_win32_pipe_unique<ch_type>,2>;
+	using native_handle_type = std::array<basic_win32_file<ch_type>,2>;
 private:
 	native_handle_type pipes;
 public:
@@ -589,13 +554,11 @@ inline constexpr void flush(basic_win32_pipe<ch_type>&){}
 using win32_io_observer=basic_win32_io_observer<char>;
 using win32_io_handle=basic_win32_io_handle<char>;
 using win32_file=basic_win32_file<char>;
-using win32_pipe_unique=basic_win32_pipe_unique<char>;
 using win32_pipe=basic_win32_pipe<char>;
 
 using u8win32_io_observer=basic_win32_io_observer<char8_t>;
 using u8win32_io_handle=basic_win32_io_handle<char8_t>;
 using u8win32_file=basic_win32_file<char8_t>;
-using u8win32_pipe_unique=basic_win32_pipe_unique<char8_t>;
 using u8win32_pipe=basic_win32_pipe<char8_t>;
 
 inline constexpr std::uint32_t win32_stdin_number(-10);
