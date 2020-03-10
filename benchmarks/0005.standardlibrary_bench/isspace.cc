@@ -93,7 +93,7 @@ template<typename T>
 inline constexpr bool fastisspacerev4(T ch)
 {
 	std::make_unsigned_t<T> const e(ch);
-	return (e==0x20)|((e-9)<5);
+	return (e==0x20)|(std::make_unsigned_t<T>(e-9)<std::make_unsigned_t<T>(5));
 }
 
 
