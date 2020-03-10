@@ -201,7 +201,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		return {os_handle};
+		return {bit_cast<void*>(os_handle)};
 	}
 #endif
 };
