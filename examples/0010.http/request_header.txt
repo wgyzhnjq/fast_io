@@ -1,0 +1,7 @@
+GET / HTTP/1.1
+Host:www.jgjy.gov.cn
+set-agent:whatever
+Accept-Type:*/*
+Connection:close
+
+Test

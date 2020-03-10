@@ -48,6 +48,18 @@ struct basic_http_status
 using http_status = basic_http_status<char>;
 using u8http_status = basic_http_status<char8_t>;
 
+template<std::integral ch_type>
+struct basic_http_request_status
+{
+	std::basic_string<ch_type> method;
+	std::basic_string<ch_type> path;
+	std::basic_string<ch_type> version;
+};
+
+using http_request_status = basic_http_request_status<char>;
+using u8http_request_status = basic_http_request_status<char8_t>;
+
+
 namespace details
 {
 template<typename T>
@@ -66,10 +78,23 @@ inline void scan_define(input& in,basic_http_status<typename input::char_type>& 
 	skip_line(in);
 }
 
+template<buffer_input_stream input>
+inline void scan_define(input& in,basic_http_request_status<typename input::char_type>& s)
+{
+	scan(in,s.method,s.path,s.version);
+	skip_line(in);
+}
+
 template<buffer_output_stream output>
 inline void print_define(output& out,basic_http_status<typename output::char_type> const& s)
 {
-	print(out,s.version," ",s.code);
+	print(out,s.version,u8" ",s.code);
+}
+
+template<buffer_output_stream output>
+inline void print_define(output& out,basic_http_request_status<typename output::char_type> const& s)
+{
+	print(out,s.method,u8" ",s.path,u8" ",s.version);
 }
 
 #ifdef __cpp_coroutines

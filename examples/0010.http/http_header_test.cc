@@ -24,6 +24,12 @@ try
 	}
 	fast_io::obuf_file obf("ind.html");
 	transmit(obf,hd,content_length);
+
+	fast_io::ibuf_file ib("request_header.txt");
+	fast_io::http_request_status request_status;
+	scan(ib, request_status);
+
+	println(fast_io::c_stdout, request_status);
 }
 catch(std::exception const& e)
 {
