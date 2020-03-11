@@ -7,6 +7,10 @@ namespace fast_io
 
 namespace details
 {
+/*
+Referenced partially from ReactOS
+https://github.com/changloong/msvcrt/blob/master/io/wopen.c
+*/
 
 template<bool inherit=false>
 inline void* create_file_a_impl(char const* lpFileName,
@@ -85,13 +89,26 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open_mode value)
 #endif
 	}
 	else if ((value&open_mode::trunc)!=open_mode::none)
-		mode.dwCreationDisposition=2;//CREATE_ALWAYS
+	{
+		if((value&open_mode::creat)!=open_mode::none)
+			mode.dwCreationDisposition=1;//CREATE_NEW
+		else if((value&open_mode::in)==open_mode::none)
+			mode.dwCreationDisposition=5;//TRUNCATE_EXISTING
+		else
+		{
+#ifdef __cpp_exceptions
+			throw std::system_error(make_error_code(std::errc::invalid_argument));
+#else
+			fast_terminate();
+#endif
+		}
+	}
 	else if((value&open_mode::in)==open_mode::none)
 	{
-		if((value&open_mode::app)==open_mode::none)
+		if((value&open_mode::app)!=open_mode::none)
 			mode.dwCreationDisposition=4;//OPEN_ALWAYS
 		else
-			mode.dwCreationDisposition=2;//CREATE_ALWAYS
+			mode.dwCreationDisposition=5;//TRUNCATE_EXISTING
 	}
 	else
 		mode.dwCreationDisposition=3;//OPEN_EXISTING

@@ -69,7 +69,7 @@ class win32_file_mapping
 public:
 	using native_handle_type = void*;
 	template<std::integral ch_type>
-	win32_file_mapping(basic_win32_file<ch_type>& bf,file_map_attribute attr,std::size_t size):
+	win32_file_mapping(basic_win32_io_observer<ch_type> bf,file_map_attribute attr,std::size_t size):
 	handle(win32::CreateFileMappingW(
 	bf.native_handle(),nullptr,static_cast<std::uint32_t>(attr),size>>32,static_cast<std::uint32_t>(size),nullptr))
 	{
@@ -167,7 +167,7 @@ class win32_file_map
 	win32_map_view_of_file view;
 public:
 	template<std::integral ch_type>
-	win32_file_map(basic_win32_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
+	win32_file_map(basic_win32_io_observer<ch_type> bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0):
 		wfm(bf,attr,bytes),view(wfm,to_win32_file_map_attribute(attr),bytes,start_address)
 	{
 	}

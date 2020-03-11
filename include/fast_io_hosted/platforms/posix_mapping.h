@@ -71,7 +71,7 @@ class posix_file_map
 	}
 public:
 	template<std::integral ch_type>
-	posix_file_map(basic_posix_file<ch_type>& bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0)
+	posix_file_map(basic_posix_io_observer<ch_type> bf,file_map_attribute attr,std::size_t bytes,std::size_t start_address=0)
 	{
         struct stat file_stat;
         auto fstat_ret(fstat(bf.native_handle(), std::addressof(file_stat)));
@@ -89,7 +89,6 @@ public:
         if (ret == MAP_FAILED)
 			throw std::system_error(errno,std::generic_category());
         rg = {ret, bytes};
-		
 	}
 	//auto native_handle() const {return wfm.native_handle();}
 	auto& region()
