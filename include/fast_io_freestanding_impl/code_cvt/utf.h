@@ -6,7 +6,7 @@
 #include <emmintrin.h>
 #include <immintrin.h>
 #include <xmmintrin.h>
-#include <intrin.h>
+//#include <intrin.h>
 #endif
 /*
 CppCon 2018: Bob Steagall “Fast Conversion From UTF-8 with C++, DFAs, and SSE Intrinsics”
