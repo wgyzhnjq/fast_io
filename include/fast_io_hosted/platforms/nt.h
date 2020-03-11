@@ -37,7 +37,7 @@ inline Iter write(basic_nt_io_observer<ch_type> obs,Iter cbegin,Iter cend)
 		std::addressof(block), std::to_address(cbegin), static_cast<std::uint32_t>(to_write), nullptr, nullptr)};
 	if(status)
 #ifdef __cpp_exceptions
-		throw win32_error(status);
+		throw nt_error(status);
 #else
 		fast_terminate();
 #endif
