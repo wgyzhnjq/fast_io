@@ -208,19 +208,24 @@ inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter pSrc,from_iter pS
 {
     char32_t cdpt;
 #ifdef __SSE__
-	auto psde{pSrcEnd - sizeof(__m128i)};
-    while (pSrc < psde)
-    {
-	if (*pSrc < 0x80)
-	    details::utf::convert_ascii_with_sse(pSrc, pDst);
-	else
+#if __cpp_lib_is_constant_evaluated>=201811L
+	if (!std::is_constant_evaluated())
 	{
-	    if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
-		details::utf::get_code_units(cdpt, pDst);
-	    else
-		throw std::range_error("illegal utf8");
+		auto psde{pSrcEnd - sizeof(__m128i)};
+		while (pSrc < psde)
+		{
+		if (*pSrc < 0x80)
+			details::utf::convert_ascii_with_sse(pSrc, pDst);
+		else
+		{
+			if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
+				details::utf::get_code_units(cdpt, pDst);
+			else
+				throw std::range_error("illegal utf8");
+		}
+		}
 	}
-    }
+#endif
 #endif
     while (pSrc < pSrcEnd)
     {
