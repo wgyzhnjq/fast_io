@@ -1,16 +1,10 @@
 #pragma once
 
-#include"win32_error.h"
-
 namespace fast_io
 {
 
 namespace details
 {
-/*
-Referenced partially from ReactOS
-https://github.com/changloong/msvcrt/blob/master/io/wopen.c
-*/
 
 template<bool inherit=false>
 inline void* create_file_a_impl(char const* lpFileName,
@@ -78,6 +72,11 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open_mode value)
 		mode.dwDesiredAccess|=0x40000000;//GENERIC_WRITE
 	if((value&open_mode::in)!=open_mode::none)
 		mode.dwDesiredAccess|=0x80000000;//GENERIC_READ
+
+/*
+Referenced partially from ReactOS
+https://github.com/changloong/msvcrt/blob/master/io/wopen.c
+*/
 	if((value&open_mode::excl)!=open_mode::none)
 	{
 		mode.dwCreationDisposition=1;//	CREATE_NEW
@@ -108,7 +107,7 @@ inline constexpr win32_open_mode calculate_win32_open_mode(open_mode value)
 		if((value&open_mode::app)!=open_mode::none)
 			mode.dwCreationDisposition=4;//OPEN_ALWAYS
 		else
-			mode.dwCreationDisposition=5;//TRUNCATE_EXISTING
+			mode.dwCreationDisposition=2;//CREATE_ALWAYS
 	}
 	else
 		mode.dwCreationDisposition=3;//OPEN_EXISTING

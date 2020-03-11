@@ -4,36 +4,47 @@ namespace fast_io
 {
 
 template<std::integral ch_type>
-class basic_nt_io_handle
+class basic_nt_io_observer
 {
 public:
 	using char_type = ch_type;
 	using native_handle_type = void*;
 	native_handle_type handle{};
+};
+
+template<std::integral ch_type>
+class basic_nt_io_handle:public basic_nt_io_observer<ch_type>
+{
+public:
+	using char_type = ch_type;
+	using native_handle_type = void*;
 protected:
 	void close_impl()
 	{
 		if(handle)
 			::NtClose(handle);
 	}
-	basic_nt_io_handle() = default;
 public:
-	using char_type = ch_type;
-	basic_nt_io_handle(native_handle_type hd):handle(hd){}
+	constexpr basic_nt_io_handle() = default;
+	constexpr basic_nt_io_handle(native_handle_type hd):handle(hd){}
 	native_handle_type& native_handle()
 	{
 		return handle;
-	}
-	inline void swap(basic_nt_io_handle& o) noexcept
-	{
-		using std::swap;
-		swap(handle,o.handle);
 	}
 	constexpr void reset() noexcept
 	{
 		handle=nullptr;
 	}
 };
+
+template<std::integral ch_type>
+class basic_nt_file:public basic_nt_io_handle<ch_type>
+{
+public:
+	
+};
+
+
 /*
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter read(basic_nt_io_handle<ch_type>& hd,Iter begin,Iter end)

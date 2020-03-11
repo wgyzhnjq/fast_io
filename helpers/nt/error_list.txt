@@ -1,14 +1,8 @@
 0x00000000
 
-STATUS_SUCCESS
+STATUS_SUCCESS/STATUS_WAIT_0
 
-The operation completed successfully.
-
-0x00000000
-
-STATUS_WAIT_0
-
-The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
+The operation completed successfully./The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
 
 0x00000001
 
@@ -36,13 +30,7 @@ The caller specified WaitAny for WaitType and one of the dispatcher objects in t
 
 0x00000080
 
-STATUS_ABANDONED
-
-The caller attempted to wait for a mutex that has been abandoned.
-
-0x00000080
-
-STATUS_ABANDONED_WAIT_0
+STATUS_ABANDONED/STATUS_ABANDONED_WAIT_0
 
 The caller attempted to wait for a mutex that has been abandoned.
 
@@ -10134,15 +10122,9 @@ The object is built-in and cannot be deleted.
 
 0xC0220018
 
-STATUS_FWP_TOO_MANY_BOOTTIME_FILTERS
+STATUS_FWP_TOO_MANY_BOOTTIME_FILTERS/STATUS_FWP_TOO_MANY_CALLOUTS
 
-The maximum number of boot-time filters has been reached.
-
-0xC0220018
-
-STATUS_FWP_TOO_MANY_CALLOUTS
-
-The maximum number of callouts has been reached.
+The maximum number of boot-time filters has been reached./The maximum number of callouts has been reached.
 
 0xC0220019
 
