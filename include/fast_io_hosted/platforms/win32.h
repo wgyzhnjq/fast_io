@@ -218,6 +218,10 @@ public:
 	{
 		return handle;
 	}
+	explicit constexpr operator basic_nt_io_observer<char_type>() const noexcept
+	{
+		return basic_nt_io_observer<char_type>{handle};
+	}
 };
 
 template<std::integral ch_type>
@@ -227,14 +231,14 @@ public:
 	using native_handle_type = void*;
 	using char_type = ch_type;
 protected:
-	void close_impl()
+	void close_impl() noexcept
 	{
 		if(this->native_handle())
 			fast_io::win32::CloseHandle(this->native_handle());
 	}
 public:
-	explicit constexpr basic_win32_io_handle()=default;
-	explicit constexpr basic_win32_io_handle(native_handle_type handle):
+	explicit constexpr basic_win32_io_handle() noexcept =default;
+	explicit constexpr basic_win32_io_handle(native_handle_type handle) noexcept:
 		basic_win32_io_observer<ch_type>{handle}{}
 	explicit basic_win32_io_handle(std::uint32_t dw):
 		basic_win32_io_observer<ch_type>{fast_io::win32::GetStdHandle(dw)}
