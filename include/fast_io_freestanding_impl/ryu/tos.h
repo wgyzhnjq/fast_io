@@ -7,7 +7,7 @@ template<std::floating_point floating,std::unsigned_integral mantissaType,std::s
 inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const& mantissa,exponentType const& exponent)
 {
 	if(!exponent)
-		return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::exponent_bits+2)};
+		return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits+2)};
 	return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits+2))};
 }
@@ -25,6 +25,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	bool const sign((bits >> (floating_trait::mantissa_bits + floating_trait::exponent_bits)) & 1u);
 	mantissa_type const mantissa(bits & ((static_cast<mantissa_type>(1u) << floating_trait::mantissa_bits) - 1u));
 	exponent_type const exponent(static_cast<exponent_type>(((bits >> floating_trait::mantissa_bits) & floating_trait::exponent_max)));
+
 	// Case distinction; exit early for the easy cases.
 	if(exponent == floating_trait::exponent_max)
 		return easy_case(result,sign,mantissa);
@@ -142,6 +143,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 	}
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
+
 	auto const mv(r2.m<<2);
 	exponent_type const mm_shift(mantissa||static_cast<signed_exponent_type>(exponent)<2);
 	std::array<mantissa_type,3> v{};
@@ -158,6 +160,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			v=mul_shift_all(r2.m,compute_pow5_inv(q),i,mm_shift);
 		else
 			v=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,mm_shift);
+
 		if(q<=floating_trait::floor_log5)//here
 		{
 			if(!(mv%5))
@@ -192,6 +195,8 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		else if(q<floating_trait::bound)
 			vr_is_trailing_zeros=multiple_of_power_of_2(mv,q);
 	}
+
+
 	signed_exponent_type removed(0);
 	char8_t last_removed_digit(0);
 	if(vm_is_trailing_zeros||vr_is_trailing_zeros)
