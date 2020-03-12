@@ -16,7 +16,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	//-(45)-48: static_cast<unsigned_char_type>(-3)
 	//'E'(69)-48: 21
 	//'e'(101)-48: 53
-	//We do not support Shit like EBCDIC. DEATH TO IBM
+	//We do not support EBCDIC
 	bool negative{};
 	if(*iter==u8'-')
 	{
@@ -57,7 +57,6 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			++m10digits;
 		++index;
 	}
-
 	if(m10digits==floating_trait::digits10)[[unlikely]]
 #ifdef __cpp_exceptions
 		throw std::runtime_error("out of precision of ryu algorithm. To do with multiprecision");
@@ -73,13 +72,16 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 		e_index=index;
 		if(++iter==ed)[[unlikely]]
 			throw std::runtime_error("malformed input");
+		++index;
 		if((*iter==u8'+')||(*iter==u8'-'))[[likely]]
 		{
 			exp_negative=(*iter==u8'-');
 			if(++iter==ed)[[unlikely]]
 				throw std::runtime_error("malformed input");
+			++index;
 		}
-		for(;iter!=ed&&*iter==u8'0';++iter);
+		for(;iter!=ed&&*iter==u8'0';++iter)
+			++index;
 		for(;iter!=ed;++iter)
 		{
 			unsigned_char_type const ch(*iter-u8'0');
@@ -88,18 +90,20 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			ue10*=10;
 			ue10+=ch;
 			++ue10digits;
+			++index;
 		}
 	}
-	if(3<ue10digits)[[unlikely]]
-		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)))
-				|static_cast<mantissa_type>(static_cast<mantissa_type>(0x7ffull) << floating_trait::mantissa_bits));
 	signed_exponent_type e10(static_cast<signed_exponent_type>(ue10));
 	if(exp_negative)
 		e10=-e10;
+	if(e_index==-1)
+		e_index=index;
+	if(dot_index==-1)
+		dot_index=index;
 	e10-=dot_index<e_index?e_index-dot_index-1:0;
-	if((m10digits+e10<floating_trait::minimum_exp)||!m10)
+	if((static_cast<signed_exponent_type>(m10digits+e10)<floating_trait::minimum_exp)||(!m10))
 		return (static_cast<mantissa_type>(negative)<<(floating_trait::exponent_bits+floating_trait::mantissa_bits));
-	if(floating_trait::maximum_exp<m10digits+e10)
+	if(floating_trait::maximum_exp<static_cast<signed_exponent_type>(m10digits+e10))
 		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)))
 				|static_cast<mantissa_type>(static_cast<mantissa_type>(0x7ffull) << floating_trait::mantissa_bits));
 	bool trailing_zeros{};
@@ -118,14 +122,12 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 		m2=mul_shift(m10,pow5<F,true>::split[e10],e2-e10-pow5bits(e10)+floating_trait::pow5_bitcount);
 		trailing_zeros = e2 < e10 || multiple_of_power_of_2(m10, e2 - e10);
 	}
-	exponent_type ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
+	signed_exponent_type ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
 	if(ieee_e2<0)
 		ieee_e2=0;
 	if(0x7fe<ieee_e2)[[unlikely]]
-	{
 		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << ((sizeof(F)<<3)-1)))
 				|static_cast<mantissa_type>(static_cast<mantissa_type>(0x7ffull) << floating_trait::mantissa_bits));
-	}
 	signed_exponent_type shift((!ieee_e2?1:ieee_e2)-e2-(floating_trait::bias+floating_trait::mantissa_bits));
 	trailing_zeros &= !(m2 & ((1L << (shift - 1)) - 1));
 	bool last_removed_bit((m2>>(shift-1))&1);
