@@ -137,7 +137,7 @@ inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& m
 	if constexpr(!ignore_exp0)
 	{
 		if(!exponent)
-			return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::exponent_bits)};
+			return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits)};
 	}
 	return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
