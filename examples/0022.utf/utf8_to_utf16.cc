@@ -5,7 +5,7 @@
 int main()
 {
 	using namespace std::string_view_literals;
-	auto wstr{fast_io::concat<std::u16string>(fast_io::code_cvt(u8"abcdefgh我"sv))};
+	auto wstr{fast_io::concat<std::u16string>(fast_io::code_cvt(u8"abcdefgh"sv))};
 	for(auto const & e : wstr)
 		println(fast_io::c_stdout,e);
 }
