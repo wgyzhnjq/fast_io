@@ -12,8 +12,8 @@ inline void nt_create_file_impl(std::span<wchar_t> sp,void** FileHandle,std::uin
 {
 	win32::nt::unicode_string us
 	{
-		static_cast<std::uint16_t>(sp.size()),
-		static_cast<std::uint16_t>(sp.size()),
+		static_cast<std::uint16_t>(sp.size()<<1),
+		static_cast<std::uint16_t>(sp.size()<<1),
 		sp.data()
 	};
 	ObjectAttributes->ObjectName=std::addressof(us);
@@ -36,7 +36,7 @@ inline void nt_create_file_impl(std::string_view path,Args&& ...args)
 	{
 		details::temp_unique_arr_ptr<wchar_t> buffer(path.size());
 		std::span sp{buffer.ptr,code_cvt_from_utf8_to_utf16(path.data(),path.data()+path.size(),buffer.ptr)};
-		if(65535<sp.size())
+		if(32767<sp.size())
 			throw nt_error(0xC0000106);
 		nt_create_file_impl(sp,std::forward<Args>(args)...);
 	}
@@ -66,7 +66,6 @@ inline constexpr nt_open_mode calculate_nt_open_mode(open_mode value)
 		mode.DesiredAccess|=0x40000000;//FILE_GENERIC_WRITE
 	if((value&open_mode::in)!=open_mode::none)
 		mode.DesiredAccess|=0x80000000;//FILE_GENERIC_READ
-
 	bool set_normal{true};
 	if((value&open_mode::archive)!=open_mode::none)
 	{
@@ -109,7 +108,6 @@ inline constexpr nt_open_mode calculate_nt_open_mode(open_mode value)
 
 /*
 
-
 https://doxygen.reactos.org/d6/d0e/ndk_2iotypes_8h.html
 #define 	FILE_SUPERSEDE   0x00000000
 #define 	FILE_OPEN   0x00000001
@@ -141,7 +139,7 @@ FILE_OVERWRITE_IF	Open the file, and overwrite it.	Create the file. 0x00000005
 	else if ((value&open_mode::trunc)!=open_mode::none)
 	{
 		if((value&open_mode::creat)!=open_mode::none)
-			mode.CreateDisposition=2;// FILE_CREATE
+			mode.CreateDisposition=2;	//FILE_CREATE
 		else if((value&open_mode::in)!=open_mode::none)
 			mode.CreateDisposition=0;	//FILE_SUPERSEDE
 		else
@@ -158,11 +156,22 @@ FILE_OVERWRITE_IF	Open the file, and overwrite it.	Create the file. 0x00000005
 		if((value&open_mode::app)!=open_mode::none)
 			mode.CreateDisposition=3;	//FILE_OPEN_IF
 		else
-			mode.CreateDisposition=5; //FILE_OVERWRITE_IF
+			mode.CreateDisposition=5; 	//FILE_OVERWRITE_IF
 	}
 	else
 		mode.CreateDisposition=1;		//FILE_OPEN
-
+	if((value&open_mode::directory)==open_mode::none)
+		mode.CreateOptions|=0x00000040;	//FILE_NON_DIRECTORY_FILE 0x00000040
+	else
+		mode.CreateOptions|=0x00000001;	//FILE_DIRECTORY_FILE 0x00000001
+	if((value&open_mode::no_block)==open_mode::none)
+		mode.CreateOptions|=0x00000020;	//FILE_SYNCHRONOUS_IO_NONALERT 0x00000020
+	else
+		mode.CreateOptions|=0x00000010;	//FILE_SYNCHRONOUS_IO_ALERT 0x00000010
+	if((value&open_mode::sequential_scan)!=open_mode::none)
+		mode.CreateOptions|=0x00000004;	//FILE_SEQUENTIAL_ONLY 0x00000004
+	else
+		mode.CreateOptions|=0x00000800;
 	return mode;
 }
 
@@ -277,7 +286,7 @@ public:
 	basic_nt_file(std::string_view filename,open_interface_t<om>)
 	{
 		constexpr auto& mode{details::nt::nt_file_openmode_single<om>::mode};
-		win32::nt::object_attributes obj{sizeof(win32::nt::object_attributes)};
+		win32::nt::object_attributes obj{.Length=sizeof(win32::nt::object_attributes),.Attributes=0x00000040};
 		win32::nt::io_status_block block{};
 		details::nt::nt_create_file_impl(filename,std::addressof(this->native_handle()),
 		mode.DesiredAccess,std::addressof(obj),std::addressof(block),nullptr,mode.FileAttributes,
