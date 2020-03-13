@@ -211,7 +211,7 @@ inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_i
 			throw std::range_error("illegal utf8");
 	}
     }
-    return pDst;
+    return (pDst-std::to_address(p_dst))+p_dst;
 }
 template<output_stream output,std::integral ch_type>
 requires ((std::same_as<typename output::char_type,char16_t>||
