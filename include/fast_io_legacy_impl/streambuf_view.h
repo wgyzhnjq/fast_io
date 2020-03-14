@@ -40,7 +40,7 @@ public:
 	using traits_type = typename T::traits_type;
 //be aware of type confusion security vulnerability
 	streambuf_view(T* bufpointer):
-		rdb(static_cast<stream_view_details::streambuf_pub<T>*>(bufpointer)){}
+		rdb(bit_cast<stream_view_details::streambuf_pub<T>*>(bufpointer)){}
 	inline T* rdbuf() const
 	{
 		return rdb;
