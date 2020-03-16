@@ -36,10 +36,13 @@
 
 #include"fast_io_core_impl/linux/system_call.h"
 
+#include"fast_io_core_impl/oreserver.h"
+
 // This should provide an option macro to disable any generation for table in freestanding environments.
 #include"fast_io_core_impl/shared_base_table.h"
 #include"fast_io_core_impl/jiaendu/jiaendu.h"
 
+#include"fast_io_core_impl/igenerator.h"
 #include"fast_io_core_impl/base.h"
 #include"fast_io_core_impl/mode.h"
 #include"fast_io_core_impl/perms.h"

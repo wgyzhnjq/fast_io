@@ -52,7 +52,7 @@ concept random_access_stream_impl = requires(T& t)
 {
 	seek(t,5);
 };
-
+/*
 template<typename T>
 concept buffer_input_stream_impl = std::ranges::contiguous_range<T>&&requires(T& in,std::size_t n)
 {
@@ -60,14 +60,34 @@ concept buffer_input_stream_impl = std::ranges::contiguous_range<T>&&requires(T&
 	in+=n;
 	++in;
 	iclear(in);
+};*/
+template<typename T>
+concept buffer_input_stream_impl = requires(T& in)
+{
+//	iensure_hot(in);
+	std::to_address(ibuffer_cbegin(in));
+	std::to_address(ibuffer_gbegin(in));
+	std::to_address(ibuffer_gend(in));
+	std::to_address(ibuffer_cend(in));
+	{underflow(in)}->std::convertible_to<bool>;
 };
 
 template<typename T>
-concept buffer_output_stream_impl = requires(T& out,std::size_t n)
+concept reserve_output_stream_impl = requires(T& out,std::size_t n)
 {
-	oreserve(out,n);
-	orelease(out,n);
+	orelease(out,oreserve(out,n));
 };
+
+template<typename T>
+concept buffer_output_stream_impl = requires(T& out)
+{
+//	oensure_hot(out);
+	std::to_address(obuffer_cbegin(out));
+	std::to_address(obuffer_curr(out));
+	std::to_address(obuffer_cend(out));
+	overflow(out);
+};
+
 template<typename T>
 concept zero_copy_input_stream_impl = requires(T& in)
 {
@@ -98,7 +118,22 @@ concept memory_map_output_stream_impl = requires(T& out)
 	memory_map_out_handle(out);
 };
 
-/*template<typename T>
+template<typename T>
+concept undo_input_stream_impl = requires(T& in,typename T::char_type ch)
+{
+	--begin(igenerator(in));
+};
+
+template<typename T>
+concept undo_output_stream_impl = requires(T& out,typename T::char_type ch)
+{
+	unput(out,ch);
+};
+
+
+/*
+
+template<typename T>
 concept status_stream = requires(T stm)
 {
 	{typename T::status_type};
@@ -143,7 +178,19 @@ template<typename T>
 concept character_io_stream = character_input_stream<T>&&character_output_stream<T>;
 
 template<typename T>
+concept undo_input_stream = character_input_stream<T>&&details::undo_input_stream_impl<T>;
+
+template<typename T>
+concept undo_output_stream = character_output_stream<T>&&details::undo_output_stream_impl<T>;
+
+template<typename T>
+concept undo_io_stream = undo_input_stream<T>&&undo_output_stream<T>;
+
+template<typename T>
 concept mutex_io_stream = mutex_input_stream<T>&&mutex_output_stream<T>;
+
+template<typename T>
+concept reserve_output_stream = output_stream<T>&&details::reserve_output_stream_impl<T>;
 
 template<typename T>
 concept buffer_input_stream = input_stream<T>&&details::buffer_input_stream_impl<T>;
@@ -153,7 +200,6 @@ concept buffer_output_stream = output_stream<T>&&details::buffer_output_stream_i
 
 template<typename T>
 concept buffer_io_stream = buffer_input_stream<T>&&buffer_output_stream<T>&&io_stream<T>;
-
 
 template<typename T>
 concept zero_copy_input_stream = input_stream<T>&&details::zero_copy_input_stream_impl<T>;
@@ -203,5 +249,13 @@ concept sendable=output_stream<output>&&requires(output& out,T&& t)
 {
 	send_define(out,std::forward<T>(t));
 };
+
+template<typename T>
+concept reserve_printable=requires(T const& t,char8_t* ptr)
+{
+	{print_reserve_size(t)}->std::convertible_to<std::size_t>;
+	{print_reserve_define(t,ptr)}->char8_t*;
+};
+
 
 }
