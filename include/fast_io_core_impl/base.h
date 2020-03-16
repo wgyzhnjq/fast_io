@@ -607,7 +607,7 @@ inline constexpr bool scan_define(input& in,T& a)
 	a=details::input_base_number<std::remove_cvref_t<T>,10>(in);
 	return true;
 }
-
+/*
 template<output_stream output,std::integral T>
 inline constexpr void print_define(output& out,T a)
 {
@@ -637,7 +637,7 @@ inline constexpr void println_define(output& out,T a)
 			details::jiaendu::output<true>(out,static_cast<unsigned_t>(a));
 	}
 }
-
+*/
 template<std::size_t base,bool uppercase,output_stream output,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr void print_define(output& out,manip::base_t<base,uppercase,T> v)

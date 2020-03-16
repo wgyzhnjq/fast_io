@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 template<buffer_output_stream output,std::integral I>
-inline constexpr decltype(auto) oreserve(output& out,I n)->typename output::char_type*
+inline constexpr auto oreserve(output& out,I n)->typename output::char_type*
 {
 	decltype(auto) curr{obuffer_curr(out)};
 	if(obuffer_cend(out)-curr<n)[[unlikely]]
@@ -17,34 +17,27 @@ inline constexpr void orelease(output& out,typename output::char_type* ptr)
 {
 	obuffer_curr(out)=ptr;
 }
-
 /*
-inline constexpr std::size_t print_reserve_size()
-{}
 
-inline constexpr void print_reserve_define()
-{}
-*/
-template<reserve_output_stream output,reserve_printable res>
-inline constexpr void print_define(output& out,res const& t)
+template<reserve_printable T,std::integral ch>
+inline constexpr std::size_t print_reserve_size(manip::follow_character<T const,ch> ref)
 {
-	using char_type = output::char_type;
-	constexpr std::size_t size{print_reserve_size(t)};
-	if constexpr(decltype(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out))>>))
-	{
-		auto ptr{oreserve(out,size)};
-		if(ptr==nullptr)[[unlikely]]
-		{
-			std::array<char_type,size> array;
-			write(out,arr.data(),print_reserve_define(arr.data(),t));
-			return;
-		}
-		orelease(out,print_reserve_define(arr.data(),t));
-	}
-	else
-	{
-		orelease(out,print_reserve_define(t,oreserve(out,size)));
-	}
+	return print_reserve_size(ref.reference)+1;
 }
 
+template<std::random_access_iterator RAiter,reserve_printable T,std::integral ch>
+inline constexpr void print_reserve_define(RAiter it,manip::follow_character<T const,ch> ref)
+{
+	it=print_reserve_define(it,ref.reference);
+	*it=ref.character;
+	return ++it;
+}
+
+template<character_output_stream output,typename T,std::integral ch_type>
+inline constexpr void print_define(output& out,manip::follow_character<T const,ch_type> ref)
+{
+	print_define(out,ref.reference);
+	put(out,ref.character);
+}
+*/
 }

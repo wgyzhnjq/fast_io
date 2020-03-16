@@ -5,7 +5,9 @@
 Although it is still called jiaendu algorithm. The 64 bits are created by myself + I modified the table of jiaendu. It is no longer real jiaendu any more.
 */
 
-namespace fast_io::details::jiaendu
+namespace fast_io
+{
+namespace details::jiaendu
 {
 
 template<std::unsigned_integral U,std::contiguous_iterator Iter>
@@ -207,9 +209,9 @@ inline std::size_t output_unsigned(U value,Iter str)
 			{
 				auto wstr(str);
 				memcpy(wstr,static_tables<ch_type>::table5[v2].data(),bytes4);
-				wstr += static_offset<>::offset[v2];
+				str += static_offset<>::offset[v2];
 				memcpy(wstr,static_tables<ch_type>::table4[remains0].data(),bytes4);
-				wstr += 4;
+				str += 4;
 				return static_cast<std::size_t>(wstr - str);
 			}
 		}
@@ -413,4 +415,33 @@ inline void output(outp& out,T t)
 	}
 }
 
+}
+
+template<std::integral int_type>
+inline constexpr std::size_t print_reserve_size(int_type const&)
+{
+	if constexpr(std::unsigned_integral<int_type>)
+		return details::jiaendu::cal_max_size<int_type>();
+	else
+		return details::jiaendu::cal_max_size<std::make_unsigned_t<int_type>>()+1;
+}
+
+template<std::contiguous_iterator caiter,std::integral int_type>
+inline constexpr caiter print_reserve_define(caiter iter,int_type const& i)
+{
+	if constexpr(std::unsigned_integral<int_type>)
+		return iter+details::jiaendu::output_unsigned(iter,i);
+	else
+	{
+		if(i<0)
+		{
+			*iter=u8'-';
+			++iter;
+			return iter+details::jiaendu::output_unsigned(iter,-static_cast<std::make_unsigned_t<int_type>>(i));
+		}
+		else
+			return iter+details::jiaendu::output_unsigned(iter,static_cast<std::make_unsigned_t<int_type>>(i));
+	}
+}
+static_assert(reserve_printable<std::size_t>);
 }

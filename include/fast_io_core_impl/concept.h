@@ -254,7 +254,7 @@ template<typename T>
 concept reserve_printable=requires(T const& t,char8_t* ptr)
 {
 	{print_reserve_size(t)}->std::convertible_to<std::size_t>;
-	{print_reserve_define(t,ptr)}->char8_t*;
+	{print_reserve_define(ptr,t)}->std::same_as<char8_t*>;
 };
 
 

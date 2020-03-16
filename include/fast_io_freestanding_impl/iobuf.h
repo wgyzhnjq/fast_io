@@ -282,8 +282,8 @@ inline constexpr decltype(auto) memory_map_in_handle(basic_ibuf<Ihandler,Buf>& h
 template<output_stream Ohandler,typename Buf=basic_buf_handler<typename Ohandler::char_type>>
 class basic_obuf
 {
-	Ohandler oh;
 public:
+	Ohandler oh;
 	Buf obuffer;
 	inline constexpr void close_impl() noexcept
 	{
@@ -331,25 +331,25 @@ public:
 template<output_stream Ohandler,typename Buf>
 [[nodiscard]] inline constexpr auto obuffer_cbegin(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ob.native_handle().beg;
+	return ob.obuffer.beg;
 }
 
 template<output_stream Ohandler,typename Buf>
 [[nodiscard]] inline constexpr auto& obuffer_curr(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ob.native_handle().curr;
+	return ob.obuffer.curr;
 }
 
 template<output_stream Ohandler,typename Buf>
 [[nodiscard]] inline constexpr auto obuffer_cend(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ob.native_handle().end;
+	return ob.obuffer.end;
 }
 
 template<output_stream Ohandler,typename Buf>
 inline constexpr void overflow(basic_obuf<Ohandler,Buf>& ob)
 {
-	write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.curr);
+	write(ob.oh,ob.obuffer.beg,ob.obuffer.curr);
 }
 
 template<buffer_input_stream Ohandler,typename Buf>

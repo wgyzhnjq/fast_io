@@ -14,6 +14,7 @@ namespace details
 template<buffer_input_stream input>
 constexpr basic_input_buffer_iterator<input>& deal_with_underflow(basic_input_buffer_iterator<input>& gen)
 {
+	auto& ref(*gen.ptr);
 	if(!underflow(ref))[[unlikely]]
 	{
 		gen.ptr={};

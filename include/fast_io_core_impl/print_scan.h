@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 
-
+/*
 template<buffer_input_stream input>
 inline constexpr std::size_t skip_line(input& in)
 {
@@ -12,7 +12,7 @@ inline constexpr std::size_t skip_line(input& in)
 	for(decltype(get<true>(in)) ch;(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
 	return skipped;
 }
-/*
+
 
 template<buffer_input_stream input>
 inline constexpr auto eat_space_get(input& in)
@@ -41,6 +41,7 @@ inline constexpr void scan_define(input& in, T& b)
 		b=1;
 }
 */
+
 template<character_output_stream output,std::integral T>
 requires std::same_as<T,bool>
 inline constexpr void print_define(output& out, T const& b)
@@ -83,11 +84,48 @@ inline constexpr auto normal_scan(input &ip,Args&& ...args)
 		(scan_with_ex(ip,std::forward<Args>(args)),...);
 }
 
+template<output_stream output,typename T>
+requires (printable<output,T>||reserve_printable<T>)
+inline constexpr void print_control(output& out,T&& t)
+{
+	if constexpr(reserve_printable<T>)
+	{
+		using char_type = output::char_type;
+		constexpr std::size_t size{print_reserve_size(t)};
+		if constexpr(reserve_output_stream<output>)
+		{
+			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out))>>)
+			{
+				auto ptr{oreserve(out,size)};
+				if(ptr==nullptr)[[unlikely]]
+				{
+					std::array<char_type,size> array;
+					write(out,array.data(),print_reserve_define(array.data(),std::forward<T>(t)));
+					return;
+				}
+				orelease(out,print_reserve_define(ptr,std::forward<T>(t)));
+			}
+			else
+			{
+				orelease(out,print_reserve_define(oreserve(out,size),std::forward<T>(t)));
+			}
+		}
+		else
+		{
+			std::array<char_type,size> array;
+			write(out,array.data(),print_reserve_define(array.data(),std::forward<T>(t)));
+		}
+	}
+	else if constexpr(printable<output,T>)
+	{
+		print_define(out,std::forward<T>(t));
+	}
+}
 template<output_stream output,typename ...Args>
 requires(printable<output,Args>&&...)
 inline constexpr void normal_print(output &out,Args&& ...args)
 {
-	(print_define(out,std::forward<Args>(args)),...);
+	(print_control(out,std::forward<Args>(args)),...);
 }
 
 template<output_stream output,typename ...Args>
@@ -96,12 +134,12 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 {
 	if constexpr((sizeof...(Args)==1)&&(printlnable<output,Args>&&...))
 	{
-		(println_define(out,std::forward<Args>(args)),...);
+		(print_control(out,follow_character(std::forward<Args>(args),u8'\n')),...);
 	}
 	else
 	{
-		(print_define(out,std::forward<Args>(args)),...);
-		put(out,0xA);
+		((print_control(out,std::forward<Args>(args))),...);
+		put(out,u8'\n');
 	}
 }
 
@@ -162,7 +200,7 @@ inline constexpr void print(output &out,Args&& ...args)
 		decltype(auto) uh(unlocked_handle(out));
 		print(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
+	else if constexpr(((printable<output,Args>||reserve_printable<Args>)&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
 		normal_print(out,std::forward<Args>(args)...);
 	else if constexpr(true)
 		buffer_print(out,std::forward<Args>(args)...);
