@@ -24,7 +24,11 @@ constexpr basic_input_buffer_iterator<input>& deal_with_underflow(basic_input_bu
 	return gen;
 }
 }
-
+template<buffer_input_stream input>
+inline constexpr auto operator*(basic_input_buffer_iterator<input>& gen)
+{
+	return *ibuffer_gbegin(*gen.ptr);
+}
 template<buffer_input_stream input>
 inline constexpr basic_input_buffer_iterator<input>& operator++(basic_input_buffer_iterator<input>& gen)
 {

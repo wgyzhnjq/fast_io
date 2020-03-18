@@ -6,6 +6,16 @@
 namespace fast_io
 {
 
+template<buffer_input_stream input,std::floating_point T>
+inline constexpr bool scan_define(input& in,T &t)
+{
+	if(!skip_space(in))
+		return false;
+	auto igen{igenerator(in)};
+	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(begin(igen),end(igen)));
+	return true;
+}
+
 template<output_stream output,std::size_t precision,std::floating_point T>
 inline void print_define(output& out,manip::fixed<precision,T const> a)
 {
@@ -166,14 +176,13 @@ inline void print_define(output& out,manip::shortest_shortest<uppercase_e,T cons
 	std::array<typename output::char_type,reserved_size> array;
 	write(out,array.data(),details::ryu::output_shortest<uppercase_e>(array.data(),static_cast<double>(a.reference)));
 }
-
+/*
 template<output_stream output,std::floating_point T>
 inline void print_define(output& out,manip::int_hint<T> a)
 {
 	std::size_t constexpr reserved_size(30);
 	if constexpr(buffer_output_stream<output>)
 	{
-
 		auto reserved(oreserve(out,reserved_size));
 		if constexpr(std::is_pointer_v<decltype(reserved)>)
 		{
@@ -193,45 +202,30 @@ inline void print_define(output& out,manip::int_hint<T> a)
 	}
 	std::array<typename output::char_type,reserved_size> array;
 	write(out,array.data(),details::ryu::output_shortest<false,0,true>(array.data(),static_cast<double>(a.reference)));
+}*/
+
+template<std::floating_point T>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::int_hint<T>>)
+{
+	return 30;
 }
 
-
-template<buffer_input_stream input,std::floating_point T>
-inline constexpr bool scan_define(input& in,T &t)
+template<std::random_access_iterator raiter,std::floating_point T>
+inline raiter print_reserve_define(print_reserve_type_t<manip::int_hint<T>>,raiter start,T a)
 {
-	if(!skip_space(in))
-		return false;
-	auto igen{igenerator(in)};
-	t=static_cast<std::remove_cvref_t<T>>(details::ryu::input_floating<double>(begin(igen),end(igen)));
-	return true;
+	return details::ryu::output_shortest<false,0,true>(start,static_cast<double>(a));
 }
 
-template<output_stream output,std::floating_point T>
-inline void print_define(output& out,T a)
+template<std::floating_point T>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<T>)
 {
-	std::size_t constexpr reserved_size(30);
-	if constexpr(buffer_output_stream<output>)
-	{
+	return 30;
+}
 
-		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
-		{
-			if(reserved)
-			{
-				auto start(reserved-reserved_size);
-				orelease(out,reserved-details::ryu::output_shortest<false>(start,static_cast<double>(a)));
-				return;
-			}
-		}
-		else
-		{
-			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::ryu::output_shortest<false>(start,static_cast<double>(a)));
-			return;
-		}
-	}
-	std::array<typename output::char_type,reserved_size> array;
-	write(out,array.data(),details::ryu::output_shortest<false>(array.data(),static_cast<double>(a)));
+template<std::random_access_iterator raiter,std::floating_point T>
+inline raiter print_reserve_define(print_reserve_type_t<T>,raiter start,T a)
+{
+	return details::ryu::output_shortest<false>(start,static_cast<double>(a));
 }
 
 

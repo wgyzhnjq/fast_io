@@ -1,6 +1,5 @@
 #pragma once
 #include"table_gen.h"
-
 /*
 Although it is still called jiaendu algorithm. The 64 bits are created by myself + I modified the table of jiaendu. It is no longer real jiaendu any more.
 */
@@ -10,8 +9,8 @@ namespace fast_io
 namespace details::jiaendu
 {
 
-template<std::unsigned_integral U,std::contiguous_iterator Iter>
-inline std::size_t output_unsigned(U value,Iter str)
+template<std::contiguous_iterator Iter,std::unsigned_integral U>
+inline std::size_t output_unsigned(Iter str,U value)
 {
 	using ch_type = std::remove_cvref_t<decltype(*str)>;
 	constexpr std::size_t bytes4{4*sizeof(ch_type)};
@@ -317,131 +316,16 @@ inline std::size_t output_unsigned_point(U value,Iter str)
 {
 	if(value >= 10)[[likely]]
 	{
-		std::size_t ret(output_unsigned(value,str+1));
+		std::size_t ret(output_unsigned(str+1,value));
 		*str=str[1];
 		str[1]=u8'.';
 		return ret+1;
 	}
 	else
-		return output_unsigned(value,str);
+		return output_unsigned(str,value);
 }
 
-template<std::unsigned_integral T>
-requires(sizeof(T)<=8)
-inline constexpr std::size_t cal_max_size()
-{
-	if constexpr(8==sizeof(T))
-		return 20;
-	else if constexpr(4==sizeof(T))
-		return 10;
-	else if constexpr(2==sizeof(T))
-		return 5;
-	else if constexpr(1==sizeof(T))
-		return 3;
-}
-
-template<bool ln=false,bool sign=false,output_stream outp,std::unsigned_integral T>
-inline void output(outp& out,T t)
-{
-	constexpr std::size_t reserved_size(cal_max_size<T>()+static_cast<std::size_t>(ln)+static_cast<std::size_t>(sign));
-	if constexpr(buffer_output_stream<outp>)
-	{
-		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
-		{
-			if(reserved)[[likely]]
-			{
-				auto start(reserved-reserved_size);
-				if constexpr(sign)
-				{
-					*start = u8'-';
-					++start;
-				}
-				auto p(output_unsigned(t,start));
-				if constexpr(ln)
-				{
-					start[p]=u8'\n';
-					++p;
-				}
-				if constexpr(sign)
-					orelease(out,(reserved_size-1)-p);
-				else
-					orelease(out,reserved_size-p);
-				return;
-			}
-		}
-		else
-		{
-			auto start(reserved-reserved_size);
-			if constexpr(sign)
-			{
-				*start = u8'-';
-				++start;
-			}
-			auto p(output_unsigned(t,std::to_address(start)));
-			if constexpr(ln)
-			{
-				start[p]=u8'\n';
-				++p;
-			}
-			if constexpr(sign)
-				orelease(out,(reserved_size-1)-p);
-			else
-				orelease(out,reserved_size-p);
-			return;
-		}
-	}
-	std::array<typename outp::char_type,reserved_size> array;
-	if constexpr(sign)
-	{
-		array.front() = u8'-';
-		auto p(array.data()+1+output_unsigned(t,array.data()+1));
-		if constexpr(ln)
-		{
-			*p=u8'\n';
-			++p;
-		}
-		write(out,array.data(),p);
-	}
-	else
-	{
-		auto p(array.data()+output_unsigned(t,array.data()));
-		if constexpr(ln)
-		{
-			*p=u8'\n';
-			++p;
-		}
-		write(out,array.data(),p);
-	}
-}
 
 }
 
-template<std::integral int_type>
-inline constexpr std::size_t print_reserve_size(int_type const&)
-{
-	if constexpr(std::unsigned_integral<int_type>)
-		return details::jiaendu::cal_max_size<int_type>();
-	else
-		return details::jiaendu::cal_max_size<std::make_unsigned_t<int_type>>()+1;
-}
-
-template<std::contiguous_iterator caiter,std::integral int_type>
-inline constexpr caiter print_reserve_define(caiter iter,int_type const& i)
-{
-	if constexpr(std::unsigned_integral<int_type>)
-		return iter+details::jiaendu::output_unsigned(iter,i);
-	else
-	{
-		if(i<0)
-		{
-			*iter=u8'-';
-			++iter;
-			return iter+details::jiaendu::output_unsigned(iter,-static_cast<std::make_unsigned_t<int_type>>(i));
-		}
-		else
-			return iter+details::jiaendu::output_unsigned(iter,static_cast<std::make_unsigned_t<int_type>>(i));
-	}
-}
-static_assert(reserve_printable<std::size_t>);
 }

@@ -68,7 +68,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 						mantissa_type m1(v2%static_cast<mantissa_type>(10000));
 						mantissa_type v3(v2/static_cast<mantissa_type>(10000));
 						if(m1)[[likely]]//This must be fixed form
-							result+=jiaendu::output_unsigned(v2,result);
+							result+=jiaendu::output_unsigned(result,v2);
 						else
 						{
 							for(;;)
@@ -90,7 +90,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 								}
 								else
 								{
-									jiaendu::output_unsigned(v3,result+1);
+									jiaendu::output_unsigned(result+1,v3);
 									*result=result[1];
 									result[1]=u8'.';
 									result+=v3_len+1;
@@ -105,7 +105,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 							}
 							else
 							{
-								jiaendu::output_unsigned(v2,result);
+								jiaendu::output_unsigned(result,v2);
 								result+=v2_len;
 							}
 						}
@@ -117,7 +117,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 					}
 				}
 				else if constexpr(mode==1)		//fixed
-					result+=jiaendu::output_unsigned(v2,result);
+					result+=jiaendu::output_unsigned(result,v2);
 				else	//scientific
 				{
 					auto const v2_len(chars_len<10,true>(v2));
@@ -303,7 +303,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		switch(this_case)
 		{
 		case 1:
-			jiaendu::output_unsigned(v.front(),result);
+			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);
 		case 2:
@@ -312,12 +312,12 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			auto eposition(real_exp+1);
 			if(olength==eposition)
 			{
-				jiaendu::output_unsigned(a,result);
+				jiaendu::output_unsigned(result,a);
 				result+=olength;
 			}
 			else
 			{
-				jiaendu::output_unsigned(a,result+1);
+				jiaendu::output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
 				result[eposition]=u8'.';
 				result+=olength+1;
@@ -327,7 +327,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		default:
 			result=my_copy_n(u8"0.",2,result);
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			jiaendu::output_unsigned(v.front(),result);
+			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
 			return result;
 		}
@@ -338,7 +338,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 		if(olength<=real_exp)
 		{
-			jiaendu::output_unsigned(v.front(),result);
+			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);	
 		}
@@ -348,12 +348,12 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			auto eposition(real_exp+1);
 			if(olength==eposition)
 			{
-				jiaendu::output_unsigned(a,result);
+				jiaendu::output_unsigned(result,a);
 				result+=olength;
 			}
 			else
 			{
-				jiaendu::output_unsigned(a,result+1);
+				jiaendu::output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
 				result[eposition]=u8'.';
 				result+=olength+1;
@@ -364,7 +364,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		{
 			result=my_copy_n(u8"0.",2,result);
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			jiaendu::output_unsigned(v.front(),result);
+			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
 			return result;
 		}
@@ -375,13 +375,13 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		std::int32_t real_exp(static_cast<std::int32_t>(e10 + removed - 1));
 		if(a<10)
 		{
-			std::size_t olength(details::jiaendu::output_unsigned(a,result));
+			std::size_t olength(details::jiaendu::output_unsigned(result,a));
 			real_exp+=olength;
 			result+=olength;
 		}
 		else
 		{
-			std::size_t olength(details::jiaendu::output_unsigned(a,result+1));
+			std::size_t olength(details::jiaendu::output_unsigned(result+1,a));
 			real_exp+=static_cast<std::int32_t>(olength);
 			*result=result[1];
 			result[1]=u8'.';

@@ -91,29 +91,29 @@ inline constexpr void print_control(output& out,T&& t)
 	if constexpr(reserve_printable<T>)
 	{
 		using char_type = output::char_type;
-		constexpr std::size_t size{print_reserve_size(t)};
+		constexpr std::size_t size{print_reserve_size(print_reserve_type<T>)};
 		if constexpr(reserve_output_stream<output>)
 		{
-			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out))>>)
+			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out,size))>>)
 			{
 				auto ptr{oreserve(out,size)};
 				if(ptr==nullptr)[[unlikely]]
 				{
 					std::array<char_type,size> array;
-					write(out,array.data(),print_reserve_define(array.data(),std::forward<T>(t)));
+					write(out,array.data(),print_reserve_define(print_reserve_type<T>,array.data(),std::forward<T>(t)));
 					return;
 				}
-				orelease(out,print_reserve_define(ptr,std::forward<T>(t)));
+				orelease(out,print_reserve_define(print_reserve_type<T>,ptr,std::forward<T>(t)));
 			}
 			else
 			{
-				orelease(out,print_reserve_define(oreserve(out,size),std::forward<T>(t)));
+				orelease(out,print_reserve_define(print_reserve_type<T>,oreserve(out,size),std::forward<T>(t)));
 			}
 		}
 		else
 		{
 			std::array<char_type,size> array;
-			write(out,array.data(),print_reserve_define(array.data(),std::forward<T>(t)));
+			write(out,array.data(),print_reserve_define(print_reserve_type<T>,array.data(),std::forward<T>(t)));
 		}
 	}
 	else if constexpr(printable<output,T>)
@@ -121,20 +121,67 @@ inline constexpr void print_control(output& out,T&& t)
 		print_define(out,std::forward<T>(t));
 	}
 }
+
+template<output_stream output,typename T,std::integral ch_type>
+requires ((printable<output,T>&&character_output_stream<output>)||reserve_printable<T>)
+inline constexpr void print_control(output& out,manip::follow_character<T,ch_type> t)
+{
+	if constexpr(reserve_printable<T>)
+	{
+		using char_type = output::char_type;
+		constexpr std::size_t size{print_reserve_size(print_reserve_type<std::remove_cvref_t<T>>)+1};
+		if constexpr(reserve_output_stream<output>)
+		{
+			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out,size))>>)
+			{
+				auto ptr{oreserve(out,size)};
+				if(ptr==nullptr)[[unlikely]]
+				{
+					std::array<char_type,size> array;
+					auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,array.data(),t.reference)};
+					*it=t.character;
+					write(out,array.data(),++it);
+					return;
+				}
+				auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,ptr,t.reference)};
+				*it=t.character;
+				orelease(out,++it);
+			}
+			else
+			{
+				auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,oreserve(out,size),t.reference)};
+				*it=t.character;
+				orelease(out,++it);
+			}
+		}
+		else
+		{
+			std::array<char_type,size> array;
+			auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,array.data(),t.reference)};
+			*it=t.character;
+			write(out,array.data(),++it);
+		}
+	}
+	else if constexpr(printable<output,T>)
+	{
+		print_define(out,std::forward<T>(t));
+	}
+}
+
 template<output_stream output,typename ...Args>
-requires(printable<output,Args>&&...)
+requires(general_printable<output,Args>&&...)
 inline constexpr void normal_print(output &out,Args&& ...args)
 {
 	(print_control(out,std::forward<Args>(args)),...);
 }
 
 template<output_stream output,typename ...Args>
-requires((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||(character_output_stream<output>&&(printable<output,Args>&&...)))
+requires((sizeof...(Args)==1&&(reserve_printable<Args>&&...))||(character_output_stream<output>&&(printable<output,Args>&&...)))
 inline constexpr void normal_println(output &out,Args&& ...args)
 {
-	if constexpr((sizeof...(Args)==1)&&(printlnable<output,Args>&&...))
+	if constexpr((sizeof...(Args)==1)&&(reserve_printable<Args>&&...))
 	{
-		(print_control(out,follow_character(std::forward<Args>(args),u8'\n')),...);
+		(print_control(out,manip::follow_character<Args const,char8_t>(std::forward<Args>(args),u8'\n')),...);
 	}
 	else
 	{
@@ -216,7 +263,7 @@ inline constexpr void println(output &out,Args&& ...args)
 		decltype(auto) uh(unlocked_handle(out));
 		println(uh,std::forward<Args>(args)...);
 	}
-	else if constexpr((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||
+	else if constexpr((sizeof...(Args)==1&&(reserve_printable<Args>&&...))||
 	((printable<output,Args>&&...)&&buffer_output_stream<output>&&character_output_stream<output>))
 		normal_println(out,std::forward<Args>(args)...);
 	else if constexpr(true)
@@ -240,69 +287,6 @@ inline constexpr void send(output &out,Args&& ...args)
 		buffer_send(out,std::forward<Args>(args)...);
 }
 
-
-template<output_stream output,typename ...Args>
-requires (sizeof...(Args)!=0)
-inline constexpr void print_flush(output &out,Args&& ...args)
-{
-	using namespace print_scan_details;
-	if constexpr(mutex_output_stream<output>)
-	{
-		typename output::lock_guard_type lg{mutex(out)};
-		decltype(auto) uh(unlocked_handle(out));
-		print_flush(uh,std::forward<Args>(args)...);
-	}
-	else
-	{
-		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-			normal_print(out,std::forward<Args>(args)...);
-		else if constexpr(true)
-			buffer_print(out,std::forward<Args>(args)...);
-		flush(out);
-	}
-}
-
-template<output_stream output,typename ...Args>
-inline constexpr void println_flush(output &out,Args&& ...args)
-{
-	using namespace print_scan_details;
-	if constexpr(mutex_output_stream<output>)
-	{
-		typename output::lock_guard_type lg{mutex(out)};
-		decltype(auto) uh(unlocked_handle(out));
-		println_flush(out.native_handle(),std::forward<Args>(args)...);
-	}
-	else
-	{
-		if constexpr((sizeof...(Args)==1&&(printlnable<output,Args>&&...))||
-			((printable<output,Args>&&...)&&buffer_output_stream<output>&&character_output_stream<output>))
-			normal_println(out,std::forward<Args>(args)...);
-		else if constexpr(true)
-			buffer_println(out,std::forward<Args>(args)...);
-		flush(out);
-	}
-}
-
-template<output_stream output,typename ...Args>
-requires (sizeof...(Args)!=0)
-inline constexpr void send_flush(output &out,Args&& ...args)
-{
-	using namespace print_scan_details;
-	if constexpr(mutex_output_stream<output>)
-	{
-		typename output::lock_guard_type lg{mutex(out)};
-		decltype(auto) uh(unlocked_handle(out));
-		send_flush(out.native_handle(),std::forward<Args>(args)...);
-	}
-	else
-	{
-		if constexpr((sendable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-			normal_send(out,std::forward<Args>(args)...);
-		else if constexpr(true)
-			buffer_send(out,std::forward<Args>(args)...);
-		flush(out);
-	}
-}
 
 
 inline namespace print_scan_details
@@ -371,26 +355,6 @@ inline constexpr void fprint(output &out,Args&& ...args)
 		buffer_fprint(out,std::forward<Args>(args)...);
 }
 
-template<output_stream output,typename ...Args>
-requires (sizeof...(Args)!=0)
-inline constexpr void fprint_flush(output &out,Args&& ...args)
-{
-	using namespace print_scan_details;
-	if constexpr(mutex_output_stream<output>)
-	{
-		typename output::lock_guard_type lg{mutex(out)};
-		decltype(auto) uh(unlocked_handle(out));
-		fprint_flush(uh,std::forward<Args>(args)...);
-	}
-	else
-	{
-		if constexpr((printable<output,Args>&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-			normal_fprint(out,std::forward<Args>(args)...);
-		else if constexpr(true)
-			buffer_fprint(out,std::forward<Args>(args)...);
-		flush(out);
-	}
-}
 
 
 }
