@@ -84,10 +84,11 @@ inline constexpr std::size_t chars_len(U value) noexcept
 	}
 }
 
-template<std::unsigned_integral T>
+template<std::unsigned_integral T,char8_t base = 10>
 requires(sizeof(T)<=8)
 inline constexpr std::size_t cal_max_uint_size()
 {
+/*
 	if constexpr(8==sizeof(T))
 		return 20;
 	else if constexpr(4==sizeof(T))
@@ -95,6 +96,14 @@ inline constexpr std::size_t cal_max_uint_size()
 	else if constexpr(2==sizeof(T))
 		return 5;
 	else if constexpr(1==sizeof(T))
-		return 3;
+		return 3;*/
+	std::size_t i{};
+	auto n{std::numeric_limits<T>::max()};
+	for(;n;++i)
+		n/=base;
+	return i;
 }
+
+static_assert(cal_max_uint_size<std::uint64_t,10>()==20);
+static_assert(cal_max_uint_size<std::uint32_t,10>()==10);
 }
