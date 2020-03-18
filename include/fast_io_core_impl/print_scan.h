@@ -3,45 +3,6 @@
 namespace fast_io
 {
 
-
-/*
-template<buffer_input_stream input>
-inline constexpr std::size_t skip_line(input& in)
-{
-	std::size_t skipped(0);
-	for(decltype(get<true>(in)) ch;(ch=get<true>(in)).second&&ch.first!=0xA;++skipped);
-	return skipped;
-}
-
-
-template<buffer_input_stream input>
-inline constexpr auto eat_space_get(input& in)
-{
-	decltype(get(in)) ch(get(in));
-	for(;details::isspace(ch);ch=get(in));
-	return ch;
-}
-
-template<buffer_input_stream input>
-inline constexpr auto try_eat_space_get(input& in)
-{
-	auto ch(get<true>(in));
-	for(;details::isspace(ch.first);ch=get<true>(in));
-	return ch;
-}
-
-template<buffer_input_stream input,std::integral T>
-requires std::same_as<T,bool>
-inline constexpr void scan_define(input& in, T& b)
-{
-	auto value(eat_space_get(in));
-	if(value==0x30)
-		b=0;
-	else
-		b=1;
-}
-*/
-
 template<character_output_stream output,std::integral T>
 requires std::same_as<T,bool>
 inline constexpr void print_define(output& out, T const& b)
@@ -88,10 +49,11 @@ template<output_stream output,typename T>
 requires (printable<output,T>||reserve_printable<T>)
 inline constexpr void print_control(output& out,T&& t)
 {
+	using char_type = output::char_type;
+	using no_cvref = std::remove_cvref_t<T>;
 	if constexpr(reserve_printable<T>)
 	{
-		using char_type = output::char_type;
-		constexpr std::size_t size{print_reserve_size(print_reserve_type<T>)};
+		constexpr std::size_t size{print_reserve_size(print_reserve_type<no_cvref>)};
 		if constexpr(reserve_output_stream<output>)
 		{
 			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out,size))>>)
@@ -100,20 +62,20 @@ inline constexpr void print_control(output& out,T&& t)
 				if(ptr==nullptr)[[unlikely]]
 				{
 					std::array<char_type,size> array;
-					write(out,array.data(),print_reserve_define(print_reserve_type<T>,array.data(),std::forward<T>(t)));
+					write(out,array.data(),print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<T>(t)));
 					return;
 				}
-				orelease(out,print_reserve_define(print_reserve_type<T>,ptr,std::forward<T>(t)));
+				orelease(out,print_reserve_define(print_reserve_type<no_cvref>,ptr,std::forward<T>(t)));
 			}
 			else
 			{
-				orelease(out,print_reserve_define(print_reserve_type<T>,oreserve(out,size),std::forward<T>(t)));
+				orelease(out,print_reserve_define(print_reserve_type<no_cvref>,oreserve(out,size),std::forward<T>(t)));
 			}
 		}
 		else
 		{
 			std::array<char_type,size> array;
-			write(out,array.data(),print_reserve_define(print_reserve_type<T>,array.data(),std::forward<T>(t)));
+			write(out,array.data(),print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<T>(t)));
 		}
 	}
 	else if constexpr(printable<output,T>)
@@ -164,7 +126,8 @@ inline constexpr void print_control(output& out,manip::follow_character<T,ch_typ
 	}
 	else if constexpr(printable<output,T>)
 	{
-		print_define(out,std::forward<T>(t));
+		print_define(out,t.reference);
+		put(out,t.character);
 	}
 }
 
@@ -248,7 +211,7 @@ inline constexpr void print(output &out,Args&& ...args)
 		print(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr(((printable<output,Args>||reserve_printable<Args>)&&...)&&(sizeof...(Args)==1||buffer_output_stream<output>))
-		normal_print(out,std::forward<Args>(args)...);
+		(print_control(out,std::forward<Args>(args)),...);
 	else if constexpr(true)
 		buffer_print(out,std::forward<Args>(args)...);
 }

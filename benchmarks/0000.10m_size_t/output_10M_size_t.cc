@@ -105,12 +105,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		println(u8obuf_file,i);
 	}
-	{
+/*	{
 	fast_io::timer t("u8obuf_file");
 	fast_io::u8obuf_file u8obuf_file_old("u8obuf_file_old.txt");
 	for(std::size_t i(0);i!=N;++i)
 		println(u8obuf_file_old,fast_io::dec(i));
-	}
+	}*/
 	{
 	fast_io::timer t("onative_file dynamic");
 	fast_io::u8dynamic_buf dyn(std::in_place_type<fast_io::onative_file>,"u8dynamicbuf.txt");
