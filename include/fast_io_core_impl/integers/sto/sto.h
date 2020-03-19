@@ -15,9 +15,8 @@ inline constexpr std::size_t get_max_size()
 }
 
 template<char8_t base,std::unsigned_integral T>
-inline constexpr void detect_overflow(T t,std::size_t length)
+inline constexpr void detect_overflow(T const& t,std::size_t length)
 {
-
 	constexpr std::size_t max_size{get_max_size<T,base>()};
 	if(max_size<=length)[[unlikely]]
 	{
@@ -31,7 +30,7 @@ inline constexpr void detect_overflow(T t,std::size_t length)
 }
 
 template<char8_t base,std::unsigned_integral T>
-inline constexpr void detect_signed_overflow(T t,std::size_t length,bool sign)
+inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool sign)
 {
 	constexpr std::size_t max_size{get_max_size<T,base>()};
 	if(max_size<=length)[[unlikely]]
