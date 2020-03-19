@@ -73,8 +73,8 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::base
 		return details::cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+1;
 }
 
-template<std::random_access_iterator caiter,char8_t base,bool uppercase,std::integral int_type>
-inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::base_t<base,uppercase,int_type>>,caiter iter,auto ref)
+template<std::random_access_iterator caiter,char8_t base,bool uppercase,std::integral int_type,typename P>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::base_t<base,uppercase,int_type>>,caiter iter,P ref)
 {
 	auto const i{ref.reference};
 	if (std::is_constant_evaluated())

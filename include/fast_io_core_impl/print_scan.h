@@ -49,7 +49,7 @@ template<output_stream output,typename T>
 requires (printable<output,T>||reserve_printable<T>)
 inline constexpr void print_control(output& out,T&& t)
 {
-	using char_type = output::char_type;
+	using char_type = typename output::char_type;
 	using no_cvref = std::remove_cvref_t<T>;
 	if constexpr(reserve_printable<T>)
 	{
@@ -90,7 +90,7 @@ inline constexpr void print_control(output& out,manip::follow_character<T,ch_typ
 {
 	if constexpr(reserve_printable<T>)
 	{
-		using char_type = output::char_type;
+		using char_type = typename output::char_type;
 		constexpr std::size_t size{print_reserve_size(print_reserve_type<std::remove_cvref_t<T>>)+1};
 		if constexpr(reserve_output_stream<output>)
 		{
@@ -144,7 +144,7 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 {
 	if constexpr((sizeof...(Args)==1)&&(reserve_printable<Args>&&...))
 	{
-		(print_control(out,manip::follow_character<Args const,char8_t>(std::forward<Args>(args),u8'\n')),...);
+		(print_control(out,manip::follow_character<Args const,char8_t>{std::forward<Args>(args),u8'\n'}),...);
 	}
 	else
 	{

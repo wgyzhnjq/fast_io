@@ -94,8 +94,8 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::fixe
 	return 325;
 }
 
-template<std::random_access_iterator raiter,std::floating_point T>
-inline raiter print_reserve_define(print_reserve_type_t<manip::fixed_shortest<T>>,raiter start,auto a)
+template<std::random_access_iterator raiter,std::floating_point T,typename P>
+inline raiter print_reserve_define(print_reserve_type_t<manip::fixed_shortest<T>>,raiter start,P a)
 {
 	return details::ryu::output_shortest<false,1>(start,static_cast<double>(a.reference));
 }
@@ -106,8 +106,8 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::scie
 	return 30;
 }
 
-template<std::random_access_iterator raiter,bool uppercase_e,std::floating_point T>
-inline raiter print_reserve_define(print_reserve_type_t<manip::scientific_shortest<uppercase_e,T>>,raiter start,auto a)
+template<std::random_access_iterator raiter,bool uppercase_e,std::floating_point T,typename P>
+inline raiter print_reserve_define(print_reserve_type_t<manip::scientific_shortest<uppercase_e,T>>,raiter start,P a)
 {
 	return details::ryu::output_shortest<uppercase_e,2>(start,static_cast<double>(a.reference));
 }
@@ -118,8 +118,8 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::gene
 	return 30;
 }
 
-template<std::random_access_iterator raiter,bool uppercase_e,std::floating_point T>
-inline raiter print_reserve_define(print_reserve_type_t<manip::general_shortest<uppercase_e,T>>,raiter start,auto a)
+template<std::random_access_iterator raiter,bool uppercase_e,std::floating_point T,typename P>
+inline raiter print_reserve_define(print_reserve_type_t<manip::general_shortest<uppercase_e,T>>,raiter start,P a)
 {
 	return details::ryu::output_shortest<uppercase_e>(start,static_cast<double>(a.reference));
 }
@@ -130,8 +130,8 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::int_
 	return 30;
 }
 
-template<std::random_access_iterator raiter,std::floating_point T>
-inline raiter print_reserve_define(print_reserve_type_t<manip::int_hint<T>>,raiter start,auto a)
+template<std::random_access_iterator raiter,std::floating_point T,typename P>
+inline raiter print_reserve_define(print_reserve_type_t<manip::int_hint<T>>,raiter start,P a)
 {
 	return details::ryu::output_shortest<false,0,true>(start,static_cast<double>(a.reference));
 }
