@@ -53,13 +53,13 @@ struct scientific_shortest
 };
 
 template<std::size_t precision,bool uppercase_e,typename T>
-struct shortest
+struct general
 {
 	T& reference;
 };
 
 template<bool uppercase_e,typename T>
-struct shortest_shortest
+struct general_shortest
 {
 	T& reference;
 };
@@ -261,9 +261,9 @@ template<typename T>
 inline constexpr manip::fixed_shortest<T const> fixed(T const &f){return {f};}
 
 template<typename T>
-inline constexpr manip::shortest_shortest<false,T const> shortest(T const &f){return {f};}
+inline constexpr manip::general_shortest<false,T const> general(T const &f){return {f};}
 template<typename T>
-inline constexpr manip::shortest_shortest<true,T const> shortest_upper(T const &f){return {f};}
+inline constexpr manip::general_shortest<true,T const> general_upper(T const &f){return {f};}
 template<typename T>
 inline constexpr manip::unix<T const> local(T const &f){return {f};}
 template<typename T>
