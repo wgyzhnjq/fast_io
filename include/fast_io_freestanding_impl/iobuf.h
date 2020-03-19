@@ -240,8 +240,8 @@ inline constexpr Iter read(basic_ibuf<Ihandler,Buf>& ib,Iter begin,Iter end)
 		return details::ibuf_read<Buf::size>(ib,begin,end);
 	else
 	{
-		auto b(reinterpret_cast<std::byte*>(std::to_address(begin)));
-		return begin+(details::ibuf_read<Buf::size,true>(ib,b,reinterpret_cast<std::byte*>(std::to_address(end)))-b)/sizeof(*begin);
+		auto b(reinterpret_cast<char const*>(std::to_address(begin)));
+		return begin+(details::ibuf_read<Buf::size,true>(ib,b,reinterpret_cast<char const*>(std::to_address(end)))-b)/sizeof(*begin);
 	}
 }
 
@@ -447,8 +447,8 @@ inline constexpr void write(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
 		details::obuf_write<true>(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
-		details::obuf_write<true>(ob,reinterpret_cast<std::byte const*>(std::to_address(cbegini)),
-					reinterpret_cast<std::byte const*>(std::to_address(cendi)));
+		details::obuf_write<true>(ob,reinterpret_cast<char const*>(std::to_address(cbegini)),
+					reinterpret_cast<char const*>(std::to_address(cendi)));
 }
 
 template<output_stream Ohandler,typename Buf>
