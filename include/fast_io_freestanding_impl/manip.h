@@ -7,43 +7,29 @@ template<buffer_input_stream input>
 inline bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
 	details::is_none_space dg;
-	auto i(begin(in));
-	for(;;)
+	auto gen{igenerator(in)};
+	auto i{begin(gen)};
+	auto e{end(gen)};
+	str.clear();
+	if(i==e)
+		return false;
+	for(;i!=e;++i)
 	{
-		for(auto e(end(in));i!=e&&!dg(*i);++i);
-		if(i!=end(in))
-			break;
-		if(!iflush(in))
-			return false;
-		i=begin(in);
-	}
-	for(str.clear();;)
-	{
-		auto j(i);
-		for(auto e(end(in));j!=e&&dg(*j);++j);
-		str.append(i,j);
-		if(j!=end(in))
+		if(!dg(*i))
 		{
-			in+=j-begin(in);
 			return true;
 		}
-		if(!iflush(in))
-			return true;
-		str.reserve(str.size()<<1);
-		i=begin(in);
+		str.push_back(*i);
 	}
+	return true;
 }
 
-template<buffer_input_stream input>
+template<input_stream input>
 inline void scan_define(input& in,manip::whole<std::basic_string<typename input::char_type>> r)
 {
-	for(r.reference.clear();;)
-	{
-		r.reference.append(begin(in),end(in));
-		if(!iflush(in))
-			return;
-		r.reference.reserve(r.reference.size()<<1);
-	}
+	r.reference.clear();
+	fast_io::basic_ostring_ref<std::basic_string<typename input::char_type>> ostrf(r.reference);
+	transmit(ostrf,in);
 }
 
 template<buffer_input_stream input>
