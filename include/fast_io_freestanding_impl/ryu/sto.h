@@ -57,12 +57,20 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			++m10digits;
 		++index;
 	}
+	std::size_t extra_e10{};
 	if(m10digits==floating_trait::digits10)[[unlikely]]
+	{
+		for(bool const ok{dot_index==-1};iter!=ed&&*iter==u8'0';++iter)
+			extra_e10+=ok;
+		if(iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'1')<9)[[unlikely]]
+		{
 #ifdef __cpp_exceptions
-		throw std::runtime_error("out of precision of ryu algorithm. To do with multiprecision");
+			throw std::runtime_error("out of precision of ryu algorithm. To do with multiprecision");
 #else
-		fast_terminate();
+			fast_terminate();
 #endif
+		}
+	}
 	signed_exponent_type e_index{-1};
 	bool exp_negative{};
 	exponent_type ue10{};
@@ -93,6 +101,9 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			++index;
 		}
 	}
+	detect_overflow<10>(ue10,ue10digits);
+	if((ue10+=extra_e10)<extra_e10)[[unlikely]]
+		throw std::runtime_error("exp part integer overflow");
 	signed_exponent_type e10(static_cast<signed_exponent_type>(ue10));
 	if(exp_negative)
 		e10=-e10;

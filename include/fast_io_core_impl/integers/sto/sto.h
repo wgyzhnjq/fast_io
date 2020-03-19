@@ -14,6 +14,44 @@ inline constexpr std::size_t get_max_size()
 	return i;
 }
 
+template<char8_t base,std::unsigned_integral T>
+inline constexpr void detect_overflow(T t,std::size_t length)
+{
+
+	constexpr std::size_t max_size{get_max_size<T,base>()};
+	if(max_size<=length)[[unlikely]]
+	{
+		if((max_size<length)|(t<=base))[[unlikely]]
+#ifdef __cpp_exceptions
+			throw std::overflow_error("unsigned overflow");
+#else
+			fast_terminate();
+#endif
+	}
+}
+
+template<char8_t base,std::unsigned_integral T>
+inline constexpr void detect_signed_overflow(T t,std::size_t length,bool sign)
+{
+	constexpr std::size_t max_size{get_max_size<T,base>()};
+	if(max_size<=length)[[unlikely]]
+	{
+		if((max_size<length)|(t<=base))[[unlikely]]
+#ifdef __cpp_exceptions
+			throw std::overflow_error("unsigned overflow");
+#else
+			fast_terminate();
+#endif
+		if(static_cast<T>(static_cast<T>(std::numeric_limits<std::make_signed_t<T>>::max())+sign)<t)
+#ifdef __cpp_exceptions
+			throw std::overflow_error("signed overflow");
+#else
+			fast_terminate();
+#endif
+	}
+}
+
+
 template<std::integral T,char8_t base,bool no_dec=false,buffer_input_stream input>
 inline constexpr T input_base_number(input& in)
 {
@@ -52,14 +90,7 @@ inline constexpr T input_base_number(input& in)
 			}
 			++length;
 		}
-		constexpr std::size_t max_size{get_max_size<unsigned_t,base>()};
-		if(max_size<=length)[[unlikely]]
-			if((max_size<length)|(t<=base))[[unlikely]]
-#ifdef __cpp_exceptions
-				throw std::overflow_error("unsigned overflow");
-#else
-				fast_terminate();
-#endif
+		detect_overflow<base>(t,length);
 		return t;
 	}
 	else
@@ -103,22 +134,7 @@ inline constexpr T input_base_number(input& in)
 			}
 			++length;
 		}
-		constexpr std::size_t max_size{get_max_size<T,base>()};
-		if(max_size<=length)[[unlikely]]
-		{
-			if((max_size<length)|(t<=base))[[unlikely]]
-#ifdef __cpp_exceptions
-				throw std::overflow_error("signed overflow");
-#else
-				fast_terminate();
-#endif
-			if(static_cast<unsigned_t>(static_cast<unsigned_t>(std::numeric_limits<T>::max())+sign)<t)
-#ifdef __cpp_exceptions
-				throw std::overflow_error("signed overflow");
-#else
-				fast_terminate();
-#endif
-		}
+		detect_signed_overflow<base>(t,length,sign);
 		if(sign)
 			return -static_cast<T>(t);
 		return static_cast<T>(t);
