@@ -145,7 +145,10 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<T>)
 template<std::random_access_iterator raiter,std::floating_point T>
 inline raiter print_reserve_define(print_reserve_type_t<T>,raiter start,T a)
 {
-	return details::ryu::output_shortest<false>(start,static_cast<double>(a));
+//	if constexpr(sizeof(double)<sizeof(T))
+		return details::ryu::output_shortest<false>(start,static_cast<double>(a));
+//	else
+//		return details::ryu::output_shortest<false>(start,a);
 }
 
 

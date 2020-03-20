@@ -101,9 +101,16 @@ inline constexpr T mul_shift(T m, std::array<T,2> const& mul, std::size_t j)
 	return low((mul_extend(m,mul.back())+high(mul_extend(m,mul.front())))>>(j-muldiff));
 }
 
-template<typename T>
-requires (std::same_as<std::uint64_t,T>||std::same_as<fast_io::uint128_t,T>)
-inline constexpr std::array<T,3> mul_shift_all(T m, std::array<T,2> const& mul,std::size_t j,std::uint32_t mmshift)
+template<std::unsigned_integral T,std::size_t muldiff=sizeof(T)*8>
+requires std::same_as<T,std::uint32_t>
+inline constexpr T mul_shift(T m, std::uint64_t mul, std::size_t j)
+{
+	return (static_cast<std::uint64_t>(m)*mul)>>(j-muldiff);
+}
+
+template<typename T,typename P>
+requires (std::same_as<std::uint32_t,T>||std::same_as<std::uint64_t,T>||std::same_as<fast_io::uint128_t,T>)
+inline constexpr std::array<T,3> mul_shift_all(T m, P& mul,std::size_t j,std::uint32_t mmshift)
 {
 	auto const m4(m<<2);
 	return {mul_shift(m4,mul,j),mul_shift(m4+2,mul,j),mul_shift(m4-1-mmshift,mul,j)};

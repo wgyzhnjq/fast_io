@@ -322,7 +322,10 @@ inline std::size_t output_unsigned_point(U value,Iter str)
 		return ret+1;
 	}
 	else
-		return output_unsigned(str,value);
+	{
+		*str = static_cast<char8_t>(value)+u8'0';
+		return 1;
+	}
 }
 
 

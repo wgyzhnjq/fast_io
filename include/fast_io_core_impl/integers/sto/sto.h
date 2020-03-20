@@ -37,7 +37,7 @@ inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool 
 	{
 		if((max_size<length)|(t<=base))[[unlikely]]
 #ifdef __cpp_exceptions
-			throw std::overflow_error("unsigned overflow");
+			throw std::overflow_error("signed overflow");
 #else
 			fast_terminate();
 #endif
