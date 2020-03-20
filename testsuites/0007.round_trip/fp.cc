@@ -11,7 +11,7 @@ int main()
 	char buffer[100];
 	auto [p,ec]=std::to_chars(buffer,buffer+100,d);
 	*p=u8'\n';
-	write(fast_io::out,buffer,++p);
+	write(fast_io::c_stdout,buffer,++p);
 	put(fast_io::c_stdout,u8'\n');
 }
 //cl -EHsc -Ox fp.cc /std:c++latest /experimental:concepts
