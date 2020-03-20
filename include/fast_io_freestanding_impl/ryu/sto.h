@@ -60,8 +60,14 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	std::size_t extra_e10{};
 	if(m10digits==floating_trait::digits10)[[unlikely]]
 	{
-		for(bool const ok{dot_index==-1};iter!=ed&&*iter==u8'0';++iter)
-			extra_e10+=ok;
+		if(dot_index==-1)
+		{
+			for(;iter!=ed&&*iter==u8'0';++iter)
+				++extra_e10;
+			if(iter!=ed&&*iter==u8'.')
+				++iter;
+		}
+		for(;iter!=ed&&*iter==u8'0';++iter);
 		if(iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'1')<9)[[unlikely]]
 		{
 #ifdef __cpp_exceptions
