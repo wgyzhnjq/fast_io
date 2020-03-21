@@ -7,7 +7,7 @@ namespace details
 struct is_none_space
 {
 template<std::integral T>
-inline constexpr bool operator()(T ch)
+inline constexpr bool operator()(T ch) const
 {
 	std::make_unsigned_t<T> e(ch);
 	return 0x4<(e-0x9)&e!=0x20;

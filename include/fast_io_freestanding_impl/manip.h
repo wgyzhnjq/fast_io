@@ -3,25 +3,56 @@
 namespace fast_io
 {
 
-template<buffer_input_stream input>
-inline bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
+template<character_input_stream input>
+inline constexpr bool scan_define(input& in,std::basic_string<typename input::char_type> &str)
 {
-	details::is_none_space dg;
-	auto gen{igenerator(in)};
-	auto i{begin(gen)};
-	auto e{end(gen)};
-	str.clear();
-	if(i==e)
-		return false;
-	for(;i!=e;++i)
+	constexpr details::is_none_space dg;
+	if constexpr(buffer_input_stream<input>)
 	{
-		if(!dg(*i))
+		for(;;)
 		{
-			return true;
+			auto b{std::to_address(ibuffer_gbegin(in))};
+			auto e{std::to_address(ibuffer_gend(in))};
+			for(;b!=e&&!dg(*b);++b);
+			ibuffer_gbegin(in)=b;
+			if(b==e)[[unlikely]]
+			{
+				if(!underflow(in))[[unlikely]]
+					return false;
+			}
+			else
+				break;
 		}
-		str.push_back(*i);
+		for(str.clear();;)
+		{
+			auto b{std::to_address(ibuffer_gbegin(in))};
+			auto e{std::to_address(ibuffer_gend(in))};
+			auto i{b};
+			for(;i!=e&&dg(*i);++i);
+			str.append(b,i);
+			ibuffer_gbegin(in)=i;
+			if(i==e)[[unlikely]]
+			{
+				if(!underflow(in))[[unlikely]]
+					break;
+			}
+			else
+				break;
+		}
+		return true;
 	}
-	return true;
+	else
+	{
+		auto gen{igenerator(in)};
+		auto i{begin(gen)};
+		auto e{end(gen)};
+		for(;i!=e&&!dg(*i);++i);
+		if(i==e)
+			return false;
+		for(str.clear();i!=e&&dg(*i);++i)
+			str.push_back(*i);
+		return true;
+	}
 }
 
 template<input_stream input>
