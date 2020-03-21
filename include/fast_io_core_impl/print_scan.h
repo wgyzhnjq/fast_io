@@ -19,7 +19,7 @@ inline constexpr void print_define(output& out,std::basic_string_view<typename o
 inline namespace print_scan_details
 {
 
-template<buffer_input_stream input,typename T>
+template<character_input_stream input,typename T>
 inline constexpr void scan_with_ex(input &in,T&& t)
 {
 	if constexpr(std::same_as<decltype(scan_define(in,std::forward<T>(t))),void>)
@@ -35,7 +35,7 @@ inline constexpr void scan_with_ex(input &in,T&& t)
 	}
 }
 
-template<bool report_eof,buffer_input_stream input,typename ...Args>
+template<bool report_eof,character_input_stream input,typename ...Args>
 requires(scanable<input,Args>&&...)
 inline constexpr auto normal_scan(input &ip,Args&& ...args)
 {

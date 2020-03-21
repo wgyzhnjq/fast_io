@@ -51,7 +51,7 @@ inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool 
 }
 
 
-template<std::integral T,char8_t base,bool no_dec=false,buffer_input_stream input>
+template<std::integral T,char8_t base,bool no_dec=false,character_input_stream input>
 inline constexpr T input_base_number(input& in)
 {
 	using unsigned_char_type = std::make_unsigned_t<typename input::char_type>;
@@ -141,7 +141,7 @@ inline constexpr T input_base_number(input& in)
 }
 }
 
-template<char8_t base,bool uppercase,buffer_input_stream input,std::integral T>
+template<char8_t base,bool uppercase,character_input_stream input,std::integral T>
 inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	if(!skip_space(in))
@@ -150,8 +150,13 @@ inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 	return true;
 }
 
+template<character_input_stream input,std::integral T>
+inline constexpr void scan_define(input& in,manip::no_decoration<T> v)
+{
+	v.reference=details::input_base_number<std::remove_cvref_t<T>,10>(in);
+}
 
-template<buffer_input_stream input,std::integral T>
+template<character_input_stream input,std::integral T>
 inline constexpr bool scan_define(input& in,T& a)
 {
 	if(!skip_space(in))
@@ -160,8 +165,7 @@ inline constexpr bool scan_define(input& in,T& a)
 	return true;
 }
 
-
-template<char8_t base,bool uppercase,buffer_input_stream input,typename T>
+template<char8_t base,bool uppercase,character_input_stream input,typename T>
 requires std::same_as<std::byte,std::remove_cvref_t<T>>
 inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {

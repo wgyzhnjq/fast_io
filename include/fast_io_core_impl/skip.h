@@ -16,28 +16,39 @@ inline constexpr bool operator()(T ch) const
 
 }
 
-template<buffer_input_stream input,typename UnaryPredicate>
+template<character_input_stream input,typename UnaryPredicate>
 [[nodiscard]] inline constexpr bool skip_until(input& in,UnaryPredicate pred)
 {
-	for(;;)
+	if constexpr(buffer_input_stream<input>)
 	{
-		decltype(auto) gbegin{ibuffer_gbegin(in)};
-		decltype(auto) gend{ibuffer_gend(in)};
-		for(;gbegin!=gend;++gbegin)
-			if(pred(*gbegin))
-				return true;
-		if(!underflow(in))
-			return false;
+		for(;;)
+		{
+			decltype(auto) gbegin{ibuffer_gbegin(in)};
+			decltype(auto) gend{ibuffer_gend(in)};
+			for(;gbegin!=gend;++gbegin)
+				if(pred(*gbegin))
+					return true;
+			if(!underflow(in))
+				return false;
+		}
+	}
+	else
+	{
+		auto ig{igenerator(in)};
+		auto b{begin(ig)};
+		auto e{end(ig)};
+		for(;b!=e&&!pred(*b);++b);
+		return b!=e;
 	}
 }
 
-template<buffer_input_stream input>
+template<character_input_stream input>
 [[nodiscard]] inline constexpr bool skip_space(input& in)
 {
 	return skip_until(in,details::is_none_space{});
 }
 
-template<std::size_t sign=false,std::uint8_t base=0xA,buffer_input_stream input>
+template<std::size_t sign=false,std::uint8_t base=0xA,character_input_stream input>
 [[nodiscard]] inline constexpr bool skip_none_numerical(input& in)
 {
 	return skip_until(in,details::is_numerical<sign,base>{});
