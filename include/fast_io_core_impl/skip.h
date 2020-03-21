@@ -43,6 +43,21 @@ template<character_input_stream input,typename UnaryPredicate>
 }
 
 template<character_input_stream input>
+[[nodiscard]] inline constexpr bool discard_unchecked(input& in)
+{
+	for(;;)
+	{
+		decltype(auto) gbegin{ibuffer_gbegin(in)};
+		decltype(auto) gend{ibuffer_gend(in)};
+		for(;gbegin!=gend;++gbegin)
+			if(pred(*gbegin))
+				return true;
+		if(!underflow(in))
+			return false;
+	}
+}
+
+template<character_input_stream input>
 [[nodiscard]] inline constexpr bool skip_space(input& in)
 {
 	return skip_until(in,details::is_none_space{});

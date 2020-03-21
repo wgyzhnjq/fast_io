@@ -70,6 +70,18 @@ concept buffer_input_stream_impl = requires(T& in)
 };
 
 template<typename T>
+concept contiguous_input_stream_impl = requires(T& in)
+{
+	iremove_prefix(in,static_cast<std::size_t>(0));
+	std::to_address(idata(in));
+	{isize(in)}->std::convertible_to<std::size_t>;
+	ifront(in);
+	iclear(in);
+	{iempty(in)}->std::convertible_to<bool>;
+};
+
+
+template<typename T>
 concept reserve_output_stream_impl = requires(T& out,std::size_t n)
 {
 	orelease(out,oreserve(out,n));
@@ -178,6 +190,9 @@ concept reserve_output_stream = output_stream<T>&&details::reserve_output_stream
 
 template<typename T>
 concept buffer_input_stream = input_stream<T>&&details::buffer_input_stream_impl<T>;
+
+template<typename T>
+concept contiguous_input_stream = input_stream<T>&&details::contiguous_input_stream_impl<T>;
 
 template<typename T>
 concept buffer_output_stream = output_stream<T>&&details::buffer_output_stream_impl<T>;

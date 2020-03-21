@@ -156,6 +156,12 @@ inline constexpr void scan_define(input& in,manip::no_decoration<T> v)
 	v.reference=details::input_base_number<std::remove_cvref_t<T>,10>(in);
 }
 
+template<char8_t base,bool uppercase,character_input_stream input,std::integral T>
+inline constexpr void scan_define(input& in,manip::no_decoration<manip::base_t<base,uppercase,T>> v)
+{
+	v.reference.reference=details::input_base_number<std::remove_cvref_t<T>,base>(in);
+}
+
 template<character_input_stream input,std::integral T>
 inline constexpr bool scan_define(input& in,T& a)
 {
@@ -175,5 +181,11 @@ inline constexpr bool scan_define(input& in,manip::base_t<base,uppercase,T> v)
 	return true;
 }
 
+template<char8_t base,bool uppercase,character_input_stream input,typename T>
+requires std::same_as<std::byte,std::remove_cvref_t<T>>
+inline constexpr void scan_define(input& in,manip::no_decoration<manip::base_t<base,uppercase,T>> v)
+{
+	v.reference.reference=static_cast<std::byte>(details::input_base_number<char8_t,base>(in));
+}
 
 }
