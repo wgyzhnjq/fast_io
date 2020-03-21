@@ -25,9 +25,14 @@ template<character_input_stream input,typename UnaryPredicate>
 		{
 			decltype(auto) gbegin{ibuffer_gbegin(in)};
 			decltype(auto) gend{ibuffer_gend(in)};
-			for(;gbegin!=gend;++gbegin)
-				if(pred(*gbegin))
+			auto b{std::to_address(gbegin)};
+			auto e{std::to_address(gend)};
+			for(;b!=e;++b)
+				if(pred(*b))
+				{
+					gbegin=b;
 					return true;
+				}
 			if(!underflow(in))
 				return false;
 		}
@@ -43,17 +48,69 @@ template<character_input_stream input,typename UnaryPredicate>
 }
 
 template<character_input_stream input>
-[[nodiscard]] inline constexpr bool discard_unchecked(input& in)
+inline constexpr std::size_t discard(input& in)
 {
-	for(;;)
+	if constexpr(contiguous_input_stream<input>)
 	{
-		decltype(auto) gbegin{ibuffer_gbegin(in)};
-		decltype(auto) gend{ibuffer_gend(in)};
-		for(;gbegin!=gend;++gbegin)
-			if(pred(*gbegin))
-				return true;
-		if(!underflow(in))
-			return false;
+		if(iempty(in))[[unlikely]]
+			return 0;
+		iremove_prefix(in,1);
+		return 1;
+	}
+	else
+	{
+		auto gen(igenerator(in));
+		auto b(begin(gen));
+		auto e(end(gen));
+		if(b==e)[[unlikely]]
+			return 0;
+		++b;
+		return 1;
+	}
+}
+
+
+template<character_input_stream input>
+inline constexpr std::size_t discard(input& in,std::size_t n)
+{
+	if constexpr(contiguous_input_stream<input>)
+	{
+		auto sz{isize(in)};
+		if(sz<n)[[unlikely]]
+			n=sz;
+		iremove_prefix(in,n);
+		return n;
+	}
+	else if constexpr(buffer_input_stream<input>)
+	{
+		std::size_t discarded{};
+		for(;;)
+		{
+			decltype(auto) gbegin{ibuffer_gbegin(in)};
+			decltype(auto) gend{ibuffer_gend(in)};
+			auto b{std::to_address(gbegin)};
+			auto e{std::to_address(gend)};
+			if(e-b<n)
+			{
+				discarded+=e-b;
+				if(!underflow(in))[[unlikely]]
+					return discarded;
+			}
+			b+=n;
+			discarded+=n;
+			gbegin=b;
+		}
+		return discarded;
+	}
+	else
+	{
+		auto gen(igenerator(in));
+		auto b(begin(gen));
+		auto e(end(gen));
+		std::size_t discarded{};
+		for(;b!=e&&discarded!=n;++b)
+			++n;
+		return discarded;
 	}
 }
 

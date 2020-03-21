@@ -16,6 +16,15 @@ int main()
 		scan(ibuf_file,v[i]);
 	}
 	}
+	{
+	fast_io::timer t("ibuf discard");
+	fast_io::ibuf_file ibuf_file("native.txt");
+	for(std::size_t i(0);i!=N;++i)
+	{
+		scan(ibuf_file,fast_io::no_decoration(v[i]));
+		discard(ibuf_file);
+	}
+	}
 	std::string str;
 	str.reserve(30);
 	{
@@ -51,7 +60,7 @@ int main()
 		fast_io::timer t("charconv");
 		for(std::size_t i(0);i!=N;++i)
 		{
-			auto const& str(strs[i]);
+			std::string_view str(strs[i]);
 			auto [p,ec]=std::from_chars(str.data(),str.data()+str.size(),v[i]);
 		}
 	}
