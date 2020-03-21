@@ -59,20 +59,18 @@ inline void print_define(output& out,manip::scientific<precision,uppercase_e,T c
 	if constexpr(buffer_output_stream<output>)
 	{
 
-		auto reserved(oreserve(out,reserved_size));
-		if constexpr(std::is_pointer_v<decltype(reserved)>)
+		auto start(oreserve(out,reserved_size));
+		if constexpr(std::is_pointer_v<decltype(start)>)
 		{
-			if(reserved)
+			if(start)
 			{
-				auto start(reserved-reserved_size);
-				orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
+				orelease(out,details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
 				return;
 			}
 		}
 		else
 		{
-			auto start(reserved-reserved_size);
-			orelease(out,reserved-details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
+			orelease(out,details::ryu::output_fixed<precision,true,uppercase_e>(start,static_cast<double>(a.reference)));
 			return;
 		}
 	}
