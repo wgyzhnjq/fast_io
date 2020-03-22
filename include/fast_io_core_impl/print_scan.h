@@ -45,6 +45,7 @@ inline constexpr auto normal_scan(input &ip,Args&& ...args)
 		(scan_with_ex(ip,std::forward<Args>(args)),...);
 }
 
+
 template<output_stream output,typename T>
 requires (printable<output,T>||reserve_printable<T>)
 inline constexpr void print_control(output& out,T&& t)
@@ -131,6 +132,53 @@ inline constexpr void print_control(output& out,manip::follow_character<T,ch_typ
 	}
 }
 
+template<output_stream output,typename T>
+requires ((printable<output,T>&&character_output_stream<output>)||reserve_printable<T>)
+inline constexpr void print_control_line(output& out,T&& t)
+{
+	if constexpr(reserve_printable<T>)
+	{
+		using char_type = typename output::char_type;
+		constexpr std::size_t size{print_reserve_size(print_reserve_type<std::remove_cvref_t<T>>)+1};
+		if constexpr(reserve_output_stream<output>)
+		{
+			if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out,size))>>)
+			{
+				auto ptr{oreserve(out,size)};
+				if(ptr==nullptr)[[unlikely]]
+				{
+					std::array<char_type,size> array;
+					auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,array.data(),std::forward<T>(t))};
+					*it=u8'\n';
+					write(out,array.data(),++it);
+					return;
+				}
+				auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,ptr,std::forward<T>(t))};
+				*it=u8'\n';
+				orelease(out,++it);
+			}
+			else
+			{
+				auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,oreserve(out,size),std::forward<T>(t))};
+				*it=u8'\n';
+				orelease(out,++it);
+			}
+		}
+		else
+		{
+			std::array<char_type,size> array;
+			auto it{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,array.data(),std::forward<T>(t))};
+			*it=u8'\n';
+			write(out,array.data(),++it);
+		}
+	}
+	else if constexpr(printable<output,T>)
+	{
+		print_define(out,std::forward<T>(t));
+		put(out,u8'\n');
+	}
+}
+
 template<output_stream output,typename ...Args>
 requires(general_printable<output,Args>&&...)
 inline constexpr void normal_print(output &out,Args&& ...args)
@@ -144,7 +192,7 @@ inline constexpr void normal_println(output &out,Args&& ...args)
 {
 	if constexpr((sizeof...(Args)==1)&&(reserve_printable<Args>&&...))
 	{
-		(print_control(out,manip::follow_character<Args const,char8_t>{std::forward<Args>(args),u8'\n'}),...);
+		((print_control_line(out,std::forward<Args>(args))),...);
 	}
 	else
 	{
