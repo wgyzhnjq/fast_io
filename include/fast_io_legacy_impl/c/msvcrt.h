@@ -143,8 +143,8 @@ inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
 
 inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
 {
-	fp->_cnt-=ptr-fp->_ptr;
-	fp->_ptr=ptr;
+	cio.fp->_cnt-=ptr-cio.fp->_ptr;
+	cio.fp->_ptr=ptr;
 }
 
 inline bool underflow(c_io_observer_unlocked cio)
@@ -157,14 +157,20 @@ inline constexpr char* obuffer_cbegin(c_io_observer_unlocked cio)
 	return cio.fp->_base;
 }
 
-inline constexpr details::c_io_handle_curr_proxy obuffer_curr(c_io_observer_unlocked cio)
+inline constexpr char* obuffer_curr(c_io_observer_unlocked cio)
 {
-	return {cio.fp};
+	return cio.fp->_ptr;
 }
 
 inline constexpr char* obuffer_cend(c_io_observer_unlocked cio)
 {
 	return cio.fp->_base+cio.fp->_bufsiz;
+}
+
+inline constexpr void obuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
+{
+	cio.fp->_cnt-=ptr-cio.fp->_ptr;
+	cio.fp->_ptr=ptr;
 }
 
 inline void overflow(c_io_observer_unlocked cio,char ch)
