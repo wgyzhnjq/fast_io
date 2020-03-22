@@ -66,22 +66,46 @@ inline void scan_define(input& in,manip::whole<std::basic_string<typename input:
 template<buffer_input_stream input>
 inline bool scan_define(input& in,manip::line<std::basic_string<typename input::char_type>> ref)
 {
-	auto gen{igenerator(in)};
-	auto i{begin(gen)};
-	auto e{end(gen)};
-	if(i==e)
-		return false;
-	ref.reference.clear();
-	for(;i!=e;++i)
+	auto& str{ref.reference};
+	if constexpr(buffer_input_stream<input>)
 	{
-		if(*i==u8'\n')
+		if(ibuffer_curr(in)==ibuffer_end(in))[[unlikely]]
+				if(!underflow(in))[[unlikely]]
+					return false;
+		for(str.clear();;)
 		{
-			++i;
-			return true;
+			auto b{ibuffer_curr(in)};
+			auto i{b};
+			auto e{ibuffer_end(in)};
+			for(;i!=e&&*i!=u8'\n';++i);
+			str.append(b,i);
+			ibuffer_set_curr(in,i);
+			if(i==e)[[unlikely]]
+			{
+				if(!underflow(in))[[unlikely]]
+					break;
+			}
+			else
+			{
+				ibuffer_set_curr(in,i+1);
+				break;
+			}
 		}
-		ref.reference.push_back(*i);
+		return true;
 	}
-	return true;
+	else
+	{
+		auto gen{igenerator(in)};
+		auto i{begin(gen)};
+		auto e{end(gen)};
+		if(i==e)[[unlikely]]
+			return false;
+		for(;i!=e&&*i!=u8'\n';++i)
+			str.push_back(*i);
+		if(i!=e)[[likely]]
+			++i;
+		return true;
+	}
 /*	auto i(begin(in));
 	auto e(end(in));
 	if(i==e)
