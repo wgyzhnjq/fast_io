@@ -4,6 +4,7 @@
 #include<fstream>
 #include"../../include/fast_io.h"
 #include"../../include/fast_io_device.h"
+#include"../../include/fast_io_legacy.h"
 //#include"../../include/fast_io_crypto.h"
 #include<exception>
 #include<memory>
