@@ -26,10 +26,13 @@ inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr) noe
 extern "C" int __underflow (FILE *) noexcept;
 inline bool underflow(c_io_observer_unlocked cio) noexcept
 {
-	debug_println("cio ",cio.fp->_IO_read_base," ",cio.fp->_IO_read_ptr," ",cio.fp->_IO_read_end);
+	debug_println("cio\tbase:",fast_io::unsigned_view(cio.fp->_IO_read_base),"\tptr:",
+		fast_io::unsigned_view(cio.fp->_IO_read_ptr),"\tend:",
+		fast_io::unsigned_view(cio.fp->_IO_read_end));
 	bool f{__underflow(cio.fp)!=EOF};
-	debug_println("cio ",cio.fp->_IO_read_base," ",cio.fp->_IO_read_ptr," ",cio.fp->_IO_read_end);
-
+	debug_println("cio\tbase:",fast_io::unsigned_view(cio.fp->_IO_read_base),"\tptr:",
+		fast_io::unsigned_view(cio.fp->_IO_read_ptr),"\tend:",
+		fast_io::unsigned_view(cio.fp->_IO_read_end));
 	return f;
 }
 
