@@ -91,7 +91,7 @@ inline constexpr std::default_sentinel_t end(basic_input_buffer_generator<input>
 template<buffer_input_stream input>
 inline constexpr basic_input_buffer_generator<input> igenerator(input& in)
 {
-	if(ibuffer_gbegin(in)==ibuffer_gend(in))[[unlikely]]
+	if(ibuffer_curr(in)==ibuffer_cend(in))[[unlikely]]
 	{
 		if(!underflow(in))[[unlikely]]
 			return {};

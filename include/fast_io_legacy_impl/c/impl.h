@@ -112,63 +112,6 @@ inline void write(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
 		fast_terminate();
 #endif
 }
-/*
-template<bool err=false>
-inline auto get(c_io_observer_unlocked& cfhd)
-{
-	auto ch(
-#ifdef _MSC_VER
-	_fgetc_nolock
-#elif defined(_POSIX_SOURCE)
-	fgetc_unlocked
-#else
-	fgetc
-#endif
-	(cfhd.native_handle()));
-	if(ch==EOF)
-	{
-		if(
-#ifdef _POSIX_SOURCE
-	feof_unlocked
-#else
-	feof
-#endif
-(cfhd.native_handle()))
-		{
-			if constexpr(err)
-				return std::pair<typename c_io_observer_unlocked::char_type,bool>{0,true};
-			else
-				throw eof();
-		}
-		throw std::system_error(errno,std::system_category());
-	}
-	if constexpr(err)
-		return std::pair<typename c_io_observer_unlocked::char_type,bool>
-		{
-			std::char_traits<typename c_io_observer_unlocked::char_type>::to_char_type(ch),false
-		};
-	else
-		return std::char_traits<typename c_io_observer_unlocked::char_type>::to_char_type(ch);
-}
-*/
-inline void put(c_io_observer_unlocked& cfhd,typename c_io_observer_unlocked::char_type ch)
-{
-	if(
-#if defined(_MSC_VER)
-		_fputc_nolock
-#elif defined(_POSIX_SOURCE)
-		fputc_unlocked
-#else
-		fputc
-#endif
-	(static_cast<char>(ch),cfhd.native_handle())==EOF)
-
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::system_category());
-#else
-		fast_terminate();
-#endif
-}
 
 inline void flush(c_io_observer_unlocked& cfhd)
 {
@@ -211,40 +154,6 @@ inline void seek(c_io_observer_unlocked& cfhd,U i,seekdir s=seekdir::beg)
 
 
 
-//Exploiting the library internal implementation for performance since the stdio.h performance is SO TERRIBLE
-#ifdef __MINGW32__
-//cannot convert to char8_t due to strict aliasing rule violation
-inline char* oreserve(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	auto& h(*cfhd.native_handle());
-	if((h._cnt-=n)<=0) [[unlikely]]
-	{
-		h._cnt+=n;
-		return nullptr;
-	}
-	return h._ptr+=n;
-}
-
-inline void orelease(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	auto& h(*(_iobuf*)cfhd.native_handle());
-	h._cnt+=n;
-	h._ptr-=n;
-}
-#elif defined(__GNU_LIBRARY__)
-inline char* oreserve(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	auto& h(*cfhd.native_handle());
-	if(h._IO_write_end<=h._IO_write_ptr+n)
-		return nullptr;
-	return h._IO_write_ptr+=n;
-}
-
-inline void orelease(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	cfhd.native_handle()->_IO_write_ptr-=n;
-}
-#endif
 
 class c_io_lock_guard;
 
@@ -300,9 +209,9 @@ inline auto mutex(c_io_observer& h)
 	return h.native_handle();
 }
 
-inline auto unlocked_handle(c_io_observer& h)
+inline c_io_observer_unlocked unlocked_handle(c_io_observer& h)
 {
-	return c_io_observer_unlocked{h.native_handle()};
+	return {h.native_handle()};
 }
 
 class c_io_lock_guard
@@ -349,17 +258,6 @@ inline void write(c_io_observer& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
-#ifdef __cpp_exceptions
-		throw std::system_error(errno,std::system_category());
-#else
-		fast_terminate();
-#endif
-}
-
-
-inline void put(c_io_observer& cfhd,typename c_io_observer::char_type ch)
-{
-	if(std::fputc(ch,cfhd.native_handle())==EOF)
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
 #else
@@ -592,7 +490,7 @@ inline auto redirect_handle(basic_c_io_observer<ch_type>& h)
 using c_io_handle_unlocked = basic_c_io_handle_unlocked<char>;
 using c_io_handle = basic_c_io_handle<char>;
 using c_file = basic_c_file<char>;
-using c_file_unlocked = basic_c_file<char>;
+using c_file_unlocked = basic_c_file_unlocked<char>;
 
 #ifdef __linux__
 template<std::integral ch_type>

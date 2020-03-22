@@ -13,7 +13,7 @@ inline constexpr bool scan_define(input& in,std::basic_string<typename input::ch
 		{
 			decltype(auto) ibf_curr(ibuffer_curr(in));
 			auto b{std::to_address(ibf_curr)};
-			auto e{ibuffer_end(in)};
+			auto e{ibuffer_cend(in)};
 			for(;b!=e&&!dg(*b);++b);
 			ibf_curr=b;
 			if(b==e)[[unlikely]]
@@ -28,7 +28,7 @@ inline constexpr bool scan_define(input& in,std::basic_string<typename input::ch
 		{
 			decltype(auto) ibf_curr(ibuffer_curr(in));
 			auto b{std::to_address(ibf_curr)};
-			auto e{ibuffer_end(in)};
+			auto e{ibuffer_cend(in)};
 			auto i{b};
 			for(;i!=e&&dg(*i);++i);
 			str.append(b,i);

@@ -124,9 +124,9 @@ template<input_stream Ihandler,typename Buf>
 }
 
 template<buffer_output_stream Ihandler,typename Buf>
-inline constexpr decltype(auto) overflow(basic_ibuf<Ihandler,Buf>& ib)
+inline constexpr decltype(auto) overflow(basic_ibuf<Ihandler,Buf>& ib,typename Ihandler::char_type ch)
 {
-	return overflow(ib.oh);
+	return overflow(ib.oh,ch);
 }
 
 template<buffer_output_stream Ihandler,typename Buf>
@@ -343,9 +343,17 @@ template<output_stream Ohandler,typename Buf>
 }
 
 template<output_stream Ohandler,typename Buf>
-inline constexpr void overflow(basic_obuf<Ohandler,Buf>& ob)
+inline constexpr void overflow(basic_obuf<Ohandler,Buf>& ob,typename Ohandler::char_type ch)
 {
-	write(ob.oh,ob.obuffer.beg,ob.obuffer.curr);
+	if(ob.obuffer.beg)	//cold buffer
+		write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+	else
+	{
+		ob.obuffer.init_space();
+		ob.obuffer.end=ob.obuffer.beg+Buf::size;
+	}
+	*(ob.obuffer.curr=ob.obuffer.beg)=ch;
+	++ob.obuffer.curr;
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
@@ -441,24 +449,6 @@ inline constexpr void write(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi
 					reinterpret_cast<char const*>(std::to_address(cendi)));
 }
 
-template<output_stream Ohandler,typename Buf>
-inline constexpr void put(basic_obuf<Ohandler,Buf>& ob,typename basic_obuf<Ohandler,Buf>::char_type ch)
-{
-	if(ob.obuffer.curr==ob.obuffer.end)[[unlikely]]		//buffer full
-	{
-		if(ob.obuffer.beg)	//cold buffer
-			write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
-		else
-		{
-			ob.obuffer.init_space();
-			ob.obuffer.end=ob.obuffer.beg+Buf::size;
-		}
-		ob.obuffer.curr=ob.obuffer.beg+1;
-		*ob.obuffer.beg=ch;
-		return;//no flow dependency any more
-	}
-	*ob.obuffer.curr++=ch;
-}
 template<output_stream Ohandler,typename Buf>
 inline constexpr void flush(basic_obuf<Ohandler,Buf>& ob)
 {

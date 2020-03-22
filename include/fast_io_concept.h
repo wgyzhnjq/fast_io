@@ -88,13 +88,13 @@ concept reserve_output_stream_impl = requires(T& out,std::size_t n)
 };
 
 template<typename T>
-concept buffer_output_stream_impl = requires(T& out)
+concept buffer_output_stream_impl = requires(T& out,typename T::char_type ch)
 {
 //	oensure_hot(out);
 	obuffer_cbegin(out);
 	std::to_address(obuffer_curr(out));
 	obuffer_cend(out);
-	overflow(out);
+	overflow(out,ch);
 };
 
 template<typename T>
@@ -244,21 +244,6 @@ struct print_reserve_type_t
 };
 template<typename T>
 inline constexpr print_reserve_type_t<T> print_reserve_type{};
-
-template<buffer_output_stream output,std::integral I>
-inline constexpr auto oreserve(output& out,I n)->typename output::char_type*
-{
-	decltype(auto) curr{obuffer_curr(out)};
-	if(obuffer_cend(out)-curr<n)[[unlikely]]
-		return nullptr;
-	return std::to_address(curr);
-}
-
-template<buffer_output_stream output>
-inline constexpr void orelease(output& out,typename output::char_type* ptr)
-{
-	obuffer_curr(out)=ptr;
-}
 
 template<typename T>
 concept reserve_printable=requires(T&& t,char8_t* ptr)

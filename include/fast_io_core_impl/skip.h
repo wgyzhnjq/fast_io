@@ -23,10 +23,9 @@ template<character_input_stream input,typename UnaryPredicate>
 	{
 		for(;;)
 		{
-			decltype(auto) gbegin{ibuffer_gbegin(in)};
-			decltype(auto) gend{ibuffer_gend(in)};
+			decltype(auto) gbegin{ibuffer_curr(in)};
 			auto b{std::to_address(gbegin)};
-			auto e{std::to_address(gend)};
+			auto e{ibuffer_cend(in)};
 			for(;b!=e;++b)
 				if(pred(*b))
 				{
@@ -86,10 +85,9 @@ inline constexpr std::size_t discard(input& in,std::size_t n)
 		std::size_t discarded{};
 		for(;;)
 		{
-			decltype(auto) gbegin{ibuffer_gbegin(in)};
-			decltype(auto) gend{ibuffer_gend(in)};
+			decltype(auto) gbegin{ibuffer_curr(in)};
 			auto b{std::to_address(gbegin)};
-			auto e{std::to_address(gend)};
+			auto e{ibuffer_cend(in)};
 			if(e-b<n)
 			{
 				discarded+=e-b;

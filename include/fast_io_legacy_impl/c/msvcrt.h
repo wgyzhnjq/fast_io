@@ -27,7 +27,7 @@ struct c_io_handle_curr_proxy
 	using element_type = char*;
 	inline constexpr c_io_handle_curr_proxy& operator=(char* ptr) noexcept
 	{
-		fp->_cnt+=ptr-fp->_ptr;
+		fp->_cnt-=ptr-fp->_ptr;
 		fp->_ptr=ptr;
 		return *this;
 	}
@@ -105,7 +105,6 @@ struct c_io_handle_curr_proxy
 		--*this;
 		return temp;
 	}
-
 };
 
 inline constexpr bool operator==(char const * e,c_io_handle_curr_proxy io)
@@ -124,6 +123,7 @@ inline constexpr bool operator!=(c_io_handle_curr_proxy io,char const * e)
 {
 	return io.fp->_ptr!=e;
 }
+
 }
 
 inline constexpr char* ibuffer_cbegin(c_io_observer_unlocked cio)
@@ -138,14 +138,12 @@ inline constexpr details::c_io_handle_curr_proxy ibuffer_curr(c_io_observer_unlo
 
 inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
 {
-	return cio.fp->_ptr+cio.fp->_bufsiz;
+	return cio.fp->_ptr+cio.fp->_cnt;
 }
 
 inline bool underflow(c_io_observer_unlocked cio)
 {
-	posix_io_observer pos(static_cast<posix_io_observer>(cio));
-	auto& e{*cio.fp};
-	return !(e._cnt=e._bufsiz-((e._ptr=read(pos,e._base,e._base+e._bufsiz))-e._base));
+	return _filbuf(cio.fp)!=EOF;
 }
 
 inline constexpr char* obuffer_cbegin(c_io_observer_unlocked cio)
@@ -160,14 +158,32 @@ inline constexpr details::c_io_handle_curr_proxy obuffer_curr(c_io_observer_unlo
 
 inline constexpr char* obuffer_cend(c_io_observer_unlocked cio)
 {
-	return cio.fp->_ptr+cio.fp->_bufsiz;
+	return cio.fp->_base+cio.fp->_bufsiz;
 }
 
-inline void overflow(c_io_observer_unlocked cio)
+inline void overflow(c_io_observer_unlocked cio,char ch)
 {
-	posix_io_observer pos(static_cast<posix_io_observer>(cio));
-	auto& e{*cio.fp};
-	write(pos,e._base,e._base+e._cnt);
+	cio.fp->_flag|=0x010000;
+	if(_flsbuf(static_cast<int>(static_cast<unsigned char>(ch)),cio.fp)==EOF)[[unlikely]]
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
 }
+/*
+inline constexpr char* oreserve(c_io_observer_unlocked cio,std::size_t sz)
+{
+	if(cio.fp->_bufsiz-cio.fp->_cnt<sz)[[unlikely]]
+		return nullptr;
+	return cio.fp->_ptr;
+}
+
+inline constexpr void orelease(c_io_observer_unlocked cio,char* ptr)
+{
+	cio.fp->_cnt-=ptr-cio.fp->_ptr;
+	cio.fp->_ptr=ptr;
+}
+*/
 
 }
