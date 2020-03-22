@@ -11,10 +11,11 @@ inline constexpr bool scan_define(input& in,std::basic_string<typename input::ch
 	{
 		for(;;)
 		{
-			auto b{std::to_address(ibuffer_gbegin(in))};
-			auto e{std::to_address(ibuffer_gend(in))};
+			decltype(auto) ibf_curr(ibuffer_curr(in));
+			auto b{std::to_address(ibf_curr)};
+			auto e{ibuffer_end(in)};
 			for(;b!=e&&!dg(*b);++b);
-			ibuffer_gbegin(in)=b;
+			ibf_curr=b;
 			if(b==e)[[unlikely]]
 			{
 				if(!underflow(in))[[unlikely]]
@@ -25,12 +26,13 @@ inline constexpr bool scan_define(input& in,std::basic_string<typename input::ch
 		}
 		for(str.clear();;)
 		{
-			auto b{std::to_address(ibuffer_gbegin(in))};
-			auto e{std::to_address(ibuffer_gend(in))};
+			decltype(auto) ibf_curr(ibuffer_curr(in));
+			auto b{std::to_address(ibf_curr)};
+			auto e{ibuffer_end(in)};
 			auto i{b};
 			for(;i!=e&&dg(*i);++i);
 			str.append(b,i);
-			ibuffer_gbegin(in)=i;
+			ibf_curr=b;
 			if(i==e)[[unlikely]]
 			{
 				if(!underflow(in))[[unlikely]]

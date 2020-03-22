@@ -20,21 +20,21 @@ constexpr basic_input_buffer_iterator<input>& deal_with_underflow(basic_input_bu
 		gen.ptr={};
 		return gen;
 	}
-	++ibuffer_gbegin(ref);
+	++ibuffer_curr(ref);
 	return gen;
 }
 }
 template<buffer_input_stream input>
 inline constexpr auto operator*(basic_input_buffer_iterator<input>& gen)
 {
-	return *ibuffer_gbegin(*gen.ptr);
+	return *ibuffer_curr(*gen.ptr);
 }
 template<buffer_input_stream input>
 inline constexpr basic_input_buffer_iterator<input>& operator++(basic_input_buffer_iterator<input>& gen)
 {
 	auto& ref(*gen.ptr);
-	decltype(auto) gi{ibuffer_gbegin(ref)};
-	if(gi==ibuffer_gend(ref))[[unlikely]]
+	decltype(auto) gi{ibuffer_curr(ref)};
+	if(gi==ibuffer_cend(ref))[[unlikely]]
 		return details::deal_with_underflow(gen);
 	++gi;
 	return gen;

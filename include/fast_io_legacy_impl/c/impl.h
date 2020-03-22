@@ -70,22 +70,6 @@ inline auto redirect_handle(basic_c_io_observer_unlocked<ch_type>& h)
 
 using c_io_observer_unlocked = basic_c_io_observer_unlocked<char>;
 
-/*
-#ifdef _MSC_VER
-
-struct _iobuf
-{
-char *_ptr;
-int _cnt;
-char *_base;
-int _flag;
-int _file;
-int _charbuf;
-int _bufsiz;
-char *_tmpfname;
-};
-#endif
-*/
 template<std::contiguous_iterator Iter>
 inline Iter read(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
 {
@@ -624,3 +608,12 @@ inline auto zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type>& h)
 #endif
 
 }
+
+#if defined(__WINNT__)
+// || defined(_MSC_VER)
+#include"msvcrt.h"
+#elif defined(__GLIBC__)
+#include"glibc.h"
+#else
+#include"general.h"
+#endif

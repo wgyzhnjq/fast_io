@@ -62,9 +62,9 @@ template<typename T>
 concept buffer_input_stream_impl = requires(T& in)
 {
 //	iensure_hot(in);
-	std::to_address(ibuffer_cbegin(in));
-	std::to_address(ibuffer_gbegin(in));
-	std::to_address(ibuffer_gend(in));
+	ibuffer_cbegin(in);
+	std::to_address(ibuffer_curr(in));
+	ibuffer_cend(in);
 //	std::to_address(ibuffer_cend(in)); many platform like libstdc++/libc++ do not correctly support this??
 	{underflow(in)}->std::convertible_to<bool>;
 };
@@ -91,9 +91,9 @@ template<typename T>
 concept buffer_output_stream_impl = requires(T& out)
 {
 //	oensure_hot(out);
-	std::to_address(obuffer_cbegin(out));
+	obuffer_cbegin(out);
 	std::to_address(obuffer_curr(out));
-	std::to_address(obuffer_cend(out));
+	obuffer_cend(out);
 	overflow(out);
 };
 

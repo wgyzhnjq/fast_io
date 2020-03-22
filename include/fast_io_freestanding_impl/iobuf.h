@@ -113,20 +113,16 @@ template<input_stream Ihandler,typename Buf>
 	return ib.ibuffer.beg;
 }
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto& ibuffer_gbegin(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr auto& ibuffer_curr(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.curr;
 }
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto& ibuffer_gend(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr auto ibuffer_cend(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.end;
 }
-template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto ibuffer_cend(basic_ibuf<Ihandler,Buf>& ib)
-{
-	return ib.ibuffer.beg+Buf::size;
-}
+
 template<buffer_output_stream Ihandler,typename Buf>
 inline constexpr decltype(auto) overflow(basic_ibuf<Ihandler,Buf>& ib)
 {
@@ -365,15 +361,9 @@ template<buffer_input_stream Ohandler,typename Buf>
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) ibuffer_gbegin(basic_obuf<Ohandler,Buf>& ob)
+[[nodiscard]] inline constexpr decltype(auto) ibuffer_curr(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ibuffer_gbegin(ob.oh);
-}
-
-template<buffer_input_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) ibuffer_gend(basic_obuf<Ohandler,Buf>& ob)
-{
-	return ibuffer_gend(ob.oh);
+	return ibuffer_curr(ob.oh);
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
