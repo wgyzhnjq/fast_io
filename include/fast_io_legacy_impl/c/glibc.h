@@ -20,7 +20,10 @@ inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
 extern "C" int __underflow (FILE *);
 inline bool underflow(c_io_observer_unlocked cio)
 {
-	return __underflow(cio.fp)!=EOF;
+	if(__underflow(cio.fp)==EOF)[[unlikely]]
+		return false;
+	--cio.fp->_IO_read_ptr;
+	return true;
 }
 
 inline constexpr char* obuffer_cbegin(c_io_observer_unlocked cio)
