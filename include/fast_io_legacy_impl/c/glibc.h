@@ -3,7 +3,7 @@
 namespace fast_io
 {
 
-inline constexpr char* ibuffer_cbegin(c_io_observer_unlocked cio)
+inline constexpr char* ibuffer_begin(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_read_base;
 }
@@ -13,7 +13,7 @@ inline constexpr auto& ibuffer_curr(c_io_observer_unlocked cio)
 	return cio.fp->_IO_read_ptr;
 }
 
-inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
+inline constexpr char* ibuffer_end(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_read_end;
 }
@@ -32,7 +32,7 @@ inline bool underflow(c_io_observer_unlocked cio)
 	return true;
 }
 
-inline constexpr char* obuffer_cbegin(c_io_observer_unlocked cio)
+inline constexpr char* obuffer_begin(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_write_base;
 }
@@ -42,7 +42,7 @@ inline constexpr auto& obuffer_curr(c_io_observer_unlocked cio)
 	return cio.fp->_IO_write_ptr;
 }
 
-inline constexpr char* obuffer_cend(c_io_observer_unlocked cio)
+inline constexpr char* obuffer_end(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_write_end;
 }

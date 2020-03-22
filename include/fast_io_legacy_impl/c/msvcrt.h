@@ -136,7 +136,7 @@ inline constexpr char* ibuffer_curr(c_io_observer_unlocked cio)
 	return cio.fp->_ptr;
 }
 
-inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
+inline constexpr char* ibuffer_end(c_io_observer_unlocked cio)
 {
 	return cio.fp->_ptr+cio.fp->_cnt;
 }
@@ -152,7 +152,7 @@ inline bool underflow(c_io_observer_unlocked cio)
 	return _filbuf(cio.fp)!=EOF;
 }
 
-inline constexpr char* obuffer_cbegin(c_io_observer_unlocked cio)
+inline constexpr char* obuffer_begin(c_io_observer_unlocked cio)
 {
 	return cio.fp->_base;
 }
@@ -162,7 +162,7 @@ inline constexpr char* obuffer_curr(c_io_observer_unlocked cio)
 	return cio.fp->_ptr;
 }
 
-inline constexpr char* obuffer_cend(c_io_observer_unlocked cio)
+inline constexpr char* obuffer_end(c_io_observer_unlocked cio)
 {
 	return cio.fp->_base+cio.fp->_bufsiz;
 }
