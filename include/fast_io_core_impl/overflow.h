@@ -7,16 +7,15 @@ namespace fast_io
 template<buffer_output_stream output,std::integral I>
 inline constexpr auto oreserve(output& out,I n)->typename output::char_type*
 {
-	decltype(auto) curr{obuffer_curr(out)};
-	if(obuffer_end(out)<=std::to_address(curr)+n)[[unlikely]]
+	if(obuffer_end(out)<=obuffer_curr(out)+n)[[unlikely]]
 		return nullptr;
-	return std::to_address(curr);
+	return obuffer_curr(out);
 }
 
 template<buffer_output_stream output>
 inline constexpr void orelease(output& out,typename output::char_type* ptr)
 {
-	obuffer_curr(out)=ptr;
+	obuffer_set_curr(out,ptr);
 }
 
 template<buffer_output_stream output>
