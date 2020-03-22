@@ -338,10 +338,7 @@ public:
 };
 
 
-template<typename T,
-	bool buffer=true,
-	bool use_fwide=false>
-requires (!use_fwide||std::same_as<typename T::native_handle,wchar_t>)
+template<typename T>
 class basic_c_file_impl:public T
 {
 public:
@@ -389,7 +386,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		if constexpr(use_fwide)
+		if constexpr(std::same_as<wchar_t,T>)
 		{
 			if(fwide(this->native_handle(),1)<=0)
 #ifdef __cpp_exceptions
@@ -398,11 +395,9 @@ public:
 				throw std::system_error(std::make_error_code(std::errc::io_error));
 			}
 #else
-				fast_terminate();
+			fast_terminate();
 #endif
 		}
-		if constexpr(!buffer)
-			std::setbuf(native_handle(),nullptr);
 	}
 
 	basic_c_file_impl(basic_posix_io_handle<char_type>&& posix_handle,open_mode om):
