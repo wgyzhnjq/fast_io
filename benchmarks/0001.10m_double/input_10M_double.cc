@@ -45,6 +45,12 @@ try
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}
+	{
+	fast_io::timer t("hacked c_file_unlocked");
+	fast_io::c_file_unlocked ibuf("obuf_filedb.txt");
+	for(std::size_t i(0);i!=N;++i)
+		scan(ibuf,v[i]);
+	}
 /*	{
 	cqw::timer t("ibuf_mutex ryu");
 	fast_io::ibuf_mutex ibuf("obufdb.txt");
