@@ -8,7 +8,7 @@ inline constexpr char* ibuffer_begin(c_io_observer_unlocked cio) noexcept
 	return cio.fp->_IO_read_base;
 }
 
-inline constexpr auto& ibuffer_curr(c_io_observer_unlocked cio) noexcept
+inline constexpr char* ibuffer_curr(c_io_observer_unlocked cio) noexcept
 {
 	return cio.fp->_IO_read_ptr;
 }
@@ -34,7 +34,7 @@ inline constexpr char* obuffer_begin(c_io_observer_unlocked cio) noexcept
 	return cio.fp->_IO_write_base;
 }
 
-inline constexpr auto& obuffer_curr(c_io_observer_unlocked cio) noexcept
+inline constexpr char* obuffer_curr(c_io_observer_unlocked cio) noexcept
 {
 	return cio.fp->_IO_write_ptr;
 }
