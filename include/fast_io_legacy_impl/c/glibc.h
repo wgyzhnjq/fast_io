@@ -17,6 +17,12 @@ inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_read_end;
 }
+
+inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
+{
+	cio.fp->_IO_read_ptr=ptr;
+}
+
 extern "C" int __underflow (FILE *);
 inline bool underflow(c_io_observer_unlocked cio)
 {
@@ -40,6 +46,12 @@ inline constexpr char* obuffer_cend(c_io_observer_unlocked cio)
 {
 	return cio.fp->_IO_write_end;
 }
+
+inline constexpr void obuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
+{
+	cio.fp->_IO_write_ptr=ptr;
+}
+
 extern "C" int __overflow (FILE *,int);
 
 inline void overflow(c_io_observer_unlocked cio,char ch)

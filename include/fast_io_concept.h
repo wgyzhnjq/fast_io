@@ -61,11 +61,9 @@ concept random_access_stream_impl = requires(T& t)
 template<typename T>
 concept buffer_input_stream_impl = requires(T& in)
 {
-//	iensure_hot(in);
-	ibuffer_cbegin(in);
-	std::to_address(ibuffer_curr(in));
-	ibuffer_cend(in);
-//	std::to_address(ibuffer_cend(in)); many platform like libstdc++/libc++ do not correctly support this??
+	{ibuffer_begin(in)}->std::convertible_to<typename T::char_type*>;
+	ibuffer_set_curr(in,ibuffer_curr(in));
+	{ibuffer_end(in)}->std::convertible_to<typename T::char_type*>;
 	{underflow(in)}->std::convertible_to<bool>;
 };
 
@@ -90,10 +88,9 @@ concept reserve_output_stream_impl = requires(T& out,std::size_t n)
 template<typename T>
 concept buffer_output_stream_impl = requires(T& out,typename T::char_type ch)
 {
-//	oensure_hot(out);
-	obuffer_cbegin(out);
-	std::to_address(obuffer_curr(out));
-	obuffer_cend(out);
+	{obuffer_begin(out)}->std::convertible_to<typename T::char_type*>;
+	{obuffer_end(out)}->std::convertible_to<typename T::char_type*>;
+	obuffer_set_curr(out,obuffer_curr(out));
 	overflow(out,ch);
 };
 

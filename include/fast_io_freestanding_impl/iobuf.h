@@ -108,7 +108,7 @@ template<input_stream Ihandler,typename Buf>
 }
 
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto ibuffer_cbegin(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr auto ibuffer_begin(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.beg;
 }
@@ -118,10 +118,17 @@ template<input_stream Ihandler,typename Buf>
 	return ib.ibuffer.curr;
 }
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto ibuffer_cend(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr auto ibuffer_end(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.end;
 }
+
+template<input_stream Ihandler,typename Buf>
+inline constexpr void ibuffer_set_curr(basic_ibuf<Ihandler,Buf>& ib,typename Ihandler::char_type* ptr)
+{
+	ib.ibuffer.curr=ptr;
+}
+
 
 template<buffer_output_stream Ihandler,typename Buf>
 inline constexpr decltype(auto) overflow(basic_ibuf<Ihandler,Buf>& ib,typename Ihandler::char_type ch)
@@ -130,9 +137,9 @@ inline constexpr decltype(auto) overflow(basic_ibuf<Ihandler,Buf>& ib,typename I
 }
 
 template<buffer_output_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) obuffer_cbegin(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr decltype(auto) obuffer_begin(basic_ibuf<Ihandler,Buf>& ib)
 {
-	return obuffer_cbegin(ib.oh);
+	return obuffer_begin(ib.oh);
 }
 
 template<buffer_output_stream Ihandler,typename Buf>
@@ -141,9 +148,15 @@ template<buffer_output_stream Ihandler,typename Buf>
 	return obuffer_curr(ib.oh);
 }
 template<buffer_output_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) obuffer_cend(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr decltype(auto) obuffer_end(basic_ibuf<Ihandler,Buf>& ib)
 {
-	return obuffer_cend(ib.oh);
+	return obuffer_end(ib.oh);
+}
+
+template<buffer_output_stream Ihandler,typename Buf>
+[[nodiscard]] inline constexpr decltype(auto) obuffer_set_curr(basic_ibuf<Ihandler,Buf>& ib,typename Ihandler::char_type* ptr)
+{
+	return obuffer_set_curr(ib.oh,ptr);
 }
 
 template<output_stream Ihandler,typename Buf>
@@ -325,7 +338,7 @@ public:
 };
 
 template<output_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr auto obuffer_cbegin(basic_obuf<Ohandler,Buf>& ob)
+[[nodiscard]] inline constexpr auto obuffer_begin(basic_obuf<Ohandler,Buf>& ob)
 {
 	return ob.obuffer.beg;
 }
@@ -337,9 +350,15 @@ template<output_stream Ohandler,typename Buf>
 }
 
 template<output_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr auto obuffer_cend(basic_obuf<Ohandler,Buf>& ob)
+[[nodiscard]] inline constexpr auto obuffer_end(basic_obuf<Ohandler,Buf>& ob)
 {
 	return ob.obuffer.end;
+}
+
+template<output_stream Ohandler,typename Buf>
+inline constexpr void obuffer_set_curr(basic_obuf<Ohandler,Buf>& ob,typename Ohandler::char_type* ptr)
+{
+	ob.obuffer.curr=ptr;
 }
 
 template<output_stream Ohandler,typename Buf>
@@ -363,9 +382,9 @@ template<buffer_input_stream Ohandler,typename Buf>
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) ibuffer_cbegin(basic_obuf<Ohandler,Buf>& ob)
+[[nodiscard]] inline constexpr decltype(auto) ibuffer_begin(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ibuffer_cbegin(ob.oh);
+	return ibuffer_begin(ob.oh);
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
@@ -375,9 +394,15 @@ template<buffer_input_stream Ohandler,typename Buf>
 }
 
 template<buffer_input_stream Ohandler,typename Buf>
-[[nodiscard]] inline constexpr decltype(auto) ibuffer_cend(basic_obuf<Ohandler,Buf>& ob)
+[[nodiscard]] inline constexpr decltype(auto) ibuffer_end(basic_obuf<Ohandler,Buf>& ob)
 {
-	return ibuffer_cend(ob.oh);
+	return ibuffer_end(ob.oh);
+}
+
+template<buffer_input_stream Ohandler,typename Buf>
+inline constexpr decltype(auto) ibuffer_set_curr(basic_obuf<Ohandler,Buf>& ob,typename Ohandler::char_type* ptr)
+{
+	return ibuffer_set_curr(ob.oh,ptr);
 }
 
 namespace details

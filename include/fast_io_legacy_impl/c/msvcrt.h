@@ -17,7 +17,7 @@ int _bufsiz;
 char *_tmpfname;
 };
 */
-
+/*
 namespace details
 {
 
@@ -125,20 +125,26 @@ inline constexpr bool operator!=(c_io_handle_curr_proxy io,char const * e)
 }
 
 }
-
-inline constexpr char* ibuffer_cbegin(c_io_observer_unlocked cio)
+*/
+inline constexpr char* ibuffer_begin(c_io_observer_unlocked cio)
 {
 	return cio.fp->_base;
 }
 
-inline constexpr details::c_io_handle_curr_proxy ibuffer_curr(c_io_observer_unlocked cio)
+inline constexpr char* ibuffer_curr(c_io_observer_unlocked cio)
 {
-	return {cio.fp};
+	return cio.fp->_ptr;
 }
 
 inline constexpr char* ibuffer_cend(c_io_observer_unlocked cio)
 {
 	return cio.fp->_ptr+cio.fp->_cnt;
+}
+
+inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
+{
+	fp->_cnt-=ptr-fp->_ptr;
+	fp->_ptr=ptr;
 }
 
 inline bool underflow(c_io_observer_unlocked cio)

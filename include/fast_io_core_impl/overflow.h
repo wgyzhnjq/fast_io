@@ -22,13 +22,14 @@ inline constexpr void orelease(output& out,typename output::char_type* ptr)
 template<buffer_output_stream output>
 inline constexpr void put(output& out,typename output::char_type ch)
 {
-	decltype(auto) ref{obuffer_curr(out)};
+	auto ref{obuffer_curr(out)};
 	if(ref==obuffer_cend(out))[[unlikely]]
 	{
 		overflow(out,ch);
 		return;
 	}
 	*ref=ch;
-	++ref;
+	obuffer_set_curr(out,ref+1);
+//	++ref;
 }
 } // namespace fast_io

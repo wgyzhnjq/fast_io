@@ -23,17 +23,14 @@ template<character_input_stream input,typename UnaryPredicate>
 	{
 		for(;;)
 		{
-			decltype(auto) gbegin{ibuffer_curr(in)};
-			auto b{std::to_address(gbegin)};
-			auto e{ibuffer_cend(in)};
-			for(;b!=e;++b)
-				if(pred(*b))
-				{
-					gbegin=b;
-					return true;
-				}
-			if(!underflow(in))
+//			decltype(auto) gbegin{ibuffer_curr(in)};
+			auto b{ibuffer_curr(in)};
+			auto e{ibuffer_end(in)};
+			for(;b!=e&&!pred(*b);++b);
+			ibuffer_set_curr(in,b);
+			if(b==e&&!underflow(in))[[unlikely]]
 				return false;
+			return true;
 		}
 	}
 	else
@@ -85,9 +82,8 @@ inline constexpr std::size_t discard(input& in,std::size_t n)
 		std::size_t discarded{};
 		for(;;)
 		{
-			decltype(auto) gbegin{ibuffer_curr(in)};
-			auto b{std::to_address(gbegin)};
-			auto e{ibuffer_cend(in)};
+			auto b{ibuffer_curr(in)};
+			auto e{ibuffer_end(in)};
 			if(e-b<n)
 			{
 				discarded+=e-b;
@@ -96,7 +92,7 @@ inline constexpr std::size_t discard(input& in,std::size_t n)
 			}
 			b+=n;
 			discarded+=n;
-			gbegin=b;
+			set_ibuffer_curr(in,b);
 		}
 		return discarded;
 	}
