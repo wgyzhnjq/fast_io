@@ -26,10 +26,7 @@ inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
 extern "C" int __underflow (FILE *);
 inline bool underflow(c_io_observer_unlocked cio)
 {
-	if(__underflow(cio.fp)==EOF)[[unlikely]]
-		return false;
-	--cio.fp->_IO_read_ptr;
-	return true;
+	return __underflow(cio.fp)!=EOF;
 }
 
 inline constexpr char* obuffer_begin(c_io_observer_unlocked cio)
@@ -63,19 +60,5 @@ inline void overflow(c_io_observer_unlocked cio,char ch)
 		fast_terminate();
 #endif
 }
-/*
-#if defined(__GNU_LIBRARY__)
-inline char* oreserve(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	auto& h(*cfhd.native_handle());
-	if(h._IO_write_end<=h._IO_write_ptr+n)
-		return nullptr;
-	return h._IO_write_ptr+=n;
-}
 
-inline void orelease(c_io_observer_unlocked& cfhd,std::size_t n)
-{
-	cfhd.native_handle()->_IO_write_ptr-=n;
-}
-#endif*/
 }
