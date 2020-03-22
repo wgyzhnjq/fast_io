@@ -61,10 +61,10 @@ try
 	}
 	{
 	fast_io::timer t("ibuf_sign");
-	fast_io::ibuf_file ibuf_file("cfilestar.txt");
+	fast_io::c_file_unlocked cfu("cfilestar.txt",fast_io::open_interface<fast_io::open_mode::in>);
 	for(std::size_t i(0);i!=N;++i)
 	{
-		scan(ibuf_file,v2[i]);
+		scan(cfu,v[i]);
 	}
 	}
 
