@@ -48,7 +48,7 @@ try
 	}
 	{
 	fast_io::timer t("hacked c_file_unlocked");
-	fast_io::c_file_unlocked ibuf("obuf_filedb.txt");
+	fast_io::c_file_unlocked ibuf("obuf_filedb.txt",fast_io::open_interface<fast_io::open_mode::in>);
 	for(std::size_t i(0);i!=N;++i)
 		scan(ibuf,v[i]);
 	}
