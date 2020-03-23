@@ -152,9 +152,6 @@ inline void seek(c_io_observer_unlocked& cfhd,U i,seekdir s=seekdir::beg)
 	seek(cfhd,seek_type<char>,i,s);
 }
 
-
-
-
 class c_io_lock_guard;
 
 template<std::integral ch_type>
@@ -382,14 +379,14 @@ public:
 		if constexpr(std::same_as<wchar_t,T>)
 		{
 			if(fwide(this->native_handle(),1)<=0)
-#ifdef __cpp_exceptions
 			{
+#ifdef __cpp_exceptions
 				std::fclose(this->native_handle());
-				throw std::system_error(std::make_error_code(std::errc::io_error));
-			}
+				throw std::system_error(errno,std::generic_category());
 #else
-			fast_terminate();
+				fast_terminate();
 #endif
+			}
 		}
 	}
 
