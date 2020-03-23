@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 /*
-mem layout
+MinGW64 layout
 struct _iobuf
 {
 char *_ptr;
@@ -16,6 +16,7 @@ int _charbuf;
 int _bufsiz;
 char *_tmpfname;
 };
+
 */
 
 inline constexpr char* ibuffer_begin(c_io_observer_unlocked cio)

@@ -491,9 +491,9 @@ inline auto zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type>& h)
 #endif
 
 }
-
-#if defined(__WINNT__)
-// || defined(_MSC_VER)
+#ifdef _MSC_VER
+#include"universal_crt.h"
+#elif defined(__WINNT__)
 #include"msvcrt.h"
 #elif defined(__GLIBC__)
 #include"glibc.h"
