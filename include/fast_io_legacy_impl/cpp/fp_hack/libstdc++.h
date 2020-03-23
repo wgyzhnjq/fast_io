@@ -12,28 +12,21 @@ inline FILE* fp_hack(std::basic_filebuf<char_type,traits_type>* fbuf) noexcept
 {
 	FILE* fp{};
 	// we can only do this or ubsanitizer will complain. Do not do down_cast
-	memcpy(&fp,reinterpret_cast<std::byte*>(fbuf)+sizeof(std::basic_streambuf<char_type, traits_type>)+sizeof(std::__c_lock),sizeof(fp));
+	memcpy(std::addressof(fp),reinterpret_cast<std::byte*>(fbuf)+sizeof(std::basic_streambuf<char_type, traits_type>)+sizeof(std::__c_lock),sizeof(fp));
 	return fp;
 }
 
 #ifdef __cpp_rtti
 template<typename T>
-requires (std::same_as<T,std::basic_streambuf<typename T::char_type,typename T::traits_type>>
-||std::derived_from<std::basic_filebuf<typename T::char_type,typename T::traits_type>,T>)
+requires (std::same_as<T,std::basic_streambuf<typename T::char_type,typename T::traits_type>>)
 inline FILE* fp_hack(T* cio)
 {
-	using filebuf_type = std::basic_filebuf<typename T::char_type,typename T::traits_type>;
-	if constexpr(std::derived_from<T,filebuf_type>)
-		return fp_hack(cio);
-	else
-	{
-		using char_type = typename T::char_type;
-		using traits_type = typename T::traits_type;
-		auto fbuf{dynamic_cast<std::basic_filebuf<char_type,traits_type>*>(cio)};
-		if(fbuf)
-			return fp_hack(fbuf);
-		return dynamic_cast<__gnu_cxx::stdio_sync_filebuf<char_type, traits_type>&>(*cio).file();
-	}
+	using char_type = typename T::char_type;
+	using traits_type = typename T::traits_type;
+	auto fbuf{dynamic_cast<std::basic_filebuf<char_type,traits_type>*>(cio)};
+	if(fbuf)
+		return fp_hack(fbuf);
+	return dynamic_cast<__gnu_cxx::stdio_sync_filebuf<char_type, traits_type>&>(*cio).file();
 }
 #endif
 }

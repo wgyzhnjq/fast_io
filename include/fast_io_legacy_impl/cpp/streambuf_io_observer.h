@@ -6,6 +6,8 @@
 #include"fp_hack/libstdc++.h"
 #elif defined(_MSVC_STL_UPDATE)
 #include"fp_hack/msvc_stl.h"
+#elif defined(__LIBCPP_VERSION)
+#include"fp_hack/libc++.h"
 #endif
 
 
@@ -30,8 +32,7 @@ public:
 	{
 		return rdb;
 	}
-#if defined(__GLIBCXX__)  || defined(_MSVC_STL_UPDATE)
-//Todo || defined(__LIBCPP_VERSION)
+#if defined(__GLIBCXX__) || defined(__LIBCPP_VERSION)  || defined(_MSVC_STL_UPDATE)
 	explicit operator basic_c_io_observer_unlocked<char_type>()
 	{
 		return basic_c_io_observer_unlocked<char_type>{details::streambuf_hack::fp_hack(rdb)};
