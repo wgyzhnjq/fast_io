@@ -149,7 +149,11 @@ inline constexpr void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr)
 
 inline bool underflow(c_io_observer_unlocked cio)
 {
-	return _filbuf(cio.fp)!=EOF;
+	if(_filbuf(cio.fp)==EOF)[[unlikely]]
+		return false;
+	++cio.fp->_cnt;
+	--cio.fp->_ptr;
+	return true;
 }
 
 inline constexpr char* obuffer_begin(c_io_observer_unlocked cio)
@@ -183,19 +187,5 @@ inline void overflow(c_io_observer_unlocked cio,char ch)
 		fast_terminate();
 #endif
 }
-/*
-inline constexpr char* oreserve(c_io_observer_unlocked cio,std::size_t sz)
-{
-	if(cio.fp->_bufsiz-cio.fp->_cnt<sz)[[unlikely]]
-		return nullptr;
-	return cio.fp->_ptr;
-}
-
-inline constexpr void orelease(c_io_observer_unlocked cio,char* ptr)
-{
-	cio.fp->_cnt-=ptr-cio.fp->_ptr;
-	cio.fp->_ptr=ptr;
-}
-*/
 
 }

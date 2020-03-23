@@ -33,18 +33,14 @@ try
 	fast_io::timer t("ibuf");
 	fast_io::ibuf_file ibuf_file("filebuf_io_observer.txt");
 	for(std::size_t i(0);i!=N;++i)
-	{
 		scan(ibuf_file,v[i]);
 	}
-	}
-	{
-	fast_io::timer t("ibuf_sign");
-	fast_io::c_file_unlocked cfu("filebuf_io_observer.txt",fast_io::open_interface<fast_io::open_mode::in>);
+/*	{
+	fast_io::timer t("cful");
+	fast_io::c_file_unlocked cfu("filebuf_io_observer.txt",fast_io::open_interface<fast_io::open_mode::binary|fast_io::open_mode::in>);
 	for(std::size_t i(0);i!=N;++i)
-	{
 		scan(cfu,v[i]);
-	}
-	}
+	}*/
 
 	{
 	fast_io::timer t("ibuf_mutex");

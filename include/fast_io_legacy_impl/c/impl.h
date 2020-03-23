@@ -379,13 +379,6 @@ public:
 			fast_terminate();
 #endif
 		posix_handle.detach();
-
-		if(native_handle()==nullptr)
-#ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
-#else
-			fast_terminate();
-#endif
 		if constexpr(std::same_as<wchar_t,T>)
 		{
 			if(fwide(this->native_handle(),1)<=0)
