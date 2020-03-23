@@ -1,4 +1,6 @@
 #pragma once
+
+
 //Let's do great brutal hack to GCC's libstdc++ and LLVM's libc++ with memcpy
 namespace fast_io
 {
@@ -64,6 +66,7 @@ inline void hack_set_buffer_curr(T* rdb,typename T::char_type* ptr) noexcept
 	memcpy(reinterpret_cast<std::byte*>(rdb)+offset,std::addressof(ptr),sizeof(std::uintptr_t));
 }
 }
+
 
 
 }

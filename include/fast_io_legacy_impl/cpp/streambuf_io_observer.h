@@ -1,8 +1,12 @@
 #pragma once
-
 #include<streambuf>
 #include<fstream>
 #include<sstream>
+#ifdef __GLIBCXX__
+#include"fp_hack/libstdc++.h"
+
+#endif
+
 
 namespace fast_io
 {
@@ -25,6 +29,34 @@ public:
 	{
 		return rdb;
 	}
+#if defined(__GLIBCXX__) 
+//Todo || defined(__LIBCPP_VERSION) || 
+//defined(_MSVC_STL_UPDATE)
+	explicit operator basic_c_io_observer_unlocked<char_type>()
+	{
+		return basic_c_io_observer_unlocked<char_type>(details::streambuf_hack::fp_hack(rdb));
+	}
+	explicit operator basic_c_io_observer<char_type>()
+	{
+		return basic_c_io_observer<char_type>(details::streambuf_hack::fp_hack(rdb));
+	}
+	explicit operator basic_posix_io_observer<char_type>()
+	{
+		return static_cast<basic_posix_io_observer<char_type>>(static_cast<basic_c_io_observer<char_type>>(*this));
+	}
+#if defined(__WINNT__) || defined(_MSC_VER)
+	explicit operator basic_win32_io_observer<char_type>()
+	{
+		return static_cast<basic_win32_io_observer<char_type>>
+		(static_cast<basic_posix_io_observer<char_type>>(*this));
+	}
+	explicit operator basic_nt_io_observer<char_type>()
+	{
+		return static_cast<basic_nt_io_observer<char_type>>
+		(static_cast<basic_posix_io_observer<char_type>>(*this));
+	}
+#endif
+#endif
 };
 
 template<typename T,std::contiguous_iterator Iter>
