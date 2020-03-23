@@ -5,7 +5,7 @@ namespace fast_io::details::streambuf_hack
 {
 
 template<typename char_type,typename traits_type>
-inline FILE* fp_hack_filebuf(std::basic_filebuf<char_type,traits_type>* fbuf) noexcept
+inline FILE* fp_hack(std::basic_filebuf<char_type,traits_type>* fbuf) noexcept
 {
 	FILE* fp{};
 	// we can only do this or ubsanitizer will complain. Do not do down_cast
@@ -19,20 +19,11 @@ requires (std::same_as<T,std::basic_streambuf<typename T::char_type,typename T::
 ||std::derived_from<std::basic_filebuf<typename T::char_type,typename T::traits_type>,T>)
 inline FILE* fp_hack(T* cio)
 {
-	if constexpr(std::derived_from<T,std::basic_filebuf<typename T::char_type,typename T::traits_type>>)
-		return fp_hack_filebuf(cio);
+	using filebuf_type = std::basic_filebuf<typename T::char_type,typename T::traits_type>;
+	if constexpr(std::derived_from<T,filebuf_type>)
+		return fp_hack(cio);
 	else
-	{
-		using char_type = typename T::char_type;
-		using traits_type = typename T::traits_type;
-		auto fbuf{dynamic_cast<std::basic_filebuf<char_type,traits_type>*>(cio)};
-		if(fbuf)
-			return fp_hack_filebuf(fbuf);
-//		auto sbuf{dynamic_cast<__gnu_cxx::stdio_sync_filebuf<char_type, traits_type>*>(cio)};
-//		if(sbuf)
-//			return sbuf->file();
-		throw std::system_error(std::make_error_code(std::errc::bad_file_descriptor));
-	}
+		return fp_hack(std::addressof(dynamic_cast<filebuf_type&>(*cio)));
 }
 #endif
 }
