@@ -298,7 +298,29 @@ inline constexpr void send(output &out,Args&& ...args)
 		buffer_send(out,std::forward<Args>(args)...);
 }
 
+#ifndef NDEBUG
 
+template<output_stream output,typename ...Args>
+requires requires(output& out,Args&& ...args)
+{
+	fast_io::print(out,std::forward<Args>(args)...);
+}
+inline constexpr void debug_print(output &out,Args&& ...args)
+{
+	fast_io::print(out,std::forward<Args>(args)...);
+}
+
+template<output_stream output,typename ...Args>
+requires requires(output& out,Args&& ...args)
+{
+	fast_io::println(out,std::forward<Args>(args)...);
+}
+inline constexpr void debug_println(output &out,Args&& ...args)
+{
+	fast_io::println(out,std::forward<Args>(args)...);
+}
+
+#endif
 
 inline namespace print_scan_details
 {

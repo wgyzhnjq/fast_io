@@ -45,7 +45,7 @@ inline Iter write(basic_general_streambuf_io_observer<T>& t,Iter begin,Iter end)
 #else
 		fast_terminate();
 #endif*/
-	return begin+(t.rdb->sputn(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)));
+	return begin+(t.rdb->sputn(static_cast<char_type const*>(static_cast<void const*>(std::to_address(begin))),(end-begin)*sizeof(*begin)/sizeof(char_type)))*sizeof(char_type)/sizeof(*begin);
 }
 
 template<std::integral CharT,typename Traits = std::char_traits<CharT>>

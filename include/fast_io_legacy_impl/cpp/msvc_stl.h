@@ -24,23 +24,32 @@ private:
 protected:
     locale* _Plocale; // pointer to imbued locale object
 */
+
 namespace details::streambuf_hack
 {
 
 template<std::size_t pos,typename T>
-inline typename T::char_type* hack_first_next(T* ptr)
+inline typename T::char_type*& hack_first_next(T* rdb)
 {
-	constexpr std::size_t offset(sizeof(std::uintptr_t)+sizeof(std::uintptr_t)*pos);
-	typename T::char_type* value;
-	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(cio.rdb)+offset,sizeof(std::uintptr_t));
+	constexpr std::size_t offset(sizeof(std::uintptr_t)	//vptr
+	+sizeof(std::uintptr_t)*2		//_Gfirst,_Pfirst. Why do they set these useless fields??? OOP just encourages bad code tbh
+	+sizeof(std::uintptr_t)*pos);	//Yes to C with concepts. No to C with classes.
+	typename T::char_type** value;
+	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(rdb)+offset,sizeof(typename T::char_type**));
+	return *value;
 }
 
 template<std::size_t pos,typename T>
-inline int hack_last(T* ptr)
+inline int& hack_last(T* rdb)
 {
-	constexpr std::size_t offset(sizeof(std::uintptr_t)+sizeof(std::uintptr_t)*8+pos*sizeof(int));
-	int value;
-	memcpy(std::addressof(value),static_cast<byte*>(cio.rdb)+offset,sizeof(std::uintptr_t));
+	constexpr std::size_t offset(sizeof(std::uintptr_t)	//vptr
+	+sizeof(std::uintptr_t)*8		//pass those 8 pointers
+	+2*sizeof(int)					//pass 2 integers
+	+sizeof(std::uintptr_t)*pos);
+//	printf("offset : %zu\n",offset);
+	int* value;
+	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(rdb)+offset,sizeof(int*));
+	return *value;
 }
 
 template<std::size_t position,typename T>
@@ -52,20 +61,21 @@ inline typename T::char_type* hack_buffer_ptr(T* rdb) noexcept
 	else if constexpr(position==1)
 		return hack_first_next<4>(rdb);
 	else if constexpr(position==2)
-		return hack_first_next<0>(rdb)+hack_last<0>(rdb);
+		return hack_first_next<4>(rdb)+hack_last<0>(rdb);
 	else if constexpr(position==3)
 		return hack_first_next<1>(rdb);
 	else if constexpr(position==4)
 		return hack_first_next<5>(rdb);
 	else if constexpr(position==5)
-		return hack_first_next<1>(rdb)+hack_last<1>(rdb);
+		return hack_first_next<5>(rdb)+hack_last<1>(rdb);
 }
 template<std::size_t position,typename T>
 requires (position==1||position==4)
 inline void hack_set_buffer_curr(T* rdb,typename T::char_type* ptr) noexcept
 {
-	constexpr std::size_t offset(sizeof(std::uintptr_t)+4*sizeof(std::uintptr_t)+static_cast<std::size_t>(position==4));
-	memcpy(reinterpret_cast<std::byte*>(rdb)+offset,std::addressof(ptr),sizeof(std::uintptr_t));
+	auto& pptr{hack_first_next<4+static_cast<std::size_t>(position==4)>(rdb)};
+	hack_last<static_cast<std::size_t>(position==4)>(rdb)-=ptr-pptr;
+	pptr=ptr;
 }
 }
 

@@ -11,7 +11,7 @@ int main()
 	{
 	fast_io::timer t("output");
 	std::ofstream fout("filebuf_io_observer.txt",std::ofstream::binary);
-	fast_io::filebuf_io_observer fob(fout.rdbuf());
+	fast_io::filebuf_io_observer fob{fout.rdbuf()};
 	for(std::size_t i{};i!=N;++i)
 		println(fob,i);
 	}
@@ -19,9 +19,9 @@ int main()
 	{
 	fast_io::timer t("input");
 	std::ifstream fin("filebuf_io_observer.txt",std::ifstream::binary);
-	fast_io::filebuf_io_observer fob(fin.rdbuf());
+	fast_io::filebuf_io_observer fob{fin.rdbuf()};
 	std::ofstream fout("filebuf_io_observer_verify.txt",std::ofstream::binary);
-	fast_io::filebuf_io_observer fob_out(fout.rdbuf());
+	fast_io::filebuf_io_observer fob_out{fout.rdbuf()};
 	for(std::size_t i{};i!=N;++i)
 	{
 		std::size_t value;
