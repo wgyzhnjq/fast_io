@@ -35,7 +35,7 @@ inline Iter read(basic_general_streambuf_io_observer<T>& t,Iter begin,Iter end)
 }
 
 template<typename T,std::contiguous_iterator Iter>
-inline Iter write(basic_general_streambuf_io_observer<T> t,Iter begin,Iter end)
+inline Iter write(basic_general_streambuf_io_observer<T>& t,Iter begin,Iter end)
 {
 	using char_type = typename T::char_type;
 /*
