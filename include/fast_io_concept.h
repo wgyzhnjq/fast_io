@@ -29,7 +29,7 @@ template<typename T>
 concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b)
 {
 	{write(out,b,b)};
-	{flush(out)};
+//	{flush(out)};
 };
 
 template<typename T>

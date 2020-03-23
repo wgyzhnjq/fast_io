@@ -48,9 +48,15 @@ try
 	}
 	{
 	fast_io::timer t("hacked c_file_unlocked");
-	fast_io::c_file_unlocked ibuf("obuf_filedb.txt",fast_io::open_interface<fast_io::open_mode::in>);
+	fast_io::obuf_file obf("csful.txt");
+	fast_io::ibuf_file csfu("obuf_filedb.txt");
+//	std::array<char,65536> buffer;
+//	setvbuf(csfu.fp,buffer.data(),_IOFBF,buffer.size());
 	for(std::size_t i(0);i!=N;++i)
-		scan(ibuf,v[i]);
+	{
+		scan(csfu,v[i]);
+		println(obf,v[i]);
+	}
 	}
 /*	{
 	cqw::timer t("ibuf_mutex ryu");
