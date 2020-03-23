@@ -4,7 +4,8 @@
 #include<sstream>
 #ifdef __GLIBCXX__
 #include"fp_hack/libstdc++.h"
-
+#elif defined(_MSVC_STL_UPDATE)
+#include"fp_hack/msvc_stl.h"
 #endif
 
 
@@ -29,16 +30,15 @@ public:
 	{
 		return rdb;
 	}
-#if defined(__GLIBCXX__) 
-//Todo || defined(__LIBCPP_VERSION) || 
-//defined(_MSVC_STL_UPDATE)
+#if defined(__GLIBCXX__)  || defined(_MSVC_STL_UPDATE)
+//Todo || defined(__LIBCPP_VERSION)
 	explicit operator basic_c_io_observer_unlocked<char_type>()
 	{
-		return basic_c_io_observer_unlocked<char_type>(details::streambuf_hack::fp_hack(rdb));
+		return basic_c_io_observer_unlocked<char_type>{details::streambuf_hack::fp_hack(rdb)};
 	}
 	explicit operator basic_c_io_observer<char_type>()
 	{
-		return basic_c_io_observer<char_type>(details::streambuf_hack::fp_hack(rdb));
+		return basic_c_io_observer<char_type>{details::streambuf_hack::fp_hack(rdb)};
 	}
 	explicit operator basic_posix_io_observer<char_type>()
 	{

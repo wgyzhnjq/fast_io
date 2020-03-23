@@ -48,7 +48,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		return static_cast<basic_posix_io_observer<char_type>>(fd);
+		return basic_posix_io_observer<char_type>{fd};
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_observer<char_type>() const
@@ -189,7 +189,7 @@ public:
 #else
 			fast_terminate();
 #endif
-		return static_cast<basic_posix_io_observer<char_type>>(fd);
+		return basic_posix_io_observer<char_type>{fd};
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
 	explicit operator basic_win32_io_observer<char_type>() const
