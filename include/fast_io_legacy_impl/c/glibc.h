@@ -68,14 +68,10 @@ https://github.com/lattera/glibc/blob/master/libio/bits/types/struct_FILE.h
 */
 inline std::byte* hack_wide_data(FILE* fp)
 {
-#ifdef _IO_USE_OLD_IO_FILE
-	constexpr std::size_t off{sizeof(_IO_FILE)+sizeof(__off64_t)+sizeof(std::uintptr_t)};
+	constexpr std::size_t off{sizeof(__off64_t)+2*sizeof(std::uintptr_t)};
 	std::byte* value;
-	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(fp)+off,sizeof(std::byte*));
+	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(std::addressof(fp->_lock))+off,sizeof(std::byte*));
 	return value;
-#else
-	return fp->_wide_data;
-#endif
 }
 
 template<std::size_t position>
