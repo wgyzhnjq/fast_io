@@ -28,7 +28,9 @@ inline c_io_handle c_stdin{stdin};
 inline c_io_handle c_stdout{stdout};
 inline c_io_handle c_stderr{stderr};
 
-
+inline wc_io_handle wc_stdin{stdin};
+inline wc_io_handle wc_stdout{stdout};
+inline wc_io_handle wc_stderr{stderr};
 //inline stream_view cpp_clog(std::clog);
 }
 }
