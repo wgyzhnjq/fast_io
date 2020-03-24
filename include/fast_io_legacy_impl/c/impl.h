@@ -70,8 +70,8 @@ inline auto redirect_handle(basic_c_io_observer_unlocked<ch_type>& h)
 
 using c_io_observer_unlocked = basic_c_io_observer_unlocked<char>;
 
-template<std::contiguous_iterator Iter>
-inline Iter read(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
+template<std::integral T,std::contiguous_iterator Iter>
+inline Iter read(basic_c_io_observer_unlocked<T>& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(
@@ -93,8 +93,8 @@ inline Iter read(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
 #endif
 }
 
-template<std::contiguous_iterator Iter>
-inline void write(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
+template<std::integral T,std::contiguous_iterator Iter>
+inline void write(basic_c_io_observer_unlocked<T>& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(
@@ -113,7 +113,8 @@ inline void write(c_io_observer_unlocked& cfhd,Iter begin,Iter end)
 #endif
 }
 
-inline void flush(c_io_observer_unlocked& cfhd)
+template<std::integral T>
+inline void flush(basic_c_io_observer_unlocked<T>& cfhd)
 {
 	if(
 #if defined(_MSC_VER)
@@ -199,14 +200,13 @@ public:
 #endif
 };
 
-using c_io_observer=basic_c_io_observer<char>;
-
-inline auto mutex(c_io_observer& h)
+template<std::integral T>
+inline auto mutex(basic_c_io_observer<T>& h)
 {
 	return h.native_handle();
 }
-
-inline c_io_observer_unlocked unlocked_handle(c_io_observer& h)
+template<std::integral T>
+inline basic_c_io_observer_unlocked<T> unlocked_handle(basic_c_io_observer<T>& h)
 {
 	return {h.native_handle()};
 }
@@ -236,8 +236,8 @@ public:
 };
 
 
-template<std::contiguous_iterator Iter>
-inline Iter read(c_io_observer& cfhd,Iter begin,Iter end)
+template<std::integral T,std::contiguous_iterator Iter>
+inline Iter read(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(std::fread(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
@@ -250,8 +250,8 @@ inline Iter read(c_io_observer& cfhd,Iter begin,Iter end)
 #endif
 }
 
-template<std::contiguous_iterator Iter>
-inline void write(c_io_observer& cfhd,Iter begin,Iter end)
+template<std::integral T,std::contiguous_iterator Iter>
+inline void write(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
@@ -262,7 +262,8 @@ inline void write(c_io_observer& cfhd,Iter begin,Iter end)
 #endif
 }
 
-inline void flush(c_io_observer& cfhd)
+template<std::integral T>
+inline void flush(basic_c_io_observer<T>& cfhd)
 {
 	if(std::fflush(cfhd.native_handle()))
 #ifdef __cpp_exceptions
@@ -272,10 +273,10 @@ inline void flush(c_io_observer& cfhd)
 #endif
 }
 
-template<typename T,std::integral U>
-inline auto seek(c_io_observer& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
+template<typename P,typename T,std::integral U>
+inline auto seek(basic_c_io_observer<P>& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 {
-	if(std::fseek(cfhd.native_handle(),seek_precondition<long,T,typename c_io_observer::char_type>(i),static_cast<int>(s)))
+	if(std::fseek(cfhd.native_handle(),seek_precondition<long,T,typename basic_c_io_observer<P>::char_type>(i),static_cast<int>(s)))
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::system_category());
 #else
@@ -291,10 +292,10 @@ inline auto seek(c_io_observer& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 	return val;
 }
 
-template<std::integral U>
-inline auto seek(c_io_observer& cfhd,U i,seekdir s=seekdir::beg)
+template<typename P,std::integral U>
+inline auto seek(basic_c_io_observer<P>& cfhd,U i,seekdir s=seekdir::beg)
 {
-	return seek(cfhd,seek_type<typename c_io_observer::char_type>,i,s);
+	return seek(cfhd,seek_type<typename basic_c_io_observer<P>::char_type>,i,s);
 }
 namespace details
 {
@@ -472,10 +473,19 @@ inline auto redirect_handle(basic_c_io_observer<ch_type>& h)
 #endif
 }
 
+using c_io_observer_unlocked=basic_c_io_observer_unlocked<char>;
+using c_io_observer=basic_c_io_observer<char>;
 using c_io_handle_unlocked = basic_c_io_handle_unlocked<char>;
 using c_io_handle = basic_c_io_handle<char>;
 using c_file = basic_c_file<char>;
 using c_file_unlocked = basic_c_file_unlocked<char>;
+
+using wc_io_observer_unlocked=basic_c_io_observer_unlocked<wchar_t>;
+using wc_io_observer=basic_c_io_observer<wchar_t>;
+using wc_io_handle_unlocked = basic_c_io_handle_unlocked<wchar_t>;
+using wc_io_handle = basic_c_io_handle<wchar_t>;
+using wc_file = basic_c_file<wchar_t>;
+using wc_file_unlocked = basic_c_file_unlocked<wchar_t>;
 
 #ifdef __linux__
 template<std::integral ch_type>
