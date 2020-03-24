@@ -61,23 +61,36 @@ inline void overflow(c_io_observer_unlocked cio,char ch)
 #endif
 }
 
-
 namespace details::fp_wide_hack
 {
+/*
+https://github.com/lattera/glibc/blob/master/libio/bits/types/struct_FILE.h
+*/
+inline std::byte* hack_wide_data(FILE* fp)
+{
+#ifdef _IO_USE_OLD_IO_FILE
+	constexpr std::size_t off{sizeof(_IO_FILE)+sizeof(__off64_t)+sizeof(std::uintptr_t)};
+	std::byte* value;
+	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(fp)+off,sizeof(std::byte*));
+	return value;
+#else
+	return fp->_wide_data;
+#endif
+}
 
 template<std::size_t position>
 inline wchar_t* hack_wp(FILE* fp)
 {
 	constexpr std::size_t off{position*sizeof(uintptr_t)};
 	wchar_t* value;
-	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(fp->_wide_data)+off,sizeof(wchar_t*));
+	memcpy(std::addressof(value),hack_wide_data(fp)+off,sizeof(wchar_t*));
 	return value;
 }
 template<std::size_t position>
 inline void hack_wpset(FILE* fp,wchar_t* ptr)
 {
 	constexpr std::size_t off{position*sizeof(uintptr_t)};
-	memcpy(reinterpret_cast<std::byte*>(fp->_wide_data)+off,std::addressof(ptr),sizeof(wchar_t*));
+	memcpy(hack_wide_data(fp)+off,std::addressof(ptr),sizeof(wchar_t*));
 }
 }
 //wchar_t supports
