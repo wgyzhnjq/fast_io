@@ -72,7 +72,7 @@ inline std::byte* hack_wide_data(FILE* fp)
 	std::byte* value;
 	memcpy(std::addressof(value),reinterpret_cast<std::byte*>(std::addressof(fp->_lock))+off,sizeof(std::byte*));
 	return value;*/
-	return fp->_wide_data;
+	return reinterpret_cast<std::byte*>(fp->_wide_data);
 }
 
 template<std::size_t position>
