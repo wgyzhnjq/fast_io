@@ -155,7 +155,7 @@ inline std::size_t output_unsigned(Iter str,U value)
 			}
 		}
 	}
-	else if constexpr(sizeof(U)==bytes4)
+	else if constexpr(sizeof(U)==4)
 	{
 		if (value >= 100000000)[[unlikely]]
 		{
