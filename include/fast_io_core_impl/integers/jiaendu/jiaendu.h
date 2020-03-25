@@ -316,7 +316,7 @@ inline std::size_t output_unsigned_point(U value,Iter str)
 {
 	if(value >= 10)[[likely]]
 	{
-		std::size_t ret(output_unsigned(str+1,value));
+		std::size_t ret(output_unsigned(std::to_address(str)+1,value));
 		*str=str[1];
 		str[1]=u8'.';
 		return ret+1;

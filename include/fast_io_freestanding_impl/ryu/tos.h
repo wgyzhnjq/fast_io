@@ -128,7 +128,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 							break;
 						v2=d;
 					}
-					result+=output_unsigned_point(v2);
+					result+=details::jiaendu::output_unsigned_point(v2,result);
 					if constexpr(uppercase_e)
 						my_copy_n(u8"E+",2,result);
 					else
@@ -275,7 +275,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		*result=0x2d;
 		++result;
 	}
-	if constexpr(mode==0) //shortest
+	if constexpr(mode==0) //general
 	{
 		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));	
 		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
