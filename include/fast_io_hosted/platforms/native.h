@@ -52,10 +52,10 @@ using u8native_io_observer = u8posix_io_observer;
 using u8native_io_handle = u8posix_io_handle;
 using u8native_file = u8posix_file;
 using u8native_pipe = u8posix_pipe;
-using u8native_io_observer = u8win32_io_observer;
-using u8native_io_handle = u8win32_io_handle;
-using u8native_file = u8win32_file;
-using u8native_pipe = u8win32_pipe;
+using wnative_io_observer = wposix_io_observer;
+using wnative_io_handle = wposix_io_handle;
+using wnative_file = wposix_file;
+using wnative_pipe = wposix_pipe;
 using native_file_map = posix_file_map;
 #endif
 
