@@ -93,22 +93,22 @@ inline void hack_wpset(FILE* fp,wchar_t* ptr)
 
 inline wchar_t* ibuffer_begin(wc_io_observer_unlocked cio) noexcept
 {
-	return details::fp_wide_hack::hack_wp<0>(cio.fp);
+	return details::fp_wide_hack::hack_wp<2>(cio.fp);
 }
 
 inline wchar_t* ibuffer_curr(wc_io_observer_unlocked cio) noexcept
 {
-	return details::fp_wide_hack::hack_wp<1>(cio.fp);
+	return details::fp_wide_hack::hack_wp<0>(cio.fp);
 }
 
 inline wchar_t* ibuffer_end(wc_io_observer_unlocked cio) noexcept
 {
-	return details::fp_wide_hack::hack_wp<2>(cio.fp);
+	return details::fp_wide_hack::hack_wp<1>(cio.fp);
 }
 
 inline void ibuffer_set_curr(wc_io_observer_unlocked cio,wchar_t* ptr) noexcept
 {
-	details::fp_wide_hack::hack_wpset<1>(cio.fp,ptr);
+	details::fp_wide_hack::hack_wpset<0>(cio.fp,ptr);
 }
 
 extern "C" std::wint_t __wunderflow (FILE *) noexcept;
