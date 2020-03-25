@@ -234,11 +234,13 @@ inline void obuffer_set_curr(wc_io_observer_unlocked cio,[[gnu::may_alias]] wcha
 	set_fp_flags(cio.fp,get_fp_flags(cio.fp)|0x010000);
 }
 
+extern "C" wint_t __stdcall __acrt_stdio_flush_and_write_wide_nolock(wint_t,FILE*) noexcept;
+
 inline void overflow(wc_io_observer_unlocked cio,wchar_t ch)
 {
 	using namespace details::ucrt_hack;
 	obuffer_set_curr(cio,obuffer_end(cio));
-	if(fputwc(static_cast<wint_t>(static_cast<std::make_unsigned_t<wchar_t>>(ch)),cio.fp)==EOF)[[unlikely]]
+	if(__acrt_stdio_flush_and_write_wide_nolock(static_cast<wint_t>(static_cast<std::make_unsigned_t<wchar_t>>(ch)),cio.fp)==WEOF)[[unlikely]]
 #ifdef __cpp_exceptions
 		throw std::system_error(errno,std::generic_category());
 #else
