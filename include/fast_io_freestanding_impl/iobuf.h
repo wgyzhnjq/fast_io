@@ -19,7 +19,7 @@ struct io_aligned_allocator
 	}
 };
 
-template<typename CharT,std::size_t buffer_size = ((
+template<std::integral CharT,std::size_t buffer_size = ((
 #if defined(__WINNT__) || defined(_MSC_VER)
 1048576
 #else
@@ -49,7 +49,7 @@ public:
 	}
 	basic_buf_handler& operator=(basic_buf_handler&& m) noexcept
 	{
-		if(std::addressof(m)!=this)
+		if(std::addressof(m)!=this)[[likely]]
 		{
 			if(m.beg)
 				alloc.deallocate(beg,buffer_size);
@@ -66,13 +66,13 @@ public:
 	}
 	inline void release()
 	{
-		if(beg)
+		if(beg)[[likely]]
 			alloc.deallocate(beg,buffer_size);
 		end=curr=beg=nullptr;
 	}
 	~basic_buf_handler()
 	{
-		if(beg)
+		if(beg)[[likely]]
 			alloc.deallocate(beg,buffer_size);
 	}
 	Allocator get_allocator() const{ return alloc;}
@@ -113,7 +113,7 @@ template<input_stream Ihandler,typename Buf>
 	return ib.ibuffer.beg;
 }
 template<input_stream Ihandler,typename Buf>
-[[nodiscard]] inline constexpr auto& ibuffer_curr(basic_ibuf<Ihandler,Buf>& ib)
+[[nodiscard]] inline constexpr auto ibuffer_curr(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.curr;
 }
@@ -468,7 +468,7 @@ inline constexpr void write(basic_obuf<Ohandler,Buf>& ob,Iter cbegini,Iter cendi
 {
 	using char_type = typename basic_obuf<Ohandler,Buf>::char_type;
 	if constexpr(std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
-		details::obuf_write<true>(ob,std::to_address(cbegini),std::to_address(cendi));
+		details::obuf_write<false>(ob,std::to_address(cbegini),std::to_address(cendi));
 	else
 		details::obuf_write<true>(ob,reinterpret_cast<char const*>(std::to_address(cbegini)),
 					reinterpret_cast<char const*>(std::to_address(cendi)));
