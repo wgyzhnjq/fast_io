@@ -101,8 +101,8 @@ inline void overflow(c_io_observer_unlocked cio,char ch)
 
 inline void ibuffer_set_curr(wc_io_observer_unlocked cio, [[gnu::may_alias]] wchar_t* ptr)
 {
-	cio.fp->_cnt-=bit_cast<char*>(ptr)-cio.fp->_ptr;
-	cio.fp->_ptr=bit_cast<char*>(ptr);
+	cio.fp->_cnt-=reinterpret_cast<char*>(ptr)-cio.fp->_ptr;
+	cio.fp->_ptr=reinterpret_cast<char*>(ptr);
 }
 
 inline bool underflow(wc_io_observer_unlocked cio)
