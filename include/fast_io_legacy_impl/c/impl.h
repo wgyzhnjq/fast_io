@@ -574,10 +574,7 @@ Todo
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
 	{
-		cookie_io_functions_t io_funcs{.close=[](void* cookie) noexcept->int
-		{
-			return 0;
-		}};
+		cookie_io_functions_t io_funcs{};
 		if constexpr(input_stream<stm>)
 			io_funcs.read=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
 			{
