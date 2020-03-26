@@ -565,6 +565,115 @@ Todo
 #endif
 	}
 #endif
+
+
+	template<stream stm>
+	requires (std::same_as<typename T::char_type,char>&&std::same_as<typename stm::char_type,char>)
+	basic_c_file_impl(c_file_cookie_t,std::string_view mode,std::reference_wrapper<stm> reff)
+#if defined(_GNU_SOURCE)
+//musl libc also supports this I think
+//https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
+	{
+		cookie_io_functions_t io_funcs{.close=[](void* cookie) noexcept->int
+		{
+			return 0;
+		}};
+		if constexpr(input_stream<stm>)
+			io_funcs.read=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
+			{
+				try
+				{
+					return read(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
+				}
+				catch(std::system_error const& err)
+				{
+					if(err.code().category()==std::generic_category())
+						errno=err.code().value();
+					else
+						errno=EIO;
+					return -1;
+				}
+				catch(...)
+				{
+					errno=EIO;
+					return -1;
+				}
+			};
+		if constexpr(output_stream<stm>)
+		{
+			io_funcs.write=[](void* cookie,char const* buf,std::size_t size) noexcept->std::ptrdiff_t
+			{
+				try
+				{
+					if constexpr(std::same_as<decltype(write(*bit_cast<stm*>(cookie),buf,buf+size)),void>)
+					{
+						write(*bit_cast<stm*>(cookie),buf,buf+size);
+						return static_cast<std::ptrdiff_t>(size);
+					}
+					else
+						return write(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
+				}
+				catch(std::system_error const& err)
+				{
+					if(err.code().category()==std::generic_category())
+						errno=err.code().value();
+					else
+						errno=EIO;
+					return -1;
+				}
+				catch(...)
+				{
+					errno=EIO;
+					return -1;
+				}
+			};
+		}
+		if constexpr(random_access_stream<stm>)
+		{
+			io_funcs.seek=[](void *cookie, off64_t *offset, int whence) noexcept->int
+			{
+				try
+				{
+					*offset=seek(*bit_cast<stm*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
+					return 0;
+				}
+				catch(std::system_error const& err)
+				{
+					if(err.code().category()==std::generic_category())
+						errno=err.code().value();
+					else
+						errno=EIO;
+					return -1;
+				}
+				catch(...)
+				{
+					errno=EIO;
+					return -1;
+				}
+			};
+		}
+		if(!(this->native_handle()=fopencookie(std::addressof(reff.get()),mode.data(),io_funcs)))[[unlikely]]
+			throw std::system_error(errno,std::generic_category());
+	}
+/*
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined (__BIONIC__)
+Todo
+	{
+
+	}
+*/
+#else
+//not supported platform like windows MSVCRT. We throw std::errc::operation_not_supported
+
+	{
+#ifdef __cpp_exceptions
+		throw std::system_error(std::make_error_code(std::errc::operation_not_supported));
+#else
+		fast_terminate();
+#endif
+	}
+#endif
+
 	basic_c_file_impl(basic_c_file_impl const&)=delete;
 	basic_c_file_impl& operator=(basic_c_file_impl const&)=delete;
 	constexpr basic_c_file_impl(basic_c_file_impl&& b) noexcept :T(std::move(b)){}
