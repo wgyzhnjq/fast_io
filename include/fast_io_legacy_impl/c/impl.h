@@ -483,7 +483,7 @@ public:
 	{
 		cookie_io_functions_t io_funcs{.close=[](void* cookie) noexcept->int
 		{
-			delete bit_cast<typename T::char_type*>(cookie);
+			delete bit_cast<stm*>(cookie);
 			return 0;
 		}};
 		if constexpr(input_stream<stm>)
@@ -491,7 +491,7 @@ public:
 			{
 				try
 				{
-					char* p{read(*bit_cast<typename T::char_type*>(cookie),buf,buf+size)};
+					char* p{read(*bit_cast<stm*>(cookie),buf,buf+size)};
 					return p-buf;
 				}
 /*				catch(std::system_error const& err)
@@ -516,12 +516,12 @@ public:
 				{
 					if constexpr(std::same_as<decltype(write(sm,s,s+count)),void>)
 					{
-						write(*bit_cast<typename T::char_type*>(cookie),buf,buf+size);
+						write(*bit_cast<stm*>(cookie),buf,buf+size);
 						return static_cast<std::ptrdiff_t>(size);
 					}
 					else
 					{
-						char* p{write(*bit_cast<typename T::char_type*>(cookie),buf,buf+size)};
+						char* p{write(*bit_cast<stm*>(cookie),buf,buf+size)};
 						return p-buf;
 					}
 				}
@@ -546,7 +546,7 @@ public:
 			{
 				try
 				{
-					*offset=seek(*bit_cast<typename T::char_type*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
+					*offset=seek(*bit_cast<stm*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
 					return 0;
 				}
 /*				catch(std::system_error const& err)
