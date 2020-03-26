@@ -12,7 +12,7 @@ inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const&
 		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits+2))};
 }
 
-template<bool uppercase_e=false,std::size_t mode=0,bool int_hint=false,std::random_access_iterator Iter,std::floating_point F>
+template<char8_t decimal_point,bool uppercase_e=false,std::size_t mode=0,bool int_hint=false,std::random_access_iterator Iter,std::floating_point F>
 inline constexpr Iter output_shortest(Iter result, F d)
 {
 	using char_type = std::remove_reference_t<decltype(*result)>;
@@ -92,7 +92,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 								{
 									jiaendu::output_unsigned(result+1,v3);
 									*result=result[1];
-									result[1]=u8'.';
+									result[1]=decimal_point;
 									result+=v3_len+1;
 								}
 								if constexpr(uppercase_e)
@@ -128,7 +128,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 							break;
 						v2=d;
 					}
-					result+=details::jiaendu::output_unsigned_point(v2,result);
+					result+=details::jiaendu::output_unsigned_point<decimal_point>(v2,result);
 					if constexpr(uppercase_e)
 						my_copy_n(u8"E+",2,result);
 					else
@@ -297,7 +297,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 		std::uint32_t scientific_length(olength==1?olength+3:olength+5);
 		if(scientific_length<fixed_length)
 		{
-			result+=details::jiaendu::output_unsigned_point(v.front(),result);
+			result+=details::jiaendu::output_unsigned_point<decimal_point>(v.front(),result);
 			return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);
 		}
 		switch(this_case)
@@ -319,13 +319,22 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			{
 				jiaendu::output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
-				result[eposition]=u8'.';
+				result[eposition]=decimal_point;
 				result+=olength+1;
 			}
 			return result;
 		}
 		default:
-			result=my_copy_n(u8"0.",2,result);
+			if constexpr(decimal_point==u8'.')
+				result=my_copy_n(u8"0.",2,result);
+			else if constexpr(decimal_point==u8',')
+				result=my_copy_n(u8"0,",2,result);
+			else
+			{
+				*result=u8'0';		//to do with UTF32 decimal points
+				*++result=decimal_point;
+				++result;
+			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
@@ -355,14 +364,23 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			{
 				jiaendu::output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
-				result[eposition]=u8'.';
+				result[eposition]=decimal_point;
 				result+=olength+1;
 			}
 			return result;
 		}
 		else
 		{
-			result=my_copy_n(u8"0.",2,result);
+			if constexpr(decimal_point==u8'.')
+				result=my_copy_n(u8"0.",2,result);
+			else if constexpr(decimal_point==u8',')
+				result=my_copy_n(u8"0,",2,result);
+			else
+			{
+				*result=u8'0';
+				*++result=decimal_point;
+				++result;
+			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			jiaendu::output_unsigned(result,v.front());
 			result+=olength;
@@ -384,7 +402,7 @@ inline constexpr Iter output_shortest(Iter result, F d)
 			std::size_t olength(details::jiaendu::output_unsigned(result+1,a));
 			real_exp+=static_cast<std::int32_t>(olength);
 			*result=result[1];
-			result[1]=u8'.';
+			result[1]=decimal_point;
 			result+=olength+1;
 		}
 		return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);

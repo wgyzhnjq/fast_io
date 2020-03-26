@@ -29,7 +29,7 @@
 #include"fast_io_core_impl/eof.h"
 #include"fast_io_core_impl/fill_nc.h"
 #include"fast_io_core_impl/io_ref.h"
-#include"fast_io_core_impl/manip.h"
+#include"fast_io_core_impl/manip/impl.h"
 
 #include"fast_io_core_impl/linux/system_call.h"
 

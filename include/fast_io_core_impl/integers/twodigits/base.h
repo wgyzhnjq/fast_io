@@ -6,7 +6,7 @@ namespace fast_io
 namespace details
 {
 
-template<char8_t base,bool uppercase,bool point=false,std::random_access_iterator Iter,typename U>
+template<char8_t base,bool uppercase,bool point=false,char32_t dec,std::random_access_iterator Iter,typename U>
 requires (!std::signed_integral<U>)
 inline constexpr auto output_base_number_impl(Iter iter,U a)
 {
@@ -31,7 +31,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			if constexpr(point)
 			{
 				*--iter=tm[1];
-				*--iter=0x2E;
+				*--iter=dec;
 				*--iter=tm.front();
 			}
 			else
@@ -42,7 +42,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		else
 		{
 			if constexpr(point)
-				*--iter=0x2E;
+				*--iter=dec;
 			if constexpr(10 < base)
 			{
 				if(a<10)
@@ -70,7 +70,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 			if constexpr(point)
 			{
 				my_copy(i+1,ed,iter-=ed-(i+1));
-				*--iter=0x2E;
+				*--iter=dec;
 				*--iter=*i;
 			}
 			else
@@ -79,7 +79,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		else
 		{
 			if constexpr(point)
-				*--iter=0x2E;
+				*--iter=dec;
 			if constexpr(10 < base)
 			{
 				if(a<10)
