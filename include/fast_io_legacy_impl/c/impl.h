@@ -5,11 +5,11 @@
 namespace fast_io
 {
 
-struct c_file_hook_t
+struct c_file_cookie_t
 {
-explicit constexpr c_file_hook_t()=default;
+explicit constexpr c_file_cookie_t()=default;
 };
-inline constexpr c_file_hook_t c_file_hook{};
+inline constexpr c_file_cookie_t c_file_cookie{};
 
 namespace details
 {
@@ -19,7 +19,7 @@ struct c_open_mode
 inline static constexpr std::string_view value=to_c_mode(om);
 };
 template<stream stm>
-inline constexpr char const* to_c_cookie_mode()
+inline constexpr std::string_view to_c_cookie_mode()
 {
 	using namespace std::string_view_literals;
 	if constexpr((input_stream<stm>)&&(!output_stream<stm>))
@@ -476,7 +476,7 @@ public:
 	{}
 	template<stream stm,typename... Args>
 	requires (std::same_as<typename T::char_type,char>&&std::same_as<typename stm::char_type,char>)
-	basic_c_file_impl(c_file_hook_t,std::in_place_type_t<stm>,Args&& ...args)
+	basic_c_file_impl(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args)
 #if defined(_GNU_SOURCE)
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
@@ -565,7 +565,7 @@ public:
 			}
 		}
 		std::unique_ptr<stm> up{std::make_unique<stm>(std::forward<Args>(args)...)};
-		if(!fopencookie(up.native_handle(),details::c_cookie_open_mode<stm>::value.data(),io_funcs))[[unlikely]]
+		if(!(this->native_handle()=fopencookie(up.native_handle(),details::c_cookie_open_mode<stm>::value.data(),io_funcs)))[[unlikely]]
 			throw std::system_error(errno,std::generic_category());
 		up.release();
 	}
@@ -576,9 +576,10 @@ Todo
 	{
 
 	}
+*/
 #else
 //not supported platform like windows MSVCRT. We throw std::errc::operation_not_supported
-*/
+
 	{
 #ifdef __cpp_exceptions
 		throw std::system_error(std::make_error_code(std::errc::operation_not_supported));
