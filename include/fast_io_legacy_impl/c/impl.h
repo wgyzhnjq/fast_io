@@ -510,7 +510,7 @@ public:
 			};
 		if constexpr(output_stream<stm>)
 		{
-			io_funcs.write=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
+			io_funcs.write=[](void* cookie,char const* buf,std::size_t size) noexcept->std::ptrdiff_t
 			{
 				try
 				{
