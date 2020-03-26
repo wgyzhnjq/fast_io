@@ -481,13 +481,13 @@ public:
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
 	{
-		cookie_io_functions_t io_funcs{.close=[](void* cookie)->int noexcept
+		cookie_io_functions_t io_funcs{.close=[](void* cookie) noexcept->int
 		{
 			delete bit_cast<typename T::char_type*>(cookie);
 			return 0;
 		}};
 		if constexpr(input_stream<stm>)
-			io_funcs.read=[](void* cookie,char* buf,std::size_t size)->std::ptrdiff_t noexcept
+			io_funcs.read=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
 			{
 				try
 				{
@@ -510,7 +510,7 @@ public:
 			}
 		if constexpr(output_stream<stm>)
 		{
-			io_funcs.write=[](void* cookie,char* buf,std::size_t size)->std::ptrdiff_t noexcept
+			io_funcs.write=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
 			{
 				try
 				{
@@ -542,7 +542,7 @@ public:
 		}
 		if constexpr(random_access_stream<stm>)
 		{
-			io_funcs.seek=[](void *cookie, off64_t *offset, int whence)->std::ptrdiff_t noexcept
+			io_funcs.seek=[](void *cookie, off64_t *offset, int whence) noexcept->std::ptrdiff_t
 			{
 				try
 				{
