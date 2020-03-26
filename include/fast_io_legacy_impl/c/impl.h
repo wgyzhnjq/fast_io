@@ -514,7 +514,7 @@ public:
 			{
 				try
 				{
-					if constexpr(std::same_as<decltype(write(sm,s,s+count)),void>)
+					if constexpr(std::same_as<decltype(write(*bit_cast<stm*>(cookie),buf,buf+size)),void>)
 					{
 						write(*bit_cast<stm*>(cookie),buf,buf+size);
 						return static_cast<std::ptrdiff_t>(size);
