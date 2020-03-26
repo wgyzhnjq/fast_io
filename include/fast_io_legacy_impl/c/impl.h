@@ -404,7 +404,7 @@ public:
 #endif
 			}
 		}
-/*		else if constexpr(!std::same_as<char,T>)
+		else if constexpr(!std::same_as<char,typename T::char_type>)
 		{
 		//close buffer for non char and wchar_t types like libstdc++ does. All these hacks just violate strict-aliasing rule
 			if(setvbuf(this->native_handle(),nullptr,_IONBF,0))
@@ -416,7 +416,7 @@ public:
 				fast_terminate();
 #endif
 			}
-		}*/
+		}
 	}
 
 	basic_c_file_impl(basic_posix_io_handle<char_type>&& posix_handle,open_mode om):
