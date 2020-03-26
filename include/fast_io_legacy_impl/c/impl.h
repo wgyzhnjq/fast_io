@@ -78,7 +78,7 @@ inline auto redirect_handle(basic_c_io_observer_unlocked<ch_type>& h)
 using c_io_observer_unlocked = basic_c_io_observer_unlocked<char>;
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline Iter read(basic_c_io_observer_unlocked<T>& cfhd,Iter begin,Iter end)
+inline Iter read(basic_c_io_observer_unlocked<T> cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(
@@ -101,7 +101,7 @@ inline Iter read(basic_c_io_observer_unlocked<T>& cfhd,Iter begin,Iter end)
 }
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline void write(basic_c_io_observer_unlocked<T>& cfhd,Iter begin,Iter end)
+inline void write(basic_c_io_observer_unlocked<T> cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(
