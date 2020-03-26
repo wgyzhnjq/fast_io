@@ -394,7 +394,7 @@ public:
 		posix_handle.detach();
 		if constexpr(std::same_as<wchar_t,typename T::char_type>)
 		{
-			fwide(this->native_handle(),1);
+//			fwide(this->native_handle(),1);
 		}
 		else if constexpr(!std::same_as<char,typename T::char_type>)
 		{
