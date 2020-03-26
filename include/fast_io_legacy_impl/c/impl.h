@@ -542,7 +542,7 @@ public:
 		}
 		if constexpr(random_access_stream<stm>)
 		{
-			io_funcs.seek=[](void *cookie, off64_t *offset, int whence) noexcept->std::ptrdiff_t
+			io_funcs.seek=[](void *cookie, off64_t *offset, int whence) noexcept->int
 			{
 				try
 				{
