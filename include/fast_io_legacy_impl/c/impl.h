@@ -507,7 +507,7 @@ public:
 					errno=EIO;
 					return -1;
 				}
-			}
+			};
 		if constexpr(output_stream<stm>)
 		{
 			io_funcs.write=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
@@ -538,7 +538,7 @@ public:
 					errno=EIO;
 					return -1;
 				}
-			}
+			};
 		}
 		if constexpr(random_access_stream<stm>)
 		{
@@ -562,7 +562,7 @@ public:
 					errno=EIO;
 					return -1;
 				}
-			}
+			};
 		}
 		std::unique_ptr<stm> up{std::make_unique<stm>(std::forward<Args>(args)...)};
 		if(!(this->native_handle()=fopencookie(up.get(),details::c_cookie_open_mode<stm>::value.data(),io_funcs)))[[unlikely]]
