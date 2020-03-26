@@ -565,7 +565,7 @@ public:
 			}
 		}
 		std::unique_ptr<stm> up{std::make_unique<stm>(std::forward<Args>(args)...)};
-		if(!(this->native_handle()=fopencookie(up.native_handle(),details::c_cookie_open_mode<stm>::value.data(),io_funcs)))[[unlikely]]
+		if(!(this->native_handle()=fopencookie(up.get(),details::c_cookie_open_mode<stm>::value.data(),io_funcs)))[[unlikely]]
 			throw std::system_error(errno,std::generic_category());
 		up.release();
 	}
