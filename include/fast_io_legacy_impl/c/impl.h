@@ -18,24 +18,6 @@ struct c_open_mode
 {
 inline static constexpr std::string_view value=to_c_mode(om);
 };
-template<stream stm>
-inline constexpr std::string_view to_c_cookie_mode()
-{
-	using namespace std::string_view_literals;
-	if constexpr((input_stream<stm>)&&(!output_stream<stm>))
-		return "rb"sv;
-	else if constexpr((!input_stream<stm>)&&(output_stream<stm>))
-		return "wb"sv;
-	else
-		return "rwb"sv;
-}
-
-template<stream stm>
-struct c_cookie_open_mode
-{
-inline static constexpr std::string_view value=to_c_cookie_mode<stm>();
-};
-
 
 }
 template<std::integral ch_type>
@@ -476,7 +458,7 @@ public:
 	{}
 	template<stream stm,typename... Args>
 	requires (std::same_as<typename T::char_type,char>&&std::same_as<typename stm::char_type,char>)
-	basic_c_file_impl(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args)
+	basic_c_file_impl(c_file_cookie_t,std::string_view mode,std::in_place_type_t<stm>,Args&& ...args)
 #if defined(_GNU_SOURCE)
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
@@ -493,14 +475,14 @@ public:
 				{
 					return read(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
 				}
-/*				catch(std::system_error const& err)
+				catch(std::system_error const& err)
 				{
-					if(err.code().category()=std::generic_category())
+					if(err.code().category()==std::generic_category())
 						errno=err.code().value();
 					else
 						errno=EIO;
 					return -1;
-				}*/
+				}
 				catch(...)
 				{
 					errno=EIO;
@@ -521,14 +503,14 @@ public:
 					else
 						return write(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
 				}
-/*				catch(std::system_error const& err)
+				catch(std::system_error const& err)
 				{
-					if(err.code().category()=std::generic_category())
+					if(err.code().category()==std::generic_category())
 						errno=err.code().value();
 					else
 						errno=EIO;
 					return -1;
-				}*/
+				}
 				catch(...)
 				{
 					errno=EIO;
@@ -545,14 +527,14 @@ public:
 					*offset=seek(*bit_cast<stm*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
 					return 0;
 				}
-/*				catch(std::system_error const& err)
+				catch(std::system_error const& err)
 				{
-					if(err.code().category()=std::generic_category())
+					if(err.code().category()==std::generic_category())
 						errno=err.code().value();
 					else
 						errno=EIO;
 					return -1;
-				}*/
+				}
 				catch(...)
 				{
 					errno=EIO;
@@ -561,13 +543,12 @@ public:
 			};
 		}
 		std::unique_ptr<stm> up{std::make_unique<stm>(std::forward<Args>(args)...)};
-		if(!(this->native_handle()=fopencookie(up.get(),details::c_cookie_open_mode<stm>::value.data(),io_funcs)))[[unlikely]]
+		if(!(this->native_handle()=fopencookie(up.get(),mode.data(),io_funcs)))[[unlikely]]
 			throw std::system_error(errno,std::generic_category());
 		up.release();
 	}
 /*
 #elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined (__BIONIC__)
-//Why?? __BIONIC__ you are linux platform, why do you use BSD system??
 Todo
 	{
 
