@@ -491,8 +491,7 @@ public:
 			{
 				try
 				{
-					char* p{read(*bit_cast<stm*>(cookie),buf,buf+size)};
-					return p-buf;
+					return read(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
 				}
 /*				catch(std::system_error const& err)
 				{
@@ -520,10 +519,7 @@ public:
 						return static_cast<std::ptrdiff_t>(size);
 					}
 					else
-					{
-						char* p{write(*bit_cast<stm*>(cookie),buf,buf+size)};
-						return p-buf;
-					}
+						return write(*bit_cast<stm*>(cookie),buf,buf+size)-buf;
 				}
 /*				catch(std::system_error const& err)
 				{
