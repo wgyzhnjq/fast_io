@@ -1,4 +1,4 @@
-#include"../../timer.h"
+#include"../../../timer.h"
 
 int main()
 {
@@ -6,7 +6,7 @@ int main()
 	std::size_t value{};
 	{
 	fast_io::timer t("fast_io::ospan");
-	for(std::size_t i{};i!=N;++i)
+	for(std::uint32_t i{};i!=N;++i)
 	{
 		std::array<char,50> a;
 		fast_io::ospan os(a);
