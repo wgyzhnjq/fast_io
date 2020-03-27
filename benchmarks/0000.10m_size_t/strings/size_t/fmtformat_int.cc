@@ -3,7 +3,7 @@
 
 int main()
 {
-	constexpr std::uint32_t N(10000000);
+	constexpr std::size_t N(100000000);
 	std::size_t value{};
 	{
 	fast_io::timer t("fmt::format_int");
