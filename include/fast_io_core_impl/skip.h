@@ -138,7 +138,7 @@ template<character_input_stream input>
 				return skipped;
 			}
 			else
-			{		
+			{
 				if(!underflow(in))[[unlikely]]
 					return skipped;
 			}
