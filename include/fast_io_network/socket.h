@@ -142,6 +142,7 @@ public:
 	template<typename ...Args>
 	requires std::constructible_from<basic_socket<async>,Args...>
 	basic_connected_socket(Args&& ...args):basic_socket<async>(std::forward<Args>(args)...){}
+	using basic_socket<async>::native_handle;
 };
 
 template<bool async,std::contiguous_iterator Iter>
@@ -154,11 +155,11 @@ inline Iter write(basic_connected_socket<async>& soc,Iter begin,Iter end)
 {
 	return begin+(sock::details::send(soc.native_handle(),std::to_address(begin),static_cast<int>((end-begin)*sizeof(*begin)),0)/sizeof(*begin));
 }
-#if !(defined(__WINNT__) && defined(_MSC_VER))
+#if !(defined(__WINNT__) || defined(_MSC_VER))
 template<bool async>
 inline auto redirect_handle(basic_connected_socket<async>& soc)
 {
-	return bit_cast<void*>(soc.native_handle());
+	return soc.native_handle();
 }
 #endif
 template<bool async=false>
