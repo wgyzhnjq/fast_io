@@ -10,7 +10,7 @@ inline constexpr T concat(Args&& ...args)
 	T v;
 	basic_ostring_ref<T> t(v);
 	print(t,std::forward<Args>(args)...);
-	return v;
+	return std::move(v);
 }
 
 template<typename T=std::string,typename... Args>
@@ -19,7 +19,7 @@ inline constexpr T concatln(Args&& ...args)
 	T v;
 	basic_ostring_ref<T> t(v);
 	println(t,std::forward<Args>(args)...);
-	return v;
+	return std::move(v);
 }
 
 template<typename T=std::string,typename... Args>
@@ -28,7 +28,7 @@ inline constexpr T format(std::string_view format,Args&& ...args)
 	T v;
 	basic_ostring_ref<T> t(v);
 	fprint(t,format,std::forward<Args>(args)...);
-	return v;
+	return std::move(v);
 }
 
 template<typename T,typename... Args>
@@ -53,6 +53,6 @@ inline constexpr auto to(Args&& ...args)
 {
 	T t;
 	in_place_to(t,std::forward<Args>(args)...);
-	return t;
+	return std::move(t);
 }
 }
