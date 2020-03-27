@@ -2,7 +2,7 @@
 
 int main()
 {
-	constexpr std::size_t N(100000000);
+	constexpr std::size_t N(200000000);
 	std::size_t value{};
 	{
 	fast_io::timer t("fast_io::concat");
