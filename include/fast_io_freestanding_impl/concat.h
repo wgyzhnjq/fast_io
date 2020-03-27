@@ -42,7 +42,7 @@ inline static constexpr bool value{true};
 template<typename T=std::string,typename... Args>
 inline constexpr T concat(Args&& ...args)
 {
-	if constexpr(sizeof...(Args)==1&&(reserve_printable<Args>&...))
+	if constexpr(sizeof...(Args)==1&&(reserve_printable<Args>&...)&&details::is_std_string<T>::value)
 		return details::deal_with_one<T,false>(std::forward<Args>(args)...);
 	else
 	{
@@ -56,7 +56,7 @@ inline constexpr T concat(Args&& ...args)
 template<typename T=std::string,typename... Args>
 inline constexpr T concatln(Args&& ...args)
 {
-	if constexpr(sizeof...(Args)==1&&(reserve_printable<Args>&...))
+	if constexpr(sizeof...(Args)==1&&(reserve_printable<Args>&...)&&details::is_std_string<T>::value)
 		return details::deal_with_one<T,true>(std::forward<Args>(args)...);
 	else
 	{
