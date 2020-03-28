@@ -24,7 +24,7 @@ inline constexpr std::size_t transmit_once(output& outp,input& inp)
 			return bytes;
 		write(outp,ibuffer_curr(inp),ibuffer_end(inp));
 		bytes += ibuffer_end(inp)-ibuffer_curr(inp);
-		ibuffer_set_curr(inp,ibuffer_curr(inp));
+		ibuffer_set_curr(inp,ibuffer_end(inp));
 		return bytes;
 	}
 	else
