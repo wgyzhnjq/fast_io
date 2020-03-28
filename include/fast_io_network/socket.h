@@ -135,6 +135,28 @@ struct address_info
 	socklen_t storage_size=sizeof(socket_address_storage);
 };
 
+template<fast_io::output_stream output>
+inline void print_define(output& out,address_info const& a)
+{
+	if(a.storage_size==4)
+	{
+		std::array<std::uint8_t, 4> storage;
+		memcpy(storage.data(),std::addressof(a.storage),4);
+		print(out,storage.front(),u8":",storage[1],u8":",storage[2],u8":",storage.back());
+	}
+	else if(a.storage_size==16)
+	{
+		std::array<std::uint16_t, 8> storage;
+		memcpy(storage.data(),std::addressof(a.storage),16);
+		print(out,u8"[",hex(storage.front()),u8":",hex(storage[1]),u8":",
+			hex(storage[2]),u8":",hex(storage[3]),u8":",
+			hex(storage[4]),u8":",hex(storage[5]),u8":",
+			hex(storage[6]),u8":",hex(storage[7]),u8"]");
+	}
+	else [[unlikely]]
+		print(out,u8"unknown");
+}
+
 template<bool async=false>
 class basic_connected_socket:public basic_socket<async>
 {
