@@ -7,7 +7,7 @@ int main()
 try
 {
 	fast_io::timer tm("total");
-	fast_io::tcp_client hd(fast_io::ipv4{45,79,107,71},2000);
+	fast_io::tcp_client hd(fast_io::ipv4{127,0,0,1},2001);
 	for(std::size_t i{};i!=100;++i)
 	{
 		fast_io::timer tm1("some");
