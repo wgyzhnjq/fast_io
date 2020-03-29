@@ -11,6 +11,6 @@ int main()
 	{
 		fast_io::acceptor accept(hd);
 		fast_io::process proc("./server_child_process",{},{.in=accept,.out=accept,.err=log});
-		println(log,"connected from: ",accept.info());
+		println(log,u8"connected from: ",accept.info());
 	}
 }
