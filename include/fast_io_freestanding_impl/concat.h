@@ -98,6 +98,12 @@ inline constexpr T to(Args&& ...args)
 {
 	if constexpr(details::is_std_string<T>::value)
 		return details::deal_with_one<T,false>(std::forward<Args>(args)...);
+	else if constexpr(std::same_as<T,std::runtime_error>||
+		std::same_as<T,std::logic_error>||std::same_as<T,std::domain_error>||
+		std::same_as<T,std::invalid_argument>||std::same_as<T,std::length_error>||
+		std::same_as<T,std::out_of_range>||std::same_as<T,std::range_error>||
+		std::same_as<T,std::overflow_error>||std::same_as<T,std::underflow_error>)
+		return T(fast_io::concat(std::forward<Args>(args)...));
 	else
 	{
 		T t;
