@@ -201,13 +201,13 @@ inline constexpr auto obuffer_curr(otransform<input,func,ch_type,sz,rac>& ib) no
 template<buffer_output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr auto obuffer_end(otransform<input,func,ch_type,sz,rac>& ib) noexcept
 {
-	return ib.buffer.data()+ib.position_end;
+	return ib.buffer.data()+sz;
 }
 
 template<buffer_output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr void obuffer_set_curr(otransform<input,func,ch_type,sz,rac>& ib,ch_type* ptr) noexcept
 {
-	ib.position=ptr-ib.ibuffer.data();
+	ib.position=ptr-ib.buffer.data();
 }
 
 template<buffer_output_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
@@ -248,19 +248,6 @@ inline constexpr bool underflow(otransform<input,func,ch_type,sz,rac>& ib)
 	return underflow(ib.handle.first);
 }
 
-
-
-template<output_stream Ohandler,typename func,std::integral ch_type,std::size_t sz,bool rac>
-inline constexpr void put(otransform<Ohandler,func,ch_type,sz,rac>& ob,typename otransform<Ohandler,func,ch_type,sz,rac>::char_type ch)
-{
-	if(ob.position==ob.buffer.size())[[unlikely]]		//buffer full
-	{
-
-		return;//no flow dependency any more
-	}
-	ob.buffer[ob.position]=ch;
-	++ob.position;
-}
 
 template<output_stream output,typename func,std::integral ch_type,std::size_t sz,bool rac,typename... Args>
 requires (random_access_stream<output>&&rac)

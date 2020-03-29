@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 
-template<buffer_input_stream input,typename func,std::integral ch_type = typename input::char_type,std::size_t buffer_size=4096,bool randomaccess=false>
+template<input_stream input,typename func,std::integral ch_type = typename input::char_type,std::size_t buffer_size=4096,bool randomaccess=false>
 class itransform
 {
 public:
@@ -105,7 +105,7 @@ inline constexpr auto ibuffer_end(itransform<input,func,ch_type,sz,rac>& ib) noe
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
 inline constexpr void ibuffer_set_curr(itransform<input,func,ch_type,sz,rac>& ib,ch_type* ptr) noexcept
 {
-	ib.position=ptr-ib.ibuffer.data();
+	ib.position=ptr-ib.buffer.data();
 }
 
 template<buffer_input_stream input,typename func,std::integral ch_type,std::size_t sz,bool rac>
