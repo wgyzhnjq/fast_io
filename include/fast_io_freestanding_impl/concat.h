@@ -12,18 +12,51 @@ inline constexpr T deal_with_one(U&& t)
 {
 	using value_type = typename T::value_type;
 	using no_cvref = std::remove_cvref_t<U>;
-	std::array<value_type,print_reserve_size(print_reserve_type<no_cvref>)+static_cast<std::size_t>(ln)> array;
-	if constexpr(ln)
+
+	constexpr auto size{print_reserve_size(print_reserve_type<no_cvref>)+static_cast<std::size_t>(ln)};
+#ifdef __GLIBCXX__
+//hack libstdc++ internal implementation for sso
+//https://github.com/gcc-mirror/gcc/blob/master/libstdc++-v3/include/bits/basic_string.h
+	if constexpr(std::is_standard_layout_v<T>&&size<=15/sizeof(value_type))
 	{
-		auto p {print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t))};
-		*p=u8'\n';
-		return T(array.data(),++p);
+		T str;//RVO
+		using allocator_type = typename T::allocator_type;
+		using traits_type = typename T::traits_type;
+		struct libstdcpp_alloc_hider
+		{
+		[[no_unique_address]] allocator_type alloc;
+		typename T::pointer mptr;
+		};
+		auto p {print_reserve_define(print_reserve_type<no_cvref>,str.data(),std::forward<U>(t))};
+		if constexpr(ln)
+		{
+			*p=u8'\n';
+			++p;
+		}
+		traits_type::assign(*p, value_type());	//null terminator
+		*reinterpret_cast<typename T::size_type*>(reinterpret_cast<char*>(std::addressof(str))
+			+sizeof(libstdcpp_alloc_hider))=p-str.data();
+		return str;
 	}
 	else
 	{
-		return T(array.data(),
-		print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t)));
+#endif
+		std::array<value_type,size> array;
+	//https://github.com/gcc-mirror/gcc/blob/41d6b10e96a1de98e90a7c0378437c3255814b16/libstdc%2B%2B-v3/include/ext/string_conversions.h	
+		if constexpr(ln)
+		{
+			auto p {print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t))};
+			*p=u8'\n';
+			return T(array.data(),++p);
+		}
+		else
+		{
+			return T(array.data(),
+			print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t)));
+		}
+#ifdef __GNUG__
 	}
+#endif
 }
 
 template <typename T>
