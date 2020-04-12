@@ -209,7 +209,7 @@ public:
 			std::uninitialized_fill(uptr.get(),uptr.get()+n,init_val);
 			begin_ptr=uptr.release();
 			end_ptr=begin_ptr+n;
-			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp)/sizeof(value_type);
 	
 		}
 	}
@@ -228,7 +228,7 @@ public:
 			std::uninitialized_default_construct(uptr.get(),uptr.get()+n);
 			begin_ptr=uptr.release();
 			end_ptr=begin_ptr+n;
-			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp)/sizeof(value_type);
 	
 		}
 	}
@@ -236,7 +236,8 @@ public:
 	{
 		if(n<=N)[[likely]]
 		{
-			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage))+n)+N;
+			end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage))+n;
+			capacity_ptr=begin_ptr+N;
 			std::uninitialized_value_construct(begin_ptr,end_ptr);
 		}
 		else
@@ -249,7 +250,7 @@ public:
 				std::uninitialized_value_construct(uptr.get(),uptr.get()+n);
 			begin_ptr=uptr.release();
 			end_ptr=begin_ptr+n;
-			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp)/sizeof(value_type);
 		}
 	}
 	mmap_svector(mmap_svector const&) = delete;

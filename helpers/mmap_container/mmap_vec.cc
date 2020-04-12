@@ -5,8 +5,8 @@
 
 int main()
 {
-	constexpr std::size_t N{10485};
-	constexpr std::size_t M{40960};
+	constexpr std::size_t N{100};
+	constexpr std::size_t M{409600};
 	{
 		fast_io::timer tm("mmap_svector");
 		for(std::size_t i{};i!=N;++i)
