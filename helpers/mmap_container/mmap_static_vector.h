@@ -1,6 +1,8 @@
 #pragma once
 #include<cstddef>
 #include<cstdlib>
+#include<concepts>
+#include<iterator>
 #include"mmap_allocate.h"
 
 namespace fast_io
