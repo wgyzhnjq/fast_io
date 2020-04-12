@@ -53,10 +53,7 @@ public:
 		return internal_ptr;
 	}
 	constexpr mmap_allocation_unique_ptr() = default;
-	constexpr mmap_allocation_unique_ptr(std::size_t n,T* hint=nullptr)
-	{
-		return mmap_allocate<page_bytes_hint>(n,hint);
-	}
+	constexpr mmap_allocation_unique_ptr(std::size_t n,T* hint=nullptr):internal_ptr(mmap_allocate<page_bytes_hint>(n,hint)){}
 	constexpr T* release() const noexcept
 	{
 		auto temp{internal_ptr};
