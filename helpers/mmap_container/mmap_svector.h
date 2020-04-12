@@ -64,6 +64,10 @@ public:
 		else
 			return static_cast<void const*>(begin_ptr)==static_cast<void const*>(static_storage);
 	}
+	constexpr reference emplace_back_unchecked_default_init()
+	{
+		return *(new (end_ptr++) value_type);
+	}
 	template<typename... Args>
 	requires std::constructible_from<T,Args...>
 	constexpr reference emplace_back_unchecked(Args&& ...args)
@@ -176,6 +180,12 @@ public:
 		}
 	}
 */
+	constexpr reference emplace_back_default_init()
+	{
+		if(end_ptr==capacity_ptr)[[unlikely]]
+			reallocate_page(next_page_capacity());
+		return *(new (end_ptr++) value_type);
+	}
 	template<typename... Args>
 	constexpr reference emplace_back(Args&& ...args)
 	{
