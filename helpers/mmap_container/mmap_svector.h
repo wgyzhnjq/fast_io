@@ -146,7 +146,7 @@ private:
 	{
 		if(is_allocated_by_mmap())
 			return (capacity()*sizeof(value_type))>>(page_bytes_exp-1);
-		return page_unit();
+		return (page_unit()<<1);
 	}
 	static constexpr std::size_t allocate_pages_by_n(std::size_t n) noexcept
 	{

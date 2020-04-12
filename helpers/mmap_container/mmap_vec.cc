@@ -5,13 +5,13 @@
 
 int main()
 {
-	constexpr std::size_t N{2562442};
-	constexpr std::size_t M{20};
+	constexpr std::size_t N{1242};
+	constexpr std::size_t M{1025};
 	{
 		fast_io::timer tm("mmap_svector");
 		for(std::size_t i{};i!=N;++i)
 		{
-		fast_io::mmap_svector<std::size_t,21> vec;
+		fast_io::mmap_svector<std::size_t,1024> vec;
 		for(std::size_t i{};i!=M;++i)
 			vec.emplace_back(235);
 		}
