@@ -3,6 +3,7 @@
 #include<cstdlib>
 #include<concepts>
 #include<iterator>
+#include<memory>
 #include"mmap_allocate.h"
 
 namespace fast_io
@@ -42,14 +43,14 @@ public:
 	}
 	constexpr bool is_allocated_by_mmap() const
 	{
-		if(std::is_constant_evaluted())
+		if(std::is_constant_evaluated())
 			return false;
 		else
 			return static_cast<void*>(begin_ptr)!=static_cast<void*>(static_storage);
 	}
 	constexpr bool is_allocated_on_stack() const
 	{
-		if(std::is_constant_evaluted())
+		if(std::is_constant_evaluated())
 			return false;
 		else
 			return static_cast<void*>(begin_ptr)==static_cast<void*>(static_storage);
