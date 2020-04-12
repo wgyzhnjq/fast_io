@@ -83,12 +83,12 @@ public:
 	{
 		return end_ptr-begin_ptr;
 	}
-	inline constexpr std::size_t max_size() const noexcept
+	inline static constexpr std::size_t max_size() noexcept
 	{
 		constexpr std::size_t bts{std::numeric_limits<std::size_t>::max()/sizeof(value_type)};
 		return bts;
 	}
-	inline constexpr std::size_t page_unit() const noexcept
+	inline static constexpr std::size_t page_unit() noexcept
 	{
 		constexpr std::size_t page_bytes{1<<page_bytes_exp};
 		constexpr std::size_t sz{sizeof(static_storage)<=page_bytes?1:
@@ -148,6 +148,11 @@ private:
 			return (capacity()*sizeof(value_type))>>(page_bytes_exp-1);
 		return page_unit();
 	}
+	static constexpr std::size_t allocate_pages_by_n(std::size_t n) noexcept
+	{
+		constexpr std::size_t pus{1<<page_unit()};
+		return n%pus?n/pus+1:n/pus;
+	}
 public:
 /*
 	constexpr void shrink_to_fit()
@@ -181,22 +186,24 @@ public:
 	{
 		(--end_ptr)->~value_type();
 	}
-/*	constexpr mmap_svector(std::size_t n,T const& init_val{}) requires(std::default_initializable<T>)
+	constexpr mmap_svector(std::size_t n,T const& init_val=T()) requires(std::default_initializable<T>)
 	{
 		if(n<=N)[[likely]]
 		{
-			for(std::size_t i{};i!=n;++i)
-				end_ptr=new (static_data()+i*sizeof(value_type)) value_type(init_val);
-			begin_ptr=end_ptr-n;
-			storage=
+			capacity_ptr=(end_ptr=begin_ptr=reinterpret_cast<value_type*>(static_storage))+N;
+			std::uninitialized_fill_n(begin_ptr,n,init_val);
+			end_ptr=begin_ptr+n;
 		}
 		else
 		{
-			mmap_allocation_unique_ptr<T,page_table_hint> uptr(n);
-			for(std::size_t i{};i!=n;++i)
-				new (uptr.get()+i*sizeof(value_type)) value_type(init_val);
+			std::size_t const cap_s{allocate_pages_by_n(n)};
+			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
+			std::uninitialized_fill(uptr.get(),uptr.get()+n,init_val);
+			begin_ptr=uptr.release();
+			end_ptr=begin_ptr+n;
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
 		}
-	}*/
+	}
 	mmap_svector(mmap_svector const&) = delete;
 	mmap_svector& operator=(mmap_svector const&) = delete;
 	constexpr mmap_svector(mmap_svector&& bmv) noexcept
@@ -229,7 +236,7 @@ public:
 			else
 			{
 				end_ptr=std::uninitialized_move(bmv.begin_ptr,bmv.end_ptr,begin_ptr);
-				bmv.end_ptr=bmv.end_ptr;
+				bmv.end_ptr=bmv.begin_ptr;
 			}
 		}
 		return *this;
