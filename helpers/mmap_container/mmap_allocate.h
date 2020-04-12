@@ -8,7 +8,7 @@ template<std::size_t page_bytes_hint=2097152,typename T>
 inline constexpr T* mmap_allocate(std::size_t n,T* hint=nullptr) noexcept
 {
 	if(std::is_constant_evaluated())
-		return std::allocator_traits<std::allocator<T>>::allocate(std::allocator<T>(),hint,n);;
+		return std::allocator_traits<std::allocator<T>>::allocate(std::allocator<T>(),hint,n);
 	else
 	{
 #if defined(_POSIX_C_SOURCE)
