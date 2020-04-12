@@ -150,7 +150,8 @@ private:
 	}
 	static constexpr std::size_t allocate_pages_by_n(std::size_t n) noexcept
 	{
-		constexpr std::size_t pus{1<<page_unit()};
+		n*=sizeof(value_type);
+		constexpr std::size_t pus{(page_unit()<<page_bytes_exp)/sizeof(T)};
 		return n%pus?n/pus+1:n/pus;
 	}
 public:
@@ -186,7 +187,7 @@ public:
 	{
 		(--end_ptr)->~value_type();
 	}
-	constexpr mmap_svector(std::size_t n,T const& init_val=T()) requires(std::default_initializable<T>)
+	constexpr mmap_svector(std::size_t n,T const& init_val) requires(std::default_initializable<T>)
 	{
 		if(n<=N)[[likely]]
 		{
@@ -196,9 +197,48 @@ public:
 		}
 		else
 		{
-			std::size_t const cap_s{allocate_pages_by_n(n)};
+			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
 			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
 			std::uninitialized_fill(uptr.get(),uptr.get()+n,init_val);
+			begin_ptr=uptr.release();
+			end_ptr=begin_ptr+n;
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
+	
+		}
+	}
+	constexpr mmap_svector(std::size_t n,default_init_t) requires(std::default_initializable<T>)
+	{
+		if(n<=N)[[likely]]
+		{
+			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage)+n))+N;
+			std::uninitialized_default_construct(begin_ptr,end_ptr);
+		}
+		else
+		{
+			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
+			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
+			std::uninitialized_default_construct(uptr.get(),uptr.get()+n);
+			begin_ptr=uptr.release();
+			end_ptr=begin_ptr+n;
+			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
+	
+		}
+	}
+	constexpr mmap_svector(std::size_t n) requires(std::default_initializable<T>)
+	{
+		if(n<=N)[[likely]]
+		{
+			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage)+n))+N;
+			std::uninitialized_value_construct(begin_ptr,end_ptr);
+		}
+		else
+		{
+			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
+			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
+			if constexpr(std::is_scalar_v<value_type>)
+				std::uninitialized_default_construct(uptr.get(),uptr.get()+n);
+			else
+				std::uninitialized_value_construct(uptr.get(),uptr.get()+n);
 			begin_ptr=uptr.release();
 			end_ptr=begin_ptr+n;
 			capacity_ptr=begin_ptr+(cap_s<<page_bytes_exp);
