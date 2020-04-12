@@ -32,10 +32,10 @@ inline constexpr T* mmap_allocate(std::size_t n,T* hint=nullptr) noexcept
 		flags,0x04));
 #elif defined(__linux__)&&defined(__x86_64__)
 		return bit_cast<T*>(system_call<9,std::ptrdiff_t>(hint,n<<page_bytes_exp,PROT_READ|PROT_WRITE,
-			MAP_SHARED | MAP_ANONYMOUS,0,0));
+			MAP_PRIVATE | MAP_ANONYMOUS,0,0));
 #elif defined(_POSIX_C_SOURCE)
 		return reinterpret_cast<T*>(mmap(hint,n<<page_bytes_exp,PROT_READ|PROT_WRITE,
-			MAP_SHARED | MAP_ANONYMOUS,0,0));
+			MAP_PRIVATE | MAP_ANONYMOUS,0,0));
 #else
 #error "current not supported"
 #endif
