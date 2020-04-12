@@ -7,7 +7,7 @@ namespace fast_io
 template<std::size_t page_bytes_hint=2097152,typename T>
 inline constexpr T* mmap_allocate(std::size_t n,T* hint=nullptr) noexcept
 {
-	if(std::is_constant_evaluted())
+	if(std::is_constant_evaluated())
 		return std::allocator_traits<std::allocator<T>>::allocate(std::allocator<T>(),hint,n);;
 	else
 	{
@@ -26,7 +26,7 @@ inline constexpr T* mmap_allocate(std::size_t n,T* hint=nullptr) noexcept
 template<std::size_t page_bytes_hint=2097152,typename T>
 inline constexpr void mmap_deallocate(T* ptr,std::size_t n) noexcept
 {
-	if(std::is_constant_evaluted())
+	if(std::is_constant_evaluated())
 		std::allocator_traits<std::allocator<T>>::deallocate(std::allocator<T>(),ptr,sizeof(T)*n);
 	else
 	{
@@ -55,7 +55,7 @@ public:
 	constexpr mmap_allocation_unique_ptr() = default;
 	constexpr mmap_allocation_unique_ptr(std::size_t n,T* hint=nullptr)
 	{
-		return mmap_allocate<page_bytes_hint>(n,T);
+		return mmap_allocate<page_bytes_hint>(n,hint);
 	}
 	constexpr T* release() const noexcept
 	{
