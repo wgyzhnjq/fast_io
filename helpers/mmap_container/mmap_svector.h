@@ -32,7 +32,8 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	pointer begin_ptr{},end_ptr{},capacity_ptr{};
 	typename std::aligned_storage<sizeof(value_type),alignof(value_type)>::type static_storage[N];
-	constexpr mmap_svector() noexcept
+private:
+	constexpr void resetimpl() noexcept
 	{
 		if(std::is_constant_evaluated())
 		{
@@ -43,6 +44,11 @@ public:
 		{
 			capacity_ptr=(end_ptr=begin_ptr=reinterpret_cast<value_type*>(static_storage))+N;
 		}
+	}
+public:
+	constexpr mmap_svector() noexcept
+	{
+		resetimpl();
 	}
 	constexpr bool is_allocated_by_mmap() const noexcept
 	{
@@ -98,6 +104,7 @@ private:
 		if(is_allocated_by_mmap())[[unlikely]]
 			mmap_deallocate<page_bytes_exp>(begin_ptr,capacity()>>page_bytes_exp);
 	}
+
 	constexpr void reallocate_page(std::size_t pages)
 	{
 
@@ -199,10 +206,13 @@ public:
 			begin_ptr=bmv.begin_ptr;
 			end_ptr=bmv.end_ptr;
 			capacity_ptr=bmv.capacity_ptr;
-			bmv.capacity_ptr=bmv.end_ptr=bmv.begin_ptr={};
+			bmv.resetimpl();
 		}
 		else
+		{
 			end_ptr=std::uninitialized_move(bmv.begin_ptr,bmv.end_ptr,begin_ptr);
+			bmv.end_ptr=bmv.begin_ptr;
+		}
 	}
 	constexpr mmap_svector& operator=(mmap_svector&& bmv) noexcept
 	{
@@ -210,13 +220,16 @@ public:
 		{
 			destroy_container();
 			if(is_allocated_by_mmap())[[unlikely]]
-				end_ptr=std::uninitialized_move(bmv.begin_ptr,bmv.end_ptr,begin_ptr);
-			else
 			{
 				begin_ptr=bmv.begin_ptr;
 				end_ptr=bmv.end_ptr;
 				capacity_ptr=bmv.capacity_ptr;
-				bmv.capacity_ptr=bmv.end_ptr=bmv.begin_ptr={};
+				bmv.resetimpl();
+			}
+			else
+			{
+				end_ptr=std::uninitialized_move(bmv.begin_ptr,bmv.end_ptr,begin_ptr);
+				bmv.end_ptr=bmv.end_ptr;
 			}
 		}
 		return *this;
