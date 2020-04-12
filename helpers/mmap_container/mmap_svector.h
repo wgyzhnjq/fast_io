@@ -92,15 +92,6 @@ public:
 		constexpr std::size_t bts{std::numeric_limits<std::size_t>::max()/sizeof(value_type)};
 		return bts;
 	}
-	inline static constexpr std::size_t page_unit() noexcept
-	{
-		constexpr std::size_t page_bytes{1<<page_bytes_exp};
-		constexpr std::size_t sz{sizeof(static_storage)<=page_bytes?1:
-			sizeof(static_storage)%page_bytes?
-			(sizeof(static_storage)/page_bytes+1):
-			sizeof(static_storage)/page_bytes};
-		return sz;
-	}
 private:
 	constexpr void destroy_container() noexcept
 	{
@@ -146,17 +137,21 @@ private:
 			capacity_ptr=(begin_ptr=uptr.release())+(pages<<page_bytes_exp)/sizeof(value_type);
 		}
 	}
+	template<bool internal_use=false>
+	static constexpr std::size_t allocate_pages_by_n(std::size_t n) noexcept
+	{
+		n*=sizeof(T);
+		constexpr std::size_t page_size{1<<page_bytes_exp};
+		if constexpr(internal_use)
+			return n/page_size+1;
+		else
+			return n%page_size?n/page_size+1:n/page_size;
+	}
 	constexpr std::size_t next_page_capacity() const noexcept
 	{
 		if(is_allocated_by_mmap())
 			return (capacity()*sizeof(value_type))>>(page_bytes_exp-1);
-		return (page_unit()<<1);
-	}
-	static constexpr std::size_t allocate_pages_by_n(std::size_t n) noexcept
-	{
-		n*=sizeof(value_type);
-		constexpr std::size_t pus{(page_unit()<<page_bytes_exp)/sizeof(T)};
-		return n%pus?n/pus+1:n/pus;
+		return allocate_pages_by_n<true>(N);
 	}
 public:
 /*
@@ -187,6 +182,7 @@ public:
 		return *(new (end_ptr++) value_type);
 	}
 	template<typename... Args>
+	requires std::constructible_from<T,Args...>
 	constexpr reference emplace_back(Args&& ...args)
 	{
 		if(end_ptr==capacity_ptr)[[unlikely]]
@@ -201,13 +197,14 @@ public:
 	{
 		if(n<=N)[[likely]]
 		{
-			capacity_ptr=(end_ptr=begin_ptr=reinterpret_cast<value_type*>(static_storage))+N;
+			end_ptr=begin_ptr=reinterpret_cast<value_type*>(static_storage);
+			capacity_ptr=begin_ptr+N;
 			std::uninitialized_fill_n(begin_ptr,n,init_val);
 			end_ptr=begin_ptr+n;
 		}
 		else
 		{
-			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
+			std::size_t const cap_s{allocate_pages_by_n(n)};
 			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
 			std::uninitialized_fill(uptr.get(),uptr.get()+n,init_val);
 			begin_ptr=uptr.release();
@@ -220,12 +217,13 @@ public:
 	{
 		if(n<=N)[[likely]]
 		{
-			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage)+n))+N;
+			end_ptr=begin_ptr=reinterpret_cast<value_type*>(static_storage);
+			capacity_ptr=begin_ptr+N;
 			std::uninitialized_default_construct(begin_ptr,end_ptr);
 		}
 		else
 		{
-			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
+			std::size_t const cap_s{allocate_pages_by_n(n)};
 			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
 			std::uninitialized_default_construct(uptr.get(),uptr.get()+n);
 			begin_ptr=uptr.release();
@@ -238,12 +236,12 @@ public:
 	{
 		if(n<=N)[[likely]]
 		{
-			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage)+n))+N;
+			capacity_ptr=(end_ptr=(begin_ptr=reinterpret_cast<value_type*>(static_storage))+n)+N;
 			std::uninitialized_value_construct(begin_ptr,end_ptr);
 		}
 		else
 		{
-			std::size_t const cap_s{allocate_pages_by_n(n)*sizeof(T)};
+			std::size_t const cap_s{allocate_pages_by_n(n)};
 			mmap_allocation_unique_ptr<T,page_bytes_exp> uptr(cap_s);
 			if constexpr(std::is_scalar_v<value_type>)
 				std::uninitialized_default_construct(uptr.get(),uptr.get()+n);
