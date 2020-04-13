@@ -212,6 +212,10 @@ public:
 	{
 		return static_cast<basic_win32_io_observer<char_type>>(static_cast<basic_posix_io_observer<char_type>>(*this));
 	}
+	explicit operator basic_nt_io_observer<char_type>() const
+	{
+		return static_cast<basic_nt_io_observer<char_type>>(static_cast<basic_posix_io_observer<char_type>>(*this));
+	}
 #endif
 };
 
@@ -252,7 +256,7 @@ public:
 
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline Iter read(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
+inline Iter read(basic_c_io_observer<T> cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	std::size_t const r(std::fread(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle()));
@@ -266,7 +270,7 @@ inline Iter read(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
 }
 
 template<std::integral T,std::contiguous_iterator Iter>
-inline void write(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
+inline void write(basic_c_io_observer<T> cfhd,Iter begin,Iter end)
 {
 	std::size_t const count(end-begin);
 	if(std::fwrite(std::to_address(begin),sizeof(*begin),count,cfhd.native_handle())<count)
@@ -278,7 +282,7 @@ inline void write(basic_c_io_observer<T>& cfhd,Iter begin,Iter end)
 }
 
 template<std::integral T>
-inline void flush(basic_c_io_observer<T>& cfhd)
+inline void flush(basic_c_io_observer<T> cfhd)
 {
 	if(std::fflush(cfhd.native_handle()))
 #ifdef __cpp_exceptions
