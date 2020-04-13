@@ -203,6 +203,10 @@ public:
 #endif
 		return {bit_cast<void*>(os_handle)};
 	}
+	explicit operator basic_nt_io_observer<char_type>() const
+	{
+		return static_cast<basic_nt_io_observer<char_type>>(static_cast<basic_win32_io_observer<char_type>>(*this));
+	}
 #endif
 };
 
@@ -720,6 +724,12 @@ inline constexpr posix_io_handle posix_stdout()
 inline constexpr posix_io_handle posix_stderr()
 {
 	return posix_io_handle(posix_stderr_number);
+}
+
+template<output_stream output,std::integral intg>
+inline constexpr void print_define(output& out,basic_posix_io_observer<intg> iob)
+{
+	print(out,iob.native_handle());
 }
 
 }

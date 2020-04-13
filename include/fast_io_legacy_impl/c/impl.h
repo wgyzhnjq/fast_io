@@ -735,6 +735,19 @@ inline auto zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type>& h)
 }
 #endif
 
+
+template<output_stream output,std::integral intg>
+inline constexpr void print_define(output& out,basic_c_io_observer_unlocked<intg> iob)
+{
+	print(out,fast_io::unsigned_view(iob.native_handle()));
+}
+
+template<output_stream output,std::integral intg>
+inline constexpr void print_define(output& out,basic_c_io_observer<intg> iob)
+{
+	print(out,fast_io::unsigned_view(iob.native_handle()));
+}
+
 }
 #ifdef _MSC_VER
 #include"universal_crt.h"

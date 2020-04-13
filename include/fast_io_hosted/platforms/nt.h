@@ -357,4 +357,11 @@ using nt_file=basic_nt_file<char>;
 using u8nt_io_observer=basic_nt_io_observer<char8_t>;
 using u8nt_io_handle=basic_nt_io_handle<char8_t>;
 using u8nt_file=basic_nt_file<char8_t>;
+
+template<output_stream output,std::integral intg>
+inline constexpr void print_define(output& out,basic_nt_io_observer<intg> iob)
+{
+	print(out,fast_io::unsigned_view(iob.native_handle()));
+}
+
 }
