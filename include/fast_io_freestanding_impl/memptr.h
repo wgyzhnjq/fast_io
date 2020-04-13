@@ -20,6 +20,14 @@ public:
 	{
 		bmv.ptr=nullptr;
 	}
+	constexpr T* data() noexcept
+	{
+		return ptr;
+	}
+	constexpr T* data() const noexcept
+	{
+		return ptr;
+	}
 #if __cpp_constexpr_dynamic_alloc >= 201907L
 	constexpr
 #endif
