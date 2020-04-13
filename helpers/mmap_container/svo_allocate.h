@@ -1,18 +1,6 @@
 #pragma once
-#ifdef _POSIX_C_SOURCE
-#include <sys/mman.h>
-#endif
-
 namespace fast_io
 {
-
-#if defined(__WINNT__) || defined(_MSC_VER)
-namespace win32::details
-{
-extern "C" void* __stdcall VirtualAlloc(void*,std::size_t,std::uint32_t,std::uint32_t);
-extern "C" int __stdcall VirtualFree(void*,std::size_t,std::uint32_t);
-}
-#endif
 
 template<std::size_t page_bytes_exp=12,typename T>
 inline constexpr T* svo_allocate(std::size_t n,T* hint=nullptr) noexcept
@@ -24,27 +12,9 @@ inline constexpr T* svo_allocate(std::size_t n,T* hint=nullptr) noexcept
 	}
 	else
 	{
-
-/*
-#if defined(__WINNT__) || defined(_MSC_VER)
-		std::uint32_t flags{0x00001000|0x00002000};//MEM_COMMIT|MEM_RESERVE
-		if constexpr(19<page_bytes_exp)//large pages probably
-			flags|=0x20000000;
-		return reinterpret_cast<T*>(win32::details::VirtualAlloc(nullptr,n<<page_bytes_exp,
-		flags,0x04));
-#elif defined(__linux__)&&defined(__x86_64__)
-		return bit_cast<T*>(system_call<9,std::ptrdiff_t>(hint,n<<page_bytes_exp,PROT_READ|PROT_WRITE,
-			MAP_PRIVATE | MAP_ANONYMOUS,0,0));
-#elif defined(_POSIX_C_SOURCE)
-		return reinterpret_cast<T*>(mmap(hint,n<<page_bytes_exp,PROT_READ|PROT_WRITE,
-			MAP_PRIVATE | MAP_ANONYMOUS,0,0));
-#else
-#error "current not supported"
-#endif
-*/
+		return reinterpret_cast<T*>(operator new[](n<<12,std::align_val_t{alignof(T)},std::nothrow));
 	}
 }
-
 template<std::size_t page_bytes_exp=12,typename T>
 inline constexpr void svo_deallocate(T* ptr,std::size_t n) noexcept
 {
@@ -55,19 +25,7 @@ inline constexpr void svo_deallocate(T* ptr,std::size_t n) noexcept
 	}
 	else
 	{
-		if(ptr==nullptr)
-			return;
-/*
-#if defined(__WINNT__) || defined(_MSC_VER)
-		win32::details::VirtualFree(ptr,n<<page_bytes_exp,0x00004000);
-#elif defined(__linux__)&&defined(__x86_64__)
-		system_call<11,int>(ptr,n<<page_bytes_exp);
-#elif defined(_POSIX_C_SOURCE)
-		munmap(ptr,n<<page_bytes_exp);
-#else
-#error "current not supported"
-#endif
-*/
+		return ::operator delete[](ptr,n<<12,std::align_val_t{alignof(T)});
 	}
 }
 template<typename T,std::size_t page_bytes_exp=12>

@@ -6,29 +6,31 @@
 int main()
 {
 	constexpr std::size_t N{100};
-	constexpr std::size_t M{409600};
+	constexpr std::size_t M{10485760};
 	{
+		std::size_t sum{};
+		{
 		fast_io::timer tm("mmap_svector");
 		for(std::size_t i{};i!=N;++i)
 		{
-		fast_io::mmap_svector<std::size_t,4096> vec(M);
-		vec.emplace_back();
+		fast_io::mmap_svector<std::size_t,65536> vec(M);
+		for(auto const & e : vec)
+			sum+=e;
 		}
+		}
+		println("sum:",sum);
 	}
 	{
+		std::size_t sum{};
+		{
 		fast_io::timer tm("std::vector");
 		for(std::size_t i{};i!=N;++i)
 		{
 		std::vector<std::size_t> vec(M);
-		vec.emplace_back();
-
-//		vec.reserve(M);
-//		for(std::size_t i{};i!=M;++i)
-//			vec.emplace_back();
+		for(auto const & e : vec)
+			sum+=e;
 		}
+		}
+		println("sum:",sum);
 	}
-
-//	println(vec.size()," ",vec.capacity());
-//	for(auto const& e : vec)
-//		println(e);
 }
