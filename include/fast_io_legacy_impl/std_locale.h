@@ -14,9 +14,11 @@ public:
 	using native_handle_type = stm;
 	using status_type = std::locale;
 	fast_io_basic_streambuf<native_handle_type> buf;
+	std::basic_iostream<typename stm::char_type> internal_stream;
 	template<typename ...Args>
 	requires std::constructible_from<fast_io_basic_streambuf<native_handle_type>,Args...>
-	cpp_locale_wrapper(Args&& ...args):buf(std::forward<Args>(args)...){}
+	cpp_locale_wrapper(Args&& ...args):buf(std::forward<Args>(args)...),
+	internal_stream(std::addressof(buf)){}
 	auto* rdbuf() noexcept
 	{
 		return std::addressof(buf);
@@ -25,15 +27,22 @@ public:
 	{
 		return std::addressof(buf);
 	}
-
+	auto& stream() noexcept
+	{
+		return internal_stream;
+	}
+	auto& stream() const noexcept
+	{
+		return internal_stream;
+	}
 	auto getloc() const
 	{
 		return buf.getloc();
 	}
 
-	auto imbue(std::locale& loc) const
+	auto imbue(std::locale const& loc)
 	{
-		return buf.imbue(loc);
+		return buf.pubimbue(loc);
 	}
 /*
 	auto& get_ios_base() noexcept
@@ -127,12 +136,12 @@ inline void cpp_locale_print_define(cpp_locale_wrapper<stm>& oum,
 std::basic_ostream<typename stm::char_type> &sbf,
 std::locale& loc,T&& ref)
 {
+	sbf.clear();
 	if constexpr(std::same_as<std::remove_cvref_t<T>,bool>)
 	{
 		std::use_facet<std::num_put<typename stm::char_type>>(loc).
 		put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
 		static_cast<bool>(ref));
-		sbf.clear();
 	}
 	if constexpr(std::signed_integral<T>)
 	{
@@ -148,7 +157,6 @@ std::locale& loc,T&& ref)
 			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
 			static_cast<long long>(ref));
 		}
-		sbf.clear();
 	}
 	else if constexpr(std::unsigned_integral<T>)
 	{
@@ -164,16 +172,15 @@ std::locale& loc,T&& ref)
 			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
 			static_cast<unsigned long long>(ref));
 		}
-		sbf.clear();
 	}
 	else if constexpr(std::floating_point<T>)
 	{
 		if constexpr(std::same_as<std::remove_cvref_t<T>,float>)
-			sbf.precision(8);
+			sbf.precision(7);
 		else if constexpr(std::same_as<std::remove_cvref_t<T>,double>)
-			sbf.precision(17);
+			sbf.precision(16);
 		else if constexpr (std::same_as<std::remove_cvref_t<T>,long double>)
-			sbf.precision(35);
+			sbf.precision(34);
 		if constexpr(sizeof(T)<=sizeof(double))
 			std::use_facet<std::num_put<typename stm::char_type>>(loc).
 			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
@@ -182,7 +189,6 @@ std::locale& loc,T&& ref)
 			std::use_facet<std::num_put<typename stm::char_type>>(loc).
 			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
 			static_cast<long double>(ref));
-		sbf.clear();
 	}
 	else if constexpr(requires(std::basic_ostream<typename stm::char_type>& sbf)
 	{
@@ -190,27 +196,26 @@ std::locale& loc,T&& ref)
 	})
 	{
 		sbf<<std::forward<T>(ref);
-		sbf.clear();
 	}
 	else
-		print(oum.native_handle(),std::forward<T>(ref));
-	
+	{
+		basic_general_streambuf_io_observer<std::basic_ostream<typename stm::char_type>> iob{oum.rdbuf()};
+		print(iob,std::forward<T>(ref));
+	}
 }
 
 template<output_stream stm,typename... Args>
 inline void print_status_define(cpp_locale_wrapper<stm>& oum,Args&& ...args)
 {
-	std::basic_ostream<typename stm::char_type> sbf(oum.rdbuf());
 	auto loc{oum.getloc()};
-	(cpp_locale_print_define(oum,sbf,loc,std::forward<Args>(args)),...);
+	(cpp_locale_print_define(oum,oum.internal_stream,loc,std::forward<Args>(args)),...);
 }
 
 template<output_stream stm,typename... Args>
 inline void println_status_define(cpp_locale_wrapper<stm>& oum,Args&& ...args)
 {
-	std::basic_ostream<typename stm::char_type> sbf(oum.rdbuf());
 	auto loc{oum.getloc()};
-	(cpp_locale_print_define(oum,sbf,loc,std::forward<Args>(args)),...);
+	(cpp_locale_print_define(oum,oum.internal_stream,loc,std::forward<Args>(args)),...);
 	oum.buf.sputc(u8'\n');
 }
 

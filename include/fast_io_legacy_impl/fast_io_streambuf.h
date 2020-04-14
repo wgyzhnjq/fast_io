@@ -32,16 +32,40 @@ private:
 	{
 		if constexpr(fast_io::buffer_output_stream<native_handle_type>)
 		{
+			auto i{obuffer_curr(sm)};
+			if(i+1<=obuffer_end(sm))[[likely]]
+			{
+				*i=traits_type::to_char_type(ch);
+				obuffer_set_curr(sm,i+1);
+				return 0;
+			}
+			else
+			{
+//			else
+				try
+				{
+					details::call_overflow(sm,traits_type::to_char_type(ch));
+					return 0;
+				}
+				catch(...)
+				{
+					return traits_type::eof();
+				}
+			}
+			
+		}
+		else
+		{
 			try
 			{
-				details::call_overflow(sm,traits_type::to_char_type(ch));
+				write(sm,std::addressof(ch),std::addressof(ch)+1);
 				return 0;
 			}
 			catch(...)
 			{
+				return traits_type::eof();
 			}
 		}
-		return traits_type::eof();
 	}
 public:
 	template<typename... Args>
