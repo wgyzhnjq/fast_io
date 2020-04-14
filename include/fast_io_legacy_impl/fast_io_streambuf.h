@@ -3,6 +3,17 @@
 namespace fast_io
 {
 
+namespace details
+{
+
+template<buffer_output_stream output>
+inline constexpr void call_overflow(output& out,typename output::char_type ch)
+{
+	overflow(out,ch);
+}
+
+}
+
 template<stream stm,typename traits_tp = std::char_traits<typename stm::char_type>>
 class fast_io_basic_streambuf final:public std::basic_streambuf<typename traits_tp::char_type,traits_tp>
 {
@@ -12,19 +23,25 @@ public:
 	using char_type = typename traits_type::char_type;
 private:
 	native_handle_type sm;
-	std::streamsize xsputn(char_type const* s, std::streamsize count) requires(output_stream<native_handle_type>)
+	std::streamsize xsputn(char_type const* s, std::streamsize count) override
 	{
-		if constexpr(!std::same_as<decltype(write(sm,s,s+count)),void>)
-			return static_cast<std::streamsize>(write(sm,s,s+count)-s);
-		else
-		{
-			write(sm,s,s+count);
-			return count;
-		}
+		write_all(sm,s,s+count);
+		return count;
 	}
-	std::streamsize xsgetn(char_type* s, std::streamsize count) requires(input_stream<native_handle_type>)
+	typename traits_type::int_type overflow(typename traits_type::int_type ch) override
 	{
-		return static_cast<std::streamsize>(read(sm,s,s+count)-s);
+		if constexpr(fast_io::buffer_output_stream<native_handle_type>)
+		{
+			try
+			{
+				details::call_overflow(sm,traits_type::to_char_type(ch));
+				return 0;
+			}
+			catch(...)
+			{
+			}
+		}
+		return traits_type::eof();
 	}
 public:
 	template<typename... Args>

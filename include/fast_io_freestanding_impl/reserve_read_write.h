@@ -27,17 +27,18 @@ constexpr void reserve_read_cold_path(input& in,std::size_t required_size,Func& 
 	if(required_size<=1024)[[likely]]
 	{
 		std::array<typename input::char_type,1024> temp_buffer;
-		func(temp_buffer.data(),read_all(in,temp_buffer.data(),temp_buffer.data()+required_size));
+		func(temp_buffer.data(),read(in,temp_buffer.data(),temp_buffer.data()+required_size));
 	}
 	else
 	{
 		details::temp_unique_arr_ptr<typename input::char_type> temp_buffer(required_size);
-		func(temp_buffer.data(),read_all(in,temp_buffer.data(),temp_buffer.data()+required_size));
+		func(temp_buffer.data(),read(in,temp_buffer.data(),temp_buffer.data()+required_size));
 	}
 }
 }
 
 template<output_stream output,typename Func>
+requires std::invocable<Func,typename output::char_type*>
 inline constexpr void reserve_write(output& out,std::size_t required_size,Func func)
 {
 	if constexpr(reserve_output_stream<output>)
@@ -61,6 +62,7 @@ inline constexpr void reserve_write(output& out,std::size_t required_size,Func f
 }
 
 template<input_stream input,typename Func>
+requires std::invocable<Func,typename input::char_type*>
 inline constexpr void reserve_read(input& in,std::size_t required_size,Func func)
 {
 	if constexpr(buffer_input_stream<input>)
