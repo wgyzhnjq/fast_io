@@ -5,8 +5,12 @@
 
 int main()
 {
-	fast_io::cpp_locale_wrapper<fast_io::native_io_handle> obf(fast_io::native_stdout_number);
-	std::locale::global(std::locale(""));
-	print(obf,4.46461245325);
-	
+	std::locale::global(std::locale("C"));
+//THIS IS SHIT
+	fast_io::cpp_locale_wrapper<fast_io::obuf_file> obf("w.txt");
+	fast_io::streambuf_io_observer iob{obf.rdbuf()};
+	print(obuffer_curr(iob)-obuffer_begin(iob));
+//	println(obf,"std::locale is damn shit: ",421421.51);
+
+
 }

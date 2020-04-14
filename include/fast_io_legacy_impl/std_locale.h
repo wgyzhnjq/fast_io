@@ -216,7 +216,10 @@ inline void println_status_define(cpp_locale_wrapper<stm>& oum,Args&& ...args)
 {
 	auto loc{oum.getloc()};
 	(cpp_locale_print_define(oum,oum.internal_stream,loc,std::forward<Args>(args)),...);
-	oum.buf.sputc(u8'\n');
+	if constexpr(buffer_output_stream<stm>)
+		put(oum.native_handle(),u8'\n');
+	else
+		oum.buf.sputc(u8'\n');
 }
 
 }
