@@ -127,7 +127,46 @@ inline void cpp_locale_print_define(cpp_locale_wrapper<stm>& oum,
 std::basic_ostream<typename stm::char_type> &sbf,
 std::locale& loc,T&& ref)
 {
-	if constexpr(std::integral<T>||std::floating_point<T>)
+	if constexpr(std::same_as<std::remove_cvref_t<T>,bool>)
+	{
+		std::use_facet<std::num_put<typename stm::char_type>>(loc).
+		put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+		static_cast<bool>(ref));
+		sbf.clear();
+	}
+	if constexpr(std::signed_integral<T>)
+	{
+		if(sizeof(T)<=sizeof(unsigned long))
+		{
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<long>(ref));
+		}
+		else
+		{
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<long long>(ref));
+		}
+		sbf.clear();
+	}
+	else if constexpr(std::unsigned_integral<T>)
+	{
+		if(sizeof(T)<=sizeof(unsigned long))
+		{
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<unsigned long>(ref));
+		}
+		else
+		{
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<unsigned long long>(ref));
+		}
+		sbf.clear();
+	}
+	else if constexpr(std::floating_point<T>)
 	{
 		if constexpr(std::same_as<std::remove_cvref_t<T>,float>)
 			sbf.precision(8);
@@ -135,28 +174,27 @@ std::locale& loc,T&& ref)
 			sbf.precision(17);
 		else if constexpr (std::same_as<std::remove_cvref_t<T>,long double>)
 			sbf.precision(35);
-		std::use_facet<std::num_put<char>>(loc).
-		put(oum.rdbuf(), sbf, '0', 2.71);
-//		f.put(std::ostreambuf_iterator<char>(sbf),
-//			static_cast<std::ios_base&>(sbf),
-//			' ',5);
-//		f.put(iter,sbf,0,ref);
-//f.put(std::ostreambuf_iterator<char>(sbf), static_cast<std::ios_base&>(sbf), ' ', 5);
-//			sbf,static_cast<typename stm::char_type>(0),
-//			ref);
+		if constexpr(sizeof(T)<=sizeof(double))
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<double>(ref));
+		else
+			std::use_facet<std::num_put<typename stm::char_type>>(loc).
+			put(oum.rdbuf(), sbf, static_cast<typename stm::char_type>(0),
+			static_cast<long double>(ref));
+		sbf.clear();
 	}
-/*	else if constexpr(requires(std::basic_ostream<typename stm::char_type>& out)
+	else if constexpr(requires(std::basic_ostream<typename stm::char_type>& sbf)
 	{
-		out<<std::forward<T>(ref);
+		sbf<<std::forward<T>(ref);
 	})
 	{
-		std::basic_ostream<typename stm::char_type> out{oum.rdbuf()};
-		out<<std::forward<T>(ref);
-	}*/
-	else
-	{
-		print(oum.native_handle(),std::forward<T>(ref));
+		sbf<<std::forward<T>(ref);
+		sbf.clear();
 	}
+	else
+		print(oum.native_handle(),std::forward<T>(ref));
+	
 }
 
 template<output_stream stm,typename... Args>
