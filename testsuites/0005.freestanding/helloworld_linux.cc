@@ -1,6 +1,6 @@
 #include"../../include/fast_io.h"
 
-extern "C" void _start() noexcept
+extern "C" [[noreturn]] void _start() noexcept
 {
 	print("Hello World\n");
 	fast_io::fast_exit(0);
