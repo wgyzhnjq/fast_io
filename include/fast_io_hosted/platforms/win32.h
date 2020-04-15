@@ -312,8 +312,7 @@ public:
 	explicit constexpr basic_win32_io_handle(native_handle_type handle) noexcept:
 		basic_win32_io_observer<ch_type>{handle}{}
 	explicit basic_win32_io_handle(std::uint32_t dw):
-		basic_win32_io_observer<ch_type>{fast_io::win32::GetStdHandle(dw)}
-	{}
+		basic_win32_io_observer<ch_type>{fast_io::win32::GetStdHandle(dw)}{}
 	basic_win32_io_handle(basic_win32_io_handle const& other)
 	{
 		auto const current_process(win32::GetCurrentProcess());
@@ -360,13 +359,13 @@ public:
 };
 
 template<std::integral ch_type>
-inline constexpr auto redirect_handle(basic_win32_io_observer<ch_type>& hd)
+inline constexpr auto redirect_handle(basic_win32_io_observer<ch_type> hd)
 {
 	return hd.native_handle();
 }
 
 template<std::integral ch_type,typename T,std::integral U>
-inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_observer<ch_type>& handle,seek_type_t<T>,U i=0,seekdir s=seekdir::cur)
+inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_observer<ch_type> handle,seek_type_t<T>,U i=0,seekdir s=seekdir::cur)
 {
 	std::int64_t distance_to_move_high{};
 	std::int64_t seekposition{seek_precondition<std::int64_t,T,ch_type>(i)};
@@ -380,13 +379,13 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_observe
 }
 
 template<std::integral ch_type,std::integral U>
-inline auto seek(basic_win32_io_observer<ch_type>& handle,U i=0,seekdir s=seekdir::cur)
+inline auto seek(basic_win32_io_observer<ch_type> handle,U i=0,seekdir s=seekdir::cur)
 {
 	return seek(handle,seek_type<ch_type>,i,s);
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter read(basic_win32_io_observer<ch_type>& handle,Iter begin,Iter end)
+inline Iter read(basic_win32_io_observer<ch_type> handle,Iter begin,Iter end)
 {
 	std::uint32_t numberOfBytesRead{};
 	std::size_t to_read((end-begin)*sizeof(*begin));
@@ -408,7 +407,7 @@ inline Iter read(basic_win32_io_observer<ch_type>& handle,Iter begin,Iter end)
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter write(basic_win32_io_observer<ch_type>& handle,Iter cbegin,Iter cend)
+inline Iter write(basic_win32_io_observer<ch_type> handle,Iter cbegin,Iter cend)
 {
 	std::size_t to_write((cend-cbegin)*sizeof(*cbegin));
 	if constexpr(4<sizeof(std::size_t))
@@ -425,13 +424,13 @@ inline Iter write(basic_win32_io_observer<ch_type>& handle,Iter cbegin,Iter cend
 }
 /*
 template<std::integral ch_type>
-inline auto memory_map_in_handle(basic_win32_io_observer<ch_type>& handle)
+inline auto memory_map_in_handle(basic_win32_io_observer<ch_type> handle)
 {
 	return handle.native_handle();
 }
 */
 template<std::integral ch_type>
-inline constexpr void flush(basic_win32_io_observer<ch_type>&){}
+inline constexpr void flush(basic_win32_io_observer<ch_type>){}
 
 template<std::integral ch_type>
 class basic_win32_file:public basic_win32_io_handle<ch_type>

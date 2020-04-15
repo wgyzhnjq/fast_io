@@ -15,7 +15,9 @@ inline void fast_exit(I ret)
 
 inline void fast_terminate()
 {
-	fast_exit(-1);
+	*(reinterpret_cast<char*>(0))=0;
+	//create a null pointer hardware exception to terminate the program
+//	fast_exit(-1);
 }
 
 }
