@@ -8,7 +8,7 @@
 	.globl	_start
 	.type	_start, @function
 _start:
-.LFB12781:
+.LFB12874:
 	.cfi_startproc
 	movl	$1, %eax
 	movl	$1, %edi
@@ -19,13 +19,6 @@ _start:
 	syscall
 # 0 "" 2
 #NO_APP
-	cmpq	$-4096, %rax
-	jb	.L2
-	movb	$0, 0
-	ud2
-	.p2align 4,,10
-	.p2align 3
-.L2:
 	movl	$60, %eax
 	xorl	%edi, %edi
 #APP
@@ -34,7 +27,7 @@ _start:
 # 0 "" 2
 #NO_APP
 	.cfi_endproc
-.LFE12781:
+.LFE12874:
 	.size	_start, .-_start
-	.ident	"GCC: (cqwrteur) 10.0.1 20200318 (experimental)"
+	.ident	"GCC: (cqwrteur) 10.0.1 20200415 (experimental)"
 	.section	.note.GNU-stack,"",@progbits
