@@ -7,7 +7,7 @@ extern "C" void _start() noexcept
 }
 
 //g++ -o helloworld_linux helloworld_linux.cc -Ofast -std=c++2a -s -fno-exceptions -fno-rtti -DNDEBUG -ffreestanding -nodefaultlibs -static -lgcc -nostartfiles
-//binary size: 9kb
+//binary size: 768 bytes
 
 /*
 $ ldd ./helloworld_linux
