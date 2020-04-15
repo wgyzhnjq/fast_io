@@ -1,8 +1,8 @@
-#include"../../include/fast_io_hosted.h"
+#include"../../include/fast_io.h"
 
 extern "C" int __stdcall wWinMain() noexcept
 {
-	fast_io::out=fast_io::native_io_handle(fast_io::native_stdout_number);
+	fast_io::out=fast_io::native_stdout();
 	print("Hello World\n");
 	return 0;
 }

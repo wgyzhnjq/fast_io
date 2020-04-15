@@ -2,7 +2,7 @@
 
 extern "C" int __stdcall wWinMain() noexcept
 {
-	fast_io::native_io_handle out(fast_io::native_stdout_number);
+	auto out{fast_io::native_stdout()};
 	print(out,"Hello World\n");
 	return 0;
 }
