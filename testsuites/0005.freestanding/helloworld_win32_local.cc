@@ -2,12 +2,12 @@
 
 extern "C" int __stdcall wWinMain() noexcept
 {
-	fast_io::out=fast_io::native_io_handle(fast_io::native_stdout_number);
-	print("Hello World\n");
+	fast_io::native_io_handle out(fast_io::native_stdout_number);
+	print(out,"Hello World\n");
 	return 0;
 }
 
-//g++ -o helloworld_win32 helloworld_win32.cc -Ofast -std=c++2a -s -fno-exceptions -fno-rtti -DNDEBUG -ffreestanding -static -lkernel32 -nostartfiles
+//g++ -o helloworld_win32_local helloworld_win32_local.cc -Ofast -std=c++2a -s -fno-exceptions -fno-rtti -DNDEBUG -ffreestanding -static -lkernel32 -nostartfiles
 //binary size: 3584 bytes
 
 /*
