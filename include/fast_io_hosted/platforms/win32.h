@@ -435,6 +435,12 @@ inline constexpr void flush(basic_win32_io_observer<ch_type>){}
 template<std::integral ch_type>
 class basic_win32_file:public basic_win32_io_handle<ch_type>
 {
+	void seek_end_local()
+	{
+		basic_win32_file<ch_type> local{this->native_handle()};
+		seek(*this,0,seekdir::end);
+		local.detach();
+	};
 public:
 	using char_type=ch_type;
 	using native_handle_type = basic_win32_io_handle<ch_type>::native_handle_type;
@@ -467,7 +473,7 @@ public:
 				)
 	{
 		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
+			seek_end_local();
 	}
 	template<open_mode om>
 	basic_win32_file(std::string_view filename,open_interface_t<om>):basic_win32_io_handle<char_type>(
@@ -478,7 +484,7 @@ public:
 				details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes))
 	{
 		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
+			seek_end_local();
 	}
 	template<open_mode om>
 	basic_win32_file(std::string_view filename,open_interface_t<om>,perms p):basic_win32_io_handle<char_type>(
@@ -489,7 +495,7 @@ public:
 				details::dw_flag_attribute_with_perms(details::win32_file_openmode_single<om>::mode.dwFlagsAndAttributes,p)))
 	{
 		if constexpr ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
+			seek_end_local();
 	}
 	basic_win32_file(std::string_view filename,open_mode om,perms pm=static_cast<perms>(420)):basic_win32_io_handle<char_type>(nullptr)
 	{
@@ -513,7 +519,7 @@ public:
 				mode.dwFlagsAndAttributes);
 		}
 		if ((om&open_mode::ate)!=open_mode::none)
-			seek(*this,0,seekdir::end);
+			seek_end_local();
 	}
 	basic_win32_file(std::string_view file,std::string_view mode,perms pm=static_cast<perms>(420)):
 		basic_win32_file(file,fast_io::from_c_mode(mode),pm){}

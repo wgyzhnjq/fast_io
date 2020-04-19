@@ -10,6 +10,7 @@ class temp_unique_arr_ptr
 {
 public:
 	T* ptr{};
+	constexpr temp_unique_arr_ptr()=default;
 #if __cpp_constexpr_dynamic_alloc >= 201907L
 	constexpr
 #endif
