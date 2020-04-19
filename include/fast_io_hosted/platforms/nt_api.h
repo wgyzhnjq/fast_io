@@ -131,7 +131,7 @@ __kernel_entry NTSYSCALLAPI NTSTATUS NtWriteFile(
   PULONG           Key
 );
 */
-	return (get_nt_module_handle<std::uint32_t __stdcall(void*,unicode_string*,wchar_t const*,void*,io_status_block*,
+	return (get_nt_module_handle<std::uint32_t __stdcall(void*,void*,pio_apc_routine,void*,io_status_block*,
 				void const*,std::uint32_t,std::int64_t*,std::uint32_t*)>("NtWriteFile"))(std::forward<Args>(args)...);
 }
 
