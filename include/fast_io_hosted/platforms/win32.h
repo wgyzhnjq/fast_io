@@ -537,13 +537,13 @@ public:
 };
 
 template<std::integral ch_type>
-inline auto zero_copy_in_handle(basic_win32_io_handle<ch_type>& handle)
+inline auto zero_copy_in_handle(basic_win32_io_observer<ch_type> handle)
 {
 	return handle.native_handle();
 }
 
 template<std::integral ch_type>
-inline void truncate(basic_win32_io_handle<ch_type>& handle,std::size_t size)
+inline void truncate(basic_win32_io_observer<ch_type> handle,std::size_t size)
 {
 	seek(handle,size,seekdir::beg);
 	if(!win32::SetEndOfFile(handle.native_handle()))
