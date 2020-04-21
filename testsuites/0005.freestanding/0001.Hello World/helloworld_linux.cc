@@ -1,4 +1,4 @@
-#include"../../include/fast_io.h"
+#include"../../../include/fast_io.h"
 
 extern "C" [[noreturn]] void _start() noexcept
 {

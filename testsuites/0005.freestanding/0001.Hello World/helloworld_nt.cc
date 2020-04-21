@@ -1,4 +1,4 @@
-#include"../../include/fast_io_hosted.h"
+#include"../../../include/fast_io_hosted.h"
 
 extern "C" int __stdcall wWinMain() noexcept
 {

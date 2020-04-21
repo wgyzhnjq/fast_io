@@ -1,11 +1,5 @@
 #pragma once
 #ifdef FAST_IO_GLOBAL_NEW
-#include<cstddef>
-#include<cstdint>
-#include<cstring>
-#include<atomic>
-#include<bit>
-#include<array>
 
 namespace fast_io
 {
