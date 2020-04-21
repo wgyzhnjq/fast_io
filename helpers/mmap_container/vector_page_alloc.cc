@@ -1,12 +1,14 @@
 #include"../timer.h"
 #include"../../include/fast_io_device.h"
 #include<vector>
+#ifdef FAST_IO_PAGE_ALLOC
 #include"page_alloc.h"
+#endif
 
 int main()
 {
-	constexpr std::size_t N{1000000};
-	constexpr std::size_t M{100};
+	constexpr std::size_t N{100};
+	constexpr std::size_t M{1000000};
 
 	fast_io::obuf_file obf("vec.txt");
 	fast_io::timer tm("std::vector");

@@ -1,5 +1,5 @@
 #pragma once
-
+#ifdef FAST_IO_GLOBAL_NEW
 #include<cstddef>
 #include<cstdint>
 #include<cstring>
@@ -139,3 +139,5 @@ inline void operator delete[](void* ptr) noexcept
 	std::memcpy(std::addressof(bytes),real_ptr,sizeof(std::size_t));
 	operator delete(real_ptr,bytes);
 }
+
+#endif
