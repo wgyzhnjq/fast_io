@@ -56,15 +56,23 @@ struct bucket
 	page_mapped pm;
 };
 
+constinit inline std::array<std::array<std::byte,65536>,11> bucket_extras;
+
 inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 {
 	if(pm.allocated_pages==0)
 	{
 		pm.allocated_pages=65536;
-		if(65536<bytes)
+		if(65536<bytes)[[unlikely]]
 			pm.allocated_pages=bytes;
+		else
+		{
+			pm.page_mapped_capacity=(pm.page_mapped_end=bucket_extras[std::bit_width(bytes>>5)].data())+pm.allocated_pages;
+			goto next;
+		}
 	}
 	pm.page_mapped_capacity=(pm.page_mapped_end=map_a_page<std::byte>(pm.allocated_pages))+pm.allocated_pages;
+next:;
 	pm.allocated_pages<<=1;
 	auto temp{pm.page_mapped_end};
 	pm.page_mapped_end+=bytes;
