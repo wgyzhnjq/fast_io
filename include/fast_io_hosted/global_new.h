@@ -14,7 +14,6 @@ extern "C" int __stdcall VirtualFree(void*,std::size_t,std::uint32_t) noexcept;
 template<typename T>
 inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr) noexcept
 {
-
 #if defined(__WINNT__) || defined(_MSC_VER)
 	return reinterpret_cast<T*>(VirtualAlloc(nullptr,allocate_bytes,0x00001000|0x00002000,0x04));
 #elif defined(__linux__)&&defined(__x86_64__)
