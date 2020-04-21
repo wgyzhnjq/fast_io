@@ -65,7 +65,7 @@ inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 			pm.allocated_pages=bytes;
 	}
 	pm.page_mapped_capacity=(pm.page_mapped_end=map_a_page<std::byte>(pm.allocated_pages))+pm.allocated_pages;
-	pm.allocated_pages<<=2;
+	pm.allocated_pages<<=1;
 	auto temp{pm.page_mapped_end};
 	pm.page_mapped_end+=bytes;
 	return temp;
