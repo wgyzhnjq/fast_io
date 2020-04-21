@@ -21,10 +21,7 @@ template<typename T>
 inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr) noexcept
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
-	std::uint32_t flags{0x00001000|0x00002000};//MEM_COMMIT|MEM_RESERVE
-	if(1048576<=allocate_bytes)//large pages probably
-		flags|=0x20000000;
-	return reinterpret_cast<T*>(VirtualAlloc(nullptr,allocate_bytes,flags,0x04));
+	return reinterpret_cast<T*>(VirtualAlloc(nullptr,allocate_bytes,0x00001000|0x00002000,0x04));
 #elif defined(__linux__)&&defined(__x86_64__)
 	return reinterpret_cast<T*>(system_call<9,std::ptrdiff_t>(hint,allocate_bytes,PROT_READ|PROT_WRITE,
 		MAP_PRIVATE | MAP_ANONYMOUS,0,0));
@@ -149,7 +146,7 @@ inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 	buc.fvec.push_back(ptr);
 }
 
-inline constinit std::array<bucket,sizeof(std::byte*)-5> buckets;
+inline constinit std::array<bucket,sizeof(std::byte*)*8-5> buckets;
 
 inline std::byte* real_allocate(std::size_t sz)
 {
