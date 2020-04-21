@@ -56,14 +56,14 @@ struct bucket
 	page_mapped pm;
 };
 
-constinit inline std::array<std::array<std::byte,65536>,11> bucket_extras;
+constinit inline std::array<std::array<std::byte,1048576>,20> bucket_extras;
 
 inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 {
 	if(pm.allocated_pages==0)
 	{
-		pm.allocated_pages=65536;
-		if(65536<bytes)[[unlikely]]
+		pm.allocated_pages=1048576;
+		if(1048576<bytes)[[unlikely]]
 			pm.allocated_pages=bytes;
 		else
 		{
