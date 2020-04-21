@@ -1,5 +1,12 @@
 #pragma once
 
+#include<cstddef>
+#include<cstdint>
+#include<cstring>
+#include<atomic>
+#include<bit>
+#include<array>
+
 namespace fast_io
 {
 
@@ -11,7 +18,7 @@ extern "C" int __stdcall VirtualFree(void*,std::size_t,std::uint32_t);
 #endif
 
 template<typename T>
-inline auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr)
+inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	std::uint32_t flags{0x00001000|0x00002000};//MEM_COMMIT|MEM_RESERVE
@@ -49,20 +56,20 @@ struct free_vector
 	{
 		return free_vector_end-free_vector_begin;
 	}
-	void push_back(T& value) noexcept
+	void push_back(value_type const& value) noexcept
 	{
 		if(free_vector_end==free_vector_capacity)[[unlikely]]
 		{
 			std::size_t new_cap(capacity()<<1);
 			if(!new_cap)
-				new_cap=4096/sizeof(T);
+				new_cap=4096/sizeof(value_type);
 			std::size_t current_size{size()};
-			auto new_page{map_a_page(new_cap*sizeof(T),free_vector_begin)};
+			auto new_page{map_a_page(new_cap*sizeof(value_type),free_vector_begin)};
 #if defined(__WINNT__) || defined(_MSC_VER)
 			if(free_vector_begin)
 			{
-				memcpy(new_page,free_vector_begin,size()*sizeof(T));
-				VirtualFree(free_vector_begin,capacity()*sizeof(T),0x00004000);
+				memcpy(new_page,free_vector_begin,size()*sizeof(value_type));
+				VirtualFree(free_vector_begin,capacity()*sizeof(value_type),0x00004000);
 			}
 #endif
 			free_vector_end=(free_vector_begin=new_page)+current_size;
@@ -107,7 +114,7 @@ struct bucket
 	page_mapped pm;
 };
 
-inline constexpr std::byte* non_happy_allocate(page_mapped& pm,std::bytes b)
+inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 {
 	if(pm.allocated_pages==0)
 		pm.allocated_pages=4096;
@@ -118,13 +125,13 @@ inline constexpr std::byte* non_happy_allocate(page_mapped& pm,std::bytes b)
 	return temp;
 }
 
-inline constexpr std::byte* allocate(bucket& buc,std::size_t bytes) noexcept
+inline std::byte* buc_allocate(bucket& buc,std::size_t bytes) noexcept
 {
 	spin_lock_guard lg{buc.lock};
 	if(buc.fvec.empty())[[unlikely]]
 	{
 		if(buc.pm.page_mapped_end==buc.pm.page_mapped_capacity)[[unlikely]]
-			return non_happy_allocate(buc.pm,bytes);
+			return non_happy_buc_allocate(buc.pm,bytes);
 		auto temp{buc.pm.page_mapped_end};
 		buc.pm.page_mapped_end+=bytes;
 		return temp;
@@ -132,12 +139,25 @@ inline constexpr std::byte* allocate(bucket& buc,std::size_t bytes) noexcept
 	return *--buc.fvec.free_vector_end;
 }
 
-inline constexpr void deallocate(bucket& buc,std::byte* ptr) noexcept
+inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 {
 	spin_lock_guard lg{buc.lock};
 	buc.fvec.push_back(ptr);
 }
 
+inline constinit std::array<bucket,64> buckets;
+}
 }
 
+inline void* operator new(std::size_t sz) noexcept
+{
+	sz>>=5;
+	using namespace fast_io::details::allocation;
+	return buc_allocate(fast_io::details::allocation::buckets[std::bit_width(sz)],std::bit_ceil(sz));
+}
+
+inline void operator delete(void* ptr,std::size_t sz) noexcept
+{
+	sz>>=5;
+	return buc_deallocate(fast_io::details::allocation::buckets[std::bit_width(sz)],reinterpret_cast<std::byte*>(ptr));
 }
