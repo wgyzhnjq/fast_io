@@ -163,6 +163,8 @@ inline void* operator new(std::size_t sz) noexcept
 
 inline void operator delete(void* ptr,std::size_t sz) noexcept
 {
+	if(ptr==nullptr)[[unlikely]]
+		return;
 	fast_io::details::allocation::buc_deallocate(fast_io::details::allocation::buckets[std::bit_width(sz>>5)],reinterpret_cast<std::byte*>(ptr));
 }
 
@@ -175,6 +177,8 @@ inline void* operator new[](std::size_t sz) noexcept
 
 inline void operator delete[](void* ptr) noexcept
 {
+	if(ptr==nullptr)[[unlikely]]
+		return;
 	std::size_t bytes;
 	auto real_ptr{reinterpret_cast<std::byte*>(ptr)-sizeof(std::size_t)};
 	std::memcpy(std::addressof(bytes),real_ptr,sizeof(std::size_t));
