@@ -11,10 +11,11 @@ int main()
 
 	for(std::size_t i{};i!=N;++i)
 	{
-		std::vector<std::size_t> vec;
+		std::vector<std::size_t> vec(M);
 		for(std::size_t j{};j!=M;++j)
-			vec.emplace_back(j);
-		println(obf,fast_io::unsigned_view(vec.data()));
+		{
+			sum+=vec.emplace_back(j);
+		}
 	}
-	println("sum:",sum);
+	print(sum);
 }
