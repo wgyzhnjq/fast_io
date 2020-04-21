@@ -13,8 +13,8 @@ int main()
 	for(std::size_t i{};i!=N;++i)
 	{
 		std::size_t* bt{new std::size_t[M]};
-		bt[M-1]={};
-		sum += bt[M>>1];
+//		bt[M-1]={};
+//		sum += bt[M>>1];
 		delete[] bt;
 	}
 }
