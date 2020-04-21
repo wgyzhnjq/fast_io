@@ -5,5 +5,5 @@
 
 int main()
 {
-	std::vector<std::size_t> vec(100);
+	std::unique_ptr<std::size_t> uptr{new std::size_t};
 }

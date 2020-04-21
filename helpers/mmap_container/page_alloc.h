@@ -34,56 +34,6 @@ inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr) noe
 #endif
 }
 
-struct free_vector
-{
-	using value_type = std::byte*;
-	using pointer = value_type*;
-	pointer free_vector_begin{};
-	pointer free_vector_end{};
-	pointer free_vector_capacity{};
-	constexpr bool empty() const noexcept
-	{
-		return free_vector_begin==free_vector_end;
-	}
-	constexpr std::size_t capacity() const noexcept
-	{
-		return free_vector_capacity-free_vector_begin;
-	}
-	constexpr std::size_t size() const noexcept
-	{
-		return free_vector_end-free_vector_begin;
-	}
-	void push_back(value_type const& value) noexcept
-	{
-		if(free_vector_end==free_vector_capacity)[[unlikely]]
-		{
-			std::size_t new_cap(capacity()<<1);
-			if(!new_cap)
-				new_cap=4096/sizeof(value_type);
-			std::size_t current_size{size()};
-			auto new_page{map_a_page(new_cap*sizeof(value_type),free_vector_begin)};
-/*
-#if defined(__WINNT__) || defined(_MSC_VER)
-			if(free_vector_begin)
-			{
-				memcpy(new_page,free_vector_begin,size()*sizeof(value_type));
-				VirtualFree(free_vector_begin,capacity()*sizeof(value_type),0x00004000);
-			}
-#endif
-*/
-			free_vector_end=(free_vector_begin=new_page)+current_size;
-			free_vector_capacity=free_vector_begin+new_cap;
-		}
-		*free_vector_end=value;
-		++free_vector_end;
-	}
-	constexpr void pop_back()
-	{
-		--free_vector_end;
-	}
-};
-
-
 struct page_mapped
 {
 	std::byte* page_mapped_end{};
@@ -109,7 +59,7 @@ struct spin_lock_guard
 struct bucket
 {
 	std::atomic_flag lock{};
-	free_vector fvec;
+	std::byte* flist{};
 	page_mapped pm;
 };
 
@@ -131,7 +81,7 @@ inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 inline std::byte* buc_allocate(bucket& buc,std::size_t bytes) noexcept
 {
 	spin_lock_guard lg{buc.lock};
-	if(buc.fvec.empty())[[unlikely]]
+	if(buc.flist==nullptr)[[unlikely]]
 	{
 		if(buc.pm.page_mapped_end==buc.pm.page_mapped_capacity)[[unlikely]]
 			return non_happy_buc_allocate(buc.pm,bytes);
@@ -139,13 +89,16 @@ inline std::byte* buc_allocate(bucket& buc,std::size_t bytes) noexcept
 		buc.pm.page_mapped_end+=bytes;
 		return temp;
 	}
-	return *--buc.fvec.free_vector_end;
+	std::byte* ptr{buc.flist};
+	memcpy(std::addressof(buc.flist),buc.flist,sizeof(std::uintptr_t));
+	return ptr;
 }
 
 inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 {
 	spin_lock_guard lg{buc.lock};
-	buc.fvec.push_back(ptr);
+	memcpy(ptr,std::addressof(buc.flist),sizeof(std::uintptr_t));
+	buc.flist=ptr;
 }
 
 inline constinit std::array<bucket,sizeof(std::byte*)*8-5> buckets;

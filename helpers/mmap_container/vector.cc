@@ -1,7 +1,6 @@
 #include"../timer.h"
 #include<vector>
 
-
 int main()
 {
 	constexpr std::size_t N{100};
@@ -15,6 +14,7 @@ int main()
 		std::vector<std::size_t> vec;
 		for(std::size_t j{};j!=M;++j)
 			vec.emplace_back(j);
+		println(obf,fast_io::unsigned_view(vec.data()));
 	}
 	println("sum:",sum);
 }
