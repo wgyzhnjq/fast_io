@@ -1,9 +1,9 @@
 
 #include"../../include/fast_io.h"
 #include"page_alloc.h"
+#include<vector>
 
 int main()
 {
-	auto p{new int()};
-	delete p;
+	std::vector<std::size_t> vec(100);
 }
