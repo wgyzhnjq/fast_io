@@ -29,7 +29,6 @@ inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr) noe
 
 struct page_mapped
 {
-	std::array<std::byte,4096> mem{};
 	std::byte* page_mapped_end{};
 	std::byte* page_mapped_capacity{};
 	std::size_t allocated_pages{};
@@ -61,16 +60,9 @@ inline std::byte* non_happy_buc_allocate(page_mapped& pm,std::size_t bytes)
 {
 	if(pm.allocated_pages==0)
 	{
-		pm.allocated_pages=4096;
-		if(bytes<=4096)[[likely]]
-		{
-			pm.page_mapped_end=pm.mem.data();
-			pm.page_mapped_capacity=pm.page_mapped_end+pm.allocated_pages;
-			pm.allocated_pages<<=1;
-			auto temp{pm.page_mapped_end};
-			pm.page_mapped_end+=bytes;
-			return temp;
-		}
+		pm.allocated_pages=65536;
+		if(65536<bytes)
+			pm.allocated_pages=bytes;
 	}
 	pm.page_mapped_capacity=(pm.page_mapped_end=map_a_page<std::byte>(pm.allocated_pages))+pm.allocated_pages;
 	pm.allocated_pages<<=1;
