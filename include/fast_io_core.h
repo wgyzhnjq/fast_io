@@ -23,6 +23,8 @@
 #include<cstring>		//for memcpy
 #include<bit>			//for std::endian, std::rotl and std::bit_cast etc
 #include<span>
+#include<atomic>		//std::atomic
+
 //fast_io core
 #include"fast_io_core_impl/before_cpp20_concept.h"
 #include"fast_io_core_impl/overflow.h"
