@@ -24,7 +24,7 @@ inline constexpr auto map_a_page(std::size_t allocate_bytes,T* hint=nullptr) noe
 	return reinterpret_cast<T*>(mmap(hint,allocate_bytes,PROT_READ|PROT_WRITE,
 		MAP_PRIVATE | MAP_ANONYMOUS,0,0));
 #else
-#error "current not supported"
+	return reinterpret_cast<T*>(std::realloc(hint,allocate_bytes));
 #endif
 }
 
