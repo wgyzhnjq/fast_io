@@ -3,7 +3,7 @@
 
 int main()
 {
-	constexpr std::size_t N{10};
+	constexpr std::size_t N{100};
 	constexpr std::size_t M{1000000};
 
 	std::size_t sum{};

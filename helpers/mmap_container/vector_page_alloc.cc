@@ -4,7 +4,7 @@
 
 int main()
 {
-	constexpr std::size_t N{1};
+	constexpr std::size_t N{100};
 	constexpr std::size_t M{1000000};
 
 	std::size_t sum{};
@@ -19,5 +19,5 @@ int main()
 		e=sum;
 	}
 	}
-//	print("sum:",sum);
+	println("sum:",sum);
 }
