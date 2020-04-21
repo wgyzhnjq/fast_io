@@ -94,12 +94,12 @@ inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 	buc.flist=ptr;
 }
 
-inline constinit std::array<bucket,sizeof(std::byte*)*8-4> buckets;
+inline constinit std::array<bucket,sizeof(std::byte*)*8-5> buckets;
 
 inline std::byte* real_allocate(std::size_t sz)
 {
 	using namespace fast_io::details::allocation;
-	return buc_allocate(fast_io::details::allocation::buckets[std::bit_width(sz>>4)],std::bit_ceil(sz));
+	return buc_allocate(fast_io::details::allocation::buckets[std::bit_width(sz>>5)],std::bit_ceil(sz));
 }
 }
 }
@@ -113,7 +113,7 @@ inline void operator delete(void* ptr,std::size_t sz) noexcept
 {
 	if(ptr==nullptr)[[unlikely]]
 		return;
-	fast_io::details::allocation::buc_deallocate(fast_io::details::allocation::buckets[std::bit_width(sz>>4)],reinterpret_cast<std::byte*>(ptr));
+	fast_io::details::allocation::buc_deallocate(fast_io::details::allocation::buckets[std::bit_width(sz>>5)],reinterpret_cast<std::byte*>(ptr));
 }
 
 inline void* operator new[](std::size_t sz) noexcept
