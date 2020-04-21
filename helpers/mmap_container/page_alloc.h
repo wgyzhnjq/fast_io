@@ -145,7 +145,7 @@ inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 	buc.fvec.push_back(ptr);
 }
 
-inline constinit std::array<bucket,64> buckets;
+inline constinit std::array<bucket,sizeof(std::byte*)-5> buckets;
 }
 }
 
