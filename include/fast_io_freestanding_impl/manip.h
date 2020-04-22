@@ -30,7 +30,7 @@ inline constexpr bool scan_define(input& in,std::basic_string<typename input::ch
 			auto i{b};
 			for(;i!=e&&dg(*i);++i);
 			str.append(b,i);
-			ibuffer_set_curr(in,b);
+			ibuffer_set_curr(in,i);
 			if(i==e)[[unlikely]]
 			{
 				if(!underflow(in))[[unlikely]]
