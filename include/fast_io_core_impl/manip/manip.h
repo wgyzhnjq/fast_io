@@ -200,7 +200,7 @@ template<typename T>
 inline constexpr manip::line<T&> line(T &f){return {f};}
 
 template<typename T>
-inline constexpr manip::line<T> line(T f){return {f};}
+inline constexpr manip::line<T> line(T&& f){return {std::move(f)};}
 
 template<typename T>
 inline constexpr manip::no_decoration<T> no_decoration(T &f){return {f};}
