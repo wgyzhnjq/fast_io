@@ -17,7 +17,7 @@ int main()
 		vec.emplace_back(dis(eng));
 	{
 	fast_io::timer t("fixed output");
-	fast_io::obuf_file obf("parrallel.txt");
+	fast_io::obuf_file obf("parallel.txt");
 	print(obf,fast_io::parallel(vec,[](auto const& e)
 	{
 		return fast_io::line(fast_io::fixed(e));

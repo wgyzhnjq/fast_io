@@ -69,7 +69,7 @@ THREAD_NUMBER
 		jth.emplace_back(print_out<char8_t>,std::addressof(vec.emplace_back(new char8_t[allocation_size],allocation_size).osp),i*range,(i+1)*range);
 	}
 
-	fast_io::u8obuf_file onv("parrallel.txt");
+	fast_io::u8obuf_file onv("parallel.txt");
 	for(auto& e : vec)
 		write(onv,e.osp.span().data(),e.osp.span().data()+osize(e.osp));
 }
