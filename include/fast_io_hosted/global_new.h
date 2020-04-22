@@ -81,7 +81,7 @@ next:;
 
 inline std::byte* buc_allocate(bucket& buc,std::size_t bytes) noexcept
 {
-//	spin_lock_guard lg{buc.lock};
+	spin_lock_guard lg{buc.lock};
 	if(buc.flist==nullptr)[[unlikely]]
 	{
 		if(buc.pm.page_mapped_end==buc.pm.page_mapped_capacity)[[unlikely]]
@@ -97,7 +97,7 @@ inline std::byte* buc_allocate(bucket& buc,std::size_t bytes) noexcept
 
 inline void buc_deallocate(bucket& buc,std::byte* ptr) noexcept
 {
-//	spin_lock_guard lg{buc.lock};
+	spin_lock_guard lg{buc.lock};
 	memcpy(ptr,std::addressof(buc.flist),sizeof(std::uintptr_t));
 	buc.flist=ptr;
 }

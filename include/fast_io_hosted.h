@@ -14,3 +14,4 @@ For hosted implementations the set of standard library headers required by the C
 #include"fast_io_hosted/chrono.h"
 #include"fast_io_hosted/process/native.h"
 #include"fast_io_hosted/global_new.h"
+#include"fast_io_hosted/parrallel.h"
