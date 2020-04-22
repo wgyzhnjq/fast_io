@@ -17,7 +17,7 @@ int main()
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
 	{
-	fast_io::timer t("scientific output");
+	fast_io::timer t("output");
 	fast_io::obuf_file obf("parrallel.txt");
 	print(obf,fast_io::parallel(vec,[](auto const& e)
 	{
