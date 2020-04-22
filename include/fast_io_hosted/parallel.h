@@ -27,6 +27,13 @@ struct parallel<T,void>
 	T& reference;
 };
 
+template<typename Func>
+struct parallel_unit
+{
+	Func callback;
+	std::size_t count{};
+};
+
 }
 
 template<typename Func>
@@ -36,6 +43,9 @@ template<std::ranges::random_access_range T>
 inline constexpr manip::parallel<T,void> parallel(T& r){return {r};}
 template<std::ranges::random_access_range T,typename Func>
 inline constexpr manip::parallel<T,Func> parallel(T& r,Func callback){return {r,callback};}
+
+template<typename Func>
+inline constexpr manip::parallel_unit<Func> parallel_unit(Func callback,std::size_t count){return {callback,count};}
 
 namespace details
 {
@@ -187,7 +197,22 @@ inline constexpr void print_define(stm& output,manip::parallel<R,Func> ref)
 				print(output,ref.callback(*iter));
 		});
 	}
-	
 }
+
+
+template<output_stream stm,typename Func>
+inline constexpr void print_define(stm& output,manip::parallel_unit<Func> ref)
+{
+	using char_type = typename stm::char_type;
+	constexpr std::size_t sz{print_reserve_size(print_reserve_type<std::remove_cvref_t<
+	decltype(ref.callback(static_cast<std::size_t>(0)))>>)};
+	details::parrallel_details(output,ref.count,sz,
+		[&ref](reserve_output_stream auto& output,std::size_t start_number,std::size_t stop_number)
+	{
+		for(;start_number!=stop_number;++start_number)
+			print(output,ref.callback(start_number));
+	});
+}
+
 
 }
