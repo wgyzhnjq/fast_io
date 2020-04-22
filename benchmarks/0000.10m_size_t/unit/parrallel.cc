@@ -52,7 +52,13 @@ int main()
 	std::vector<span_raii<char8_t>> vec;
 
 	constexpr std::size_t N{10000000};
-	constexpr std::size_t thread_number{40};
+	constexpr std::size_t thread_number{
+#ifdef THREAD_NUMBER
+THREAD_NUMBER
+#else
+40
+#endif
+};
 	constexpr std::size_t max_length{22};
 	constexpr std::size_t range{N/thread_number};
 	constexpr std::size_t allocation_size{range*max_length};
