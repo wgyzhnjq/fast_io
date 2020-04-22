@@ -1,5 +1,5 @@
-#include"../../fast_io/fast_io.h"
-#include"../../fast_io/fast_io_device.h"
+#include"../../../fast_io/fast_io.h"
+#include"../../../fast_io/fast_io_device.h"
 #include<thread>
 #include<span>
 #include"../../timer.h"
