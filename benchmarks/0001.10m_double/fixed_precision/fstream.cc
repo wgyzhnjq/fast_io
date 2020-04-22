@@ -6,6 +6,7 @@
 #include<random>
 #include<fstream>
 #include<iomanip>
+#include<cfloat>
 
 int main()
 {

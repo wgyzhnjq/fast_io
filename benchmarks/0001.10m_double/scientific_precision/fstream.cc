@@ -6,7 +6,7 @@
 #include<random>
 #include<fstream>
 #include<iomanip>
-
+#include<cfloat>
 int main()
 {
 	constexpr std::size_t N(10000000);

@@ -5,7 +5,7 @@
 #include"../../../include/fast_io_legacy.h"
 #include<random>
 #include<thread>
-
+#include<cfloat>
 int main()
 {
 	constexpr std::size_t N(10000000);

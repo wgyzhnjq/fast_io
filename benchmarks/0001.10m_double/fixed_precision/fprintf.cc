@@ -4,6 +4,7 @@
 //#include"../../include/fast_io_crypto.h"
 #include"../../../include/fast_io_legacy.h"
 #include<random>
+#include<cfloat>
 
 int main()
 {
