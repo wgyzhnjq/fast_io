@@ -18,18 +18,24 @@ template<typename T,typename Func>
 struct parallel
 {
 	T& reference;
-	[[no_unique_address]] Func callback;
+	Func callback;
+};
+
+template<typename T>
+struct parallel<T,void>
+{
+	T& reference;
 };
 
 }
 
 template<typename Func>
-inline constexpr manip::parallel_counter<Func> parrallel_counter(Func func,std::size_t count,std::size_t chars_per_element){return {func,count,chars_per_element};}
+inline constexpr manip::parallel_counter<Func> parallel_counter(Func func,std::size_t count,std::size_t chars_per_element){return {func,count,chars_per_element};}
 
 template<std::ranges::random_access_range T>
-inline constexpr manip::parallel<T,void> parrallel(T& r){return {r};}
+inline constexpr manip::parallel<T,void> parallel(T& r){return {r};}
 template<std::ranges::random_access_range T,typename Func>
-inline constexpr manip::parallel<T,void> parrallel(T& r,Func callback){return {r,callback};}
+inline constexpr manip::parallel<T,Func> parallel(T& r,Func callback){return {r,callback};}
 
 namespace details
 {
@@ -125,6 +131,7 @@ inline constexpr void parrallel_details(stm& output,std::size_t count,std::size_
 		write(output,e.osp.span().data(),e.osp.span().data()+osize(e.osp));
 }
 
+
 }
 
 template<output_stream stm,typename Func>
@@ -138,21 +145,32 @@ template<output_stream stm,std::ranges::random_access_range R,typename Func>
 inline constexpr void print_define(stm& output,manip::parallel<R,Func> ref)
 {
 	using char_type = typename stm::char_type;
-	constexpr std::size_t sz{print_reserve_size(print_reserve_type<std::remove_cvref_t<
-	std::conditional_t<std::same_as<Func,void>,
-	std::ranges::range_value_t<R>,decltype(ref.callback(*std::ranges::begin(ref.reference)))>>>())};
-	
-	details::parrallel_details(output,std::ranges::size(ref.reference),sz,
-		[&](reserve_output_stream auto& output,std::size_t start_number,std::size_t stop_number)
+	auto be{std::ranges::begin(ref.reference)};
+	if constexpr(std::same_as<void,Func>)
 	{
-		auto iter{std::ranges::begin(ref.reference)+start_number};
-		auto ed{std::ranges::end(ref.reference)+stop_number};
-		for(;iter!=ed;++iter)
-			if constexpr(std::same_as<Func,void>)
+		constexpr std::size_t sz{print_reserve_size(print_reserve_type<std::remove_cvref_t<std::ranges::range_value_t<R>>>)};
+		details::parrallel_details(output,std::ranges::size(ref.reference),sz,
+			[be](reserve_output_stream auto& output,std::size_t start_number,std::size_t stop_number)
+		{
+			auto ed{be+stop_number};
+			for(auto iter{be+start_number};iter!=ed;++iter)
 				print(output,*iter);
-			else
+		});
+	}
+	else
+	{
+		constexpr std::size_t sz{print_reserve_size(print_reserve_type<std::remove_cvref_t<
+		decltype(ref.callback(*std::ranges::begin(ref.reference)))>>)};
+
+		details::parrallel_details(output,std::ranges::size(ref.reference),sz,
+			[&](reserve_output_stream auto& output,std::size_t start_number,std::size_t stop_number)
+		{
+			auto ed{be+stop_number};
+			for(auto iter{be+start_number};iter!=ed;++iter)
 				print(output,ref.callback(*iter));
-	});
+		});
+	}
+	
 }
 
 }
