@@ -108,8 +108,18 @@ inline constexpr void print_define(output& out,basic_general_streambuf_io_observ
 {
 	print(out,fast_io::unsigned_view(iob.native_handle()));
 }
-
-
+#if defined(__GLIBCXX__) || defined(__LIBCPP_VERSION)  || defined(_MSVC_STL_UPDATE)
+template<std::integral ch_type,typename Traits>
+inline constexpr decltype(auto) zero_copy_in_handle(basic_filebuf_io_observer<ch_type,Traits> h)
+{
+	return zero_copy_in_handle(static_cast<basic_c_io_observer_unlocked<ch_type>>(h));
+}
+template<std::integral ch_type,typename Traits>
+inline constexpr decltype(auto) zero_copy_out_handle(basic_filebuf_io_observer<ch_type,Traits> h)
+{
+	return zero_copy_out_handle(static_cast<basic_c_io_observer_unlocked<ch_type>>(h));
+}
+#endif
 }
 
 
