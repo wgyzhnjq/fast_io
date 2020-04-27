@@ -284,4 +284,11 @@ concept printable=output_stream<output>&&requires(output& out,T&& t)
 template<typename output,typename T>
 concept general_printable=reserve_printable<T>||printable<output,T>;
 
+template<typename io_device,typename... Args>
+concept io_controllable=requires(io_device& device,Args&& ...args)
+{
+	io_control(device,std::forward<Args>(args)...);
+};
+
+
 }

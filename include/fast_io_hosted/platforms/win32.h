@@ -422,6 +422,22 @@ inline Iter write(basic_win32_io_observer<ch_type> handle,Iter cbegin,Iter cend)
 #endif
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
+
+template<std::integral ch_type,typename... Args>
+requires requires(basic_win32_io_observer<ch_type> h,Args&& ...args)
+{
+	fast_io::win32::DeviceIoControl(h.native_handle(),std::forward<Args>(args)...);
+}
+inline void io_control(basic_win32_io_observer<ch_type> h,Args&& ...args)
+{
+	if(!fast_io::win32::DeviceIoControl(h.native_handle(),std::forward<Args>(args)...))
+#ifdef __cpp_exceptions
+		throw win32_error();
+#else
+		fast_terminate();
+#endif
+}
+
 /*
 template<std::integral ch_type>
 inline auto memory_map_in_handle(basic_win32_io_observer<ch_type> handle)

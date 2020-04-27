@@ -66,7 +66,7 @@ public:
 };
 
 template<std::integral ch_type>
-inline auto redirect_handle(basic_c_io_observer_unlocked<ch_type>& h)
+inline auto redirect_handle(basic_c_io_observer_unlocked<ch_type> h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	return static_cast<basic_win32_io_observer<ch_type>>(h).native_handle();
@@ -121,7 +121,7 @@ inline void write(basic_c_io_observer_unlocked<T> cfhd,Iter begin,Iter end)
 }
 
 template<std::integral T>
-inline void flush(basic_c_io_observer_unlocked<T>& cfhd)
+inline void flush(basic_c_io_observer_unlocked<T> cfhd)
 {
 	if(
 #if defined(_MSC_VER)
@@ -166,6 +166,13 @@ template<std::integral ch_type,std::integral U>
 inline auto seek(basic_c_io_observer_unlocked<ch_type> cfhd,U i,seekdir s=seekdir::beg)
 {
 	return seek(cfhd,seek_type<char>,i,s);
+}
+
+template<std::integral ch_type,typename... Args>
+requires io_controllable<basic_posix_io_observer<ch_type>,Args...>
+inline decltype(auto) io_control(basic_c_io_observer_unlocked<ch_type> h,Args&& ...args)
+{
+	return io_control(static_cast<basic_posix_io_observer<ch_type>>(h),std::forward<Args>(args)...);
 }
 
 class c_io_lock_guard;
@@ -220,7 +227,7 @@ public:
 };
 
 template<std::integral T>
-inline auto mutex(basic_c_io_observer<T>& h)
+inline auto mutex(basic_c_io_observer<T> h)
 {
 	return h.native_handle();
 }
@@ -293,7 +300,7 @@ inline void flush(basic_c_io_observer<T> cfhd)
 }
 
 template<typename P,typename T,std::integral U>
-inline auto seek(basic_c_io_observer<P>& cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
+inline auto seek(basic_c_io_observer<P> cfhd,seek_type_t<T>,U i,seekdir s=seekdir::beg)
 {
 	if(std::fseek(cfhd.native_handle(),seek_precondition<long,T,typename basic_c_io_observer<P>::char_type>(i),static_cast<int>(s)))
 #ifdef __cpp_exceptions
@@ -312,7 +319,7 @@ inline auto seek(basic_c_io_observer<P>& cfhd,seek_type_t<T>,U i,seekdir s=seekd
 }
 
 template<typename P,std::integral U>
-inline auto seek(basic_c_io_observer<P>& cfhd,U i,seekdir s=seekdir::beg)
+inline auto seek(basic_c_io_observer<P> cfhd,U i,seekdir s=seekdir::beg)
 {
 	return seek(cfhd,seek_type<typename basic_c_io_observer<P>::char_type>,i,s);
 }
@@ -703,7 +710,7 @@ using basic_c_file_unlocked=details::basic_c_file_impl<basic_c_io_handle_unlocke
 
 
 template<std::integral ch_type>
-inline auto redirect_handle(basic_c_io_observer<ch_type>& h)
+inline auto redirect_handle(basic_c_io_observer<ch_type> h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	return static_cast<basic_win32_io_observer<ch_type>>(h).native_handle();
@@ -728,16 +735,16 @@ using wc_file_unlocked = basic_c_file_unlocked<wchar_t>;
 
 template<std::integral ch_type>
 requires zero_copy_input_stream<basic_posix_io_observer<ch_type>>
-inline auto zero_copy_in_handle(basic_c_io_observer_unlocked<ch_type> h)
+inline decltype(auto) zero_copy_in_handle(basic_c_io_observer_unlocked<ch_type> h)
 {
-	return ::fileno_unlocked(h.native_handle());
+	return zero_copy_in_handle(static_cast<basic_posix_io_observer<ch_type>>(h));
 }
 
 template<std::integral ch_type>
 requires zero_copy_output_stream<basic_posix_io_observer<ch_type>>
-inline auto zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type> h)
+inline decltype(auto) zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type> h)
 {
-	return ::fileno_unlocked(h.native_handle());
+	return zero_copy_out_handle(static_cast<basic_posix_io_observer<ch_type>>(h));
 }
 
 template<output_stream output,std::integral intg>

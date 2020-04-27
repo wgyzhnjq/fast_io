@@ -135,6 +135,9 @@ void*  VirtualAddress;
 std::size_t NumberOfBytes;
 };
 int __stdcall PrefetchVirtualMemory(void*,std::size_t,win32_memory_range_entry*,std::uint32_t flags);*/
+
+
+int __stdcall DeviceIoControl(void*,std::uint32_t,void*,std::uint32_t,void*,std::uint32_t,void*,overlapped*) noexcept;
 }
 
 

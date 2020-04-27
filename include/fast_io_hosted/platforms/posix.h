@@ -344,7 +344,7 @@ inline auto zero_copy_out_handle(basic_posix_io_observer<ch_type> h)
 }
 #endif
 template<std::integral ch_type>
-inline auto redirect_handle(basic_posix_io_observer<ch_type>& h)
+inline auto redirect_handle(basic_posix_io_observer<ch_type> h)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	return bit_cast<void*>(_get_osfhandle(h.native_handle()));
@@ -352,6 +352,30 @@ inline auto redirect_handle(basic_posix_io_observer<ch_type>& h)
 	return h.native_handle();
 #endif
 }
+
+#if defined(__WINNT__) || defined(_MSC_VER)
+template<std::integral ch_type,typename... Args>
+requires io_controllable<basic_win32_io_observer<ch_type>,Args...>
+inline decltype(auto) io_control(basic_posix_io_observer<ch_type> h,Args&& ...args)
+{
+	return io_control(static_cast<basic_win32_io_observer<ch_type>>(h),std::forward<Args>(args)...);
+}
+#else
+template<std::integral ch_type,typename... Args>
+requires requires(basic_posix_io_observer<ch_type> h,Args&& ...args)
+{
+	::ioctl(h.native_handle(),std::forward<Args>(args)...)
+}
+inline void io_control(basic_posix_io_observer<ch_type> h,Args&& ...args)
+{
+#if defined(__linux__)&&defined(__x86_64__)
+	system_call_throw_error(system_call<16,int>(h.native_handle(),std::forward<Args>(args)...));
+#else
+	::ioctl(h.native_handle(),std::forward<Args>(args)...);
+#endif
+}
+#endif
+
 
 template<std::integral ch_type>
 inline void swap(basic_posix_io_observer<ch_type>& a,basic_posix_io_observer<ch_type>& b) noexcept

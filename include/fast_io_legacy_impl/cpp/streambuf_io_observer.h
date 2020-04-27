@@ -128,6 +128,13 @@ inline constexpr decltype(auto) zero_copy_out_handle(basic_filebuf_io_observer<c
 {
 	return zero_copy_out_handle(static_cast<basic_c_io_observer_unlocked<ch_type>>(h));
 }
+
+template<std::integral ch_type,typename... Args>
+requires io_controllable<basic_c_io_observer_unlocked<ch_type>,Args...>
+inline decltype(auto) io_control(basic_filebuf_io_observer<ch_type> h,Args&& ...args)
+{
+	return io_control(static_cast<basic_c_io_observer_unlocked<ch_type>>(h),std::forward<Args>(args)...);
+}
 #endif
 
 template<output_stream output,typename T>
