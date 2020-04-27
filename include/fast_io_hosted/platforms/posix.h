@@ -319,12 +319,12 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_observe
 	return ret;
 }
 template<std::integral ch_type,std::integral R>
-inline auto seek(basic_posix_io_observer<ch_type>& h,R i=0,seekdir s=seekdir::cur)
+inline auto seek(basic_posix_io_observer<ch_type> h,R i=0,seekdir s=seekdir::cur)
 {
 	return seek(h,seek_type<ch_type>,i,s);
 }
 template<std::integral ch_type>
-inline void flush(basic_posix_io_observer<ch_type>&)
+inline void flush(basic_posix_io_observer<ch_type>)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
@@ -333,12 +333,12 @@ inline void flush(basic_posix_io_observer<ch_type>&)
 
 #ifdef __linux__
 template<std::integral ch_type>
-inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type>& h)
+inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type> h)
 {
 	return h.native_handle();
 }
 template<std::integral ch_type>
-inline auto zero_copy_out_handle(basic_posix_io_observer<ch_type>& h)
+inline auto zero_copy_out_handle(basic_posix_io_observer<ch_type> h)
 {
 	return h.native_handle();
 }
