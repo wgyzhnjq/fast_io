@@ -376,13 +376,6 @@ inline void io_control(basic_posix_io_observer<ch_type> h,Args&& ...args)
 }
 #endif
 
-
-template<std::integral ch_type>
-inline void swap(basic_posix_io_observer<ch_type>& a,basic_posix_io_observer<ch_type>& b) noexcept
-{
-	a.swap(b);
-}
-
 template<std::integral ch_type>
 class basic_posix_file:public basic_posix_io_handle<ch_type>
 {
