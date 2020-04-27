@@ -726,18 +726,19 @@ using wc_io_handle = basic_c_io_handle<wchar_t>;
 using wc_file = basic_c_file<wchar_t>;
 using wc_file_unlocked = basic_c_file_unlocked<wchar_t>;
 
-#ifdef __linux__
 template<std::integral ch_type>
+requires zero_copy_input_stream<basic_posix_io_observer<ch_type>>
 inline auto zero_copy_in_handle(basic_c_io_observer_unlocked<ch_type> h)
 {
 	return ::fileno_unlocked(h.native_handle());
 }
+
 template<std::integral ch_type>
+requires zero_copy_output_stream<basic_posix_io_observer<ch_type>>
 inline auto zero_copy_out_handle(basic_c_io_observer_unlocked<ch_type> h)
 {
 	return ::fileno_unlocked(h.native_handle());
 }
-#endif
 
 template<output_stream output,std::integral intg>
 inline constexpr void print_define(output& out,basic_c_io_observer_unlocked<intg> iob)

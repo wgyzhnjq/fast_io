@@ -117,11 +117,13 @@ using u8stringbuf_io_observer = basic_stringbuf_io_observer<char8_t>;
 
 #if defined(__GLIBCXX__) || defined(__LIBCPP_VERSION)  || defined(_MSVC_STL_UPDATE)
 template<std::integral ch_type,typename Traits>
+requires zero_copy_input_stream<basic_c_io_observer_unlocked<ch_type>>
 inline constexpr decltype(auto) zero_copy_in_handle(basic_filebuf_io_observer<ch_type,Traits> h)
 {
 	return zero_copy_in_handle(static_cast<basic_c_io_observer_unlocked<ch_type>>(h));
 }
 template<std::integral ch_type,typename Traits>
+requires zero_copy_output_stream<basic_c_io_observer_unlocked<ch_type>>
 inline constexpr decltype(auto) zero_copy_out_handle(basic_filebuf_io_observer<ch_type,Traits> h)
 {
 	return zero_copy_out_handle(static_cast<basic_c_io_observer_unlocked<ch_type>>(h));
