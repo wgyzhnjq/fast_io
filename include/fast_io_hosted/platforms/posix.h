@@ -273,13 +273,13 @@ public:
 };
 
 template<std::integral ch_type>
-inline bool valid(basic_posix_io_observer<ch_type>& h)
+inline bool valid(basic_posix_io_observer<ch_type> h)
 {
 	return h.native_handle()!=-1;
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter read(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
+inline Iter read(basic_posix_io_observer<ch_type> h,Iter begin,Iter end)
 {
 	auto read_bytes(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -292,7 +292,7 @@ inline Iter read(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
 	return begin+(read_bytes/sizeof(*begin));
 }
 template<std::integral ch_type,std::contiguous_iterator Iter>
-inline Iter write(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
+inline Iter write(basic_posix_io_observer<ch_type> h,Iter begin,Iter end)
 {
 	auto write_bytes(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -306,7 +306,7 @@ inline Iter write(basic_posix_io_observer<ch_type>& h,Iter begin,Iter end)
 }
 
 template<std::integral ch_type,typename T,std::integral R>
-inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_observer<ch_type>& h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
+inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_observer<ch_type> h,seek_type_t<T>,R i=0,seekdir s=seekdir::cur)
 {
 	auto ret(
 #if defined(__linux__)&&defined(__x86_64__)
@@ -480,7 +480,7 @@ public:
 };
 
 template<std::integral ch_type>
-inline void truncate(basic_posix_io_observer<ch_type>& h,std::size_t size)
+inline void truncate(basic_posix_io_observer<ch_type> h,std::size_t size)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
 	auto err(_chsize_s(h.native_handle(),size));
