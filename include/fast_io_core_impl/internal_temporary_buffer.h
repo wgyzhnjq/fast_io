@@ -48,7 +48,7 @@ inline constexpr void obuffer_set_curr(internal_temporary_buffer<ch_type>& ob,ch
 	ob.end_ptr=ptr;
 }
 
-namespace internal_temporary_buffer_details
+namespace details::internal_temporary_buffer_impl
 {
 
 template<std::integral ch_type>
@@ -78,7 +78,7 @@ inline constexpr void write_bad_case(internal_temporary_buffer<ch_type>& ob,Iter
 template<std::integral ch_type>
 inline constexpr void overflow(internal_temporary_buffer<ch_type>& ob,ch_type ch)
 {
-	internal_temporary_buffer_details::grow((ob.capacity_ptr-ob.beg_ptr)<<1);
+	details::internal_temporary_buffer_impl::grow(ob,(ob.capacity_ptr-ob.beg_ptr)<<1);
 	*ob.end_ptr=ch;
 	++ob.end_ptr;
 }
@@ -95,7 +95,7 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 		std::size_t remain_space(ob.capacity_ptr-ob.end_ptr);
 		if(remain_space<to_write_chars)[[unlikely]]
 		{
-			internal_temporary_buffer_details::write_bad_case(ob,cbegin,cend,to_write_chars);
+			details::internal_temporary_buffer_impl::write_bad_case(ob,cbegin,cend,to_write_chars);
 			return;
 		}
 		ob.end_ptr=std::copy(cbegin,cend,ob.end_ptr);		
