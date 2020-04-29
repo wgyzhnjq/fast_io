@@ -121,7 +121,7 @@ using dns = basic_dns<fast_io::sock::family::unspec>;
 template<fast_io::sock::family fam>
 inline constexpr auto cbegin(basic_dns<fam> const& d)
 {
-	return details::dns_iterator{d.get_result()};
+	return dns_iterator{d.get_result()};
 }
 
 template<fast_io::sock::family fam>
@@ -133,7 +133,7 @@ inline constexpr auto begin(basic_dns<fam> const& d)
 template<fast_io::sock::family fam>
 inline constexpr auto begin(basic_dns<fam> & d)
 {
-	return details::dns_iterator{d.get_result()};
+	return dns_iterator{d.get_result()};
 }
 
 template<fast_io::sock::family fam>
