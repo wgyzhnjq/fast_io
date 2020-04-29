@@ -6,7 +6,7 @@
 #undef max
 #undef interface
 
-namespace fast_io
+namespace fast_io_examples
 {
 
 
@@ -138,9 +138,9 @@ public:
 	win32_internet_handle request;
 	constexpr basic_win32_internet_https_client()=default;
 	basic_win32_internet_https_client(std::string_view host,std::string_view method,std::string_view object_name,std::uint32_t port=443):
-		session(fast_io::win32_internet_open("Microsoft Internet Explorer",INTERNET_OPEN_TYPE_PRECONFIG,nullptr,nullptr,0)),
-		connection(fast_io::win32_internet_connect(session,host.data(),port,nullptr,nullptr,INTERNET_SERVICE_HTTP,0,0)),
-		request(fast_io::win32_http_open_request(connection,method.data(),object_name.data(),HTTP_VERSION,nullptr,nullptr,
+		session(win32_internet_open("Microsoft Internet Explorer",INTERNET_OPEN_TYPE_PRECONFIG,nullptr,nullptr,0)),
+		connection(win32_internet_connect(session,host.data(),port,nullptr,nullptr,INTERNET_SERVICE_HTTP,0,0)),
+		request(win32_http_open_request(connection,method.data(),object_name.data(),HTTP_VERSION,nullptr,nullptr,
 		INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE | INTERNET_FLAG_KEEP_CONNECTION |
 		INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_READ_PREFETCH | INTERNET_FLAG_NO_COOKIES |
 		INTERNET_FLAG_NO_AUTH |	INTERNET_FLAG_RESTRICTED_ZONE |	INTERNET_FLAG_CACHE_IF_NET_FAIL |

@@ -372,7 +372,7 @@ inline constexpr void debug_println(output &out,Args&& ...args)
 }
 
 #endif
-
+/*
 inline namespace print_scan_details
 {
 template<output_stream os,typename ch_type,typename ...Args>
@@ -439,6 +439,6 @@ inline constexpr void fprint(output &out,Args&& ...args)
 		buffer_fprint(out,std::forward<Args>(args)...);
 }
 
-
+*/
 
 }
