@@ -1,6 +1,12 @@
 #pragma once
+#include<windows.h>
+#include<wininet.h>
 
-namespace fast_io_examples
+#undef min
+#undef max
+#undef interface
+
+namespace fast_io
 {
 
 
@@ -77,6 +83,23 @@ inline win32_internet_handle win32_http_open_request(win32_internet_handle& hand
 	return win32_internet_handle(ptr);
 }
 
+inline void win32_http_send_request(win32_internet_handle& handle)
+{
+	if(!HttpSendRequestA(handle.handle,nullptr,0,nullptr,0))
+		throw fast_io::win32_error();
+}
+
+inline void win32_http_send_request(win32_internet_handle& handle,std::string_view sview)
+{
+	if(!HttpSendRequestA(handle.handle,sview.data(),sview.size(),nullptr,0))
+		throw fast_io::win32_error();
+}
+inline void win32_http_send_request(win32_internet_handle& handle,std::string_view sview,std::span<std::byte> extra)
+{
+	if(!HttpSendRequestA(handle.handle,sview.data(),sview.size(),extra.data(),extra.size()))
+		throw fast_io::win32_error();
+}
+
 template<std::integral ch_type>
 class basic_win32_internet_io_observer
 {
@@ -98,6 +121,30 @@ public:
 	};
 };
 
+template<std::integral ch_type>
+class basic_win32_internet_https_client:public basic_win32_internet_io_observer<ch_type>
+{
+public:
+	using char_type = ch_type;
+	using native_handle_type = basic_win32_internet_io_observer<ch_type>::native_handle_type;
+	win32_internet_handle session;
+	win32_internet_handle connection;
+	win32_internet_handle request;
+	constexpr basic_win32_internet_https_client()=default;
+	basic_win32_internet_https_client(std::string_view host,std::string_view method,std::string_view object_name,std::uint32_t port=443):
+		session(fast_io::win32_internet_open("Microsoft Internet Explorer",INTERNET_OPEN_TYPE_PRECONFIG,nullptr,nullptr,0)),
+		connection(fast_io::win32_internet_connect(session,host.data(),port,nullptr,nullptr,INTERNET_SERVICE_HTTP,0,0)),
+		request(fast_io::win32_http_open_request(connection,method.data(),object_name.data(),HTTP_VERSION,nullptr,nullptr,
+		INTERNET_FLAG_RELOAD | INTERNET_FLAG_SECURE | INTERNET_FLAG_KEEP_CONNECTION |
+		INTERNET_FLAG_NO_AUTO_REDIRECT | INTERNET_FLAG_READ_PREFETCH | INTERNET_FLAG_NO_COOKIES |
+		INTERNET_FLAG_NO_AUTH |	INTERNET_FLAG_RESTRICTED_ZONE |	INTERNET_FLAG_CACHE_IF_NET_FAIL |
+		INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP |	INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_NO_UI,
+		0))
+	{
+		win32_http_send_request(request);
+		this->native_handle()=request.handle;
+	}
+};
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter read(basic_win32_internet_io_observer<ch_type> iob,Iter begin,Iter end)
@@ -117,7 +164,11 @@ inline Iter write(basic_win32_internet_io_observer<ch_type> iob,Iter begin,Iter 
 	return begin+written/sizeof(begin);
 }
 
-
 using win32_internet_io_observer = basic_win32_internet_io_observer<char>;
 
+using ibuf_win32_internet_io_observer = fast_io::basic_ibuf<win32_internet_io_observer>;
+
+using win32_internet_https_client = basic_win32_internet_https_client<char>;
+
+using ibuf_win32_internet_https_client = fast_io::basic_ibuf<win32_internet_https_client>;
 }
