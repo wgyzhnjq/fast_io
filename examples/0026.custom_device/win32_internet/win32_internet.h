@@ -21,16 +21,21 @@ public:
 	{
 		bmv.handle={};
 	}
-	void close() noexcept
+	void close()
 	{
 		if(handle)
-			InternetCloseHandle(handle);
+		{
+			if(!InternetCloseHandle(handle))
+				throw fast_io::win32_error();
+			handle=nullptr;
+		}
 	}
 	win32_internet_handle& operator=(win32_internet_handle&& bmv) noexcept
 	{
 		if(bmv.handle==handle)
 			return *this;
-		close();
+		if(handle)
+			InternetCloseHandle(handle);
 		handle=bmv.handle;
 		bmv.handle={};
 		return *this;
@@ -39,7 +44,8 @@ public:
 	win32_internet_handle& operator=(win32_internet_handle const&) = delete;
 	~win32_internet_handle()
 	{
-		close();
+		if(handle)
+			InternetCloseHandle(handle);
 	}
 };
 
