@@ -101,7 +101,7 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 		ob.end_ptr=std::copy(cbegin,cend,ob.end_ptr);		
 	}
 	else
-		write(ob,reinterpret_cast<char*>(std::to_address(cbegin)),reinterpret_cast<char*>(std::to_address(cend)));
+		write(ob,reinterpret_cast<char const*>(std::to_address(cbegin)),reinterpret_cast<char const*>(std::to_address(cend)));
 }
 
 template<std::integral ch_type>
