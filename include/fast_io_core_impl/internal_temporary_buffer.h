@@ -2,7 +2,7 @@
 //std::string is not usable in freestanding environments and cause problems for this library
 //This is a very simple stuff for internal use
 
-namespace fast_io::details
+namespace fast_io
 {
 
 template<std::integral ch_type>
@@ -95,7 +95,7 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 		std::size_t remain_space(ob.capacity_ptr-ob.end_ptr);
 		if(remain_space<to_write_chars)[[unlikely]]
 		{
-			write_bad_case(ob,cbegin,cend,to_write_chars);
+			internal_temporary_buffer_details::write_bad_case(ob,cbegin,cend,to_write_chars);
 			return;
 		}
 		ob.end_ptr=std::copy(cbegin,cend,ob.end_ptr);		
@@ -107,5 +107,5 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 template<std::integral ch_type>
 inline constexpr void flush(internal_temporary_buffer<ch_type>&){}
 
-
+static_assert(buffer_output_stream<internal_temporary_buffer<char>>);
 }
