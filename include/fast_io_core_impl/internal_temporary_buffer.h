@@ -54,14 +54,13 @@ namespace internal_temporary_buffer_details
 template<std::integral ch_type>
 inline constexpr void grow(internal_temporary_buffer<ch_type>& ob,std::size_t new_capacity)
 {
-	auto newp=new ch_type[(ob.capacity_ptr-ob.beg_ptr)<<1];
+	auto newp=new ch_type[new_capacity];
 	std::copy(ob.beg_ptr,ob.end_ptr,newp);
 	std::size_t const current_size(ob.end_ptr-ob.beg_ptr);
-	std::size_t const current_capacity(ob.capacity_ptr-ob.beg_ptr);
 	if(ob.beg_ptr!=ob.static_buffer.data())
 		delete[] ob.beg_ptr;
 	ob.end_ptr=(ob.beg_ptr=newp)+current_size;
-	ob.capacity_ptr=ob.beg_ptr+current_capacity;
+	ob.capacity_ptr=ob.beg_ptr+new_capacity;
 }
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
