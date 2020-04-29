@@ -48,6 +48,8 @@
 #include"fast_io_core_impl/ostring.h"
 #include"fast_io_core_impl/ostring_ref.h"
 #include"fast_io_core_impl/skip.h"
+#include"fast_io_core_impl/internal_temporary_buffer.h"
+
 //#include"fast_io_core_impl/istack.h"
 //#include"fast_io_core_impl/ebcdic.h"
 // Precondition should be removed in the future. Programming bugs

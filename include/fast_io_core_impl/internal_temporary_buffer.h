@@ -15,10 +15,10 @@ public:
 	using const_iterator = pointer;
 	std::array<char_type,4096> static_buffer;
 	pointer *beg_ptr=static_buffer.data(),*end_ptr=static_buffer.data(),*capacity_ptr=static_buffer.data()+4096;
-	constexpr internal_string()=default;
-	internal_string(internal_string const&)=delete;
-	internal_string& operator=(internal_string const&)=delete;
-	constexpr ~internal_string()
+	constexpr internal_temporary_buffer()=default;
+	internal_temporary_buffer(internal_temporary_buffer const&)=delete;
+	internal_temporary_buffer& operator=(internal_temporary_buffer const&)=delete;
+	constexpr ~internal_temporary_buffer()
 	{
 		if(beg_ptr!=static_buffer.data())
 			delete[] beg_ptr;
@@ -58,7 +58,7 @@ inline constexpr void grow(internal_temporary_buffer<ch_type>& ob,std::size_t ne
 	std::copy(ob.beg_ptr,ob.end_ptr,newp);
 	std::size_t const current_size(ob.end_ptr-ob.beg_ptr);
 	std::size_t const current_capacity(ob.capacity_ptr-ob.beg_ptr);
-	if(ob.beg_ptr!=static_buffer.data())
+	if(ob.beg_ptr!=ob.static_buffer.data())
 		delete[] ob.beg_ptr;
 	ob.end_ptr=(ob.beg_ptr=newp)+current_size;
 	ob.capacity_ptr=ob.beg_ptr+current_capacity;
@@ -87,11 +87,10 @@ inline constexpr void overflow(internal_temporary_buffer<ch_type>& ob,ch_type ch
 
 template<std::integral ch_type,std::contiguous_iterator Iter>
 requires (std::same_as<ch_type,char>||
-	std::same_as<typename ch_type,typename std::iterator_traits<Iter>::value_type>)
+	std::same_as<ch_type,typename std::iterator_traits<Iter>::value_type>)
 inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,Iter cend)
 {
-	using char_type = typename T::value_type;
-	if constexpr(std::same_as<char_type,std::remove_cvref_t<decltype(*cbegin)>>)
+	if constexpr(std::same_as<ch_type,std::remove_cvref_t<decltype(*cbegin)>>)
 	{
 		std::size_t to_write_chars(cend-cbegin);
 		std::size_t remain_space(ob.capacity_ptr-ob.end_ptr);
@@ -106,8 +105,8 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 		write(ob,reinterpret_cast<char*>(std::to_address(cbegin)),reinterpret_cast<char*>(std::to_address(cend)));
 }
 
-template<typename T>
-inline constexpr void flush(internal_temporary_buffer<T>&){}
+template<std::integral ch_type>
+inline constexpr void flush(internal_temporary_buffer<ch_type>&){}
 
 
 }
