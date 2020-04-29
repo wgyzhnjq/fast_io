@@ -17,7 +17,7 @@ public:
 	constexpr win32_internet_handle(){}
 	constexpr win32_internet_handle(void* value):handle(value){}
 	
-	win32_internet_handle(win32_internet_handle&& bmv) noexcept:handle(bmv.handle)
+	constexpr win32_internet_handle(win32_internet_handle&& bmv) noexcept:handle(bmv.handle)
 	{
 		bmv.handle={};
 	}
