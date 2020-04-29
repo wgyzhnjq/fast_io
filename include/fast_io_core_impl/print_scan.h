@@ -253,7 +253,7 @@ inline constexpr auto scan(input &in,Args&& ...args)
 	else if constexpr(status_input_stream<input>)
 		scan_status_define(in,std::forward<Args>(args)...);
 	else
-		return normal_scan<report_eof>(in,std::forward<Args>(args)...);
+		return details::normal_scan<report_eof>(in,std::forward<Args>(args)...);
 }
 
 template<input_stream input,typename ...Args>
