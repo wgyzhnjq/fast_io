@@ -24,7 +24,7 @@ public:
 	~timer()
 	{
 #ifdef __clang__
-		fprintf(stderr,"%s:%.17f",s.data(),static_cast<std::chrono::duration_cast<std::chrono::duration<double>>>(std::chrono::high_resolution_clock::now()-t0));
+		fprintf(stderr,"%s:%.17g\n",s.data(),std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now()-t0).count());
 #else
 		println(fast_io::err,s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
 #endif

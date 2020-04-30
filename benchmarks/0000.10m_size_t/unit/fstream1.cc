@@ -1,5 +1,6 @@
 #include"../../timer.h"
 #include<fstream>
+#include<vector>
 
 int main()
 {
