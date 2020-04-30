@@ -1,5 +1,12 @@
 #include <ctime>
 #include <cstdio>
+#ifdef MINGW32
+#include <io.h>
+#else
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#endif
 
 const int MAXN = 10000000;
 const int MAXS = 60*1024*1024;
