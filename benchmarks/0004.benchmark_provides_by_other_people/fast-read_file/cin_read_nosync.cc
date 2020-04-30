@@ -1,5 +1,6 @@
 #include <ctime>
 #include <cstdio>
+#include <iostream>
 const int MAXN = 10000000;
 
 int numbers[MAXN];
