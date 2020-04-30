@@ -182,9 +182,7 @@ int main(int argc,char** argv)
 		"fast_io_win32_file, "
 #endif
 		"fast_io_posix_file, fast_io_c_file_unlocked, fast_io_c_file, fast_io_ibuf_file"
-#if defined(__GLIBCXX__) || defined(_MSC_VER)
-", fast_io_stream_file"
-#endif
+", fast_io_filebuf_io_observer"
 #ifdef _AFXDLL
 ", fast_io_mfc_file"
 #endif
