@@ -1,4 +1,5 @@
 #include <ctime>
+#include <cstdio>
 
 const int MAXS = 60*1024*1024;
 char buf[MAXS];
