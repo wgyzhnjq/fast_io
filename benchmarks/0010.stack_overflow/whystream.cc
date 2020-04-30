@@ -8,7 +8,9 @@ https://stackoverflow.com/questions/26095160/why-are-stdfstreams-so-slow
 #include <iostream>
 #include <functional>
 #include <memory>
+#ifndef __clang__
 #include"../../include/fast_io_device.h"
+#endif
 
 void measure(const std::string& test, std::function<void()> function)
 {
@@ -50,6 +52,7 @@ int main(int argc, const char * argv[])
         std::ifstream stream("test_stream_read.txt", std::ios::binary);
         stream.read(buffer, BUFFER_SIZE);
     });
+#ifndef __clang__
     measure("fast_io::obuf_file write", [buffer]()
     {
 	fast_io::obuf_file obf("test_fast_io_obuf_file_write.txt");
@@ -71,4 +74,5 @@ int main(int argc, const char * argv[])
 	fast_io::inative_file inf("test_fast_io_inative_file_read.txt");
         read(inf,buffer,buffer+BUFFER_SIZE);
     });
+#endif
 }
