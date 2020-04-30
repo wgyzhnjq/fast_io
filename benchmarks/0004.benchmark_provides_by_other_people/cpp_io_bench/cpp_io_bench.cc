@@ -1,8 +1,8 @@
 //https://cristianadam.eu/20160410/c-plus-plus-i-slash-o-benchmark/
-#include"../timer.h"
-#include"../../include/fast_io_device.h"
-#include"../../include/fast_io_legacy.h"
-#include"../../include/fast_io_third_party.h"
+#include"../../timer.h"
+#include"../../../include/fast_io_device.h"
+#include"../../../include/fast_io_legacy.h"
+#include"../../../include/fast_io_third_party.h"
 #include<map>
 #include<vector>
 #include<functional>
