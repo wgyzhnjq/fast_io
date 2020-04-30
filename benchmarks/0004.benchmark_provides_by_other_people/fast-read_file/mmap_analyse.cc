@@ -39,6 +39,6 @@ int main()
 {
 	int start = clock();
 	//DO SOMETHING
-	read_analyse();
+	mmap_analyse();
 	printf("%.3lf\n",double(clock()-start)/CLOCKS_PER_SEC);
 }
