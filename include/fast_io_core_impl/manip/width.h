@@ -31,6 +31,33 @@ inline constexpr manip::width<T,ch_type> width(T t,std::size_t wd,bool left=fals
 	return {t,wd,left,indent_character};
 }
 
+template<typename T,std::integral ch_type=char8_t>
+requires (!manipulator<T>)
+inline constexpr manip::width<T const&,ch_type> left_width(T const& t,std::size_t wd,bool left=false,ch_type indent_character=u8' ')
+{
+	return {t,wd,false,indent_character};
+}
+
+template<manipulator T,std::integral ch_type=char8_t>
+inline constexpr manip::width<T,ch_type> left_width(T t,std::size_t wd,bool left=false,ch_type indent_character=u8' ')
+{
+	return {t,wd,false,indent_character};
+}
+
+template<typename T,std::integral ch_type=char8_t>
+requires (!manipulator<T>)
+inline constexpr manip::width<T const&,ch_type> right_width(T const& t,std::size_t wd,ch_type indent_character=u8' ')
+{
+	return {t,wd,true,indent_character};
+}
+
+template<manipulator T,std::integral ch_type=char8_t>
+inline constexpr manip::width<T,ch_type> right_width(T t,std::size_t wd,ch_type indent_character=u8' ')
+{
+	return {t,wd,true,indent_character};
+}
+
+
 namespace details
 {
 template<fast_io::output_stream output,typename T,std::integral ch_type>
@@ -106,15 +133,7 @@ inline constexpr void print_define(output& out,manip::width<T,ch_type> wdt)
 				}
 				else
 				{
-					if constexpr(std::is_pointer_v<std::remove_cvref_t<decltype(oreserve(out,size))>>)
-					{
-						if(std::is_constant_evaluated())
-							std::copy_backward(ptr,printed,ptr+wdt.width);
-						else
-							std::memmove(ptr,printed,(wdt.width-printed_chars_count)*sizeof(ch_type));
-					}
-					else
-						std::copy_backward(ptr,printed,ptr+wdt.width);
+					std::copy_backward(ptr,printed,ptr+wdt.width);
 					details::my_fill_n(ptr,wdt.width-printed_chars_count,wdt.indent_character);
 				}
 				orelease(out,ptr+wdt.width);
