@@ -48,11 +48,8 @@ inline constexpr void obuffer_set_curr(internal_temporary_buffer<ch_type>& ob,ch
 	ob.end_ptr=ptr;
 }
 
-namespace details::internal_temporary_buffer_impl
-{
-
 template<std::integral ch_type>
-inline constexpr void grow(internal_temporary_buffer<ch_type>& ob,std::size_t new_capacity)
+inline constexpr void ogrow(internal_temporary_buffer<ch_type>& ob,std::size_t new_capacity)
 {
 	auto newp=new ch_type[new_capacity];
 	std::copy(ob.beg_ptr,ob.end_ptr,newp);
@@ -63,13 +60,16 @@ inline constexpr void grow(internal_temporary_buffer<ch_type>& ob,std::size_t ne
 	ob.capacity_ptr=ob.beg_ptr+new_capacity;
 }
 
+namespace details::internal_temporary_buffer_impl
+{
+
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline constexpr void write_bad_case(internal_temporary_buffer<ch_type>& ob,Iter cbegin,Iter cend,std::size_t to_write_chars)
 {
 	std::size_t new_capacity((ob.capacity_ptr-ob.beg_ptr)<<1);
 	if(new_capacity<to_write_chars)
 		new_capacity=to_write_chars;
-	grow(ob,new_capacity);
+	ogrow(ob,new_capacity);
 	ob.end_ptr=std::copy(cbegin,cend,ob.end_ptr);
 }
 
@@ -78,7 +78,7 @@ inline constexpr void write_bad_case(internal_temporary_buffer<ch_type>& ob,Iter
 template<std::integral ch_type>
 inline constexpr void overflow(internal_temporary_buffer<ch_type>& ob,ch_type ch)
 {
-	details::internal_temporary_buffer_impl::grow(ob,(ob.capacity_ptr-ob.beg_ptr)<<1);
+	ogrow(ob,(ob.capacity_ptr-ob.beg_ptr)<<1);
 	*ob.end_ptr=ch;
 	++ob.end_ptr;
 }
