@@ -1,7 +1,10 @@
 #include <ctime>
 #include <cstdio>
 
+const int MAXN = 10000000;
 const int MAXS = 60*1024*1024;
+
+int numbers[MAXN];
 char buf[MAXS];
 
 void analyse(char *buf,int len = MAXS)
@@ -15,12 +18,6 @@ void analyse(char *buf,int len = MAXS)
 			numbers[i] = numbers[i] * 10 + *p - '0';
 }
 
-const int MAXN = 10000000;
-const int MAXS = 60*1024*1024;
-
-int numbers[MAXN];
-char buf[MAXS];
-
 void read_analyse()
 {
 	int fd = open("data.txt",O_RDONLY);
@@ -33,6 +30,6 @@ int main()
 {
 	int start = clock();
 	//DO SOMETHING
-	fread_analyse();
+	read_analyse();
 	printf("%.3lf\n",double(clock()-start)/CLOCKS_PER_SEC);
 }
