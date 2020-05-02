@@ -37,13 +37,15 @@ struct bio_new_fp_flags
 };
 }
 
-template<stream stm>
+template<typename stm>
+requires (stream<std::remove_cvref_t<stm>>)
 struct fast_io_bio_method_t
 {
 	bio_method_st method{};
 	explicit fast_io_bio_method_t()
 	{
-		if constexpr(input_stream<stm>)
+		using real_stm_type = std::remove_cvref_t<stm>;
+		if constexpr(input_stream<real_stm_type>)
 		{
 			method.bread=[](BIO* bbio,char* buf,std::size_t size,std::size_t* readd) noexcept->int
 			{
@@ -58,7 +60,7 @@ struct fast_io_bio_method_t
 				}
 			};
 		}
-		if constexpr(output_stream<stm>)
+		if constexpr(output_stream<real_stm_type>)
 		{
 			method.bwrite=[](BIO* bbio,char const* buf,std::size_t size,std::size_t* written) noexcept->int
 			{
@@ -73,11 +75,12 @@ struct fast_io_bio_method_t
 				}
 			};
 		}
-		method.destroy=[](BIO* bbio) noexcept -> int
-		{
-			delete bit_cast<stm*>(BIO_get_data(bbio));
-			return 0;
-		};
+		if constexpr(!std::is_reference_v<stm>)
+			method.destroy=[](BIO* bbio) noexcept -> int
+			{
+				delete bit_cast<stm*>(BIO_get_data(bbio));
+				return 0;
+			};
 		method.name=typeid(stm).name();
 		constexpr int value(BIO_TYPE_DESCRIPTOR-BIO_TYPE_START);
 		static_assert(0<value);
@@ -85,7 +88,7 @@ struct fast_io_bio_method_t
 	}
 };
 
-template<stream stm>
+template<typename stm>
 fast_io_bio_method_t<stm> const fast_io_bio_method{};
 
 template<std::integral ch_type>
@@ -156,13 +159,22 @@ public:
 	constexpr basic_bio_file(native_handle_type bio):basic_bio_io_observer<char_type>(bio){}
 	template<stream stm,typename ...Args>
 	requires std::constructible_from<stm,Args...>
-	basic_bio_file(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm>.method)))
+	basic_bio_file(file_cookie_t,std::in_place_type_t<stm>,Args&& ...args):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm>.method)))
 	{
 		detect_open_failure();
 		basic_bio_file<char_type> self(this->native_handle());
 		BIO_set_data(this->native_handle(),bit_cast<void*>(new stm(std::forward<Args>(args)...)));
 		self.release();
 	}
+	template<stream stm>
+	basic_bio_file(file_cookie_t,stm& sm):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm>.method)))
+	{
+		detect_open_failure();
+		basic_bio_file<char_type> self(this->native_handle());
+		BIO_set_data(this->native_handle(),bit_cast<void*>(std::addressof(sm)));
+		self.release();
+	}
+
 	template<fast_io::open_mode om>
 	basic_bio_file(basic_c_io_handle<char_type>&& bmv,open_interface_t<om>):
 		basic_bio_io_observer<char_type>(BIO_new_fp(bmv.native_handle(),details::bio_new_fp_flags<om,true>::value))
