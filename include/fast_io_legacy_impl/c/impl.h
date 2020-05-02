@@ -5,12 +5,6 @@
 namespace fast_io
 {
 
-struct c_file_cookie_t
-{
-explicit constexpr c_file_cookie_t()=default;
-};
-inline constexpr c_file_cookie_t c_file_cookie{};
-
 namespace details
 {
 template<open_mode om>
