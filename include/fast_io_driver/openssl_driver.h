@@ -1,6 +1,7 @@
 #pragma once
 #include<openssl/bio.h>
 #include<openssl/ssl.h>
+#include<openssl/err.h>
 #include<typeinfo>
 
 #include"../fast_io_hosted.h"
