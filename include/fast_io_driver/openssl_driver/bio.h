@@ -320,4 +320,11 @@ constexpr void print_define(output& out,basic_bio_io_observer<ch_type> bio)
 	print(out,fast_io::unsigned_view(bio.native_handle()));
 }
 
+template<output_stream output,std::integral ch_type>
+void print_define(output& out,openssl_error const& err)
+{
+	bio_file bf(io_cookie,out);
+	ERR_print_errors(bf.native_handle());
+}
+
 }
