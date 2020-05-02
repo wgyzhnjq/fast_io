@@ -39,7 +39,7 @@ public:
 			{
 				delete bit_cast<value_type*>(cookie);
 				return 0;
-			}
+			};
 		if constexpr(input_stream<value_type>)
 			native_functions.read=[](void* cookie,char* buf,std::size_t size) noexcept->std::ptrdiff_t
 			{
