@@ -3,6 +3,8 @@
 #include<openssl/ssl.h>
 #include<typeinfo>
 
+#include"../fast_io_hosted.h"
+#include"../fast_io_legacy_impl/c/impl.h"
 #include"openssl_driver/init.h"
 #include"openssl_driver/observer.h"
 #include"openssl_driver/error.h"
