@@ -225,10 +225,10 @@ struct native_interface_t
 };
 inline native_interface_t constexpr native_interface;
 
-struct file_cookie_t
+struct io_cookie_t
 {
-explicit constexpr file_cookie_t()=default;
+explicit constexpr io_cookie_t()=default;
 };
-inline constexpr file_cookie_t file_cookie{};
+inline constexpr io_cookie_t io_cookie{};
 
 }
