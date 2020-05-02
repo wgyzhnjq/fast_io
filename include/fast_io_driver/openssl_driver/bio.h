@@ -39,11 +39,11 @@ struct bio_new_fp_flags
 
 template<typename stm>
 requires (stream<std::remove_reference_t<stm>>)
-struct bio_io_cookie_functions
+struct bio_io_cookie_functions_t
 {
 	using native_functions_type = bio_method_st;
 	native_functions_type functions{};
-	explicit bio_io_cookie_functions()
+	explicit bio_io_cookie_functions_t()
 	{
 		using value_type = std::remove_reference_t<stm>;
 		if constexpr(input_stream<value_type>)
