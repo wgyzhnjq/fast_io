@@ -51,7 +51,7 @@ struct fast_io_bio_method_t
 			{
 				try
 				{
-					*readd=(read(*bit_cast<stm*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
+					*readd=(read(*bit_cast<real_stm_type*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
 					return 0;
 				}
 				catch(...)
@@ -66,7 +66,7 @@ struct fast_io_bio_method_t
 			{
 				try
 				{
-					*written=(write(*bit_cast<stm*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
+					*written=(write(*bit_cast<real_stm_type*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
 					return 0;
 				}
 				catch(...)
