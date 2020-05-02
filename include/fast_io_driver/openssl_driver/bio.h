@@ -167,7 +167,7 @@ public:
 		self.release();
 	}
 	template<stream stm>
-	basic_bio_file(file_cookie_t,stm& sm):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm>.method)))
+	basic_bio_file(file_cookie_t,stm& sm):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm&>.method)))
 	{
 		detect_open_failure();
 		basic_bio_file<char_type> self(this->native_handle());
