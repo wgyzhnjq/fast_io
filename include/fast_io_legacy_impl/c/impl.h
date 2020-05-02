@@ -31,7 +31,7 @@ public:
 
 	using native_functions_type = cookie_io_functions_t;
 	native_functions_type native_functions{};
-	explicit constexpr c_io_cookie_functions()
+	explicit constexpr c_io_cookie_functions_t()
 	{
 		using value_type = std::remove_reference_t<stm>;
 		if constexpr(!std::is_reference_v<stm>)
