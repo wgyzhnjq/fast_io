@@ -1,4 +1,18 @@
 #pragma once
+struct bio_method_st {
+    int type;
+    char *name;
+    int (*bwrite) (BIO *, const char *, size_t, size_t *);
+    int (*bwrite_old) (BIO *, const char *, int);
+    int (*bread) (BIO *, char *, size_t, size_t *);
+    int (*bread_old) (BIO *, char *, int);
+    int (*bputs) (BIO *, const char *);
+    int (*bgets) (BIO *, char *, int);
+    long (*ctrl) (BIO *, int, long, void *);
+    int (*create) (BIO *);
+    int (*destroy) (BIO *);
+    long (*callback_ctrl) (BIO *, int, BIO_info_cb *);
+};
 
 namespace fast_io::openssl
 {
@@ -6,7 +20,7 @@ namespace fast_io::openssl
 template<stream stm>
 struct fast_io_bio_method_t
 {
-	BIO_METHOD method{};
+	bio_method_st method{};
 	explicit fast_io_bio_method_t()
 	{
 		if constexpr(input_stream<stm>)
@@ -15,7 +29,7 @@ struct fast_io_bio_method_t
 			{
 				try
 				{
-					*readd=read(*bit_cast<stm*>(bbio->ptr),buf,buf+size);
+					*readd=(read(*bit_cast<stm*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
 					return 0;
 				}
 				catch(...)
@@ -30,7 +44,7 @@ struct fast_io_bio_method_t
 			{
 				try
 				{
-					*written=write(*bit_cast<stm*>(bbio->ptr),buf,buf+size);
+					*written=(write(*bit_cast<stm*>(BIO_get_data(bbio)),buf,buf+size)-buf)*sizeof(typename stm::char_type);
 					return 0;
 				}
 				catch(...)
@@ -41,14 +55,14 @@ struct fast_io_bio_method_t
 		}
 		method.destroy=[](BIO* bbio) noexcept -> int
 		{
-			delete bit_cast<stm*>(bbio.ptr);
+			delete bit_cast<stm*>(BIO_get_data(bbio));
 			return 0;
-		}
-		auto info(typeid(stream));
-		method.name=typeid(stream).name();
+		};
+		auto info(typeid(stm));
+		method.name=info.name();
 		constexpr int value(BIO_TYPE_DESCRIPTOR-BIO_TYPE_START);
 		static_assert(0<value);
-		method.type=static_cast<int>(info.hash()%value+BIO_TYPE_START);
+		method.type=static_cast<int>(info.hash_code()%value+BIO_TYPE_START);
 	}
 };
 
@@ -66,15 +80,15 @@ public:
 	{
 		return bio;
 	}
-	constexpr native_handle_type& native_handle() const noexcept
+	constexpr auto& native_handle() const noexcept
 	{
 		return bio;
 	}
-	constexpr native_handle_type& native_handle() noexcept
+	constexpr auto& native_handle() noexcept
 	{
 		return bio;
 	}
-	constexpr native_handle_handle release() noexcept
+	constexpr auto release() noexcept
 	{
 		auto temp{bio};
 		bio=nullptr;
@@ -90,11 +104,11 @@ public:
 	using char_type = ch_type;
 	constexpr basic_bio_file()=default;
 	constexpr basic_bio_file(native_handle_type bio):basic_bio_io_observer<ch_type>(bio){}
-	template<stream stm,Args ...args>
+	template<stream stm,typename ...Args>
 	requires std::constructible_from<stm,Args...>
-	basic_bio_file(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args):basic_bio_io_observer(BIO_new(std::addressof(fast_io_bio_method<stm>)))
+	basic_bio_file(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args):basic_bio_io_observer<ch_type>(BIO_new(std::addressof(fast_io_bio_method<stm>)))
 	{
-		if(bio==nullptr)[[unlikely]]
+		if(this->native_handle()==nullptr)[[unlikely]]
 			throw openssl_error("BIO_new() failed");
 		basic_bio_file<ch_type> self(this->native_handle());
 		self.native_handle()->ptr=bit_cast<void*>(new stm(std::forward<Args>(args)...));
@@ -102,7 +116,7 @@ public:
 	}
 	basic_bio_file(basic_bio_file const&)=delete;
 	basic_bio_file& operator=(basic_bio_file const&)=delete;
-	constexpr basic_bio_file& operator=(basic_bio_file&& bf) noexcept:basic_bio_io_observer<ch_type>(bf.native_handle())
+	constexpr basic_bio_file(basic_bio_file&& bf) noexcept:basic_bio_io_observer<ch_type>(bf.native_handle())
 	{
 		bf.native_handle()=nullptr;
 	}
@@ -122,5 +136,28 @@ public:
 			BIO_free(this->native_handle());
 	}
 };
+
+using bio_io_observer =  basic_bio_io_observer<char>;
+using bio_file =  basic_bio_file<char>;
+
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter read(basic_bio_io_observer<ch_type> iob,Iter begin,Iter end)
+{
+	std::size_t read_bytes{};
+	if(BIO_write_ex(iob.native_handle(),std::to_address(begin),
+		sizeof(*begin)*(std::to_address(end)-std::to_address(begin)),std::addressof(read_bytes))==-1)
+		throw openssl_error("BIO_read_ex failed()");
+	return begin+read_bytes/sizeof(*begin);
+}
+
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline Iter write(basic_bio_io_observer<ch_type> iob,Iter begin,Iter end)
+{
+	std::size_t written_bytes{};
+	if(BIO_write_ex(iob.native_handle(),std::to_address(begin),
+		sizeof(*begin)*(std::to_address(end)-std::to_address(begin)),std::addressof(written_bytes))==-1)
+		throw openssl_error("BIO_write_ex failed()");
+	return begin+written_bytes/sizeof(*begin);
+}
 
 }

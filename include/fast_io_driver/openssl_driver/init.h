@@ -1,6 +1,6 @@
 #pragma once
 
-namespace fast_io::openssl::details
+namespace fast_io::openssl
 {
 
 class global_initializer
@@ -11,7 +11,6 @@ public:
 		SSL_library_init();
 	}
 };
-global_initializer ssl_init{};
 
 
 }
