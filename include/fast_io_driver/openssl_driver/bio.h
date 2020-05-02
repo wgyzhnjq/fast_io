@@ -113,12 +113,38 @@ public:
 		bio=nullptr;
 		return temp;
 	}
+	explicit operator basic_c_io_observer<char_type>() const
+	{
+		std::FILE* fp{};
+		BIO_get_fp(bio,std::addressof(fp));
+		return {fp};
+	}
+
+	explicit operator basic_posix_io_observer<char_type>() const
+	{
+		int fd{};
+		BIO_get_fd(bio,std::addressof(fd));
+		if(fd==0)
+		{
+			basic_c_io_observer<char_type> ciob(*this);
+			if(ciob)[[likely]]
+				return static_cast<basic_posix_io_observer<char_type>>(ciob);
+		}
+		return {fd};
+	}
+#if defined(__WINNT__) || defined(_MSC_VER)
+	explicit operator basic_win32_io_observer<char_type>() const
+	{
+		return basic_win32_io_observer<char_type>(static_cast<basic_posix_io_observer<char_type>>(*this));
+	}
+#endif
+
 };
 
 template<std::integral ch_type>
 class basic_bio_file:public basic_bio_io_observer<ch_type>
 {
-	void detech_open_failure()
+	void detect_open_failure()
 	{
 		if(this->native_handle()==nullptr)[[unlikely]]
 			throw openssl_error("BIO_new() failed");
@@ -132,25 +158,24 @@ public:
 	requires std::constructible_from<stm,Args...>
 	basic_bio_file(c_file_cookie_t,std::in_place_type_t<stm>,Args&& ...args):basic_bio_io_observer<char_type>(BIO_new(std::addressof(fast_io_bio_method<stm>.method)))
 	{
-//		::debug_println(__FILE__," ",__LINE__);
-		detech_open_failure();
+		detect_open_failure();
 		basic_bio_file<char_type> self(this->native_handle());
 		BIO_set_data(this->native_handle(),bit_cast<void*>(new stm(std::forward<Args>(args)...)));
-//		::debug_println(__FILE__," ",__LINE__);
-
 		self.release();
 	}
 	template<fast_io::open_mode om>
 	basic_bio_file(basic_c_io_handle<char_type>&& bmv,open_interface_t<om>):
 		basic_bio_io_observer<char_type>(BIO_new_fp(bmv.native_handle(),details::bio_new_fp_flags<om,true>::value))
 	{
-		detech_open_failure();
+		detect_open_failure();
+		bmv.detach();
 	}
 
 	basic_bio_file(basic_c_io_handle<char_type>&& bmv,fast_io::open_mode om):
 		basic_bio_io_observer<char_type>(BIO_new_fp(bmv.native_handle(),details::calculate_bio_new_fp_flags<true>(om)))
 	{
-		detech_open_failure();
+		detect_open_failure();
+		bmv.detach();
 	}
 	basic_bio_file(basic_c_io_handle<char_type>&& bmv,std::string_view om):
 		basic_bio_file(std::move(bmv),fast_io::from_c_mode(om)){}
@@ -159,12 +184,14 @@ public:
 	basic_bio_file(basic_posix_io_handle<char_type>&& bmv,open_interface_t<om>):
 		basic_bio_io_observer<char_type>(BIO_new_fd(bmv.native_handle(),details::bio_new_fp_flags<om,true>::value))
 	{
-		detech_open_failure();
+		detect_open_failure();
+		bmv.detach();
 	}
 	basic_bio_file(basic_posix_io_handle<char_type>&& bmv,fast_io::open_mode om):
 		basic_bio_io_observer<char_type>(BIO_new_fd(bmv.native_handle(),details::calculate_bio_new_fp_flags<true>(om)))
 	{
-		detech_open_failure();
+		detect_open_failure();
+		bmv.detach();
 	}
 	basic_bio_file(basic_posix_io_handle<char_type>&& bmv,std::string_view mode):basic_bio_file(std::move(bmv),fast_io::from_c_mode(mode)){}
 
@@ -172,27 +199,27 @@ public:
 	basic_bio_file(basic_c_io_observer<char_type>& bmv,open_interface_t<om>):
 		basic_bio_io_observer<char_type>(BIO_new_fp(bmv.native_handle(),details::bio_new_fp_flags<om,false>::value))
 	{
-		detech_open_failure();
+		detect_open_failure();
 	}
 
 	basic_bio_file(basic_c_io_observer<char_type>& bmv,fast_io::open_mode om):
 		basic_bio_io_observer<char_type>(BIO_new_fp(bmv.native_handle(),details::calculate_bio_new_fp_flags<false>(om)))
 	{
-		detech_open_failure();
+		detect_open_failure();
 	}
 	basic_bio_file(basic_c_io_observer<char_type>& bmv,std::string_view om):
-		basic_bio_file(std::move(bmv),fast_io::from_c_mode(om)){}
+		basic_bio_file(bmv,fast_io::from_c_mode(om)){}
 
 	template<fast_io::open_mode om>
 	basic_bio_file(basic_posix_io_observer<char_type>& bmv,open_interface_t<om>):
 		basic_bio_io_observer<char_type>(BIO_new_fd(bmv.native_handle(),details::bio_new_fp_flags<om,false>::value))
 	{
-		detech_open_failure();
+		detect_open_failure();
 	}
 	basic_bio_file(basic_posix_io_observer<char_type>& bmv,fast_io::open_mode om):
 		basic_bio_io_observer<char_type>(BIO_new_fd(bmv.native_handle(),details::calculate_bio_new_fp_flags<false>(om)))
 	{
-		detech_open_failure();
+		detect_open_failure();
 	}
 	basic_bio_file(basic_posix_io_observer<char_type>& bmv,std::string_view mode):basic_bio_file(bmv,fast_io::from_c_mode(mode)){}
 
@@ -216,7 +243,8 @@ public:
 	template<typename... Args>
 	basic_bio_file(std::string_view file,std::string_view mode,Args&& ...args):
 		basic_bio_file(basic_c_file<char_type>(file,mode,std::forward<Args>(args)...),mode)
-	{}
+	{
+	}
 
 
 
@@ -250,7 +278,7 @@ template<std::integral ch_type,std::contiguous_iterator Iter>
 inline Iter read(basic_bio_io_observer<ch_type> iob,Iter begin,Iter end)
 {
 	std::size_t read_bytes{};
-	if(BIO_write_ex(iob.native_handle(),std::to_address(begin),
+	if(BIO_read_ex(iob.native_handle(),std::to_address(begin),
 		sizeof(*begin)*(std::to_address(end)-std::to_address(begin)),std::addressof(read_bytes))==-1)
 		throw openssl_error("BIO_read_ex failed()");
 	return begin+read_bytes/sizeof(*begin);
