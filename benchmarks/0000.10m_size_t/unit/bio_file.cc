@@ -10,6 +10,6 @@ int main()
 	fast_io::timer t("output");
 	fast_io::openssl::bio_file bio("BIO_printf.txt",fast_io::open_interface<fast_io::open_mode::binary|fast_io::open_mode::out>);
 	for(std::size_t i{};i!=N;++i)
-		BIO_printf(bio.native_handle(),"%zu",i);
+		println(bio,i);
 	}
 }
