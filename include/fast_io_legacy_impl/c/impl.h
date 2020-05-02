@@ -454,7 +454,7 @@ public:
 		basic_c_file_impl(basic_posix_file<typename T::char_type>(file,mode,std::forward<Args>(args)...),mode)
 	{}
 	template<stream stm,typename... Args>
-	requires (std::same_as<typename T::char_type,char>&&std::same_as<typename stm::char_type,char>)
+	requires (std::same_as<typename T::char_type,char>&&std::same_as<typename stm::char_type,char>&&std::constructible_from<stm,Args...>)
 	basic_c_file_impl(c_file_cookie_t,std::string_view mode,std::in_place_type_t<stm>,Args&& ...args)
 #if defined(_GNU_SOURCE)
 //musl libc also supports this I think
