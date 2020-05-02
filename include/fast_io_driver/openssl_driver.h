@@ -1,6 +1,7 @@
 #pragma once
 #include<openssl/bio.h>
 #include<openssl/ssl.h>
+#include<typeinfo>
 
 #include"openssl_driver/init.h"
 #include"openssl_driver/observer.h"
