@@ -23,15 +23,15 @@ int cxx_fast_io_write(char const** written,void* d,char const* begin,char const*
 
 int cxx_fast_io_flush(void* d) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_print_size_t(void* d,std::size_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_print_size_t(void* d,size_t value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_print_ptrdiff_t(void* d,std::ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_print_ptrdiff_t(void* d,ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
 
 int cxx_fast_io_print_double(void* d,double value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_println_size_t(void* d,std::size_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_println_size_t(void* d,size_t value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_println_ptrdiff_t(void* d,std::ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_println_ptrdiff_t(void* d,ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
 
 int cxx_fast_io_println_double(void* d,double value) CXX_FAST_IO_NOEXCEPT;
 
@@ -41,21 +41,21 @@ int cxx_fast_io_bufferred_write(char const** written,void* d,char const* begin,c
 
 int cxx_fast_io_bufferred_flush(void* d) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_print_size_t(void* d,std::size_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_print_size_t(void* d,size_t value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_print_ptrdiff_t(void* d,std::ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_print_ptrdiff_t(void* d,ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
 
 int cxx_fast_io_bufferred_print_double(void* d,double value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_println_size_t(void* d,std::size_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_println_size_t(void* d,size_t value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_println_ptrdiff_t(void* d,std::ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_println_ptrdiff_t(void* d,ptrdiff_t value) CXX_FAST_IO_NOEXCEPT;
 
 int cxx_fast_io_bufferred_println_double(void* d,double value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_scan_size_t(void* d,std::size_t* value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_scan_size_t(void* d,size_t* value) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_bufferred_scan_ptrdiff_t(void* d,std::ptrdiff_t* value) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_bufferred_scan_ptrdiff_t(void* d,ptrdiff_t* value) CXX_FAST_IO_NOEXCEPT;
 
 int cxx_fast_io_bufferred_scan_double(void* d,double* value) CXX_FAST_IO_NOEXCEPT;
 
@@ -64,7 +64,7 @@ int cxx_fast_io_win32_handle_open(void** gen,void* handle,bool noclose,bool buff
 #endif
 int cxx_fast_io_posix_fd_open(void** gen,int fd,bool noclose,bool buffered) CXX_FAST_IO_NOEXCEPT;
 
-int cxx_fast_io_c_fp_open(void** gen,std::FILE* fp,bool noclose,bool buffered) CXX_FAST_IO_NOEXCEPT;
+int cxx_fast_io_c_fp_open(void** gen,FILE* fp,bool noclose,bool buffered) CXX_FAST_IO_NOEXCEPT;
 
 void cxx_fast_io_release(void* d,bool buffered) CXX_FAST_IO_NOEXCEPT;
 
