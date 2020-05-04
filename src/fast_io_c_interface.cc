@@ -12,10 +12,13 @@ constexpr inline int c_interface_call(Func f,void* d) noexcept
 {
 	try
 	{
-//		if constexpr(buffered)
-//			f(*bit_cast<iobuf_io_file*>(d));
-//		else
-//			f(io_io_observer{bit_cast<io_io_observer::native_handle_type>(d)});
+		if constexpr(buffered)
+			f(*bit_cast<iobuf_io_file*>(d));
+		else if constexpr(!buffered)
+		{
+			io_io_observer iob{bit_cast<io_io_observer::native_handle_type>(d)};
+			f(iob);
+		}
 		return {};
 	}
 	catch(std::system_error const& error)
@@ -135,19 +138,19 @@ int cxx_fast_io_println_double(void* d,double value) noexcept
 
 int cxx_fast_io_bufferred_read(char** readed,void* d,char* begin,char* end) noexcept
 {
-	return details::c_interface_call<false>([&](auto iob){
+	return details::c_interface_call<false>([&](auto& iob){
 		*readed=read(iob,begin,end);
 	},d);
 }
 int cxx_fast_io_bufferred_write(char const** written,void* d,char const* begin,char const* end) noexcept
 {
-	return details::c_interface_call<false>([&](auto iob){
+	return details::c_interface_call<false>([&](auto& iob){
 		*written=write(iob,begin,end);
 	},d);
 }
 int cxx_fast_io_bufferred_flush(void* d)
 {
-	return details::c_interface_call<false>([&](auto iob){
+	return details::c_interface_call<false>([&](auto& iob){
 		flush(iob);
 	},d);
 }
@@ -181,15 +184,15 @@ int cxx_fast_io_bufferred_println_double(void* d,double value) noexcept
 
 int cxx_fast_io_bufferred_scan_size_t(void* d,std::size_t* value) noexcept
 {
-	return details::c_interface_print<false,true,true>(d,*value);
+	return details::c_interface_print<true,false,true>(d,*value);
 }
 int cxx_fast_io_bufferred_scan_ptrdiff_t(void* d,std::ptrdiff_t* value) noexcept
 {
-	return details::c_interface_print<false,true,true>(d,*value);
+	return details::c_interface_print<true,false,true>(d,*value);
 }
 int cxx_fast_io_bufferred_scan_double(void* d,double* value) noexcept
 {
-	return details::c_interface_print<false,true,true>(d,*value);
+	return details::c_interface_print<true,false,true>(d,*value);
 }
 
 #if defined(__WINNT__) || defined(_MSC_VER)
@@ -208,7 +211,6 @@ int cxx_fast_io_c_fp_open(void** gen,std::FILE* fp,bool noclose,bool buffered) n
 {
 	return details::c_interface_open<c_io_observer,c_file>(gen,fp,noclose,buffered);
 }
-
 
 void cxx_fast_io_release(void* d,bool buffered) noexcept
 {
@@ -235,19 +237,20 @@ int cxx_fast_io_buffered_overflow(void* d,char ch) noexcept
 
 int cxx_fast_io_buffered_read(char** readed,void* d,char* begin,char* end) noexcept
 {
-	return details::c_interface_call<true>([&](auto iob){
+	return details::c_interface_call<true>([&](auto& iob){
 		*readed=read(iob,begin,end);
 	},d);
 }
 int cxx_fast_io_buffered_write(char const** written,void* d,char const* begin,char const* end) noexcept
 {
-	return details::c_interface_call<true>([&](auto iob){
-		*written=write(iob,begin,end);
+	return details::c_interface_call<true>([&](auto& iob){
+		write(iob,begin,end);
+		*written=end;
 	},d);
 }
 int cxx_fast_io_buffered_flush(void* d) noexcept
 {
-	return details::c_interface_call<true>([&](auto iob){
+	return details::c_interface_call<true>([&](auto& iob){
 		flush(iob);
 	},d);
 }
