@@ -67,8 +67,8 @@ public:
 	}
 	constexpr base<char_type>* clone() override
 	{
-		if constexpr(std::copyable<stm>)
-			return new derv{this->io};
+		if constexpr(std::is_reference_v<stm>||std::copyable<stm>)
+			return new derv(std::in_place_type<stm>,this->io);
 		else
 			throw std::system_error(EPERM,std::generic_category());
 	}

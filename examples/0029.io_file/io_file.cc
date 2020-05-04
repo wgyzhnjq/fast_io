@@ -4,5 +4,7 @@
 int main()
 {
 	fast_io::io_file file(fast_io::io_cookie,fast_io::out);
-	print(file,"Hello World\n");
+	auto f2(file);
+	print(file,"Hello World file\n");
+	print(f2,"Hello World f2\n");
 }
