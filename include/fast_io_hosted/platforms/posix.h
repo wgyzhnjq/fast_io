@@ -34,24 +34,25 @@ inline constexpr int calculate_posix_open_mode_for_win32_handle(open_mode value)
 			mode |= _O_TEXT;
 	}
 	constexpr auto supported_values{open_mode::out|open_mode::app|open_mode::in};
-	switch(supported_values&value)
+	using utype = typename std::underlying_type<open_mode>::type;
+	switch(static_cast<utype>(supported_values)&static_cast<utype>(value))
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
-	case open_mode::in:
+	case static_cast<utype>(open_mode::in):
 		return mode | O_RDONLY;
 //Destroy contents;	Create new;	"w";	Create a file for writing
-	case open_mode::out:
+	case static_cast<utype>(open_mode::out):
 //Read from start;	Error;	"r+";		Open a file for read/write
-	case open_mode::out|open_mode::in:
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::in):
 		return mode;
 //Append to file;	Create new;	"a";	Append to a file
-	case open_mode::app:
-	case open_mode::out|open_mode::app:
+	case static_cast<utype>(open_mode::app):
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::app):
 		return mode | O_APPEND;
 //Write to end;	Create new;	"a+";	Open a file for read/write
-	case open_mode::out|open_mode::in|open_mode::app:
-	case open_mode::in|open_mode::app:
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::in)|static_cast<utype>(open_mode::app):
+	case static_cast<utype>(open_mode::in)|static_cast<utype>(open_mode::app):
 		return mode | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
@@ -140,26 +141,27 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 	else
 		mode |= _O_RANDOM;
 #endif
-	constexpr auto supported_values{open_mode::out|open_mode::app|open_mode::in};
-	switch(value&supported_values)
+	using utype = typename std::underlying_type<open_mode>::type;
+	constexpr auto supported_values{static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::app)|static_cast<utype>(open_mode::in)};
+	switch(static_cast<utype>(value)&static_cast<utype>(supported_values))
 	{
 //Action if file already exists;	Action if file does not exist;	c-style mode;	Explanation
 //Read from start;	Failure to open;	"r";	Open a file for reading
-	case open_mode::in:
+	case static_cast<utype>(open_mode::in):
 		return mode | O_RDONLY;
 //Destroy contents;	Create new;	"w";	Create a file for writing
-	case open_mode::out:
+	case static_cast<utype>(open_mode::out):
 		return mode | O_WRONLY | O_CREAT | O_TRUNC;
 //Append to file;	Create new;	"a";	Append to a file
-	case open_mode::app:
-	case open_mode::out|open_mode::app:
+	case static_cast<utype>(open_mode::app):
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::app):
 		return mode | O_WRONLY | O_CREAT | O_APPEND;
 //Read from start;	Error;	"r+";		Open a file for read/write
-	case open_mode::out|open_mode::in:
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::in):
 		return mode | O_RDWR;
 //Write to end;	Create new;	"a+";	Open a file for read/write
-	case open_mode::out|open_mode::in|open_mode::app:
-	case open_mode::in|open_mode::app:
+	case static_cast<utype>(open_mode::out)|static_cast<utype>(open_mode::in)|static_cast<utype>(open_mode::app):
+	case static_cast<utype>(open_mode::in)|static_cast<utype>(open_mode::app):
 		return mode | O_RDWR | O_CREAT | O_APPEND;
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
