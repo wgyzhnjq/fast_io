@@ -16,15 +16,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
 add_definitions(-Xclang -fconcepts-ts -ffast-math)
 endif()
 
-
 set(CMAKE_CXX_STANDARD 20)
-include_directories(include)
-file(GLOB SOURCES src/*.cc)
 add_library(fast_io SHARED src/fast_io_c_interface.cc)
 set_target_properties(fast_io PROPERTIES OUTPUT_NAME "fast_io_c_interface")
 
-file(GLOB HEADERS include/*.h)
-
 install(TARGETS fast_io
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(FILES ${HEADERS} DESTINATION include/${PROJECT_NAME})
+INSTALL (DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
