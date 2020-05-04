@@ -1,6 +1,5 @@
-#include<stdlib.h>
 #include"../../include/fast_io_c_interface.h"
-#include<stdio.h>
+
 int main()
 {
 	void* device;

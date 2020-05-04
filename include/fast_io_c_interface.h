@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include<stdbool.h>
 #include<string.h>
+#include<stdlib.h>
 //This library is stil header only. Just need compile for C interface if you want to use C interface
 
 #ifdef __cplusplus
@@ -84,13 +85,13 @@ void cxx_fast_io_buffered_get_ipointers(void* d,char*** begin,char*** curr,char*
 
 int cxx_fast_io_buffered_underflow(char *ch,void* d) CXX_FAST_IO_NOEXCEPT;
 
-inline int cxx_fast_io_print_c_str(void* d,char const* str)
+static inline int cxx_fast_io_print_c_str(void* d,char const* str)
 {
 	char const* out;
 	return cxx_fast_io_write(&out,d,str,str+strlen(str));
 }
 
-inline int cxx_fast_io_buffered_print_c_str(void* d,char const* str)
+static inline int cxx_fast_io_buffered_print_c_str(void* d,char const* str)
 {
 	char const* out;
 	return cxx_fast_io_buffered_write(&out,d,str,str+strlen(str));
