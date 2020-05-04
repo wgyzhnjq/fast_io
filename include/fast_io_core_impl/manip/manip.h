@@ -26,13 +26,14 @@ struct signed_view
 	using manip_tag = manip_tag_t;
 	T& reference;
 };
-
+/*
 template<typename T>
 struct unix
 {
 	using manip_tag = manip_tag_t;
 	T& reference;
 };
+*/
 template<typename T>
 struct local
 {
@@ -194,13 +195,16 @@ inline constexpr std::size_t unsigned_view(T * const pointer)
 	return bit_cast<std::size_t>(pointer);
 }
 
+
 template<typename T>
-inline constexpr manip::unix<T const> local(T const &f){return {f};}
+inline constexpr manip::local<T const> local(T const &f){return {f};}
+
 template<typename T>
 inline constexpr manip::utc<T const> utc(T const &f){return {f};}
+/*
 template<typename T>
 inline constexpr manip::unix<T const> unix(T const &f){return {f};}
-
+*/
 template<typename T>
 inline constexpr manip::chinese<T const> chinese(T const &f){return {f};}
 template<typename T>
