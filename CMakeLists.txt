@@ -25,4 +25,6 @@ set_target_properties(fast_io_static PROPERTIES OUTPUT_NAME "fast_io_c_interface
 
 install(TARGETS fast_io
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS fast_io_static
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL (DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
