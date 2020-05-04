@@ -217,7 +217,7 @@ void cxx_fast_io_release(void* d,bool buffered) noexcept
 	if(buffered)
 		delete bit_cast<iobuf_io_file*>(d);
 	else
-		delete bit_cast<io_io_observer::native_handle_type*>(d);
+		delete bit_cast<io_io_observer::native_handle_type>(d);
 }
 
 void cxx_fast_io_buffered_get_opointers(void* d,char*** begin,char*** curr,char*** end) noexcept
