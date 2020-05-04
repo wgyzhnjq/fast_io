@@ -18,6 +18,8 @@ endif()
 
 set(CMAKE_CXX_STANDARD 20)
 add_library(fast_io SHARED src/fast_io_c_interface.cc)
+add_library(fast_io STATIC src/fast_io_c_interface.cc)
+
 set_target_properties(fast_io PROPERTIES OUTPUT_NAME "fast_io_c_interface")
 
 install(TARGETS fast_io
