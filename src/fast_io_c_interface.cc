@@ -1,5 +1,5 @@
 #include"../include/fast_io_device.h"
-//#include"../include/fast_io_c_interface.h"
+#include"../include/fast_io_c_interface.h"
 #include"../include/fast_io_legacy_impl/c/impl.h"
 
 namespace fast_io
@@ -103,7 +103,7 @@ int cxx_fast_io_write(char const** written,void* d,char const* begin,char const*
 		*written=write(iob,begin,end);
 	},d);
 }
-int cxx_fast_io_flush(void* d)
+int cxx_fast_io_flush(void* d) noexcept
 {
 	return details::c_interface_call<false>([&](auto iob){
 		flush(iob);
@@ -148,7 +148,7 @@ int cxx_fast_io_bufferred_write(char const** written,void* d,char const* begin,c
 		*written=write(iob,begin,end);
 	},d);
 }
-int cxx_fast_io_bufferred_flush(void* d)
+int cxx_fast_io_bufferred_flush(void* d) noexcept
 {
 	return details::c_interface_call<false>([&](auto& iob){
 		flush(iob);
