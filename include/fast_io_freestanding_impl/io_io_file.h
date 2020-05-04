@@ -11,8 +11,8 @@ class base
 public:
 	virtual constexpr char_type* read_impl(char_type*,char_type*) = 0;
 	virtual constexpr char_type const* write_impl(char_type const*,char_type const*) = 0;
-	virtual constexpr flush_impl() = 0;
-	virtual constexpr std::uintmax_t seek_impl(std::intmax_t,seekdir);
+	virtual constexpr void flush_impl() = 0;
+	virtual constexpr std::uintmax_t seek_impl(std::intmax_t,seekdir) = 0;
 	virtual constexpr base* clone() = 0;
 	virtual constexpr ~base() = default;
 };
@@ -22,6 +22,8 @@ class derv:public base<char_type>
 public:
 	using value_type = std::remove_reference_t<stm>;
 	stm io;
+	template<typename... Args>
+	constexpr derv(std::in_place_type_t<stm>,Args&& ...args):io(std::forward<Args>(args)...){}
 	constexpr char_type* read_impl(char_type* b,char_type* e) override
 	{
 		if constexpr(input_stream<value_type>)
@@ -144,15 +146,16 @@ public:
 	constexpr basic_io_file()=default;
 	constexpr basic_io_file(native_handle_type ptr):basic_io_io_handle<ch_type>(ptr){}
 	template<stream smt,typename... Args>
+	requires std::constructible_from<smt,Args...>
 	constexpr basic_io_file(io_cookie_t,std::in_place_type_t<smt>,Args&& ...args)
-		:basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt>{{std::forward<Args>(args)...}}){}
+		:basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt>(std::in_place_type<smt>,std::forward<Args>(args)...)){}
 	template<stream smt>
 	constexpr basic_io_file(io_cookie_t,smt& sm):
-		basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt&>{sm})
+		basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt&>(std::in_place_type<smt&>,sm))
 	{}
 	template<stream smt>
 	constexpr basic_io_file(io_cookie_t,smt&& sm):
-		basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt>{std::move(sm)})
+		basic_io_io_handle<ch_type>(new details::io_io::derv<char_type,smt>(std::in_place_type<smt>,std::move(sm)))
 	{}
 	constexpr ~basic_io_file()
 	{
@@ -207,4 +210,16 @@ constexpr auto seek(basic_io_io_observer<ch_type> iob,U i=0,seekdir s=seekdir::c
 {
 	return seek(iob,seek_type<ch_type>,i,s);
 }
+using io_io_observer = basic_io_io_observer<char>;
+using io_io_handle = basic_io_io_handle<char>;
+using io_file = basic_io_file<char>;
+
+using u8io_io_observer = basic_io_io_observer<char8_t>;
+using u8io_io_handle = basic_io_io_handle<char8_t>;
+using u8io_file = basic_io_file<char8_t>;
+
+using wio_io_observer = basic_io_io_observer<wchar_t>;
+using wio_io_handle = basic_io_io_handle<wchar_t>;
+using wio_file = basic_io_file<wchar_t>;
+
 }
