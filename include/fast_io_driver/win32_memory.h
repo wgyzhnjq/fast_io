@@ -426,6 +426,8 @@ public:
 	{
 		return oprotect;
 	}
+	win32_virtual_protect_guard(win32_virtual_protect_guard const&)=delete;
+	win32_virtual_protect_gurad& operator=(win32_virtual_protect_guard const&)=delete;
 	~win32_virtual_protect_guard()
 	{
 		std::uint32_t useless{};
