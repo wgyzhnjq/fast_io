@@ -161,13 +161,13 @@ template<reserve_output_stream output>
 constexpr void print_define(output& out,win32_memory_basic_information const& info)
 {
 	print(out,"win32_memory_basic_information:"
-	"\tbase address:",info.base_address,
-	"\tallocation base:",info.allocation_base,
-	"\tallocation protect:",info.allocation_protect,
-	"\tregion size:",info.region_size,
-	"\tstate:",info.state,
-	"\tprotect:",info.protect,
-	"\ttype:",info.type);
+	"\nbase address:",info.base_address,
+	"\nallocation base:",info.allocation_base,
+	"\nallocation protect:",info.allocation_protect,
+	"\nregion size:",info.region_size,
+	"\nstate:",info.state,
+	"\nprotect:",info.protect,
+	"\ntype:",info.type);
 }
 
 namespace win32
