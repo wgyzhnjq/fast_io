@@ -237,4 +237,10 @@ explicit constexpr io_cookie_t()=default;
 };
 inline constexpr io_cookie_t io_cookie{};
 
+struct io_async_t
+{
+explicit constexpr io_async_t()=default;
+};
+inline constexpr io_async_t io_async{};
+
 }

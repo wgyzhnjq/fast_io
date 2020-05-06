@@ -31,6 +31,18 @@ concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,ty
 	{write(out,b,b)};
 //	{flush(out)};
 };
+template<typename T>
+concept async_input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b)
+{
+	async_read(in,b,b);
+};
+
+template<typename T>
+concept async_output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b)
+{
+	async_write(out,b,b);
+//	{flush(out)};
+};
 
 template<typename T>
 concept mutex_stream_impl = requires(T& t)
@@ -135,21 +147,6 @@ concept memory_map_output_stream_impl = requires(T& out)
 	memory_map_out_handle(out);
 };
 
-template<typename T,typename U>
-concept async_input_stream_impl =
-	requires(T& in,typename T::char_type* iter,U&& func)
-{
-	async_read(in,iter,iter,func);
-};
-
-template<typename T,typename U>
-concept async_output_stream_impl =
-	requires(T& out,typename T::char_type* iter,U&& func)
-{
-	async_write(out,iter,iter,func);
-};
-
-
 template<typename T>
 concept status_stream_impl = requires(T stm)
 {
@@ -194,16 +191,6 @@ concept character_output_stream = output_stream<T>&&details::character_output_st
 
 template<typename T>
 concept character_io_stream = character_input_stream<T>&&character_output_stream<T>;
-/*
-template<typename T>
-concept undo_input_stream = character_input_stream<T>&&details::undo_input_stream_impl<T>;
-
-template<typename T>
-concept undo_output_stream = character_output_stream<T>&&details::undo_output_stream_impl<T>;
-
-template<typename T>
-concept undo_io_stream = undo_input_stream<T>&&undo_output_stream<T>;
-*/
 
 template<typename T>
 concept flush_output_stream = output_stream<T>&&details::flush_output_stream_impl<T>;
@@ -281,6 +268,14 @@ concept sendable=output_stream<output>&&requires(output& out,T&& t)
 {
 	send_define(out,std::forward<T>(t));
 };
+
+template<typename T>
+concept async_input_stream = stream<T>&&details::async_input_stream_impl<T>;
+
+template<typename T>
+concept async_output_stream = stream<T>&&details::async_output_stream_impl<T>;
+
+
 
 template<typename T>
 struct print_reserve_type_t
