@@ -4,45 +4,36 @@
 namespace fast_io::win32
 {
 
-extern "C" void* __stdcall CreateIoCompletionPort(void*,void*,std::uintptr_t,std::uint32_t);
+extern "C" int __stdcall GetQueuedCompletionStatus(void*,std::uint32_t*,std::uintptr_t,overlapped*,std::uint32_t);
+
+namespace details
+{
 
 template<typename... Args>
-requires (sizeof...(Args)==4)
-inline auto create_io_completion_port(Args&& ...args)
+requires (sizeof...(Args)==5)
+inline void get_queued_completion_status(Args&& ..args)
 {
-	auto ptr{CreateIoCompletionPort(std::forward<Args>(args)...)};
-	if(ptr==nullptr)[[unlikely]]
+	if(!win32::GetQueuedCompletionStatus(std::forward<Args>(args)...))
 		throw win32_error();
-	return ptr;
 }
-/*
-template<typename Func>
-inline void worker_thread(Func f,win32_io_observer iocp)
-{
 
-}
-*/
-/*
-template<typename func>
-inline void iocp_spawn(func f)
+template<std::integral ch_type>
+struct async_result
 {
-	std::size_t thread_num(std::thread::hardware_concurrency()<<1);
-	if(thread_num==0)[[unlikely]]
-		thread_num = 2;
-	std::vector<std::jthread> jthreads;
-	jthreads.reserve(thread_num);
-	std::vector<win32_file> iocps;
-	iocps.reserve(thread_num);
-	win32_file iocp_handle(create_io_completion_port(void*,void*,0,currency<<1));
-	for(std::size_t i{};i!=thread_num;++i)
-		jthreads.emplace_back(f,iocp_handle);
-	for(;;)
-	{
-		win32_file iob(f());
-		win32_file iocp(create_io_completion_port(iob.native_handle(),iocp_handle.native_handle(),0,currency<<1));
-	}
-}
-*/
+	basic_win32_io_observer<ch_type> io_observer{};
+	bool is_read{};
+	std::size_t transferred{};
+};
 
+template<std::integral ch_type = char>
+inline async_result<ch_type> async_wait(win32_io_observer port)
+{
+	std::uint32_t trans{};
+	void* hd{};
+	overlapped* over{};
+	get_queued_completion_status(port.native_handle(),std::addressof(trans),std::addressof(hd),std::addressof(over),-1);
+	
+}
+}
 
 }

@@ -29,19 +29,6 @@ template<typename T>
 concept output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b)
 {
 	{write(out,b,b)};
-//	{flush(out)};
-};
-template<typename T>
-concept async_input_stream_impl = stream_char_type_requirement<T>&&requires(T& in,typename T::char_type* b)
-{
-	async_read(in,b,b);
-};
-
-template<typename T>
-concept async_output_stream_impl = stream_char_type_requirement<T>&&requires(T& out,typename T::char_type const* b)
-{
-	async_write(out,b,b);
-//	{flush(out)};
 };
 
 template<typename T>
@@ -268,14 +255,6 @@ concept sendable=output_stream<output>&&requires(output& out,T&& t)
 {
 	send_define(out,std::forward<T>(t));
 };
-
-template<typename T>
-concept async_input_stream = stream<T>&&details::async_input_stream_impl<T>;
-
-template<typename T>
-concept async_output_stream = stream<T>&&details::async_output_stream_impl<T>;
-
-
 
 template<typename T>
 struct print_reserve_type_t
