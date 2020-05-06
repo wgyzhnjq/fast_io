@@ -6,7 +6,7 @@
 #undef max
 #undef interface
 
-namespace fast_io::driver
+namespace fast_io
 {
 
 
