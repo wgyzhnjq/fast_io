@@ -89,6 +89,8 @@ std::uint32_t __stdcall WaitForSingleObject(void*,std::uint32_t) noexcept;
 
 std::uint32_t __stdcall ResumeThread(void*) noexcept;
 
+std::uint32_t __stdcall CancelIo(void*) noexcept;
+
 struct startupinfo
 {
 std::uint32_t cb;
