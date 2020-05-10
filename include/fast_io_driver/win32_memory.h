@@ -177,6 +177,8 @@ extern "C" int __stdcall WriteProcessMemory(void*,void*,void const*,std::size_t,
 extern "C" int __stdcall ReadProcessMemory(void*,void const*,void*,std::size_t,std::size_t*);
 extern "C" int __stdcall VirtualQueryEx(void*,void const*,win32_memory_basic_information*,std::size_t);
 extern "C" int __stdcall VirtualProtectEx(void*,void const*,std::size_t,std::uint32_t,std::uint32_t*);
+extern "C" void* __stdcall FindWindowA(char const*,char const*);
+extern "C" std::uint32_t __stdcall GetWindowThreadProcessId(void*,std::uint32_t*);
 }
 
 template<std::integral ch_type>
@@ -322,6 +324,16 @@ inline constexpr win32_desired_access& operator&=(win32_desired_access& x, win32
 inline constexpr win32_desired_access& operator|=(win32_desired_access& x, win32_desired_access y) noexcept{return x=x|y;}
 
 inline constexpr win32_desired_access& operator^=(win32_desired_access& x, win32_desired_access y) noexcept{return x=x^y;}
+
+inline std::uint32_t get_process_id_from_window_name(std::string_view name)
+{
+	void* hwnd {win32::FindWindowA(nullptr,name.data())};
+	if(hwnd==nullptr)
+		throw win32_error();
+	std::uint32_t process_id{};
+	win32::GetWindowThreadProcessId(hwnd,std::addressof(process_id));
+	return process_id;
+}
 
 template<std::integral ch_type>
 class basic_win32_memory_file: public basic_win32_memory_io_handle<ch_type>
