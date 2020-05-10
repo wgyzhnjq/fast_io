@@ -142,6 +142,8 @@ int __stdcall PrefetchVirtualMemory(void*,std::size_t,win32_memory_range_entry*,
 int __stdcall DeviceIoControl(void*,std::uint32_t,void*,std::uint32_t,void*,std::uint32_t,void*,overlapped*) noexcept;
 
 void* __stdcall CreateIoCompletionPort(void*,void*,std::uintptr_t,std::uint32_t) noexcept;
+
+int __stdcall GetQueuedCompletionStatus(void*,std::uint32_t*,std::uintptr_t*,overlapped**,std::uint32_t) noexcept;
 }
 
 

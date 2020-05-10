@@ -431,6 +431,7 @@ inline Iter write(basic_win32_io_observer<ch_type> handle,Iter cbegin,Iter cend)
 #endif
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
+/*
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline void async_read(basic_win32_io_observer<ch_type> h,Iter begin,Iter end)
 {
@@ -461,28 +462,28 @@ inline void async_read(basic_win32_io_observer<ch_type> h,Iter begin,Iter end)
 #endif
 	}
 }
-template<std::integral ch_type,std::contiguous_iterator Iter>
-inline void async_write(basic_win32_io_observer<ch_type> h,Iter cbegin,Iter cend)
+*/
+template<std::integral ch_type,std::contiguous_iterator Iter,typename Func>
+inline void async_write(basic_win32_io_observer<ch_type> h,Iter cbegin,Iter cend,Func callback)
 {
+	using overlapped_t = win32::win32_overlapped<Func>;
+	auto over{new overlapped_t{{.operations=win32::win32_overlapped_operations::write,.function_ptr=[]
+		(win32::overlapped *ptr,std::uintptr_t completionkey,std::size_t bytes)
+	{
+		std::unique_ptr<overlapped_t> uptr(reinterpret_cast<overlapped_t*>(ptr)); 
+		uptr->function(basic_win32_io_observer<ch_type>(bit_cast<void*>(completionkey)),bytes/sizeof(*cbegin));
+	}},callback}};
 	std::size_t to_write((cend-cbegin)*sizeof(*cbegin));
-	std::size_t total_bytes{sizeof(win32::overlapped)+sizeof(std::size_t)*2+1+to_write};
-	std::byte* ptr=new std::byte[total_bytes];
-	win32::overlapped* over=new(ptr)win32::overlapped{};
-	memset(ptr+(sizeof(win32::overlapped)+sizeof(std::size_t)),0,sizeof(std::size_t));
-	memset(ptr+(sizeof(win32::overlapped)+sizeof(std::size_t)*2),1,1);
-	memcpy(ptr+sizeof(win32::overlapped),std::addressof(to_write),sizeof(std::size_t));
-	memcpy(ptr+(sizeof(win32::overlapped)+sizeof(std::size_t)*2+1),std::to_address(cbegin),to_write);
 	if constexpr(4<sizeof(std::size_t))
 		if(static_cast<std::size_t>(UINT32_MAX)<to_write)
 			to_write=static_cast<std::size_t>(UINT32_MAX);
-	if(!win32::WriteFile(h.native_handle(),ptr+(sizeof(win32::overlapped)+sizeof(std::size_t)*2+1),static_cast<std::uint32_t>(to_write),nullptr,over))
+	if(!win32::WriteFile(h.native_handle(),std::to_address(cbegin),static_cast<std::uint32_t>(to_write),nullptr,std::addressof(over.base.over)))[[likely]]
 	{
 		auto err(win32::GetLastError());
 		if(err==997)[[likely]]
 			return;
 #ifdef __cpp_exceptions
-		over->~overlapped();
-		delete[] ptr;
+		delete over;
 		throw win32_error(err);
 #else
 		fast_terminate();
