@@ -370,7 +370,7 @@ public:
 };
 
 template<std::integral char_type,std::contiguous_iterator Iter>
-[[nodiscard]] inline Iter read(basic_win32_memory_io_observer<char_type> iob,Iter begin,Iter end)
+[[nodiscard]] inline Iter read(basic_win32_memory_io_observer<char_type>& iob,Iter begin,Iter end)
 {
 	std::size_t readed{};
 	if(!win32::ReadProcessMemory(iob.handle,bit_cast<void const*>(iob.base_addr),std::to_address(begin),(end-begin)*sizeof(*begin),std::addressof(readed)))
@@ -380,7 +380,7 @@ template<std::integral char_type,std::contiguous_iterator Iter>
 }
 
 template<std::integral char_type,std::contiguous_iterator Iter>
-inline Iter write(basic_win32_memory_io_observer<char_type> iob,Iter begin,Iter end)
+inline Iter write(basic_win32_memory_io_observer<char_type>& iob,Iter begin,Iter end)
 {
 	std::size_t written{};
 	if(!win32::WriteProcessMemory(iob.handle,bit_cast<void*>(iob.base_addr),

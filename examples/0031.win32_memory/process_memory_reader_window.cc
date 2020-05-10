@@ -13,7 +13,7 @@ try
 	fast_io::win32_memory_file wmf(fast_io::win32_desired_access::process_all_access,
 		false,fast_io::get_process_id_from_window_name(argv[1]),fast_io::to<std::uintptr_t>(argv[2]));
 	auto mem_info{fast_io::win32_virtual_query(wmf)};
-	wmf.base_address()=mem_info.base_address;
+//	wmf.base_address()=mem_info.base_address;
 	println(mem_info);
 	fast_io::win32_virtual_protect_guard guard(wmf,mem_info.region_size,fast_io::win32_memory_page_protect::readwrite);
 
