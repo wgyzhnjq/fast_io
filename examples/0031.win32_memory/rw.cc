@@ -15,7 +15,7 @@ try
 	
 	auto mob{find_read_start(wfl)};
 	auto mem_info{fast_io::win32_virtual_query(mob)};
-	println("start at:",mob.base_addr,"\n",mem_info,"\nverify to transmit:",mem_info.region_size-(mob.base_addr-mem_info.base_address));
+	println("start at:",mob.base_addr,"\n",mem_info,"\nverify to transmit:",mem_info.region_size-(mob.base_addr-mem_info.base_address),"\nregion address end:",mem_info.base_address+mem_info.region_size);
 	fast_io::onative_file onv{std::string_view(argv[3])};
 	transmit(onv,mob,mem_info.region_size-(mob.base_addr-mem_info.base_address));
 }
