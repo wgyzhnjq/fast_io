@@ -417,6 +417,26 @@ inline win32_memory_page_protect win32_virtual_protect(basic_win32_memory_io_obs
 	return static_cast<win32_memory_page_protect>(old_protect);
 }
 
+template<std::integral char_type>
+[[nodiscard]] inline auto find_usable_region(basic_win32_memory_io_observer<char_type> wmf)
+{
+	for(;;)
+	{
+		auto mem_info{fast_io::win32_virtual_query(wmf)};
+		if(static_cast<std::uint32_t>(mem_info.allocation_protect)==0)
+		{
+			std::size_t rsize{mem_info.region_size};
+			if(rsize==0)[[unlikely]]
+				break;
+			wmf.base_address()+=rsize;
+		}
+		else
+			break;
+	}
+	return wmf;
+}
+
+
 class win32_virtual_protect_guard
 {
 	void* process_handle{};
