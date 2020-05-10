@@ -471,13 +471,13 @@ inline void async_write(basic_win32_io_observer<ch_type> h,Iter cbegin,Iter cend
 		(win32::overlapped *ptr,std::uintptr_t completionkey,std::size_t bytes)
 	{
 		std::unique_ptr<overlapped_t> uptr(reinterpret_cast<overlapped_t*>(ptr)); 
-		uptr->function(basic_win32_io_observer<ch_type>(bit_cast<void*>(completionkey)),bytes/sizeof(*cbegin));
+		uptr->function(bytes/sizeof(*cbegin));
 	}},callback}};
 	std::size_t to_write((cend-cbegin)*sizeof(*cbegin));
 	if constexpr(4<sizeof(std::size_t))
 		if(static_cast<std::size_t>(UINT32_MAX)<to_write)
 			to_write=static_cast<std::size_t>(UINT32_MAX);
-	if(!win32::WriteFile(h.native_handle(),std::to_address(cbegin),static_cast<std::uint32_t>(to_write),nullptr,std::addressof(over.base.over)))[[likely]]
+	if(!win32::WriteFile(h.native_handle(),std::to_address(cbegin),static_cast<std::uint32_t>(to_write),nullptr,std::addressof(over->base.over)))[[likely]]
 	{
 		auto err(win32::GetLastError());
 		if(err==997)[[likely]]

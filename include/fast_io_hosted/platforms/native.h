@@ -8,6 +8,7 @@
 #include"win32_overlapped.h"
 #include"win32.h"
 #include"win32_mapping.h"
+#include"win32_scheduling.h"
 #endif
 
 #include"posix.h"
