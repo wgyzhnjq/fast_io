@@ -464,7 +464,7 @@ inline void async_read(basic_win32_io_observer<ch_type> h,Iter begin,Iter end)
 }
 */
 template<std::integral ch_type,std::contiguous_iterator Iter,typename Func>
-inline void async_write(basic_win32_io_observer<ch_type> h,Iter cbegin,Iter cend,Func callback)
+inline void async_write_callback(basic_win32_io_observer<ch_type> h,Iter cbegin,Iter cend,Func callback)
 {
 	using overlapped_t = win32::win32_overlapped<Func>;
 	auto over{new overlapped_t{{.operations=win32::win32_overlapped_operations::write,.function_ptr=[]
