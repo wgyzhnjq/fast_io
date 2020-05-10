@@ -378,7 +378,13 @@ template<std::integral char_type,std::contiguous_iterator Iter>
 	iob.base_addr+=readed;
 	return begin+readed/sizeof(*begin);
 }
-
+template<std::integral char_type>
+[[nodiscard]] inline auto find_read_start(basic_win32_memory_io_observer<char_type> iob)
+{
+	std::size_t readed{};
+	for(std::byte ch{};!win32::ReadProcessMemory(iob.handle,bit_cast<void const*>(iob.base_addr),std::addressof(ch),1,std::addressof(readed));++iob.base_addr);
+	return iob;
+}
 template<std::integral char_type,std::contiguous_iterator Iter>
 inline Iter write(basic_win32_memory_io_observer<char_type>& iob,Iter begin,Iter end)
 {
