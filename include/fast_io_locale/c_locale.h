@@ -3,7 +3,7 @@
 namespace fast_io
 {
 
-enum class posix_locale_category:int
+enum class c_locale_category:int
 {
 all=
 #ifdef LC_ALL
@@ -119,41 +119,41 @@ LC_KEYBOARD
 none=0
 };
 
-constexpr posix_locale_category operator&(posix_locale_category x, posix_locale_category y) noexcept
+constexpr c_locale_category operator&(c_locale_category x, c_locale_category y) noexcept
 {
-using utype = typename std::underlying_type<posix_locale_category>::type;
-return static_cast<posix_locale_category>(static_cast<utype>(x) & static_cast<utype>(y));
+using utype = typename std::underlying_type<c_locale_category>::type;
+return static_cast<c_locale_category>(static_cast<utype>(x) & static_cast<utype>(y));
 }
 
-constexpr posix_locale_category operator|(posix_locale_category x, posix_locale_category y) noexcept
+constexpr c_locale_category operator|(c_locale_category x, c_locale_category y) noexcept
 {
-using utype = typename std::underlying_type<posix_locale_category>::type;
-return static_cast<posix_locale_category>(static_cast<utype>(x) | static_cast<utype>(y));
+using utype = typename std::underlying_type<c_locale_category>::type;
+return static_cast<c_locale_category>(static_cast<utype>(x) | static_cast<utype>(y));
 }
 
-constexpr posix_locale_category operator^(posix_locale_category x, posix_locale_category y) noexcept
+constexpr c_locale_category operator^(c_locale_category x, c_locale_category y) noexcept
 {
-using utype = typename std::underlying_type<posix_locale_category>::type;
-return static_cast<posix_locale_category>(static_cast<utype>(x) ^ static_cast<utype>(y));
+using utype = typename std::underlying_type<c_locale_category>::type;
+return static_cast<c_locale_category>(static_cast<utype>(x) ^ static_cast<utype>(y));
 }
 
-constexpr posix_locale_category operator~(posix_locale_category x) noexcept
+constexpr c_locale_category operator~(c_locale_category x) noexcept
 {
-using utype = typename std::underlying_type<posix_locale_category>::type;
-return static_cast<posix_locale_category>(~static_cast<utype>(x));
+using utype = typename std::underlying_type<c_locale_category>::type;
+return static_cast<c_locale_category>(~static_cast<utype>(x));
 }
 
-inline constexpr posix_locale_category& operator&=(posix_locale_category& x, posix_locale_category y) noexcept{return x=x&y;}
+inline constexpr c_locale_category& operator&=(c_locale_category& x, c_locale_category y) noexcept{return x=x&y;}
 
-inline constexpr posix_locale_category& operator|=(posix_locale_category& x, posix_locale_category y) noexcept{return x=x|y;}
+inline constexpr c_locale_category& operator|=(c_locale_category& x, c_locale_category y) noexcept{return x=x|y;}
 
-inline constexpr posix_locale_category& operator^=(posix_locale_category& x, posix_locale_category y) noexcept{return x=x^y;}
+inline constexpr c_locale_category& operator^=(c_locale_category& x, c_locale_category y) noexcept{return x=x^y;}
 
 #if defined(__WINNT__) || defined(_MSC_VER)
 extern "C" lconv* localeconv_l(_locale_t) noexcept;
 #endif
 
-class posix_locale_observer
+class c_locale_observer
 {
 public:
 	using native_handle_type = 
@@ -188,12 +188,12 @@ locale_t
 	}
 };
 
-class posix_locale_handle:public posix_locale_observer
+class c_locale_handle:public c_locale_observer
 {
 public:
-	using native_handle_type = posix_locale_observer::native_handle_type;
-	constexpr posix_locale_handle()=default;
-	constexpr posix_locale_handle(native_handle_type hd):posix_locale_observer(hd){}
+	using native_handle_type = c_locale_observer::native_handle_type;
+	constexpr c_locale_handle()=default;
+	constexpr c_locale_handle(native_handle_type hd):c_locale_observer(hd){}
 	void close()
 	{
 	if(*this)[[likely]]
@@ -207,10 +207,10 @@ public:
 	}		
 	}
 #if defined(__WINNT__) || defined(_MSC_VER)
-	posix_locale_handle(posix_locale_handle const&)=delete;
-	posix_locale_handle& operator=(posix_locale_handle const&)=delete;
+	c_locale_handle(c_locale_handle const&)=delete;
+	c_locale_handle& operator=(c_locale_handle const&)=delete;
 #else
-	posix_locale_handle(posix_locale_handle const& c):posix_locale_observer(duplocale(bmv.native_handle()))
+	c_locale_handle(c_locale_handle const& c):c_locale_observer(duplocale(bmv.native_handle()))
 	{
 		if(!*this)
 #ifdef __cpp_exceptions
@@ -219,7 +219,7 @@ public:
 			fast_io::terminate();
 #endif
 	}
-	posix_locale_handle& operator=(posix_locale_handle const& c)
+	c_locale_handle& operator=(c_locale_handle const& c)
 	{
 		auto cloned{duplocale(c.native_handle())};
 		if(cloned==static_cast<native_handle_type>(0))
@@ -239,11 +239,11 @@ public:
 	}
 #endif
 
-	constexpr posix_locale_handle(posix_locale_handle&& bmv) noexcept:posix_locale_observer(bmv.native_handle())
+	constexpr c_locale_handle(c_locale_handle&& bmv) noexcept:c_locale_observer(bmv.native_handle())
 	{
 		bmv.native_handle()=static_cast<native_handle_type>(0);
 	}
-	posix_locale_handle& operator=(posix_locale_handle&& bmv) noexcept
+	c_locale_handle& operator=(c_locale_handle&& bmv) noexcept
 	{
 		if(this->native_handle()==bmv.native_handle())
 			return *this;
@@ -259,14 +259,14 @@ public:
 		return *this;
 	}
 };
-class posix_locale:public posix_locale_handle
+class c_locale:public c_locale_handle
 {
 public:
-	using native_handle_type = posix_locale_handle::native_handle_type;
-	constexpr posix_locale()=default;
-	constexpr posix_locale(native_handle_type hd):posix_locale_handle(hd){}
-	posix_locale(posix_locale_category catg,std::string_view loc):
-		posix_locale_handle(
+	using native_handle_type = c_locale_handle::native_handle_type;
+	constexpr c_locale()=default;
+	constexpr c_locale(native_handle_type hd):c_locale_handle(hd){}
+	c_locale(c_locale_category catg,std::string_view loc):
+		c_locale_handle(
 #if defined(__WINNT__) || defined(_MSC_VER)
 	_create_locale(static_cast<int>(catg),loc.data())
 #else
@@ -281,7 +281,7 @@ public:
 		fast_io::terminate();
 #endif
 }
-	~posix_locale()
+	~c_locale()
 	{
 	if(*this)[[likely]]
 #if defined(__WINNT__) || defined(_MSC_VER)
