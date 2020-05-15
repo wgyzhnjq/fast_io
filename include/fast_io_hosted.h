@@ -20,5 +20,5 @@ For hosted implementations the set of standard library headers required by the C
 #include"fast_io_hosted/async_coro.h"
 #endif
 
-#include<clocale>
-#include"fast_io_hosted/posix_locale.h"
+//#include<clocale>
+//#include"fast_io_hosted/posix_locale.h"
