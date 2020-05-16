@@ -2,7 +2,7 @@
 
 namespace fast_io
 {
-struct c_locale_mbstowcs
+struct c_locale_multi_to_wide
 {
 	using manip_tag = manip_tag_t;
 	c_locale_observer cloc_ob;
@@ -10,58 +10,42 @@ struct c_locale_mbstowcs
 	char const *end_ptr;
 	template<std::contiguous_iterator Iter>
 	requires std::same_as<std::iter_value_t<Iter>,char>
-	constexpr c_locale_mbstowcs(c_locale_observer c,Iter begin,Iter end):
+	constexpr c_locale_multi_to_wide(c_locale_observer c,Iter begin,Iter end):
 		cloc_ob(c),begin_ptr(std::to_address(begin)),end_ptr(std::to_address(end)){}
 };
+namespace details
+{
 #if defined(__WINNT__) || defined(_MSC_VER)
 extern "C" errno_t __stdcall _mbstowcs_s_l(std::size_t*,wchar_t*,std::size_t,char const*,std::size_t,_locale_t);
 #endif
-template<output_stream output>
-requires std::same_as<typename output::char_type,wchar_t>
-void print_define(output& out,c_locale_mbstowcs ref)
+
+template<typename... Args>
+requires (sizeof...(Args)==5)
+inline std::size_t c_mbstowcs_s_l(Args&& ...args)
 {
 #if defined(__WINNT__) || defined(_MSC_VER)
-	std::size_t required_sz{};
-	auto errcd{_mbstowcs_s_l(std::addressof(required_sz),nullptr,0,ref.begin_ptr,static_cast<std::size_t>(ref.end_ptr-ref.begin_ptr),ref.cloc_ob.native_handle())};
-	if(errcd)
-#ifdef __cpp_exceptions
-		throw std::system_error(static_cast<int>(errcd),std::generic_category());
+	std::size_t sz{};
+	auto err{_mbstowcs_s_l(std::addressof(sz),std::forward<Args>(args)...)};
+	if(err)
+		throw std::system_error(static_cast<int>(err),std::generic_category());
+	return sz;
 #else
-		fast_terminate();
-#endif
-
-#else
-	std::size_t required_sz{mbstowcs_l(nullptr,ref.begin_ptr,static_cast<std::size_t>(ref.end_ptr-ref.begin_ptr),ref.cloc_ob.native_handle())};
-	if(required_sz==std::numeric_limits<std::size_t>::max())
+	std::size_t sz{mbstowcs_l(std::forward<Args>(args)...)};
+	if(sz==std::numeric_limits<std::size_t>::max())
 		throw std::system_error(errno,std::generic_category());
+	return sz;
 #endif
-	int error{};
-	reserve_write(out,required_sz,[&](wchar_t* iter)
+}
+}
+template<output_stream output>
+requires std::same_as<typename output::char_type,wchar_t>
+void print_define(output& out,c_locale_multi_to_wide ref)
+{
+	fast_io::internal_temporary_buffer<wchar_t> buffer;
+/*	for(;;)
 	{
-#if defined(__WINNT__) || defined(_MSC_VER)
-		std::size_t sz{};
-		auto err{_mbstowcs_s_l(std::addressof(sz),iter,required_sz,ref.begin_ptr,static_cast<std::size_t>(ref.end_ptr-ref.begin_ptr),ref.cloc_ob.native_handle())};
-		if(err)
-		{
-			error=static_cast<int>(err);
-			return iter;
-		}
-#else
-		std::size_t sz{mbstowcs_l(nullptr,ref.begin_ptr,static_cast<std::size_t>(ref.end_ptr-ref.begin_ptr))};
-		if(sz==std::numeric_limits<std::size_t>::max())
-		{
-			error=errno;
-			return iter;
-		}
-#endif
-		return iter+sz;
-	});
-	if(error)
-#ifdef __cpp_exceptions
-		throw std::system_error(error,std::generic_category());
-#else
-		fast_terminate();
-#endif
+		details::c_mbstowcs_s_l(nullptr,)
+	}*/
 }
 
 }

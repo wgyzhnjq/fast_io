@@ -151,6 +151,8 @@ inline constexpr c_locale_category& operator^=(c_locale_category& x, c_locale_ca
 
 #if defined(__WINNT__) || defined(_MSC_VER)
 extern "C" lconv* localeconv_l(_locale_t) noexcept;
+#else
+extern "C" lconv* localeconv_l(locale_t) noexcept;
 #endif
 
 class c_locale_observer
