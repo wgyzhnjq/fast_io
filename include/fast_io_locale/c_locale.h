@@ -174,7 +174,7 @@ locale_t
 	}
 	constexpr operator bool() const noexcept
 	{
-		return loc==static_cast<native_handle_type>(0);
+		return loc!=static_cast<native_handle_type>(0);
 	}
 	auto release() noexcept
 	{
@@ -210,7 +210,7 @@ public:
 	c_locale_handle(c_locale_handle const&)=delete;
 	c_locale_handle& operator=(c_locale_handle const&)=delete;
 #else
-	c_locale_handle(c_locale_handle const& c):c_locale_observer(duplocale(bmv.native_handle()))
+	c_locale_handle(c_locale_handle const& c):c_locale_observer(duplocale(c.native_handle()))
 	{
 		if(!*this)
 #ifdef __cpp_exceptions
@@ -276,7 +276,23 @@ public:
 {
 	if(!*this)
 #ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+		throw std::runtime_error("unknown locale");
+#else
+		fast_io::terminate();
+#endif
+}
+	c_locale(c_locale_category catg):
+		c_locale_handle(
+#if defined(__WINNT__) || defined(_MSC_VER)
+	_create_locale(static_cast<int>(catg),"")
+#else
+	newlocale(static_cast<int>(catg),"",static_cast<locale_t>(0))
+#endif
+)
+{
+	if(!*this)
+#ifdef __cpp_exceptions
+		throw std::runtime_error("unknown locale");
 #else
 		fast_io::terminate();
 #endif
