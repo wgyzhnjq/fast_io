@@ -252,7 +252,7 @@ public:
 	}
 };
 
-class [[deprecated("There is no way to guarantee thread safety of POSIX locale system cross platformly. Use it at your own risk.")]] c_locale:public c_locale_handle
+class c_locale:public c_locale_handle
 {
 public:
 	using native_handle_type = c_locale_handle::native_handle_type;
