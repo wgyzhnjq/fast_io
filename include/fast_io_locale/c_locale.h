@@ -149,12 +149,6 @@ inline constexpr c_locale_category& operator|=(c_locale_category& x, c_locale_ca
 
 inline constexpr c_locale_category& operator^=(c_locale_category& x, c_locale_category y) noexcept{return x=x^y;}
 
-#if defined(__WINNT__) || defined(_MSC_VER)
-extern "C" lconv* localeconv_l(_locale_t) noexcept;
-#else
-extern "C" lconv* localeconv_l(locale_t) noexcept;
-#endif
-
 class c_locale_observer
 {
 public:
@@ -183,10 +177,6 @@ locale_t
 		auto d{loc};
 		loc=static_cast<native_handle_type>(0);
 		return d;
-	}
-	auto get_lconv() noexcept
-	{
-		return localeconv_l(loc);
 	}
 };
 
@@ -261,7 +251,8 @@ public:
 		return *this;
 	}
 };
-class c_locale:public c_locale_handle
+
+class [[deprecated("There is no way to guarantee thread safety of POSIX locale system cross platformly. Use it at your own risk.")]] c_locale:public c_locale_handle
 {
 public:
 	using native_handle_type = c_locale_handle::native_handle_type;
@@ -270,7 +261,7 @@ public:
 	c_locale(c_locale_category catg,std::string_view loc):
 		c_locale_handle(
 #if defined(__WINNT__) || defined(_MSC_VER)
-	_create_locale(static_cast<int>(catg),loc.data())
+	_create_locale(static_cast<int>(catg),loc=="POSIX"?"C":loc.data())
 #else
 	newlocale(static_cast<int>(catg),loc.data(),static_cast<locale_t>(0))
 #endif
