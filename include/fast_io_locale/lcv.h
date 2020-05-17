@@ -66,21 +66,14 @@ inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage
 		return process_integer_output<base,uppercase>(outiter,value);
 	std::array<char_type,(details::cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+1)<<1> str;
 	auto str_iter(details::process_integer_output<base,uppercase,true>(str.data(),value));
-	std::array<char_type,cal_lcv_integer_output_size<int_type,base>()> buffer;
-	auto buffer_iter{process_lcv_grouping(grouping,str.data(),str_iter,buffer.data()+buffer.size(),storage.thousands_sep)};
+	constexpr std::size_t buffer_size{cal_lcv_integer_output_size<int_type,base>()};
+	auto buffer_iter{process_lcv_grouping(grouping,str.data(),str_iter,outiter+buffer_size,storage.thousands_sep)};
 	if constexpr(std::signed_integral<int_type>)
 	{
 		if(value<0)
 			*--buffer_iter=u8'-';
 	}
-	if(std::is_constant_evaluated())
-		return std::copy(buffer_iter,buffer.data()+buffer.size(),outiter);
-	else
-	{
-		std::size_t const sz(buffer.data()+buffer.size()-buffer_iter);
-		memcpy(std::to_address(outiter),buffer_iter,sz*sizeof(char_type));
-		return outiter+sz;
-	}
+	return details::my_copy(buffer_iter,outiter+buffer_size,outiter);
 }
 
 }
