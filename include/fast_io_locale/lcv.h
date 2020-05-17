@@ -15,17 +15,17 @@ struct lcv
 
 
 template<std::integral ch_type,typename T>
-inline constexpr manip::lcv<ch_type,T> lcv(basic_lconv_storage<ch_type> const& t,T f){return {t,f};}
+inline constexpr manip::lcv<ch_type,T&> lcv(basic_lconv_storage<ch_type> const& t,T&& f){return {t,f};}
 
 template<std::integral ch_type,std::integral int_type>
-inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<ch_type,int_type>>)
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<ch_type,int_type&>>)
 {
 	constexpr std::size_t sz{(details::cal_max_uint_size<std::make_unsigned_t<int_type>,10>()+1)<<1};
 	return sz;
 }
 
 template<std::contiguous_iterator caiter,std::integral ch_type,std::integral int_type>
-inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<ch_type,int_type>>,caiter outiter,auto ref)
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<ch_type,int_type&>>,caiter outiter,auto ref)
 {
 	auto value(ref.reference);
 	auto grouping{ref.storage.grouping()};
