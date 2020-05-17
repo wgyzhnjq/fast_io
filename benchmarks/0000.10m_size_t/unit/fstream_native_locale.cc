@@ -9,7 +9,6 @@ int main()
 	{
 	fast_io::timer t("output");
 	std::ofstream fout("fstream_native_locale.txt",std::ios::binary);
-	fout.imbue(std::locale(""));
 	auto& rdbuf(*fout.rdbuf());
 	for(std::size_t i{};i!=N;++i)
 	{

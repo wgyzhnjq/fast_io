@@ -13,73 +13,61 @@ struct lcv
 };
 }
 
-
-template<std::integral ch_type,typename T>
-inline constexpr manip::lcv<ch_type,T&> lcv(basic_lconv_storage<ch_type> const& t,T&& f){return {t,f};}
-
-template<std::integral ch_type,std::integral int_type>
-inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<ch_type,int_type&>>)
+namespace details
 {
-	constexpr std::size_t sz{(details::cal_max_uint_size<std::make_unsigned_t<int_type>,10>()+1)<<1};
-	return sz;
-}
 
-template<std::contiguous_iterator caiter,std::integral ch_type,std::integral int_type>
-inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<ch_type,int_type&>>,caiter outiter,auto ref)
+template<std::integral char_type>
+inline constexpr auto process_lcv_grouping(std::basic_string_view<char_type> const& grouping,
+	char_type* str_first,char_type* str_last,
+	char_type* buffer_iter,char_type seperator)
 {
-	auto value(ref.reference);
-	auto grouping{ref.storage.grouping()};
-	if(grouping.empty())
-		return print_reserve_define(print_reserve_type<int_type>,outiter,value);
-	auto gp_cendm1{grouping.cend()-1};
-	using char_type = ch_type;
 	using unsigned_char_type =std::make_unsigned_t<char_type>;
-	std::array<char_type,print_reserve_size(print_reserve_type<int_type>)> str;
-	namespace algo_decision = 
-#ifdef FAST_IO_OPTIMIZE_SIZE
-		details::optimize_size
-#else
-		details::jiaendu
-#endif
-;
-	auto str_iter(str.data());
-	if constexpr(std::unsigned_integral<int_type>)
-		str_iter+=algo_decision::output_unsigned(str.data(),value);
-	else
-	{
-		if(value<0)
-			str_iter+=algo_decision::output_unsigned(str.data(),-static_cast<std::make_unsigned_t<int_type>>(value));
-		else
-			str_iter+=algo_decision::output_unsigned(str.data(),static_cast<std::make_unsigned_t<int_type>>(value));
-	}
-	unsigned_char_type const seperator(ref.storage.thousands_sep);
-	std::array<char_type,print_reserve_size(print_reserve_type<int_type>)*2> buffer;
-	auto buffer_iter(buffer.data()+buffer.size());
+	auto gp_cendm1{grouping.cend()-1};
 	for(auto iter(grouping.cbegin());;)
 	{
 		unsigned_char_type gp{static_cast<unsigned_char_type>(*iter)};
 		if(gp)[[likely]]
 		{
-			if(str_iter-gp<str.data())[[unlikely]]
+			if(str_last-gp<str_first)[[unlikely]]
 				break;
 			if(std::is_constant_evaluated())
-				std::copy_n(str_iter-=gp,gp,buffer_iter-=gp);
+				std::copy_n(str_last-=gp,gp,buffer_iter-=gp);
 			else
-				memcpy(buffer_iter-=gp,str_iter-=gp,gp*sizeof(char_type));
+				memcpy(buffer_iter-=gp,str_last-=gp,gp*sizeof(char_type));
 			*--buffer_iter=seperator;
 		}
 		if(iter!=gp_cendm1)[[likely]]
 			++iter;
 	}
-	if(std::size_t const sz(str_iter-str.data());sz)
+	if(std::size_t const sz(str_last-str_first);sz)
 	{
 		if(std::is_constant_evaluated())
-			std::copy_n(str_iter-=sz,sz,buffer_iter-=sz);
+			std::copy_n(str_first,sz,buffer_iter-=sz);
 		else
-			memcpy(buffer_iter-=sz,str.data(),sz*sizeof(char_type));
+			memcpy(buffer_iter-=sz,str_first,sz*sizeof(char_type));
 	}
 	else
 		++buffer_iter;
+	return buffer_iter;
+}
+
+template<std::integral int_type,char8_t base>
+constexpr std::size_t cal_lcv_integer_output_size()
+{
+	constexpr std::size_t rsv_size{(cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+2)<<1};
+	return rsv_size;
+}
+
+template<std::integral char_type,char8_t base,bool uppercase,std::contiguous_iterator caiter,typename T,std::integral int_type>
+inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage,int_type value)
+{
+	auto grouping{storage.grouping()};
+	if(grouping.empty())
+		return process_integer_output<base,uppercase>(outiter,value);
+	std::array<char_type,(details::cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+1)<<1> str;
+	auto str_iter(details::process_integer_output<base,uppercase,true>(str.data(),value));
+	std::array<char_type,cal_lcv_integer_output_size<int_type,base>()> buffer;
+	auto buffer_iter{process_lcv_grouping(grouping,str.data(),str_iter,buffer.data()+buffer.size(),storage.thousands_sep)};
 	if constexpr(std::signed_integral<int_type>)
 	{
 		if(value<0)
@@ -95,72 +83,33 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<ch_
 	}
 }
 
-/*
-template<output_stream output,std::integral ch_type,typename T>
-requires (std::integral<T>||std::floating_point<T>)
-constexpr void print_define(output& out,manip::lcv<ch_type,T&> a)
-{
-//	if(a.storage.grouping().empty())
 }
-*/
+template<std::integral ch_type,typename T>
+inline constexpr manip::lcv<ch_type,T&> lcv(basic_lconv_storage<ch_type> const& t,T&& f){return {t,f};}
 
-/*
-template<output_stream output,std::integral ch_type,typename T>
-requires (std::integral<T>||std::floating_point<T>)
-constexpr void print_define(output& out,manip::lcv<ch_type,T&> a)
+template<std::integral ch_type,std::integral int_type>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<ch_type,int_type&>>)
 {
-	using value_type = std::remove_cvref_t<T>;
-	if constexpr(std::integral<value_type>)
-	{
-
-		
-		constexpr std::size_t mx_uint_sz{(details::cal_max_uint_size<value_type>()+5)*2};
-		reverse_write(out,mx_uint_sz);
-		if (std::is_constant_evaluated())
-		{
-			namespace algo_decision = fast_io::details::optimize_size;
-			if constexpr(std::unsigned_integral<int_type>)
-				return iter+algo_decision::output_unsigned(iter,i);
-			else
-			{
-				if(i<0)
-				{
-					*iter=u8'-';
-					++iter;
-					return iter+algo_decision::output_unsigned(iter,-static_cast<std::make_unsigned_t<int_type>>(i));
-				}
-				else
-					return iter+algo_decision::output_unsigned(iter,static_cast<std::make_unsigned_t<int_type>>(i));
-			}
-		}
-		else
-		{
-
-			namespace algo_decision = 
-	#ifdef FAST_IO_OPTIMIZE_SIZE
-				details::optimize_size
-	#else
-				details::jiaendu
-	#endif
-		;
-			if constexpr(std::unsigned_integral<int_type>)
-				return iter+algo_decision::output_unsigned(iter,i);
-			else
-			{
-				if(i<0)
-				{
-					*iter=u8'-';
-					++iter;
-					return iter+algo_decision::output_unsigned(iter,-static_cast<std::make_unsigned_t<int_type>>(i));
-				}
-				else
-					return iter+algo_decision::output_unsigned(iter,static_cast<std::make_unsigned_t<int_type>>(i));
-			}
-//		}
-	}
-	else
-	{
-	}
+	return details::cal_lcv_integer_output_size<int_type,10>();
 }
-*/
+
+template<std::contiguous_iterator caiter,std::integral char_type,std::integral int_type>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<char_type,int_type&>>,caiter outiter,auto ref)
+{
+	return details::process_lcv_integer_output<char_type,10,false>(outiter,ref.storage,ref.reference);
+}
+
+template<std::integral ch_type,char8_t base,bool uppercase,std::integral int_type>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<ch_type,manip::base_t<base,uppercase,int_type>&>>)
+{
+	return details::cal_lcv_integer_output_size<int_type,base>();
+}
+
+template<std::contiguous_iterator caiter,std::integral char_type,char8_t base,bool uppercase,std::integral int_type>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<char_type,manip::base_t<base,uppercase,int_type>&>>,caiter outiter,auto ref)
+{
+	return details::process_lcv_integer_output<char_type,base,uppercase>(outiter,ref.storage,ref.reference.reference);
+}
+
+
 }
