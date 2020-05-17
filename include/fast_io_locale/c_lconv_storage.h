@@ -66,7 +66,7 @@ struct basic_c_lconv_storage:public basic_lconv_storage<ch_type,stg_type>
 };
 
 using c_lconv_storage = basic_c_lconv_storage<char>;
-//using wc_lconv_storage = basic_c_lconv_storage<wchar_t>;
-//using u8c_lconv_storage = basic_c_lconv_storage<char8_t>;
+using wc_lconv_storage = basic_c_lconv_storage<wchar_t>;
+using u8c_lconv_storage = basic_c_lconv_storage<char8_t>;
 
 }
