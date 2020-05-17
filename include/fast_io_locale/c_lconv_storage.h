@@ -44,9 +44,9 @@ struct basic_c_lconv_storage:public basic_lconv_storage<ch_type,stg_type>
 		this->int_n_sign_posn=lcv.int_n_sign_posn;
 #endif
 		auto& stog{this->storage};
-		auto insert_lmd([&](char_type const* itemptr)
+		auto insert_lmd([&](char const* itemptr)
 		{
-			typename storage_type::size_type size{std::strlen(itemptr)};
+			std::size_t const size{std::strlen(itemptr)};
 			stog.insert(stog.end(),itemptr,itemptr+size);
 			return stog.size();
 		});
