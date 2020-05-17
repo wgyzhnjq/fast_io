@@ -2,9 +2,6 @@
 
 namespace fast_io
 {
-#if defined(__WINNT__) || defined(_MSC_VER)
-extern "C" std::lconv* __stdcall localeconv_l(_locale_t);
-#endif
 
 template<std::integral ch_type,std::ranges::contiguous_range stg_type=std::vector<ch_type>>
 struct basic_c_lconv_storage:public basic_lconv_storage<ch_type,stg_type>
