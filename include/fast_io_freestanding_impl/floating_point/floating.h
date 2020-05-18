@@ -93,7 +93,7 @@ inline raiter print_reserve_define(print_reserve_type_t<T>,raiter start,U a)
 {
 	return details::ryu::output_shortest<false,0,true>(details::compile_time_floating_v<u8'.'>,start,static_cast<double>(a));
 }
-/*
+
 template<manip::floating_formats fm,bool uppercase,std::floating_point T,char32_t dec>
 inline constexpr std::size_t print_reserve_size
 	(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>)
@@ -106,11 +106,11 @@ requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
 inline raiter print_reserve_define(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>,raiter start,U a)
 {
 	if constexpr(fm==manip::floating_formats::general)
-		return details::ryu::output_shortest<uppercase,0,true>(compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
+		return details::ryu::output_shortest<uppercase,0,true>(details::compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
 	else if constexpr(fm==manip::floating_formats::fixed)
-		return details::ryu::output_shortest<false,1,true>(compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
+		return details::ryu::output_shortest<false,1,true>(details::compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
 	else if constexpr(fm==manip::floating_formats::scientific)
-		return details::ryu::output_shortest<uppercase,2,true>(compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
+		return details::ryu::output_shortest<uppercase,2,true>(details::compile_time_floating_v<dec>,start,static_cast<double>(a.value.reference));
 }
 
 template<std::floating_point T,char32_t dec>
@@ -124,7 +124,7 @@ template<std::random_access_iterator raiter,std::floating_point T,char32_t dec,t
 requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
 inline raiter print_reserve_define(print_reserve_type_t<manip::decimal_point<T&,dec>>,raiter start,U a)
 {
-	return details::ryu::output_shortest<false,0,true>(compile_time_floating_v<dec>,start,static_cast<double>(a.value));
+	return details::ryu::output_shortest<false,0,true>(details::compile_time_floating_v<dec>,start,static_cast<double>(a.value));
 }
-*/
+
 }
