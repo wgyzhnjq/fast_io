@@ -101,7 +101,7 @@ inline constexpr auto process_lcv_floating_output(caiter outiter,T const& storag
 	if(grouping.empty())
 		return fun(details::compile_time_floating_value<true,char_type,0>{storage.decimal_point},outiter);
 	std::array<char_type,buffer_size> array;
-	auto buffer_end{fun(details::compile_time_floating_value<true,char_type,0>{storage.decimal_point},array.data())};
+	auto buffer_end{fun(details::compile_time_floating_v<u8'.'>,array.data())};
 	auto buffer_start{array.data()};
 	bool const negative{*buffer_start==u8'-'};
 	if(negative)

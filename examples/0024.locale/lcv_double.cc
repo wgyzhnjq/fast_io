@@ -5,5 +5,5 @@ int main()
 {
 	fast_io::c_locale loc(fast_io::c_locale_category::all);
 	fast_io::c_lconv_storage stg(loc);
-	print(fast_io::lcv(stg,1e200));
+	println("default:",12141241241.436346436,"\nlocal:",fast_io::lcv(stg,12141241241.436346436));
 }
