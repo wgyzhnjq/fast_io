@@ -16,7 +16,7 @@ template<char8_t decm>
 inline constexpr compile_time_floating_value<false,char8_t,decm> compile_time_floating_v{};
 
 template<std::integral ch_type>
-struct compile_time_floating_value<true,ch_type,u8'~'>		//if you see ~ which means it is a bug.
+struct compile_time_floating_value<true,ch_type,0>		//if you see ~ which means it is a bug.
 {
 	ch_type decimal_point{};
 };

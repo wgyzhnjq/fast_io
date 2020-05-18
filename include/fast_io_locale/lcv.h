@@ -93,17 +93,36 @@ inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage
 	}
 	return details::my_copy(buffer_iter,outiter+buffer_size,outiter);
 }
-/*
-template<std::integral char_type,std::contiguous_iterator caiter,typename T>
-inline constexpr auto process_lcv_floating_output(caiter outiter,T const& storage)
+
+template<std::size_t buffer_size,std::integral char_type,std::contiguous_iterator caiter,typename T,typename Func>
+inline constexpr auto process_lcv_floating_output(caiter outiter,T const& storage,Func fun)
 {
-	std::array<char_type,>
-	bool const minus{*outiter==u8'-'};
-	if(minus)
-		++begiter;
-	return outiter;
+	auto grouping{storage.grouping()};
+	if(grouping.empty())
+		return fun(details::compile_time_floating_value<true,char_type,0>{storage.decimal_point},outiter);
+	std::array<char_type,buffer_size> array;
+	auto buffer_end{fun(details::compile_time_floating_value<true,char_type,0>{storage.decimal_point},array.data())};
+	auto buffer_start{array.data()};
+	bool const negative{*buffer_start==u8'-'};
+	if(negative)
+		++buffer_start;
+	auto dcm_piter{std::find(buffer_start,buffer_end,u8'.')};
+	if(dcm_piter==buffer_end)
+	{
+		auto e_piter{std::find(buffer_start,buffer_end,u8'e')};
+		if(e_piter!=buffer_end)
+			dcm_piter=e_piter;
+	}
+	constexpr std::size_t preallocated_size(cal_lcv_size_base([]
+	{
+		return buffer_size;
+	}));
+	auto buffer_iter{process_lcv_grouping(grouping,buffer_start,dcm_piter,outiter+preallocated_size,storage.thousands_sep)};
+	if(negative)
+		*--buffer_iter=u8'-';
+	return details::my_copy(dcm_piter,buffer_end,details::my_copy(buffer_iter,outiter+preallocated_size,outiter));
 }
-*/
+
 }
 template<std::integral ch_type,typename T>
 inline constexpr manip::lcv<ch_type,T&> lcv(basic_lconv_storage<ch_type> const& t,T&& f){return {t,f};}
@@ -133,42 +152,19 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<cha
 }
 
 
-/*
-template<manip::floating_formats fm,bool uppercase,std::floating_point T,char32_t dec>
-inline constexpr std::size_t print_reserve_size
-	(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>)
+template<std::integral char_type,std::floating_point fp_type>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<char_type,fp_type&>>)
 {
-	if constexpr(fm==manip::floating_formats::general||fm==manip::floating_formats::scientific)
-		return 60;
-	else if constexpr(fm==manip::floating_formats::fixed)
-		return 700;
+	return details::cal_lcv_floating_len<fp_type,manip::floating_formats::general>();
 }
 
-template<std::random_access_iterator raiter,manip::floating_formats fm,std::floating_point T,bool uppercase,char32_t dec,typename U>
-requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
-inline raiter print_reserve_define(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>,raiter start,U a)
+template<std::contiguous_iterator caiter,std::integral char_type,std::floating_point fp_type>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<char_type,fp_type&>>,caiter outiter,auto ref)
 {
-	if constexpr(fm==manip::floating_formats::general)
-		return details::ryu::output_shortest<dec,uppercase,0,true>(start,static_cast<double>(a.value.reference));
-	else if constexpr(fm==manip::floating_formats::fixed)
-		return details::ryu::output_shortest<dec,false,1,true>(start,static_cast<double>(a.value.reference));
-	else if constexpr(fm==manip::floating_formats::scientific)
-		return details::ryu::output_shortest<dec,uppercase,2,true>(start,static_cast<double>(a.value.reference));
+	return details::process_lcv_floating_output<details::cal_floating_len<fp_type,manip::floating_formats::general>(),char_type>(outiter,ref.storage,[value=ref.reference](auto dec,auto iter)
+	{
+		return details::ryu::output_shortest<false,0,true>(dec,iter,static_cast<double>(value));
+	});
 }
-
-
-template<std::integral char_type,std::floating_point T,char32_t dec>
-inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<char_type,manip::decimal_point<T&,dec>>>)
-{
-	return details::cal_lcv_floating_len<T,fm==manip::floating_formats::general>();
-}
-
-template<std::contiguous_access_iterator raiter,std::integral char_type,std::floating_point T,char32_t dec,typename U>
-requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
-inline raiter print_reserve_define(print_reserve_type_t<manip::lcv<char_type,manip::decimal_point<T&,dec>>>,raiter start,U a)
-{
-	return process_lcv_floating_output<char_type>(start,details::ryu::output_shortest<dec,false,0,true>(start,static_cast<double>(a.reference)),a.storage);
-}
-*/
 
 }
