@@ -238,6 +238,12 @@ concept status_input_stream = input_stream<T>&&details::status_stream_impl<T>&&r
 };
 
 template<typename input,typename T>
+concept space_scanable=input_stream<input>&&requires(input& in,T&& t)
+{
+	space_scan_define(in,std::forward<T>(t));
+};
+
+template<typename input,typename T>
 concept scanable=input_stream<input>&&requires(input& in,T&& t)
 {
 	scan_define(in,std::forward<T>(t));
@@ -276,6 +282,9 @@ concept printable=output_stream<output>&&requires(output& out,T&& t)
 {
 	print_define(out,std::forward<T>(t));
 };
+
+template<typename input,typename T>
+concept general_scanable=space_scanable<input,T>||scanable<input,T>;
 
 template<typename output,typename T>
 concept general_printable=reserve_printable<T>||printable<output,T>;
