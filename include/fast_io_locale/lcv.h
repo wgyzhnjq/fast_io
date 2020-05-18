@@ -113,6 +113,8 @@ inline constexpr auto process_lcv_floating_output(caiter outiter,T const& storag
 		if(e_piter!=buffer_end)
 			dcm_piter=e_piter;
 	}
+	else
+		*dcm_piter=storage.decimal_point;
 	constexpr std::size_t preallocated_size(cal_lcv_size_base([]
 	{
 		return buffer_size;
