@@ -255,7 +255,6 @@ inline constexpr raiter print_reserve_define(print_reserve_type_t<manip::line<T>
 }
 
 template<bool report_eof=false,input_stream input,typename ...Args>
-requires (sizeof...(Args)!=0)
 inline constexpr auto scan(input &in,Args&& ...args)
 {
 	if constexpr(mutex_input_stream<input>)
@@ -265,7 +264,7 @@ inline constexpr auto scan(input &in,Args&& ...args)
 		return scan<report_eof>(uh,std::forward<Args>(args)...);
 	}
 	else if constexpr(status_input_stream<input>)
-		scan_status_define(in,std::forward<Args>(args)...);
+		return scan_status_define<report_eof>(in,std::forward<Args>(args)...);
 	else
 		return details::normal_scan<report_eof>(in,std::forward<Args>(args)...);
 }
@@ -285,7 +284,6 @@ inline constexpr void receive(input &in,Args&& ...args)
 }
 
 template<output_stream output,typename ...Args>
-requires (sizeof...(Args)!=0)
 inline constexpr void print(output &out,Args&& ...args)
 {
 	if constexpr(mutex_output_stream<output>)

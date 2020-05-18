@@ -234,7 +234,7 @@ concept status_output_stream = output_stream<T>&&details::status_stream_impl<T>&
 template<typename T>
 concept status_input_stream = input_stream<T>&&details::status_stream_impl<T>&&requires(T in)
 {
-	scan_status_define(in);
+	scan_status_define<false>(in);
 };
 
 template<typename input,typename T>
