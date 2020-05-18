@@ -51,11 +51,29 @@ inline constexpr auto process_lcv_grouping(std::basic_string_view<char_type> con
 	return buffer_iter;
 }
 
+template<typename Func>
+constexpr std::size_t cal_lcv_size_base(Func func)
+{
+	constexpr std::size_t sz{(func()+2)<<1};
+	return sz;
+}
+
 template<std::integral int_type,char8_t base>
 constexpr std::size_t cal_lcv_integer_output_size()
 {
-	constexpr std::size_t rsv_size{(cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+2)<<1};
-	return rsv_size;
+	return cal_lcv_size_base([]()
+	{
+		return cal_max_uint_size<std::make_unsigned_t<int_type>,base>();
+	});
+}
+
+template<std::floating_point fp_type,manip::floating_formats fm>
+constexpr std::size_t cal_lcv_floating_len()
+{
+	return cal_lcv_size_base([]()
+	{
+		return cal_floating_len<fp_type,fm>();
+	});
 }
 
 template<std::integral char_type,char8_t base,bool uppercase,std::contiguous_iterator caiter,typename T,std::integral int_type>
@@ -64,7 +82,7 @@ inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage
 	auto grouping{storage.grouping()};
 	if(grouping.empty())
 		return process_integer_output<base,uppercase>(outiter,value);
-	std::array<char_type,(details::cal_max_uint_size<std::make_unsigned_t<int_type>,base>()+1)<<1> str;
+	std::array<char_type,cal_max_uint_size<std::make_unsigned_t<int_type>,base>()> str;
 	auto str_iter(details::process_integer_output<base,uppercase,true>(str.data(),value));
 	constexpr std::size_t buffer_size{cal_lcv_integer_output_size<int_type,base>()};
 	auto buffer_iter{process_lcv_grouping(grouping,str.data(),str_iter,outiter+buffer_size,storage.thousands_sep)};
@@ -75,7 +93,17 @@ inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage
 	}
 	return details::my_copy(buffer_iter,outiter+buffer_size,outiter);
 }
-
+/*
+template<std::integral char_type,std::contiguous_iterator caiter,typename T>
+inline constexpr auto process_lcv_floating_output(caiter outiter,T const& storage)
+{
+	std::array<char_type,>
+	bool const minus{*outiter==u8'-'};
+	if(minus)
+		++begiter;
+	return outiter;
+}
+*/
 }
 template<std::integral ch_type,typename T>
 inline constexpr manip::lcv<ch_type,T&> lcv(basic_lconv_storage<ch_type> const& t,T&& f){return {t,f};}
@@ -104,5 +132,43 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::lcv<cha
 	return details::process_lcv_integer_output<char_type,base,uppercase>(outiter,ref.storage,ref.reference.reference);
 }
 
+
+/*
+template<manip::floating_formats fm,bool uppercase,std::floating_point T,char32_t dec>
+inline constexpr std::size_t print_reserve_size
+	(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>)
+{
+	if constexpr(fm==manip::floating_formats::general||fm==manip::floating_formats::scientific)
+		return 60;
+	else if constexpr(fm==manip::floating_formats::fixed)
+		return 700;
+}
+
+template<std::random_access_iterator raiter,manip::floating_formats fm,std::floating_point T,bool uppercase,char32_t dec,typename U>
+requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
+inline raiter print_reserve_define(print_reserve_type_t<manip::decimal_point<manip::floating_manip<fm,uppercase,T const>,dec>>,raiter start,U a)
+{
+	if constexpr(fm==manip::floating_formats::general)
+		return details::ryu::output_shortest<dec,uppercase,0,true>(start,static_cast<double>(a.value.reference));
+	else if constexpr(fm==manip::floating_formats::fixed)
+		return details::ryu::output_shortest<dec,false,1,true>(start,static_cast<double>(a.value.reference));
+	else if constexpr(fm==manip::floating_formats::scientific)
+		return details::ryu::output_shortest<dec,uppercase,2,true>(start,static_cast<double>(a.value.reference));
+}
+
+
+template<std::integral char_type,std::floating_point T,char32_t dec>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::lcv<char_type,manip::decimal_point<T&,dec>>>)
+{
+	return details::cal_lcv_floating_len<T,fm==manip::floating_formats::general>();
+}
+
+template<std::contiguous_access_iterator raiter,std::integral char_type,std::floating_point T,char32_t dec,typename U>
+requires (dec<std::numeric_limits<std::iter_value_t<raiter>>::max())
+inline raiter print_reserve_define(print_reserve_type_t<manip::lcv<char_type,manip::decimal_point<T&,dec>>>,raiter start,U a)
+{
+	return process_lcv_floating_output<char_type>(start,details::ryu::output_shortest<dec,false,0,true>(start,static_cast<double>(a.reference)),a.storage);
+}
+*/
 
 }
