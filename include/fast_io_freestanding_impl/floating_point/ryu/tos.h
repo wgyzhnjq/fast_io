@@ -96,7 +96,10 @@ inline constexpr Iter output_shortest(
 								{
 									fp_output_unsigned(result+1,v3);
 									*result=result[1];
-									result[1]=decimal_point;
+									if constexpr(is_runtime_decimal_point)
+										result[1]=decmpt.decimal_point;
+									else
+										result[1]=decimal_point;
 									result+=v3_len+1;
 								}
 								if constexpr(uppercase_e)
@@ -323,21 +326,33 @@ inline constexpr Iter output_shortest(
 			{
 				fp_output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
-				result[eposition]=decimal_point;
+				if constexpr(is_runtime_decimal_point)
+					result[eposition]=decmpt.decimal_point;
+				else
+					result[eposition]=decimal_point;
 				result+=olength+1;
 			}
 			return result;
 		}
 		default:
-			if constexpr(decimal_point==u8'.')
-				result=my_copy_n(u8"0.",2,result);
-			else if constexpr(decimal_point==u8',')
-				result=my_copy_n(u8"0,",2,result);
+			if constexpr(is_runtime_decimal_point)
+			{
+				*result=u8'0';
+				*++result=decmpt.decimal_point;
+				++result;
+			}
 			else
 			{
-				*result=u8'0';		//to do with UTF32 decimal points
-				*++result=decimal_point;
-				++result;
+				if constexpr(decimal_point==u8'.')
+					result=my_copy_n(u8"0.",2,result);
+				else if constexpr(decimal_point==u8',')
+					result=my_copy_n(u8"0,",2,result);
+				else
+				{
+					*result=u8'0';
+					*++result=decimal_point;
+					++result;
+				}
 			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			fp_output_unsigned(result,v.front());
@@ -368,22 +383,34 @@ inline constexpr Iter output_shortest(
 			{
 				fp_output_unsigned(result+1,a);
 				my_copy_n(result+1,eposition,result);
-				result[eposition]=decimal_point;
+				if constexpr(is_runtime_decimal_point)
+					result[eposition]=decmpt.decimal_point;
+				else
+					result[eposition]=decimal_point;
 				result+=olength+1;
 			}
 			return result;
 		}
 		else
 		{
-			if constexpr(decimal_point==u8'.')
-				result=my_copy_n(u8"0.",2,result);
-			else if constexpr(decimal_point==u8',')
-				result=my_copy_n(u8"0,",2,result);
-			else
+			if constexpr(is_runtime_decimal_point)
 			{
 				*result=u8'0';
-				*++result=decimal_point;
+				*++result=decmpt.decimal_point;
 				++result;
+			}
+			else
+			{
+				if constexpr(decimal_point==u8'.')
+					result=my_copy_n(u8"0.",2,result);
+				else if constexpr(decimal_point==u8',')
+					result=my_copy_n(u8"0,",2,result);
+				else
+				{
+					*result=u8'0';
+					*++result=decimal_point;
+					++result;
+				}
 			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
 			fp_output_unsigned(result,v.front());
@@ -406,7 +433,10 @@ inline constexpr Iter output_shortest(
 			std::size_t olength(fp_output_unsigned(result+1,a));
 			real_exp+=static_cast<std::int32_t>(olength);
 			*result=result[1];
-			result[1]=decimal_point;
+			if constexpr(is_runtime_decimal_point)
+				result[1]=decmpt.decimal_point;
+			else
+				result[1]=decimal_point;
 			result+=olength+1;
 		}
 		return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);
