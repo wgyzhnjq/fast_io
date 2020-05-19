@@ -29,7 +29,7 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 					*iter=u8'-';
 					++iter;
 				}
-				return iter+algo_decision::output_unsigned<base>(iter,-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+				return iter+algo_decision::output_unsigned<base>(iter,static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 			}
 			else
 				return iter+algo_decision::output_unsigned<base>(iter,static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
@@ -56,7 +56,8 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 						*iter=u8'-';
 						++iter;
 					}
-					return iter+algo_decision::output_unsigned(iter,-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+					return iter+algo_decision::output_unsigned(iter,
+					static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 				}
 				else
 					return iter+algo_decision::output_unsigned(iter,static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
@@ -81,7 +82,7 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 						*iter=u8'-';
 						++iter;
 					}
-					return iter+algo_decision::output_unsigned<base,uppercase>(iter,-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+					return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 				}
 				else
 					return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<std::make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
