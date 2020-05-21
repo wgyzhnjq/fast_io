@@ -146,4 +146,3 @@ inline void fast_exit(I ret)
 #endif
 }
 }
-}

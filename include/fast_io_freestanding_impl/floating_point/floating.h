@@ -51,19 +51,19 @@ inline raiter print_reserve_define(print_reserve_type_t<manip::decimal_point<man
 	if constexpr(fm==manip::floating_formats::fixed)
 	{
 		if(1024<a.value.precision)
-			throw std::runtime_error("precision too large");
+			throw fast_io_text_error("precision too large");
 		return details::ryu::output_fixed<dec,false,uppercase>(start,a.value.reference,a.value.precision);
 	}
 	else if constexpr(fm==manip::floating_formats::scientific)
 	{
 		if(512<a.value.precision)
-			throw std::runtime_error("precision too large");
+			throw fast_io_text_error("precision too large");
 		return details::ryu::output_fixed<dec,true,uppercase>(start,a.value.reference,a.value.precision);
 	}
 	else if constexpr(fm==manip::floating_formats::general)
 	{
 		if(1024<a.value.precision)
-			throw std::runtime_error("precision too large");
+			throw fast_io_text_error("precision too large");
 		auto fixed_iter{details::ryu::output_fixed<dec,false,uppercase>(start,a.value.reference,a.value.precision)};
 		std::array<std::iter_value_t<raiter>,512> scientific;
 		auto scientific_it{details::ryu::output_fixed<dec,true,uppercase>(scientific.data(),a.value.reference,a.value.precision)};

@@ -34,7 +34,7 @@ inline SSL_METHOD const* get_method(tls_method m)
 	case tls_method::datagram_client:
 		return DTLS_client_method();
 	default:
-		throw std::runtime_error("unknown TLS method");
+		throw fast_io_text_error("unknown TLS method");
 	};
 }
 }

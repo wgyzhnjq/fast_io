@@ -269,7 +269,7 @@ public:
 {
 	if(!*this)
 #ifdef __cpp_exceptions
-		throw std::runtime_error("unknown locale");
+		throw fast_io_text_error("unknown locale");
 #else
 		fast_io::terminate();
 #endif
@@ -285,7 +285,7 @@ public:
 {
 	if(!*this)
 #ifdef __cpp_exceptions
-		throw std::runtime_error("unknown locale");
+		throw fast_io_text_error("unknown locale");
 #else
 		fast_io::terminate();
 #endif
