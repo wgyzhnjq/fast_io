@@ -60,7 +60,7 @@ public:
 #endif
 	void orelease_impl(char_type* ptr) override
 	{
-		return orelease(reff,ptr);
+		orelease(reff,ptr);
 	}
 };
 }
