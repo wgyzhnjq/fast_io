@@ -208,7 +208,7 @@ public:
 #ifdef __cpp_exceptions
 			throw posix_error();
 #else
-			fast_io::terminate();
+			fast_terminate();
 #endif
 	}
 	c_locale_handle& operator=(c_locale_handle const& c)
@@ -218,7 +218,7 @@ public:
 #ifdef __cpp_exceptions
 			throw posix_error();
 #else
-			fast_io::terminate();
+			fast_terminate();
 #endif
 		if(*this)[[likely]]
 #if defined(__WINNT__) || defined(_MSC_VER)
@@ -271,7 +271,7 @@ public:
 #ifdef __cpp_exceptions
 		throw fast_io_text_error("unknown locale");
 #else
-		fast_io::terminate();
+		fast_terminate();
 #endif
 }
 	c_locale(c_locale_category catg):
@@ -287,7 +287,7 @@ public:
 #ifdef __cpp_exceptions
 		throw fast_io_text_error("unknown locale");
 #else
-		fast_io::terminate();
+		fast_terminate();
 #endif
 }
 	~c_locale()

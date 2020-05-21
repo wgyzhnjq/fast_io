@@ -106,7 +106,11 @@ inline constexpr T input_base_number(input& in)
 		auto it{begin(ig)};
 		auto ed{end(ig)};
 		if(it==ed)
+#ifdef __cpp_exceptions
 			throw fast_io::eof();
+#else
+			fast_terminate();
+#endif
 		auto const sign{*it=='-'};
 		if(sign)
 			++it;
