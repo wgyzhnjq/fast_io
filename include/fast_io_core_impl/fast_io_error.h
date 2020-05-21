@@ -156,7 +156,8 @@ constexpr void print_define(output& out,fast_io_error const& err)
 	else
 	{
 		internal_temporary_buffer<char> buffer;
-		details::error_reporter_derv<internal_temporary_buffer<char>&> err(std::in_place,buffer);
+		details::error_reporter_derv<internal_temporary_buffer<char>&> dev(std::in_place,buffer);
+		err.report(dev);
 		write(out,buffer.beg_ptr,buffer.end_ptr);
 	}
 }
