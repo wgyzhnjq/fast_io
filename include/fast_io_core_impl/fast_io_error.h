@@ -127,6 +127,8 @@ public:
 			return uptr.get();
 #ifdef __cpp_exceptions
 		}
+/*
+comment it to avoid dead loop???
 		catch(std::exception const& e)
 		{
 			auto str{e.what()};
@@ -135,6 +137,7 @@ public:
 			*std::copy(str,str+len,uptr.get())=0;
 			return uptr.get();
 		}
+*/
 		catch(...)
 		{
 			return "unknown fast_io_error";
@@ -144,22 +147,36 @@ public:
 #endif
 };
 
+namespace details
+{
+template<fast_io::output_stream output>
+requires std::same_as<typename output::char_type,char>
+constexpr void print_define_to_fast_io_error(output& out,fast_io_error const& err)
+{
+	internal_temporary_buffer<char> buffer;
+	details::error_reporter_derv<internal_temporary_buffer<char>&> dev(std::in_place,buffer);
+	err.report(dev);
+	write(out,buffer.beg_ptr,buffer.end_ptr);
+}
+}
+
 template<fast_io::output_stream output>
 requires std::same_as<typename output::char_type,char>
 constexpr void print_define(output& out,fast_io_error const& err)
 {
-	if constexpr(fast_io::reserve_output_stream<output>&&std::same_as<decltype(oreserve(out,0)),char*>)
+	if constexpr(fast_io::reserve_output_stream<output>)
 	{
-		details::error_reporter_derv<output&> dev(std::in_place,out);
-		err.report(dev);
+		if constexpr(std::same_as<decltype(oreserve(out,0)),char*>)
+		{
+			details::error_reporter_derv<output&> dev(std::in_place,out);
+			err.report(dev);
+			return;
+		}
+		else
+			details::print_define_to_fast_io_error(out,err);
 	}
 	else
-	{
-		internal_temporary_buffer<char> buffer;
-		details::error_reporter_derv<internal_temporary_buffer<char>&> dev(std::in_place,buffer);
-		err.report(dev);
-		write(out,buffer.beg_ptr,buffer.end_ptr);
-	}
+		details::print_define_to_fast_io_error(out,err);
 }
 
 class fast_io_text_error:public fast_io_error
@@ -174,7 +191,6 @@ public:
 	void report(error_reporter& err) const override
 	{
 		write(err,text.data(),text.data()+text.size());
-//		print(err,text);
 	}
 };
 
