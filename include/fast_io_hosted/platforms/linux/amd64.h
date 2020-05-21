@@ -134,4 +134,37 @@ inline auto system_call(auto p1, auto p2, auto p3, auto p4,auto p5,auto p6)
 	);
 	return ret;
 }
+
+
+template<std::integral I>
+inline void fast_exit(I ret)
+{
+#if defined(__linux__) && defined(__x86_64__)
+	system_call_no_return<60>(ret);
+#else
+	_exit(ret);
+#endif
+}
+
+template<std::integral I>
+requires(sizeof(I)>=1)
+inline void system_call_throw_error(I v)
+{
+#if defined(__linux__) && defined(__x86_64__)
+	using unsigned_t = std::make_unsigned_t<I>;
+	if(static_cast<unsigned_t>(v)+static_cast<unsigned_t>(4096)<static_cast<unsigned_t>(4096))
+#ifdef __cpp_exceptions
+		throw std::system_error(static_cast<int>(-v),std::generic_category());
+#else
+		fast_terminate();
+#endif
+#else
+	if(v<0)
+#ifdef __cpp_exceptions
+		throw std::system_error(errno,std::generic_category());
+#else
+		fast_terminate();
+#endif
+#endif
+}
 }

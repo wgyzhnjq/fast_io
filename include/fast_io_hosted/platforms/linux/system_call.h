@@ -1,16 +1,10 @@
 #pragma once
 
-#ifdef __cpp_exceptions
-#include<system_error>
-#endif
-
 #if defined(__linux__)
 #ifdef __x86_64__
 #include"amd64.h"
 #endif
 #endif
-
-#include"terminate.h"
 
 
 namespace fast_io

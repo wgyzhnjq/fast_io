@@ -30,7 +30,7 @@
 #include"fast_io_core_impl/overflow.h"
 #include"fast_io_core_impl/eof.h"
 #include"fast_io_core_impl/io_ref.h"
-#include"fast_io_core_impl/linux/system_call.h"
+#include"fast_io_core_impl/terminate.h"
 #include"fast_io_core_impl/internal_temporary_buffer.h"
 #include"fast_io_core_impl/manip/impl.h"
 
