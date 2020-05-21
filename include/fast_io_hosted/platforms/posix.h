@@ -203,7 +203,7 @@ public:
 		auto os_handle(_get_osfhandle(fd));
 		if(os_handle==-1)
 #ifdef __cpp_exceptions
-			throw std::system_error(errno,std::system_category());
+			throw posix_error();
 #else
 			fast_terminate();
 #endif
@@ -334,7 +334,7 @@ inline void flush(basic_posix_io_observer<ch_type>)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
-//			throw std::system_error(errno,std::generic_category());
+//			throw posix_error();
 }
 
 #ifdef __linux__
@@ -380,7 +380,7 @@ inline void io_control(basic_posix_io_observer<ch_type> h,Args&& ...args)
 	if(::ioctl(h.native_handle(),std::forward<Args>(args)...)==-1)
 	{
 #ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+		throw posix_error();
 #else
 		fast_terminate();
 #endif
@@ -432,7 +432,7 @@ public:
 	{
 /*	if(native_handle()<0)
 #ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+		throw posix_error();
 #else
 		fast_terminate();
 #endif*/
@@ -446,7 +446,7 @@ public:
 	{
 		if(native_handle()==-1)
 #ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
+			throw posix_error();
 #else
 			fast_terminate();
 #endif
@@ -457,7 +457,7 @@ public:
 	{
 		if(native_handle()==-1)
 #ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
+			throw posix_error();
 #else
 			fast_terminate();
 #endif
@@ -523,7 +523,7 @@ inline void truncate(basic_posix_io_observer<ch_type> h,std::size_t size)
 #else
 	if(::ftruncate(h.native_handle(),size)<0)
 #ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+		throw posix_error();
 #else
 		fast_terminate();
 #endif
@@ -548,7 +548,7 @@ public:
 		if(::pipe(a2.data())==-1)
 #endif
 #ifdef __cpp_exceptions
-			throw std::system_error(errno,std::generic_category());
+			throw posix_error();
 #else
 			fast_terminate();
 #endif
@@ -595,7 +595,7 @@ inline void flush(basic_posix_pipe<ch_type>&)
 {
 	// no need fsync. OS can deal with it
 //		if(::fsync(fd)==-1)
-//			throw std::system_error(errno,std::generic_category());
+//			throw posix_error();
 }
 
 template<std::integral ch_type>
@@ -670,7 +670,7 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 		else
 		{
 			#ifdef __cpp_exceptions
-				throw std::system_error(errno,std::generic_category());
+				throw posix_error();
 			#else
 				fast_terminate();
 			#endif

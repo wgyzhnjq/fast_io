@@ -32,7 +32,7 @@ inline std::size_t c_mbstowcs_s_l(Args&& ...args)
 #else
 	std::size_t sz{mbstowcs_l(std::forward<Args>(args)...)};
 	if(sz==std::numeric_limits<std::size_t>::max())
-		throw std::system_error(errno,std::generic_category());
+		throw posix_error();
 	return sz;
 #endif
 }

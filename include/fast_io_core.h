@@ -31,9 +31,9 @@
 #include"fast_io_core_impl/eof.h"
 #include"fast_io_core_impl/io_ref.h"
 #include"fast_io_core_impl/terminate.h"
+#include"fast_io_core_impl/fast_io_error.h"
 #include"fast_io_core_impl/internal_temporary_buffer.h"
 #include"fast_io_core_impl/manip/impl.h"
-
 
 // This should provide an option macro to disable any generation for table in freestanding environments.
 #include"fast_io_core_impl/integers/integer.h"

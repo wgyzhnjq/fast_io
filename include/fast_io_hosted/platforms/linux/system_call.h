@@ -25,7 +25,7 @@ inline void system_call_throw_error(I v)
 #else
 	if(v<0)
 #ifdef __cpp_exceptions
-		throw std::system_error(errno,std::generic_category());
+		throw posix_error();
 #else
 		fast_terminate();
 #endif

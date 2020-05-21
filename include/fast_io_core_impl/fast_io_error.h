@@ -118,5 +118,18 @@ constexpr void print_define(output& out,fast_io_error const& err)
 	err.report(dev);
 }
 
+class fast_io_text_error:public fast_io_error
+{
+public:
+	std::string_view text;
+	virtual
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+	void report(error_reporter& err) const override
+	{
+		print(err,text);
+	}
+};
 
 }
