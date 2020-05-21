@@ -90,7 +90,11 @@ inline constexpr T input_base_number(input& in)
 			++length;
 		}
 		if(!length)[[unlikely]]
+#ifdef __cpp_exceptions
 			throw fast_io_text_error("malformed input");
+#else
+			fast_terminate();
+#endif
 		detect_overflow<base>(t,length);
 		return t;
 	}
@@ -139,7 +143,11 @@ inline constexpr T input_base_number(input& in)
 		if(sign)
 			return -static_cast<T>(t);
 		else if(!length)[[unlikely]]
+#ifdef __cpp_exceptions
 			throw fast_io_text_error("malformed input");
+#else
+			fast_terminate();
+#endif
 		return static_cast<T>(t);
 	}
 }

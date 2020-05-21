@@ -12,10 +12,21 @@ public:
 	constexpr
 #endif
 	char const* write_impl(char const*,char const*)=0;
+	virtual
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+	char_type* oreserve_impl(std::size_t)=0;
+	virtual
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+	void orelease_impl(char_type*)=0;
 };
 namespace details
 {
 template<typename sm>
+requires (reserve_output_stream<std::remove_cvref_t<sm>>)
 class error_reporter_derv:public error_reporter
 {
 public:
@@ -37,6 +48,20 @@ public:
 		else
 			return write(reff,b,e);
 	}
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+	char_type* oreserve_impl(std::size_t sz) override
+	{
+		return oreserve(reff,sz);
+	}
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+	void orelease_impl(char_type* ptr) override
+	{
+		return orelease(reff,ptr);
+	}
 };
 }
 template<std::contiguous_iterator Iter>
@@ -54,7 +79,16 @@ constexpr Iter write(error_reporter& dev,Iter begin,Iter end)
 	}
 }
 
-constexpr void flush(error_reporter& dev){}
+constexpr inline void flush(error_reporter& dev){}
+
+constexpr inline auto oreserve(error_reporter& dev,std::size_t size)
+{
+	return dev.oreserve_impl(size);
+}
+constexpr inline void orelease(error_reporter& dev,char* ptr)
+{
+	dev.orelease_impl(ptr);
+}
 
 class fast_io_error
 #ifndef FAST_IO_ERROR_DISABLE_STD_EXCEPTION
@@ -114,8 +148,17 @@ template<fast_io::output_stream output>
 requires std::same_as<typename output::char_type,char>
 constexpr void print_define(output& out,fast_io_error const& err)
 {
-	details::error_reporter_derv<output&> dev(std::in_place,out);
-	err.report(dev);
+	if constexpr(fast_io::reserve_output_stream<output>&&std::same_as<decltype(oreserve(out,0)),char*>)
+	{
+		details::error_reporter_derv<output&> dev(std::in_place,out);
+		err.report(dev);
+	}
+	else
+	{
+		internal_temporary_buffer<char> buffer;
+		details::error_reporter_derv<internal_temporary_buffer<char>&> err(std::in_place,buffer);
+		write(out,buffer.beg_ptr,buffer.end_ptr);
+	}
 }
 
 class fast_io_text_error:public fast_io_error
