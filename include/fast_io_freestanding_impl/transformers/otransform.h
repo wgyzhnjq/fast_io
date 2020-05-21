@@ -130,7 +130,7 @@ inline constexpr void otransform_write(T& ob,Iter cbegin,Iter cend)
 				auto wrote_pos(ob.handle.second.write_proxy(ob.handle.first, ob.buffer.data(), ob.buffer.data() + ob.buffer.size()));
 				if (wrote_pos == ob.buffer.data()) [[unlikely]]
 #ifdef __cpp_exceptions
-					throw posix_error(EIO);
+					throw fast_io_text_error("write_proxy failed");
 #else
 					fast_terminate();
 #endif

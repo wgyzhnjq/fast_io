@@ -57,7 +57,7 @@ inline constexpr int calculate_posix_open_mode_for_win32_handle(open_mode value)
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::invalid_argument));
+		throw posix_error(EINVAL);
 #else
 		fast_terminate();
 #endif
@@ -109,7 +109,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_DIRECTORY
 		mode |= O_DIRECTORY;
 #elif __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+		throw posix_error(EOPNOTSUPP);
 #else
 		fast_terminate();
 #endif
@@ -126,7 +126,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 #ifdef O_NONBLOCK
 		mode |= O_NONBLOCK;
 #elif __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::operation_not_supported));
+		throw posix_error(EOPNOTSUPP);
 #else
 		fast_terminate();
 #endif
@@ -166,7 +166,7 @@ inline constexpr int calculate_posix_open_mode(open_mode value)
 //Destroy contents;	Error;	"wx";	Create a file for writing
 	default:
 #ifdef __cpp_exceptions
-		throw std::system_error(make_error_code(std::errc::invalid_argument));
+		throw posix_error(EINVAL);
 #else
 		fast_terminate();
 #endif
@@ -516,7 +516,7 @@ inline void truncate(basic_posix_io_observer<ch_type> h,std::size_t size)
 	auto err(_chsize_s(h.native_handle(),size));
 	if(err)
 #ifdef __cpp_exceptions
-		throw std::system_error(err,std::generic_category());
+		throw posix_error(err);
 #else
 		fast_terminate();
 #endif
@@ -661,7 +661,7 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 			else
 			{
 			#ifdef __cpp_exceptions
-				throw std::system_error(eno,std::generic_category());
+				throw posix_error(eno);
 			#else
 				fast_terminate();
 			#endif

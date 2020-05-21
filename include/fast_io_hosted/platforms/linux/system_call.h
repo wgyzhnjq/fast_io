@@ -18,7 +18,7 @@ inline void system_call_throw_error(I v)
 	using unsigned_t = std::make_unsigned_t<I>;
 	if(static_cast<unsigned_t>(v)+static_cast<unsigned_t>(4096)<static_cast<unsigned_t>(4096))
 #ifdef __cpp_exceptions
-		throw std::system_error(static_cast<int>(-v),std::generic_category());
+		throw posix_error(static_cast<int>(-v));
 #else
 		fast_terminate();
 #endif

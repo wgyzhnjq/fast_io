@@ -578,7 +578,7 @@ Todo
 	}
 */
 #ifdef __cpp_exceptions
-		throw std::system_error(std::make_error_code(std::errc::operation_not_supported));
+		throw posix_error(EOPNOTSUPP);
 #else
 		fast_terminate();
 #endif
@@ -601,7 +601,7 @@ Todo
 	}
 */
 #ifdef __cpp_exceptions
-		throw std::system_error(std::make_error_code(std::errc::operation_not_supported));
+		throw posix_error(EOPNOTSUPP);
 #else
 		fast_terminate();
 #endif

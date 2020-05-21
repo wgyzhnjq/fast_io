@@ -10,7 +10,6 @@
 #include"win32_mapping.h"
 #include"win32_scheduling.h"
 #endif
-#include"posix_error.h"
 #if defined(__linux__)
 #ifdef __x86_64__
 #include"linux/amd64.h"
