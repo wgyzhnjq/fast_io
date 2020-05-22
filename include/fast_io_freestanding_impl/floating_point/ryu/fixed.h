@@ -100,7 +100,26 @@ template<std::unsigned_integral T,std::size_t muldiff=sizeof(T)*8>
 requires std::same_as<T,std::uint64_t>||std::same_as<T,fast_io::uint128_t>
 inline constexpr T mul_shift(T m, std::array<T,2> const& mul, std::size_t j)
 {
-	return low((mul_extend(m,mul.back())+high(mul_extend(m,mul.front())))>>(j-muldiff));
+#if defined(_MSC_VER) && defined(_M_X64)
+	if constexpr(std::same_as<T,std::uint64_t>)
+	{
+		// m is maximum 55 bits
+		std::uint64_t high1;                                   // 128
+		std::uint64_t low1 = _umul128(m, mul[1], &high1); // 64
+		std::uint64_t high0;                                   // 64
+		_umul128(m, mul[0], &high0);                       // 0
+		std::uint64_t const sum = high0 + low1;
+		if (sum < high0)
+			++high1; // overflow into high1
+		return __shiftright128(sum, high1, static_cast<unsigned char>(j - 64));
+	}
+	else
+	{
+#endif
+		return low((mul_extend(m,mul.back())+high(mul_extend(m,mul.front())))>>(j-muldiff));
+#if defined(_MSC_VER) && defined(_M_X64)
+	}
+#endif
 }
 
 template<std::unsigned_integral T,std::size_t muldiff=sizeof(T)*8>
