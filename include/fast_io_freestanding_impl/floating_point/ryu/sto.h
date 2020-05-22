@@ -138,7 +138,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	{
 		e2+=log2pow5(e10);
 		m2=mul_shift(m10,pow5<F,true>::split[e10],e2-e10-pow5bits(e10)+floating_trait::pow5_bitcount);
-		trailing_zeros = e2 < e10 || multiple_of_power_of_2(m10, e2 - e10);
+		trailing_zeros = e2 < e10 || (e2 - e10 < 64 && multiple_of_power_of_2(m10, e2 - e10));
 	}
 	signed_exponent_type ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
 	if(ieee_e2<0)
