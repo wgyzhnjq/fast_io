@@ -6,6 +6,7 @@
 #include"optimize_size/impl.h"
 #include"jiaendu/jiaendu.h"
 #include"sto/sto.h"
+#include"append_nine_digits.h"
 
 namespace fast_io
 {
