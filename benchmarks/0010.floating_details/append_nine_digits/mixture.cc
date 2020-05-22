@@ -1,7 +1,7 @@
-#pragma once
-//This jiaendu is created purely by me. FASTEST IN THE WORLD!
-namespace fast_io::details
-{
+#include"../../../include/fast_io.h"
+#include"../../../include/fast_io_device.h"
+#include"../../timer.h"
+#include<random>
 template<std::random_access_iterator Iter>
 inline constexpr void append_nine_digits_dummy(Iter str,std::uint32_t value)
 {
@@ -40,9 +40,40 @@ inline constexpr void append_nine_digits(Iter str,std::uint32_t value)
 		remains1 = remains0 - remains1*10000;
 		remains0 = value - remains0*10000;
 		*str = static_cast<char8_t>(v2)+u8'0';
-		my_copy_n(jiaendu::static_tables<char_type>::table4[remains1].data(),4,++str);
-		my_copy_n(jiaendu::static_tables<char_type>::table4[remains0].data(),4,str += 4);
+		fast_io::details::my_copy_n(fast_io::details::jiaendu::static_tables<char_type>::table4[remains1].data(),4,++str);
+		fast_io::details::my_copy_n(fast_io::details::jiaendu::static_tables<char_type>::table4[remains0].data(),4,str += 4);
 	}
 #endif
 }
+
+int main()
+{
+	constexpr std::size_t N{10000000};
+	std::vector<std::uint32_t> vec;
+	vec.reserve(N);
+	std::mt19937_64 eng;
+	std::uniform_int_distribution dis(0,999999999);
+	for(std::size_t i(0);i!=N;++i)
+		vec.emplace_back(dis(eng));
+	{
+		fast_io::timer tm("output");
+		fast_io::obuf_file obf("jiaendu.txt");
+		for(std::size_t i{};i!=N;++i)
+		{
+			auto ptr{oreserve(obf,10)};
+			if(ptr)[[likely]]
+			{
+				ptr[9]=u8'\n';
+				append_nine_digits(ptr,vec[i]);
+				orelease(obf,ptr+10);
+			}
+			else
+			{
+				std::array<char,10> tembuf;
+				tembuf.back()=u8'\n';
+				append_nine_digits(tembuf.data(),vec[i]);
+				write(obf,tembuf.data(),tembuf.data()+tembuf.size());
+			}
+		}
+	}
 }
