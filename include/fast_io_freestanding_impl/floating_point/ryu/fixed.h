@@ -28,7 +28,7 @@ return !(static_cast<uint128_t>(value) & ((static_cast<uint128_t>(1)<<p) - 1));
 template<typename T>
 inline constexpr std::uint32_t pow5_factor(T value)
 {
-	for (std::uint32_t count(0);value;++count)
+	for (std::uint32_t count{};value;++count)
 	{
 		if (value%5)
 			return count;

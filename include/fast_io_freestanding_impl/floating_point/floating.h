@@ -85,7 +85,7 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<T>)
 template<std::random_access_iterator raiter,std::floating_point T,typename U>
 inline raiter print_reserve_define(print_reserve_type_t<T>,raiter start,U a)
 {
-	return details::ryu::output_shortest<false,0,true>(details::compile_time_floating_v<u8'.'>,start,static_cast<double>(a));
+	return details::ryu::output_shortest<false,0,true>(details::compile_time_floating_v<u8'.'>,start,a);
 }
 
 template<manip::floating_formats fm,bool uppercase,std::floating_point T,char32_t dec>

@@ -9,10 +9,10 @@
 int main()
 {
 	constexpr std::size_t N(10000000);
-	std::vector<double> vec;
+	std::vector<float> vec;
 	vec.reserve(N);
 	std::mt19937_64 eng;
-	std::uniform_real_distribution dis(-10000.0,10000.0);
+	std::uniform_real_distribution dis(-10000.0f,10000.0f);
 	for(std::size_t i(0);i!=N;++i)
 		vec.emplace_back(dis(eng));
 	{

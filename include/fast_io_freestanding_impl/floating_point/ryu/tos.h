@@ -19,8 +19,9 @@ inline constexpr Iter output_shortest(
 	[[maybe_unused]] compile_time_floating_value<is_runtime_decimal_point,decimal_char_type,decimal_point> decmpt,
 	Iter result, F d)
 {
+	using floating_type = std::remove_cvref_t<F>;
 	using char_type = std::remove_reference_t<decltype(*result)>;
-	using floating_trait = floating_traits<F>;
+	using floating_trait = floating_traits<floating_type>;
 	using mantissa_type = typename floating_trait::mantissa_type;
 	using exponent_type = typename floating_trait::exponent_type;
 	using signed_exponent_type = std::make_signed_t<exponent_type>;
@@ -40,7 +41,7 @@ inline constexpr Iter output_shortest(
 			*result=0x2d;
 			++result;
 		}
-		*result=0x30;
+		*result=u8'0';
 		++result;
 		if constexpr(mode==2)
 		{
@@ -51,6 +52,8 @@ inline constexpr Iter output_shortest(
 		}
 		return result;
 	}
+/*	printf("55\n");
+
 	if constexpr(int_hint)//scientific integer hint?? Is that useless?
 	{
 		auto const r2(init_rep<F,false>(mantissa,static_cast<signed_exponent_type>(exponent)));
@@ -119,7 +122,7 @@ inline constexpr Iter output_shortest(
 					}
 					else
 					{
-						*result=0x30;
+						*result=u8'0';
 						++result;
 					}
 				}
@@ -148,9 +151,9 @@ inline constexpr Iter output_shortest(
 			}
 		}
 	}
+*/
 	auto const r2(init_repm2<F>(mantissa,static_cast<signed_exponent_type>(exponent)));
 	bool const accept_bounds(!(r2.m&1));
-
 	auto const mv(r2.m<<2);
 	exponent_type const mm_shift(mantissa||static_cast<signed_exponent_type>(exponent)<2);
 //	std::array<mantissa_type,3> v{};
@@ -158,21 +161,31 @@ inline constexpr Iter output_shortest(
 	mantissa_type vr,vp,vm;
 	signed_exponent_type e10{};
 	bool vm_is_trailing_zeros{},vr_is_trailing_zeros{};
+	char8_t last_removed_digit{};
 	if(0<=r2.e)
 	{
-		exponent_type const q(log10_pow2(r2.e)-(3<r2.e));
+		exponent_type q(log10_pow2(r2.e));
+		if constexpr(!std::same_as<floating_type,float>)
+			q-=-(3<r2.e);
 		e10=static_cast<signed_exponent_type>(q);
 		signed_exponent_type const k(floating_trait::pow5_bitcount + pow5bits(q) - 1);
 		signed_exponent_type const i(-r2.e+static_cast<signed_exponent_type>(q)+k);
 		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
 			vr=mul_shift_all(r2.m,compute_pow5_inv(q),i,vp,vm,mm_shift);
-		else
+		else if constexpr(std::same_as<floating_type,double>)
 			vr=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,vp,vm,mm_shift);
-
+		else if constexpr(std::same_as<floating_type,float>)
+		{
+			vr = mul_pow5_inv_div_pow2(mv, q, i);
+			vp = mul_pow5_inv_div_pow2(mv+2, q, i);
+			vm = mul_pow5_inv_div_pow2(mv-1-mm_shift, q, i);
+			std::int32_t const l = floating_trait::pow5_bitcount + pow5bits(static_cast<std::int32_t>(q - 1)) - 1;
+			last_removed_digit = static_cast<char8_t>(mul_pow5_inv_div_pow2(mv, q - 1, -r2.e + static_cast<std::int32_t>(q) - 1 + l) % 10);
+		}
 		if(q<=floating_trait::floor_log5)//here
 		{
 			if(!(mv%5))
-				vm_is_trailing_zeros=multiple_of_power_of_5(mv,q);
+				vr_is_trailing_zeros=multiple_of_power_of_5(mv,q);
 			else if(accept_bounds)
 				vm_is_trailing_zeros=multiple_of_power_of_5(mv-1-mm_shift,q);
 			else
@@ -182,16 +195,29 @@ inline constexpr Iter output_shortest(
 	else
 	{
 		exponent_type abs_e2(static_cast<exponent_type>(-r2.e));
-		exponent_type const q(log10_pow5(abs_e2)-(1<abs_e2));
+		exponent_type q(log10_pow5(abs_e2));
+		if constexpr(!std::same_as<floating_type,float>)
+			q-=1<abs_e2;	
 		signed_exponent_type const signed_q(static_cast<signed_exponent_type>(q));
 		e10=signed_q+r2.e;
 		signed_exponent_type const i(-r2.e-signed_q);
 		signed_exponent_type const k(pow5bits(i)-floating_trait::pow5_bitcount);
-		signed_exponent_type const j(signed_q-k);
-		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
+		signed_exponent_type j(signed_q-k);
+		if constexpr(std::same_as<floating_type,long double>)
 			vr=mul_shift_all(r2.m,compute_pow5(i),j,vp,vm,mm_shift);
-		else
+		else if constexpr(std::same_as<floating_type,double>)
 			vr=mul_shift_all(r2.m,pow5<F,true>::split[i],j,vp,vm,mm_shift);
+		else if constexpr(std::same_as<floating_type,float>)
+		{
+			vr = mul_pow5_div_pow2(mv, static_cast<uint32_t>(i), j);
+			vp = mul_pow5_div_pow2(mv+2, static_cast<uint32_t>(i), j);
+			vm = mul_pow5_div_pow2(mv-1-mm_shift, static_cast<uint32_t>(i), j);
+			if (q != 0 && (vp - 1) / 10 <= vm / 10)
+			{
+				j = static_cast<std::int32_t>(q) - 1 - (pow5bits(i + 1) - floating_trait::pow5_bitcount);
+				last_removed_digit = static_cast<char8_t>(mul_pow5_div_pow2(mv,static_cast<std::uint32_t>(i + 1), j) % 10);
+			}
+		}
 		if(q<2)
 		{
 			vr_is_trailing_zeros=true;
@@ -201,12 +227,21 @@ inline constexpr Iter output_shortest(
 				--vp;
 		}
 		else if(q<floating_trait::bound)
-			vr_is_trailing_zeros=multiple_of_power_of_2(mv,q);
+		{
+			if constexpr(std::same_as<floating_type,float>)
+				vr_is_trailing_zeros=multiple_of_power_of_2(mv,q-1);
+			else
+				vr_is_trailing_zeros=multiple_of_power_of_2(mv,q);
+		}
 	}
-
-
-	signed_exponent_type removed(0);
-	char8_t last_removed_digit(0);
+/*
+  printf("e10=%d\n", e10);
+  printf("V+=%u\nV =%u\nV-=%u\n", vp, vr, vm);
+  printf("vm is trailing zeros=%s\n", vm_is_trailing_zeros ? "true" : "false");
+  printf("vr is trailing zeros=%s\n", vr_is_trailing_zeros ? "true" : "false");
+  printf("lastRemovedDigit:%u\n", (unsigned)last_removed_digit);
+*/
+	signed_exponent_type removed{};
 	if(vm_is_trailing_zeros||vr_is_trailing_zeros)
 	{
 		for(;;)
@@ -249,34 +284,64 @@ inline constexpr Iter output_shortest(
 	}
 	else
 	{
-		bool round_up{};
-		mantissa_type const vpdiv100(vp/100);
-		mantissa_type const vmdiv100(vm/100);
-		if(vmdiv100<vpdiv100)
+		if constexpr(std::same_as<floating_type,float>)
 		{
-			mantissa_type const vrdiv100(vr/100);
-			auto const vrmod100(vr%100);
-			round_up=50<=vrmod100;
-			vr=vrdiv100;
-			vp=vpdiv100;
-			vm=vmdiv100;
-			removed+=2;
+/*			while (vp / 10 > vm / 10)
+			{
+				last_removed_digit = static_cast<char8_t> (vr % 10);
+				vr /= 10;
+				vp /= 10;
+				vm /= 10;
+				++removed;
+			}*/
+
+			for (;;)
+			{
+				mantissa_type const vpdiv10(vp/10);
+				mantissa_type const vmdiv10(vm/10);
+				if(vpdiv10<=vmdiv10)
+					break;
+				mantissa_type const vrdiv10(vr/10);
+				auto const vrmod10(vr%10);
+				last_removed_digit=vrmod10;
+				vr=vrdiv10;
+				vp=vpdiv10;
+				vm=vmdiv10;
+				++removed;
+			}
+			vr += (vr == vm || last_removed_digit >= 5);
 		}
-		for (;;)
+		else
 		{
-			mantissa_type const vpdiv10(vp/10);
-			mantissa_type const vmdiv10(vm/10);
-			if(vpdiv10<=vmdiv10)
-				break;
-			mantissa_type const vrdiv10(vr/10);
-			auto const vrmod10(vr%10);
-			round_up=5<=vrmod10;
-			vr=vrdiv10;
-			vp=vpdiv10;
-			vm=vmdiv10;
-			++removed;
+			bool round_up{};
+			mantissa_type const vpdiv100(vp/100);
+			mantissa_type const vmdiv100(vm/100);
+			if(vmdiv100<vpdiv100)
+			{
+				mantissa_type const vrdiv100(vr/100);
+				auto const vrmod100(vr%100);
+				round_up=50<=vrmod100;
+				vr=vrdiv100;
+				vp=vpdiv100;
+				vm=vmdiv100;
+				removed+=2;
+			}
+			for (;;)
+			{
+				mantissa_type const vpdiv10(vp/10);
+				mantissa_type const vmdiv10(vm/10);
+				if(vpdiv10<=vmdiv10)
+					break;
+				mantissa_type const vrdiv10(vr/10);
+				auto const vrmod10(vr%10);
+				round_up=5<=vrmod10;
+				vr=vrdiv10;
+				vp=vpdiv10;
+				vm=vmdiv10;
+				++removed;
+			}
+			vr+=(vr==vm||round_up);
 		}
-		vr+=(vr==vm||round_up);
 	}
 	if(sign)
 	{
@@ -313,7 +378,7 @@ inline constexpr Iter output_shortest(
 		case 1:
 			fp_output_unsigned(result,vr);
 			result+=olength;
-			return my_fill_n(result,real_exp+1-olength,0x30);
+			return my_fill_n(result,real_exp+1-olength,u8'0');
 		case 2:
 		{
 			auto a(vr);
@@ -355,7 +420,7 @@ inline constexpr Iter output_shortest(
 					++result;
 				}
 			}
-			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
+			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),u8'0');
 			fp_output_unsigned(result,vr);
 			result+=olength;
 			return result;
@@ -369,7 +434,7 @@ inline constexpr Iter output_shortest(
 		{
 			fp_output_unsigned(result,vr);
 			result+=olength;
-			return my_fill_n(result,real_exp+1-olength,0x30);	
+			return my_fill_n(result,real_exp+1-olength,u8'0');	
 		}
 		else if(0<=real_exp&&real_exp<olength)
 		{
@@ -413,7 +478,7 @@ inline constexpr Iter output_shortest(
 					++result;
 				}
 			}
-			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
+			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),u8'0');
 			fp_output_unsigned(result,vr);
 			result+=olength;
 			return result;
