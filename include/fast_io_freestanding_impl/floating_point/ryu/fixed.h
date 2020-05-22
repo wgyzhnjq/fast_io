@@ -1,5 +1,7 @@
 #pragma once
-
+#if defined(_MSC_VER) && defined(_M_X64)
+#include <intrin.h>
+#endif
 namespace fast_io::details::ryu
 {
 
@@ -108,12 +110,14 @@ inline constexpr T mul_shift(T m, std::uint64_t mul, std::size_t j)
 	return (static_cast<std::uint64_t>(m)*mul)>>(j-muldiff);
 }
 
-template<typename T,typename P>
+template<typename T,typename P,typename M>
 requires (std::same_as<std::uint32_t,T>||std::same_as<std::uint64_t,T>||std::same_as<fast_io::uint128_t,T>)
-inline constexpr std::array<T,3> mul_shift_all(T m, P& mul,std::size_t j,std::uint32_t mmshift)
+inline constexpr auto mul_shift_all(T m, P& mul,std::size_t j,M& vp,M& vm,std::uint32_t mmshift)
 {
 	auto const m4(m<<2);
-	return {mul_shift(m4,mul,j),mul_shift(m4+2,mul,j),mul_shift(m4-1-mmshift,mul,j)};
+	vp = mul_shift(m4 + 2, mul, j);
+	vm = mul_shift(m4 - 1 - mmshift, mul, j);
+	return mul_shift(m4, mul, j);
 }
 
 template<typename T>

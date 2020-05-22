@@ -153,8 +153,9 @@ inline constexpr Iter output_shortest(
 
 	auto const mv(r2.m<<2);
 	exponent_type const mm_shift(mantissa||static_cast<signed_exponent_type>(exponent)<2);
-	std::array<mantissa_type,3> v{};
+//	std::array<mantissa_type,3> v{};
 	//vr,vp,vm
+	mantissa_type vr,vp,vm;
 	signed_exponent_type e10{};
 	bool vm_is_trailing_zeros{},vr_is_trailing_zeros{};
 	if(0<=r2.e)
@@ -164,9 +165,9 @@ inline constexpr Iter output_shortest(
 		signed_exponent_type const k(floating_trait::pow5_bitcount + pow5bits(q) - 1);
 		signed_exponent_type const i(-r2.e+static_cast<signed_exponent_type>(q)+k);
 		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
-			v=mul_shift_all(r2.m,compute_pow5_inv(q),i,mm_shift);
+			vr=mul_shift_all(r2.m,compute_pow5_inv(q),i,vp,vm,mm_shift);
 		else
-			v=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,mm_shift);
+			vr=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,vp,vm,mm_shift);
 
 		if(q<=floating_trait::floor_log5)//here
 		{
@@ -175,7 +176,7 @@ inline constexpr Iter output_shortest(
 			else if(accept_bounds)
 				vm_is_trailing_zeros=multiple_of_power_of_5(mv-1-mm_shift,q);
 			else
-				v[1]-=multiple_of_power_of_5(mv+2,q);
+				vp-=multiple_of_power_of_5(mv+2,q);
 		}
 	}
 	else
@@ -188,16 +189,16 @@ inline constexpr Iter output_shortest(
 		signed_exponent_type const k(pow5bits(i)-floating_trait::pow5_bitcount);
 		signed_exponent_type const j(signed_q-k);
 		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
-			v=mul_shift_all(r2.m,compute_pow5(i),j,mm_shift);
+			vr=mul_shift_all(r2.m,compute_pow5(i),j,vp,vm,mm_shift);
 		else
-			v=mul_shift_all(r2.m,pow5<F,true>::split[i],j,mm_shift);
+			vr=mul_shift_all(r2.m,pow5<F,true>::split[i],j,vp,vm,mm_shift);
 		if(q<2)
 		{
 			vr_is_trailing_zeros=true;
 			if(accept_bounds)
 				vm_is_trailing_zeros=mm_shift==1;
 			else
-				--v[1];
+				--vp;
 		}
 		else if(q<floating_trait::bound)
 			vr_is_trailing_zeros=multiple_of_power_of_2(mv,q);
@@ -210,72 +211,72 @@ inline constexpr Iter output_shortest(
 	{
 		for(;;)
 		{
-			mantissa_type const vpdiv10(v[1]/10);
-			mantissa_type const vmdiv10(v[2]/10);
-			auto const vmmod10(static_cast<char8_t>(v[2]%10));
+			mantissa_type const vpdiv10(vp/10);
+			mantissa_type const vmdiv10(vm/10);
+			auto const vmmod10(static_cast<char8_t>(vm%10));
 			if(vpdiv10 <= vmdiv10)
 				break;
-			mantissa_type const vrdiv10(v.front()/10);
-			auto const vrmod10(static_cast<char8_t>(v.front()%10));
+			mantissa_type const vrdiv10(vr/10);
+			auto const vrmod10(static_cast<char8_t>(vr%10));
 			vm_is_trailing_zeros&=!vmmod10;
 			vr_is_trailing_zeros&=!last_removed_digit;
 			last_removed_digit=static_cast<char8_t>(vrmod10);
-			v.front()=vrdiv10;
-			v[1]=vpdiv10;
-			v[2]=vmdiv10;
+			vr=vrdiv10;
+			vp=vpdiv10;
+			vm=vmdiv10;
 			++removed;
 		}
 		if(vm_is_trailing_zeros)
 			for(;;)
 			{
-				mantissa_type const vmdiv10(v[2]/10);
-				auto const vmmod10(static_cast<char8_t>(v[2]%10));
+				mantissa_type const vmdiv10(vm/10);
+				auto const vmmod10(static_cast<char8_t>(vm%10));
 				if(vmmod10)
 					break;
-				mantissa_type const vpdiv10(v[1]/10);
-				mantissa_type const vrdiv10(v.front()/10);
-				auto const vrmod10(v.front()%10);
+				mantissa_type const vpdiv10(vp/10);
+				mantissa_type const vrdiv10(vr/10);
+				auto const vrmod10(vr%10);
 				vr_is_trailing_zeros&=!last_removed_digit;
 				last_removed_digit=static_cast<char8_t>(vrmod10);
-				v.front()=vrdiv10;
-				v[1]=vpdiv10;
-				v[2]=vmdiv10;
+				vr=vrdiv10;
+				vp=vpdiv10;
+				vm=vmdiv10;
 				++removed;
 			}
-		if(vr_is_trailing_zeros&&last_removed_digit==5&&!(v.front()&1))
+		if(vr_is_trailing_zeros&&last_removed_digit==5&&!(vr&1))
 			last_removed_digit=4;
-		v.front() += ((v.front()==std::get<2>(v)&&(!accept_bounds || !vm_is_trailing_zeros))|| 4 < last_removed_digit);
+		vr += ((vr==vm&&(!accept_bounds || !vm_is_trailing_zeros))|| 4 < last_removed_digit);
 	}
 	else
 	{
 		bool round_up{};
-		mantissa_type const vpdiv100(v[1]/100);
-		mantissa_type const vmdiv100(v[2]/100);
+		mantissa_type const vpdiv100(vp/100);
+		mantissa_type const vmdiv100(vm/100);
 		if(vmdiv100<vpdiv100)
 		{
-			mantissa_type const vrdiv100(v.front()/100);
-			auto const vrmod100(v.front()%100);
+			mantissa_type const vrdiv100(vr/100);
+			auto const vrmod100(vr%100);
 			round_up=50<=vrmod100;
-			v.front()=vrdiv100;
-			v[1]=vpdiv100;
-			v[2]=vmdiv100;
+			vr=vrdiv100;
+			vp=vpdiv100;
+			vm=vmdiv100;
 			removed+=2;
 		}
 		for (;;)
 		{
-			mantissa_type const vpdiv10(v[1]/10);
-			mantissa_type const vmdiv10(v[2]/10);
+			mantissa_type const vpdiv10(vp/10);
+			mantissa_type const vmdiv10(vm/10);
 			if(vpdiv10<=vmdiv10)
 				break;
-			mantissa_type const vrdiv10(v.front()/10);
-			auto const vrmod10(v.front()%10);
+			mantissa_type const vrdiv10(vr/10);
+			auto const vrmod10(vr%10);
 			round_up=5<=vrmod10;
-			v.front()=vrdiv10;
-			v[1]=vpdiv10;
-			v[2]=vmdiv10;
+			vr=vrdiv10;
+			vp=vpdiv10;
+			vm=vmdiv10;
 			++removed;
 		}
-		v.front()+=(v.front()==v[2]||round_up);
+		vr+=(vr==vm||round_up);
 	}
 	if(sign)
 	{
@@ -284,7 +285,7 @@ inline constexpr Iter output_shortest(
 	}
 	if constexpr(mode==0) //general
 	{
-		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));	
+		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(vr)));	
 		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 		std::uint32_t fixed_length(0),this_case(0);
 		if(olength<=real_exp)
@@ -304,18 +305,18 @@ inline constexpr Iter output_shortest(
 		std::uint32_t scientific_length(olength==1?olength+3:olength+5);
 		if(scientific_length<fixed_length)
 		{
-			result+=fp_output_unsigned_point(decmpt,v.front(),result);
+			result+=fp_output_unsigned_point(decmpt,vr,result);
 			return output_exp<uppercase_e>(static_cast<std::int32_t>(real_exp),result);
 		}
 		switch(this_case)
 		{
 		case 1:
-			fp_output_unsigned(result,v.front());
+			fp_output_unsigned(result,vr);
 			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);
 		case 2:
 		{
-			auto a(v.front());
+			auto a(vr);
 			auto eposition(real_exp+1);
 			if(olength==eposition)
 			{
@@ -355,24 +356,24 @@ inline constexpr Iter output_shortest(
 				}
 			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			fp_output_unsigned(result,v.front());
+			fp_output_unsigned(result,vr);
 			result+=olength;
 			return result;
 		}
 	}
 	else if constexpr(mode==1) //fixed
 	{
-		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(v.front())));	
+		std::int32_t olength(static_cast<std::int32_t>(chars_len<10,true>(vr)));	
 		std::int32_t const real_exp(static_cast<std::int32_t>(e10 + removed + olength - 1));
 		if(olength<=real_exp)
 		{
-			fp_output_unsigned(result,v.front());
+			fp_output_unsigned(result,vr);
 			result+=olength;
 			return my_fill_n(result,real_exp+1-olength,0x30);	
 		}
 		else if(0<=real_exp&&real_exp<olength)
 		{
-			auto a(v.front());
+			auto a(vr);
 			auto eposition(real_exp+1);
 			if(olength==eposition)
 			{
@@ -413,14 +414,14 @@ inline constexpr Iter output_shortest(
 				}
 			}
 			result=my_fill_n(result,static_cast<exponent_type>(-real_exp-1),0x30);
-			fp_output_unsigned(result,v.front());
+			fp_output_unsigned(result,vr);
 			result+=olength;
 			return result;
 		}
 	}
 	else		//scientific
 	{
-		auto a(v.front());
+		auto a(vr);
 		std::int32_t real_exp(static_cast<std::int32_t>(e10 + removed - 1));
 		if(a<10)
 		{

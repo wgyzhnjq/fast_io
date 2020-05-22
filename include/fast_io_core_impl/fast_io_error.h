@@ -65,7 +65,10 @@ public:
 };
 }
 template<std::contiguous_iterator Iter>
-constexpr Iter write(error_reporter& dev,Iter begin,Iter end)
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+Iter write(error_reporter& dev,Iter begin,Iter end)
 {
 	if constexpr(std::same_as<std::iter_value_t<Iter>,char>)
 	{
@@ -81,11 +84,17 @@ constexpr Iter write(error_reporter& dev,Iter begin,Iter end)
 
 constexpr inline void flush(error_reporter& dev){}
 
-constexpr inline auto oreserve(error_reporter& dev,std::size_t size)
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+inline auto oreserve(error_reporter& dev,std::size_t size)
 {
 	return dev.oreserve_impl(size);
 }
-constexpr inline void orelease(error_reporter& dev,char* ptr)
+#if __cpp_constexpr >= 201907L
+	constexpr
+#endif
+inline void orelease(error_reporter& dev,char* ptr)
 {
 	dev.orelease_impl(ptr);
 }
