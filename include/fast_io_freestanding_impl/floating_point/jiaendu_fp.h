@@ -12,7 +12,28 @@ inline std::size_t output_unsigned(Iter str,U value)
 	constexpr std::size_t bytes4{4*sizeof(ch_type)};
 	if constexpr(sizeof(U)==8)
 	{
-		if (value>=1000000000000ULL)
+		if (value>=10000000000000000ULL)
+		{
+			std::uint64_t v4{value/10000000000000000ULL};
+			std::uint64_t remains3{value-v4*10000000000000000ULL};
+			std::uint64_t temp3(remains3/1000000000000ULL);
+			std::uint64_t remains2
+			{remains3-temp3*1000000000000ULL};
+			remains3=temp3;
+			std::uint64_t temp2{remains2};
+			std::uint64_t remains0{remains2/10000};
+			std::uint64_t remains1{remains2/100000000};
+			remains2 = remains1;
+			remains1 = remains0 - remains1*10000;
+			remains0 = temp2 - remains0*10000;
+			*str=static_cast<char8_t>(v4)+u8'0';		
+			memcpy(str + 1,static_tables<ch_type>::table4[remains3].data(),bytes4);
+			memcpy(str + 5,static_tables<ch_type>::table4[remains2].data(),bytes4);
+			memcpy(str + 9,static_tables<ch_type>::table4[remains1].data(),bytes4);
+			memcpy(str + 13,static_tables<ch_type>::table4[remains0].data(),bytes4);
+			return 17;
+		}
+		else if (value>=1000000000000ULL)
 		{
 			std::uint64_t v3{value/1000000000000ULL};
 			std::uint64_t remains2
@@ -117,7 +138,7 @@ inline std::size_t output_unsigned(Iter str,U value)
 	}
 	else
 	{
-		if (value >= 100000000)[[unlikely]]
+		if (value >= 100000000)
 		{
 #if (_WIN64 || __x86_64__ || __ppc64__)
 			std::uint64_t remains0{(static_cast<std::uint64_t>(value) *
@@ -132,8 +153,8 @@ inline std::size_t output_unsigned(Iter str,U value)
 			remains1 = remains0 - remains1*10000;
 			remains0 = value - remains0*10000;
 			*str = static_cast<char8_t>(v2)+u8'0';
-			memcpy(++str,static_tables<ch_type>::table4[remains1].data(),bytes4);
-			memcpy(str += 4,static_tables<ch_type>::table4[remains0].data(),bytes4);
+			memcpy(str + 1,static_tables<ch_type>::table4[remains1].data(),bytes4);
+			memcpy(str + 5,static_tables<ch_type>::table4[remains0].data(),bytes4);
 			return 9;
 		}
 		else if (value >= 10000)
