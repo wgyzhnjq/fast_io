@@ -164,7 +164,7 @@ inline constexpr Iter output_shortest(
 		if constexpr(!std::same_as<floating_type,float>)
 			q-=-(3<r2.e);
 		e10=static_cast<signed_exponent_type>(q);
-		signed_exponent_type const k(floating_trait::pow5_bitcount + pow5bits(q) - 1);
+		signed_exponent_type const k(floating_trait::pow5_inv_bitcount + pow5bits(q) - 1);
 		signed_exponent_type const i(-r2.e+static_cast<signed_exponent_type>(q)+k);
 		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
 			vr=mul_shift_all(r2.m,compute_pow5_inv(q),i,vp,vm,mm_shift);
@@ -175,8 +175,11 @@ inline constexpr Iter output_shortest(
 			vr = mul_pow5_inv_div_pow2(mv, q, i);
 			vp = mul_pow5_inv_div_pow2(mv+2, q, i);
 			vm = mul_pow5_inv_div_pow2(mv-1-mm_shift, q, i);
-			std::int32_t const l = floating_trait::pow5_bitcount + pow5bits(static_cast<std::int32_t>(q - 1)) - 1;
-			last_removed_digit = static_cast<char8_t>(mul_pow5_inv_div_pow2(mv, q - 1, -r2.e + static_cast<std::int32_t>(q) - 1 + l) % 10);
+			if (q != 0 && (vp - 1) / 10 <= vm / 10)
+			{
+				std::int32_t const l = floating_trait::pow5_inv_bitcount + pow5bits(static_cast<std::int32_t>(q - 1)) - 1;
+				last_removed_digit = static_cast<char8_t>(mul_pow5_inv_div_pow2(mv, q - 1, -r2.e + static_cast<std::int32_t>(q) - 1 + l) % 10);
+			}
 		}
 		if(q<=floating_trait::floor_log5)//here
 		{
