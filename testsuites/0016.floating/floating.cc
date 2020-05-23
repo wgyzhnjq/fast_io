@@ -1,7 +1,7 @@
 #include"../../include/fast_io.h"
 
 /*
-Thanks Jsoniter Scala author for providing test suite
+Thanks Jsoniter Scala Andriy Plokhotnyuk author for providing test suite
 https://github.com/plokhotnyuk/jsoniter-scala/blob/e8e246d6b716413d9fe45fc57bf214aaca3d843b/jsoniter-scala-core/shared/src/test/scala/com/github/plokhotnyuk/jsoniter_scala/core/JsonWriterSpec.scala#L488-L692
 Great!
 */
@@ -10,6 +10,22 @@ template<std::floating_point F>
 inline void check(F f)
 {
 	println(f);
+}
+
+template<std::floating_point F>
+inline void test_speciail_case()
+{
+	using lm = std::numeric_limits<F>;
+	println("Special cases:\n"
+	"min():",lm::min(),"\n"
+	"lowest():",lm::lowest(),"\n"
+	"max():",lm::max(),"\n"
+	"epsilon():",lm::epsilon(),"\n"
+	"round_error():",lm::round_error(),"\n"
+	"infinity():",lm::infinity(),"\n"
+	"quiet_NaN():",lm::quiet_NaN(),"\n"
+	"quiet_NaN():",lm::signaling_NaN(),"\n"
+	"denorm_min():",lm::denorm_min());
 }
 
 int main()
@@ -24,9 +40,6 @@ int main()
 	check(9999999.0f);
 	check(0.001f);
 	check(0.0009999999f);
-	check(std::numeric_limits<float>::min());
-	check(std::numeric_limits<float>::lowest());
-	check(std::numeric_limits<float>::max());
 	check(3.3554448E7f);
 	check(8.999999E9f);
 	check(3.4366717E10f);
@@ -60,7 +73,7 @@ int main()
 	check(200.0f);
 	check(3.3554432E7f);
 	check(1.26217745E-29f);
-
+	test_speciail_case<float>();
 	print("\n\n--------------------------\n\n");
 //double
 	check(0.0);
@@ -90,4 +103,5 @@ int main()
 	check(7.1202363472230444E-307);
 	check(3.67301024534615E16);
 	check(5.9604644775390625E-8);
+	test_speciail_case<double>();
 }
