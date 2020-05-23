@@ -24,7 +24,7 @@ inline void test_speciail_case()
 	"round_error():",lm::round_error(),"\n"
 	"infinity():",lm::infinity(),"\n"
 	"quiet_NaN():",lm::quiet_NaN(),"\n"
-	"quiet_NaN():",lm::signaling_NaN(),"\n"
+	"signaling_NaN():",lm::signaling_NaN(),"\n"
 	"denorm_min():",lm::denorm_min());
 }
 
