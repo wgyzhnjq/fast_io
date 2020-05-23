@@ -13,6 +13,7 @@ inline void check(F f)
 
 int main()
 {
+//float
 	check(0.0f);
 	check(-0.0f);
 	check(1.0f);
@@ -58,4 +59,34 @@ int main()
 	check(200.0f);
 	check(3.3554432E7f);
 	check(1.26217745E-29f);
+
+	print("\n\n--------------------------\n\n");
+//double
+	check(0.0);
+	check(-0.0);
+	check(1.0);
+	check(-1.0);
+	check(fast_io::bit_cast<double>(0x0010000000000000ULL)); // subnormal
+	check(1.0E7);
+	check(9999999.999999998);
+	check(0.001);
+	check(0.0009999999999999998);
+	check(std::numeric_limits<double>::min());
+	check(std::numeric_limits<double>::lowest());
+	check(std::numeric_limits<double>::max());
+	check(-2.109808898695963E16);
+	check(4.940656E-318);
+	check(1.18575755E-316);
+	check(2.989102097996E-312);
+	check(9.0608011534336E15);
+	check(4.708356024711512E18);
+	check(9.409340012568248E18);
+	check(1.8531501765868567E21);
+	check(-3.347727380279489E33);
+	check(1.9430376160308388E16);
+	check(-6.9741824662760956E19);
+	check(4.3816050601147837E18);
+	check(7.1202363472230444E-307);
+	check(3.67301024534615E16);
+	check(5.9604644775390625E-8);
 }
