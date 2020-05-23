@@ -1,5 +1,6 @@
 #include<random>
 #include<iostream>
+#include<cstring>
 
 int main()
 {
