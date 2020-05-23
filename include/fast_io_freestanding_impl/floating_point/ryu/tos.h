@@ -205,9 +205,9 @@ inline constexpr Iter output_shortest(
 			vr=mul_shift_all(r2.m,pow5<F,true>::split[i],j,vp,vm,mm_shift);
 		else if constexpr(std::same_as<floating_type,float>)
 		{
-			vr = mul_pow5_div_pow2(mv, static_cast<uint32_t>(i), j);
-			vp = mul_pow5_div_pow2(mv+2, static_cast<uint32_t>(i), j);
-			vm = mul_pow5_div_pow2(mv-1-mm_shift, static_cast<uint32_t>(i), j);
+			vr = mul_pow5_div_pow2(mv, static_cast<std::uint32_t>(i), j);
+			vp = mul_pow5_div_pow2(mv+2, static_cast<std::uint32_t>(i), j);
+			vm = mul_pow5_div_pow2(mv-1-mm_shift, static_cast<std::uint32_t>(i), j);
 			if (q != 0 && (vp - 1) / 10 <= vm / 10)
 			{
 				j = static_cast<std::int32_t>(q) - 1 - (pow5bits(i + 1) - floating_trait::pow5_bitcount);
