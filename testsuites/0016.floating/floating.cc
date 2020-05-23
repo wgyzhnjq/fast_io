@@ -3,6 +3,7 @@
 /*
 Thanks Jsoniter Scala author for providing test suite
 https://github.com/plokhotnyuk/jsoniter-scala/blob/e8e246d6b716413d9fe45fc57bf214aaca3d843b/jsoniter-scala-core/shared/src/test/scala/com/github/plokhotnyuk/jsoniter_scala/core/JsonWriterSpec.scala#L488-L692
+Great!
 */
 
 template<std::floating_point F>
