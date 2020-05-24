@@ -16,7 +16,7 @@ int main()
 	{
 	fast_io::timer t("input");
 	fast_io::ibuf_file ibf("obuf_file.txt");
-	for(__uint128_t i{};i!=N;++i)
+	for(std::size_t i{};i!=N;++i)
 		scan(ibf,vec[i]);
 	}
 }
