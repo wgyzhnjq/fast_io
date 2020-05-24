@@ -3,8 +3,23 @@
 namespace fast_io::details
 {
 
-template<std::uint32_t base,bool ryu_mode=false,typename U>
-requires (!std::signed_integral<U>)
+template<my_integral T>
+inline constexpr T compile_time_pow(T base,std::size_t pow)
+{
+	T t=1;
+	for(std::size_t i{};i!=pow;++i)
+		t*=base;
+	return t;
+}
+
+template<my_integral T,std::size_t pow>
+inline constexpr auto compile_pow10()
+{
+	constexpr auto value{compile_time_pow(std::remove_cvref_t<T>(10),pow)};
+	return value;
+}
+
+template<std::uint32_t base,bool ryu_mode=false,my_unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
 	if constexpr(base==10&&sizeof(U)<9)
@@ -100,9 +115,9 @@ inline constexpr T get_int_max()
 	return v;
 }
 template<my_integral T>
-inline constexpr my_make_unsigned_t<T> get_int_max_unsigned()
+inline constexpr auto get_int_max_unsigned()
 {
-	constexpr my_make_unsigned_t<T> v{cal_int_max<T>()};
+	constexpr my_make_unsigned_t<std::remove_cvref_t<T>> v{cal_int_max<std::remove_cvref_t<T>>()};
 	return v;
 }
 template<my_integral T,char8_t base = 10>

@@ -3,7 +3,7 @@
 
 int main()
 {
-	__uint128_t a,b;
+	__int128_t a,b;
 	scan(a,b);
-//	println(a+b);
+	println(a+b);
 }
