@@ -84,26 +84,38 @@ inline constexpr std::size_t chars_len(U value) noexcept
 	}
 }
 
-template<std::unsigned_integral T,char8_t base = 10>
-requires(sizeof(T)<=8)
-inline constexpr std::size_t cal_max_uint_size()
+template<my_integral T>
+inline constexpr my_make_unsigned_t<T> cal_int_max()
 {
-/*
-	if constexpr(8==sizeof(T))
-		return 20;
-	else if constexpr(4==sizeof(T))
-		return 10;
-	else if constexpr(2==sizeof(T))
-		return 5;
-	else if constexpr(1==sizeof(T))
-		return 3;*/
+	my_make_unsigned_t<T> n{};
+	--n;
+	if constexpr(my_signed_integral<T>)
+		n>>=1;
+	return n;
+}
+template<my_integral T>
+inline constexpr T get_int_max()
+{
+	constexpr T v{static_cast<T>(cal_int_max<T>())};
+	return v;
+}
+template<my_integral T>
+inline constexpr my_make_unsigned_t<T> get_int_max_unsigned()
+{
+	constexpr my_make_unsigned_t<T> v{cal_int_max<T>()};
+	return v;
+}
+template<my_integral T,char8_t base = 10>
+inline constexpr std::size_t cal_max_int_size()
+{
 	std::size_t i{};
-	auto n{std::numeric_limits<T>::max()};
+	auto n(get_int_max_unsigned<T>());
 	for(;n;++i)
 		n/=base;
 	return i;
 }
 
-static_assert(cal_max_uint_size<std::uint64_t,10>()==20);
-static_assert(cal_max_uint_size<std::uint32_t,10>()==10);
+static_assert(cal_max_int_size<std::uint64_t,10>()==20);
+static_assert(cal_max_int_size<__uint128_t,10>()==39);
+static_assert(cal_max_int_size<std::uint32_t,10>()==10);
 }

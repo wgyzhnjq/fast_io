@@ -63,7 +63,7 @@ constexpr std::size_t cal_lcv_integer_output_size()
 {
 	return cal_lcv_size_base([]()
 	{
-		return cal_max_uint_size<std::make_unsigned_t<int_type>,base>();
+		return cal_max_int_size<std::make_unsigned_t<int_type>,base>();
 	});
 }
 
@@ -82,7 +82,7 @@ inline constexpr auto process_lcv_integer_output(caiter outiter,T const& storage
 	auto grouping{storage.grouping()};
 	if(grouping.empty())
 		return process_integer_output<base,uppercase>(outiter,value);
-	std::array<char_type,cal_max_uint_size<std::make_unsigned_t<int_type>,base>()> str;
+	std::array<char_type,cal_max_int_size<std::make_unsigned_t<int_type>,base>()> str;
 	auto str_iter(details::process_integer_output<base,uppercase,true>(str.data(),value));
 	constexpr std::size_t buffer_size{cal_lcv_integer_output_size<int_type,base>()};
 	auto buffer_iter{process_lcv_grouping(grouping,str.data(),str_iter,outiter+buffer_size,storage.thousands_sep)};

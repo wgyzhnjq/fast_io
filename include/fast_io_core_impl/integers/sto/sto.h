@@ -4,20 +4,11 @@ namespace fast_io
 {
 namespace details
 {
-template<std::integral intg,char8_t base>
-requires (2<=base&&base<=36)
-inline constexpr std::size_t get_max_size()
-{
-	std::size_t i{};
-	for(auto v(std::numeric_limits<intg>::max());v;++i)
-		v/=base;
-	return i;
-}
 
-template<char8_t base,std::unsigned_integral T>
+template<char8_t base,my_unsigned_integral T>
 inline constexpr void detect_overflow(T const& t,std::size_t length)
 {
-	constexpr std::size_t max_size{get_max_size<T,base>()};
+	constexpr std::size_t max_size{cal_max_int_size<T,base>()};
 	if(max_size<=length)[[unlikely]]
 	{
 		if((max_size<length)|(t<=base))[[unlikely]]
@@ -29,10 +20,10 @@ inline constexpr void detect_overflow(T const& t,std::size_t length)
 	}
 }
 
-template<char8_t base,std::unsigned_integral T>
+template<char8_t base,my_unsigned_integral T>
 inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool sign)
 {
-	constexpr std::size_t max_size{get_max_size<T,base>()};
+	constexpr std::size_t max_size{cal_max_int_size<T,base>()};
 	if(max_size<=length)[[unlikely]]
 	{
 		if((max_size<length)|(t<=base))[[unlikely]]
@@ -41,7 +32,7 @@ inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool 
 #else
 			fast_terminate();
 #endif
-		if(static_cast<T>(static_cast<T>(std::numeric_limits<std::make_signed_t<T>>::max())+sign)<t)
+		if(static_cast<T>(get_int_max_unsigned<T>()+sign)<t)
 #ifdef __cpp_exceptions
 			throw fast_io_text_error("signed overflow");
 #else
@@ -51,12 +42,12 @@ inline constexpr void detect_signed_overflow(T const& t,std::size_t length,bool 
 }
 
 
-template<std::integral T,char8_t base,bool no_dec=false,character_input_stream input>
+template<my_integral T,char8_t base,bool no_dec=false,character_input_stream input>
 inline constexpr T input_base_number(input& in)
 {
 	using unsigned_char_type = std::make_unsigned_t<typename input::char_type>;
-	using unsigned_t = std::make_unsigned_t<std::remove_cvref_t<T>>;
-	if constexpr(std::unsigned_integral<T>)
+	using unsigned_t = my_make_unsigned_t<std::remove_cvref_t<T>>;
+	if constexpr(my_unsigned_integral<T>)
 	{
 		unsigned_t t{};
 		std::size_t length{};
@@ -157,13 +148,13 @@ inline constexpr T input_base_number(input& in)
 }
 }
 
-template<char8_t base,bool uppercase,character_input_stream input,std::integral T>
+template<char8_t base,bool uppercase,character_input_stream input,details::my_integral T>
 inline constexpr void space_scan_define(input& in,manip::base_t<base,uppercase,T> v)
 {
 	v.reference=details::input_base_number<std::remove_cvref_t<T>,base>(in);
 }
 
-template<character_input_stream input,std::integral T>
+template<character_input_stream input,details::my_integral T>
 inline constexpr void space_scan_define(input& in,T& a)
 {
 	a=details::input_base_number<std::remove_cvref_t<T>,10>(in);

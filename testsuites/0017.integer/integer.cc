@@ -130,4 +130,5 @@ int main()
 
 	static_assert(!my_signed_integral<int unsigned>);
 	static_assert(!my_signed_integral<int unsigned&>);
+	auto v{std::numeric_limits<__uint128_t>::max()};
 }

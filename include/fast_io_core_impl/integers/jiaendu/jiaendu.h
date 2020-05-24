@@ -9,12 +9,17 @@ namespace fast_io
 namespace details::jiaendu
 {
 
-template<std::contiguous_iterator Iter,std::unsigned_integral U>
+template<std::contiguous_iterator Iter,my_unsigned_integral U>
+requires (sizeof(U)<=16)
 inline std::size_t output_unsigned(Iter str,U value)
 {
 	using ch_type = std::remove_cvref_t<decltype(*str)>;
 	constexpr std::size_t bytes4{4*sizeof(ch_type)};
-	if constexpr(sizeof(U)==8)
+	if constexpr(sizeof(U)==16)
+	{
+		
+	}
+	else if constexpr(sizeof(U)==8)
 	{
 		if (value>=10000000000000000ULL)
 		{
