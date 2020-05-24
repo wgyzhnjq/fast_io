@@ -264,14 +264,14 @@ inline constexpr T input_base_number(input& in)
 #endif
 				return static_cast<T>(t2);
 			};
-			if(!length)[[unlikely]]
-			{
+			if(sign)
+				return -static_cast<T>(t);
+			else if(!length)[[unlikely]]
 #ifdef __cpp_exceptions
 				throw fast_io_text_error("malformed input");
 #else
 				fast_terminate();
 #endif
-			}
 			return t;
 		}
 		else
