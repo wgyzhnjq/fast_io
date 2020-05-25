@@ -1,6 +1,6 @@
 # fast_io
 
-fast_io is a new header-only (module only in the future) experimental library to replace iostream and cstdio based on C++ 2a feature concepts.
+fast_io is a new C++20 library for extremely fast input/output and aims to replace iostream and cstdio. It is header-only (module only in the future) for easy inclusion in your project. It requires a capable C++20 compiler supporting concepts.
 
 ## Compiler Support
 - VS 16.3
@@ -15,31 +15,30 @@ fast_io is a new header-only (module only in the future) experimental library to
 
 ## Design Goal
 
-  - Fast. As close to system call as possible.
+### Fast. As close to system call as possible.
 
-Locale support optional  
-Zero copy IO
+- Locale support optional  
+- Zero copy IO
 
-  - Safe
+### Safe
 
-No easily misused stuff like std::endl  
-No internal iomanip states (since it creates security issues)  
-Providing RAII for FILE\*&POSIX file id
+- No easily misused stuff like std::endl  
+- No internal iomanip states (since it creates security issues)  
+- Providing RAII for FILE\*&POSIX file id
 
-- Easy to use
+### Easy to use
 
-Unicode/UTF-8 support  
-Compatible with C stdio and C++ iostream  
-Binary serialization for trivially copyable types and C++ standard library containers  
-All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid  
-Support C style io format (fprint). Basic/Lua/Python/etc format (print, scan).
+- Unicode/UTF-8 support  
+- Compatible with C stdio and C++ iostream  
+- Binary serialization for trivially copyable types and C++ standard library containers  
+- All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid  
+- Support C style io format (fprint). Basic/Lua/Python/etc format (print, scan).
 
-- Customizability
+### Customizability
 
-Exception Safe & Exception neutral  
-Native Handle Interface  
-Extremely easy to support custom devices
-
+- Exception Safe & Exception neutral  
+- Native Handle Interface  
+- Extremely easy to support custom devices
 - std::mutex mutex stream
 - Compilation time open mode parse. Supports C style open mode and C++ style open mode.
 - No traits_type and EOF
