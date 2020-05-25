@@ -19,6 +19,13 @@ inline constexpr auto compile_pow10()
 	return value;
 }
 
+template<my_integral T,std::size_t pow>
+inline constexpr auto compile_pow5()
+{
+	constexpr auto value{compile_time_pow(std::remove_cvref_t<T>(5),pow)};
+	return value;
+}
+
 template<std::uint32_t base,bool ryu_mode=false,my_unsigned_integral U>
 inline constexpr std::size_t chars_len(U value) noexcept
 {
@@ -176,6 +183,5 @@ inline constexpr std::size_t cal_max_int_size()
 }
 
 static_assert(cal_max_int_size<std::uint64_t,10>()==20);
-static_assert(cal_max_int_size<__uint128_t,10>()==39);
 static_assert(cal_max_int_size<std::uint32_t,10>()==10);
 }
