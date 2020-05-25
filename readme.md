@@ -1,3 +1,5 @@
+# fast_io
+
 fast_io is a new header-only (module only in the future) experimental library to replace iostream and cstdio based on C++ 2a feature concepts.
 
 ## Compiler Support
@@ -11,37 +13,40 @@ fast_io is a new header-only (module only in the future) experimental library to
 - MacOS
 - Android
 
-## Documentation
-./doxygen/html/index.html
-
-Since C++ 20 has not been released. No standard supporting libraries for concepts, which means a lot of Concepts Definitions are ugly. It will be changed after C++ 20 is officially published.
-
 ## Design Goal
-  0. Custom Devices
-  1. Exception Safe & Exception neutral
-  2. As fast as possible. As close to system call as possible.
-  3. Zero Overhead.
-  4. As safe as possible.
-  5. Binary serialization for trivially copyable types and C++ standard library containers. Serialization methods like JSON are slow and tedious for machines. read/write
-  6. std::mutex mutex stream
-  7. Unicode/UTF-8 support
-  8. Compatible with C stdio and C++ iostream
-  9. Native Handle Interface
-  10. support C style io format (fprint). Basic/Lua/Python/etc format (print, scan). NO LONGER SUPPORTS C++ style io format (<<,>>) since we have varadics templates now. Using operator overloading incurs more overhead including compilation and runtime. I could not do optimization like avoiding multiple locking.
-  11. Compilation time open mode parse. Supports C style open mode and C++ style open mode.
-  12. No internal iomanip states (since it creates security issues)
-  13. Extremely easy to support custom devices
-  14. No easily misused stuff like std::endl
-  15. No integrated locale
-  16. No traits_type and EOF
-  17. All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid
-  18. Providing RAII for FILE*&POSIX file id
-  19. Dynamic Type Support
-  20. Pipe line support
-  21. Zero copy IO
-  22. Cryptography (Under construction) to replace openssl
-  23. debugging IO
-  24. GUI debugger (calling win32 apis MessageBox for those who are doing none console programming)
+
+  - Fast. As close to system call as possible.
+
+Locale support optional  
+Zero copy IO
+
+  - Safe
+
+No easily misused stuff like std::endl  
+No internal iomanip states (since it creates security issues)  
+Providing RAII for FILE\*&POSIX file id
+
+- Easy to use
+
+Unicode/UTF-8 support  
+Compatible with C stdio and C++ iostream  
+Binary serialization for trivially copyable types and C++ standard library containers  
+All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid  
+Support C style io format (fprint). Basic/Lua/Python/etc format (print, scan).
+
+- Customizability
+
+Exception Safe & Exception neutral  
+Native Handle Interface  
+Extremely easy to support custom devices
+
+- std::mutex mutex stream
+- Compilation time open mode parse. Supports C style open mode and C++ style open mode.
+- No traits_type and EOF
+- Dynamic Type Support
+- Pipe line support
+- Cryptography (Under construction) to replace openssl
+- debugging IO
 
 ## Post C++20 Plan
   1. Module support
@@ -56,12 +61,18 @@ Since C++ 20 has not been released. No standard supporting libraries for concept
 
 I'm aiming for this to be in the C++ standard library in the future :)
 
-## How to use this library? 
+## Getting Started 
 Please see examples in the examples folder.
 
 compile option:
     
 `g++ -o example example.cc -O2 -std=c++2a -fconcepts`
+
+## Documentation
+
+./doxygen/html/index.html
+
+Since C++ 20 has not been released. No standard supporting libraries for concepts, which means a lot of Concepts Definitions are ugly. It will be changed after C++ 20 is officially published.
 
 ## Benchmarks
 
