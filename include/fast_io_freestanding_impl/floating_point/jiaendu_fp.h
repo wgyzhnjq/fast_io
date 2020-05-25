@@ -21,7 +21,7 @@ inline std::size_t output_unsigned(Iter str,U value)
 			return offset+19;
 		}
 		else
-			return output_unsigned(str,static_cast<std::uint64_t>(value));
+			return fast_io::details::jiaendu::output_unsigned(str,static_cast<std::uint64_t>(value));
 	}
 	else if constexpr(sizeof(U)==8)
 	{

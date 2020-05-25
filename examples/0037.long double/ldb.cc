@@ -2,6 +2,6 @@
 
 int main()
 {
-	long double d(0.5);
+	long double d(435.4362346);
 	println(d);
 }

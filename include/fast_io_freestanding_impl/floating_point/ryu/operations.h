@@ -150,7 +150,8 @@ constexpr inline std::array<std::uint64_t,4> generic_compute_pow5(std::uint32_t 
 constexpr __uint128_t mul_shift_generic(__uint128_t const m,std::array<std::uint64_t,4> const& mul,std::int32_t const j)
 {
 	std::array<std::uint64_t,2> a{static_cast<std::uint64_t>(m),static_cast<std::uint64_t>(m>>64)};
-	return mul_128_256_shift(a, mul, j, 0).front();
+	auto res{mul_128_256_shift(a, mul, j, 0)};
+	return (static_cast<__uint128_t>(res[1])<<64)|res.front();
 }
 
 #endif

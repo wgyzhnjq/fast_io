@@ -108,16 +108,28 @@ inline constexpr auto easy_case(Iter result,bool sign, mantissaType const& manti
 template<std::floating_point floating,bool ignore_exp0=false,my_unsigned_integral mantissaType,std::signed_integral exponentType>
 inline constexpr unrep<mantissaType,exponentType> init_rep(mantissaType const& mantissa,exponentType const& exponent)
 {
-	if constexpr(!ignore_exp0)
+	if constexpr(sizeof(floating)==16)
 	{
-		if(!exponent)
-			return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits)};
+		if constexpr(!ignore_exp0)
+		{
+			if(!exponent)
+				return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits)};
+		}
+		return {mantissa,static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
+	}	
+	else
+	{
+		if constexpr(!ignore_exp0)
+		{
+			if(!exponent)
+				return {mantissa,1-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits)};
+		}
+		return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
+			static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 	}
-	return {static_cast<mantissaType>((static_cast<mantissaType>(1)<<floating_traits<floating>::mantissa_bits)|mantissa),
-		static_cast<exponentType>(exponent-static_cast<exponentType>(floating_traits<floating>::bias+floating_traits<floating>::mantissa_bits))};
 }
 
-template<bool uppercase_e=false,std::signed_integral T,std::random_access_iterator Iter>
+template<bool uppercase_e=false,bool four_digits=false,std::signed_integral T,std::random_access_iterator Iter>
 requires std::same_as<T,std::int32_t>
 inline constexpr Iter output_exp(T exp,Iter result)
 {
@@ -139,9 +151,39 @@ inline constexpr Iter output_exp(T exp,Iter result)
 	}
 	using char_type = std::remove_reference_t<decltype(*result)>;
 	std::make_unsigned_t<T> unsigned_exp(exp);
+#ifdef FAST_IO_OPTIMIZE_SIZE
+	std::size_t len{2};
+	if constexpr(four_digits)
+	{
+		if(1000<=unsigned_exp)[[unlikely]]
+			len=4;
+		else if(100<=unsigned_exp)[[unlikely]]
+			len=3;
+	}
+	else
+	{
+		if(100<=unsigned_exp)[[unlikely]]
+			len=3;
+	}
+	auto str{result+len};
+	for(std::size_t i{};i!=len;++i)
+	{
+		std::make_unsigned_t<T> const temp(unsigned_exp/10);
+		char_type const res(unsigned_exp%10);
+		*--str=u8'0'+res;
+		unsigned_exp=temp;
+	}
+	return result+len;
+#else
+	if constexpr(four_digits)
+	{
+	if(1000<=unsigned_exp)[[unlikely]]
+		return my_copy_n(jiaendu::static_tables<char_type>::table4[unsigned_exp].data(),4,result);
+	}
 	if(100<=unsigned_exp)[[unlikely]]
 		return my_copy_n(jiaendu::static_tables<char_type>::table3[unsigned_exp].data(),3,result);
 	return my_copy_n(jiaendu::static_tables<char_type>::table2[unsigned_exp].data(),2,result);
+#endif
 }
 
 template<char32_t dec,bool scientific = false,bool uppercase_e=false,std::random_access_iterator Iter,std::floating_point F>
