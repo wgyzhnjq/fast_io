@@ -3,7 +3,7 @@
 namespace fast_io::details::ryu
 {
 
-template<std::floating_point floating,std::unsigned_integral mantissaType,std::signed_integral exponentType>
+template<std::floating_point floating,my_unsigned_integral mantissaType,std::signed_integral exponentType>
 inline constexpr unrep<mantissaType,exponentType> init_repm2(mantissaType const& mantissa,exponentType const& exponent)
 {
 	if(!exponent)
@@ -162,12 +162,12 @@ inline constexpr Iter output_shortest(
 	{
 		exponent_type q(log10_pow2(r2.e));
 		if constexpr(!std::same_as<floating_type,float>)
-			q-=-(3<r2.e);
+			q-=(3<r2.e);
 		e10=static_cast<signed_exponent_type>(q);
 		signed_exponent_type const k(floating_trait::pow5_inv_bitcount + pow5bits(q) - 1);
 		signed_exponent_type const i(-r2.e+static_cast<signed_exponent_type>(q)+k);
 		if constexpr(std::same_as<std::remove_cvref_t<F>,long double>)
-			vr=mul_shift_all(r2.m,compute_pow5_inv(q),i,vp,vm,mm_shift);
+			vr=mul_shift_all(r2.m,generic_compute_pow5_inv(q),i,vp,vm,mm_shift);
 		else if constexpr(std::same_as<floating_type,double>)
 			vr=mul_shift_all(r2.m,pow5<F,true>::inv_split[q],i,vp,vm,mm_shift);
 		else if constexpr(std::same_as<floating_type,float>)
@@ -196,14 +196,14 @@ inline constexpr Iter output_shortest(
 		exponent_type abs_e2(static_cast<exponent_type>(-r2.e));
 		exponent_type q(log10_pow5(abs_e2));
 		if constexpr(!std::same_as<floating_type,float>)
-			q-=1<abs_e2;	
+			q-=1<abs_e2;
 		signed_exponent_type const signed_q(static_cast<signed_exponent_type>(q));
 		e10=signed_q+r2.e;
 		signed_exponent_type const i(-r2.e-signed_q);
 		signed_exponent_type const k(pow5bits(i)-floating_trait::pow5_bitcount);
 		signed_exponent_type j(signed_q-k);
 		if constexpr(std::same_as<floating_type,long double>)
-			vr=mul_shift_all(r2.m,compute_pow5(i),j,vp,vm,mm_shift);
+			vr=mul_shift_all(r2.m,generic_compute_pow5(i),j,vp,vm,mm_shift);
 		else if constexpr(std::same_as<floating_type,double>)
 			vr=mul_shift_all(r2.m,pow5<F,true>::split[i],j,vp,vm,mm_shift);
 		else if constexpr(std::same_as<floating_type,float>)

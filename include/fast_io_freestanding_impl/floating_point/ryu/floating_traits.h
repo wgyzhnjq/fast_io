@@ -15,7 +15,7 @@ struct floating_traits<float>
 	using mantissa_type = std::uint32_t;
 	using exponent_type = std::uint32_t;
 	static inline constexpr exponent_type exponent_bits = 8;
-	static inline constexpr std::uint32_t mantissa_bits = sizeof(float)*8-1-exponent_bits;
+	static inline constexpr exponent_type mantissa_bits = sizeof(float)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
 	static inline constexpr exponent_type pow5_inv_bitcount= 59;
@@ -32,7 +32,7 @@ struct floating_traits<double>
 	using mantissa_type = std::uint64_t;
 	using exponent_type = std::uint32_t;
 	static inline constexpr exponent_type exponent_bits = 11;
-	static inline constexpr std::uint32_t mantissa_bits = sizeof(double)*8-1-exponent_bits;
+	static inline constexpr exponent_type mantissa_bits = sizeof(double)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
 	static inline constexpr exponent_type pow5_inv_bitcount= 125;
@@ -51,11 +51,11 @@ struct floating_traits<long double>
 	using mantissa_type = __uint128_t;
 	using exponent_type = std::uint32_t;
 	static inline constexpr exponent_type exponent_bits = 15;
-	static inline constexpr std::uint32_t mantissa_bits = sizeof(long double)*8-1-exponent_bits;
+	static inline constexpr exponent_type mantissa_bits = sizeof(long double)*8-1-exponent_bits;
 	static inline constexpr exponent_type exponent_max = (static_cast<exponent_type>(1)<<exponent_bits)-1;
 	static inline constexpr exponent_type bias = (static_cast<exponent_type>(1)<<(exponent_bits - 1)) - 1;
-	static inline constexpr std::size_t pow5_inv_bitcount= 249;
-	static inline constexpr std::size_t pow5_bitcount= 249;
+	static inline constexpr exponent_type pow5_inv_bitcount= 249;
+	static inline constexpr exponent_type pow5_bitcount= 249;
 	static inline constexpr exponent_type floor_log5 = 55;
 	static inline constexpr exponent_type bound = 127;//ryu to do. use a tigher bound
 	static inline constexpr exponent_type digits10=21;

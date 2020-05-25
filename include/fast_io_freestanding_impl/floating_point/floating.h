@@ -14,10 +14,20 @@ namespace details
 template<std::floating_point fp_type,manip::floating_formats fm>
 constexpr std::size_t cal_floating_len()
 {
+	if constexpr(std::same_as<std::remove_cvref_t<fp_type>,long double>&&8<sizeof(long double))
+	{
+		if constexpr(fm==manip::floating_formats::general||fm==manip::floating_formats::scientific)
+			return 60;
+		else if constexpr(fm==manip::floating_formats::fixed)
+			return 16384;//??Is that enough? To verify
+	}
+	else
+	{
 	if constexpr(fm==manip::floating_formats::general||fm==manip::floating_formats::scientific)
 		return 30;
 	else if constexpr(fm==manip::floating_formats::fixed)
 		return 350;
+	}
 }
 }
 
