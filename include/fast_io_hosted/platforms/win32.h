@@ -787,32 +787,32 @@ inline constexpr std::uint32_t win32_stderr_number(-12);
 
 inline win32_io_observer win32_stdin()
 {
-	return win32_io_observer{(void*)-80};
+	return win32_io_observer{(void*)88};
 }
 
 inline win32_io_observer win32_stdout()
 {
-	return win32_io_observer{(void*)-88};
+	return win32_io_observer{(void*)92};
 }
 
 inline win32_io_observer win32_stderr()
 {
-	return win32_io_observer{(void*)-96};
+	return win32_io_observer{(void*)96};
 }
 
 inline win32_io_observer native_stdin()
 {
-	return win32_io_observer{(void*)-80};
+	return win32_stdin();
 }
 
 inline win32_io_observer native_stdout()
 {
-	return win32_io_observer{(void*)-88};
+	return win32_stdout();
 }
 
 inline win32_io_observer native_stderr()
 {
-	return win32_io_observer{(void*)-96};
+	return win32_stderr();
 }
 
 template<output_stream output,std::integral intg>
