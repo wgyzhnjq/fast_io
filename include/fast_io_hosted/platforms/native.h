@@ -13,9 +13,9 @@
 #if defined(__linux__)
 #ifdef __x86_64__
 #include"linux/amd64.h"
+#endif
+#endif
 #include"linux/system_call.h"
-#endif
-#endif
 #include"posix.h"
 #ifdef _POSIX_C_SOURCE
 #include"posix_mapping.h"
