@@ -749,19 +749,34 @@ inline std::conditional_t<report_einval,std::pair<std::uintmax_t,bool>,std::uint
 
 #endif
 
-inline constexpr posix_io_handle posix_stdin()
+inline constexpr posix_io_observer posix_stdin()
 {
-	return posix_io_handle(posix_stdin_number);
+	return posix_io_observer(posix_stdin_number);
 }
-inline constexpr posix_io_handle posix_stdout()
+inline constexpr posix_io_observer posix_stdout()
 {
-	return posix_io_handle(posix_stdout_number);
+	return posix_io_observer(posix_stdout_number);
 } 
-inline constexpr posix_io_handle posix_stderr()
+inline constexpr posix_io_observer posix_stderr()
 {
-	return posix_io_handle(posix_stderr_number);
+	return posix_io_observer(posix_stderr_number);
+}
+#if !defined(__WINNT__) && !defined(_MSC_VER)
+inline constexpr posix_io_observer native_stdin()
+{
+	return  posix_io_observer(posix_stdin_number);
 }
 
+inline constexpr posix_io_observer native_stdout()
+{
+	return posix_io_observer(posix_stdout_number);
+}
+
+inline constexpr posix_io_observer native_stderr()
+{
+	return posix_io_observer(posix_stderr_number);
+}
+#endif
 template<output_stream output,std::integral intg>
 inline constexpr void print_define(output& out,basic_posix_io_observer<intg> iob)
 {
