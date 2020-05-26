@@ -787,17 +787,17 @@ inline constexpr std::uint32_t win32_stderr_number(-12);
 
 inline win32_io_observer win32_stdin()
 {
-	return win32_io_observer{(void*)88};
+	return win32_io_observer{fast_io::win32::GetStdHandle(-10)};
 }
 
 inline win32_io_observer win32_stdout()
 {
-	return win32_io_observer{(void*)92};
+	return win32_io_observer{fast_io::win32::GetStdHandle(-11)};
 }
 
 inline win32_io_observer win32_stderr()
 {
-	return win32_io_observer{(void*)96};
+	return win32_io_observer{fast_io::win32::GetStdHandle(-12)};
 }
 
 inline win32_io_observer native_stdin()

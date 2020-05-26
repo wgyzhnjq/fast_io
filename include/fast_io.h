@@ -7,15 +7,9 @@
 namespace fast_io
 {
 
-#if defined(__WINNT__) || defined(_MSC_VER)
-static inline native_io_observer in(win32_stdin());
-static inline native_io_observer out(win32_stdout());
-static inline native_io_observer err(win32_stderr());
-#else
-static inline constexpr native_io_observer in(posix_stdin());
-static inline constexpr native_io_observer out(posix_stdout());
-static inline constexpr native_io_observer err(posix_stderr());
-#endif
+static inline constexpr posix_io_observer in(posix_stdin());
+static inline constexpr posix_io_observer out(posix_stdout());
+static inline constexpr posix_io_observer err(posix_stderr());
 
 using log_type = basic_obuf<native_io_observer>;
 inline auto out_buf()
