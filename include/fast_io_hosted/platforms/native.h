@@ -73,18 +73,4 @@ using basic_native_io_observer = basic_posix_io_observer<ch_type>;
 
 #endif
 
-
-inline native_io_handle native_stdin()
-{
-	return native_io_handle{native_stdin_number};
-}
-inline native_io_handle native_stdout()
-{
-	return native_io_handle{native_stdout_number};
-} 
-inline native_io_handle native_stderr()
-{
-	return native_io_handle{native_stderr_number};
-}
-
 }
