@@ -8,9 +8,11 @@ namespace fast_io
 {
 
 #if defined(__WINNT__) || defined(_MSC_VER)
+static inline native_io_observer in(win32_stdin());
 static inline native_io_observer out(win32_stdout());
 static inline native_io_observer err(win32_stderr());
 #else
+static inline constexpr native_io_observer in(posix_stdin());
 static inline constexpr native_io_observer out(posix_stdout());
 static inline constexpr native_io_observer err(posix_stderr());
 #endif
