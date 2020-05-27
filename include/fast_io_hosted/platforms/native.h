@@ -66,8 +66,9 @@ using wnative_io_observer = wposix_io_observer;
 using wnative_io_handle = wposix_io_handle;
 using wnative_file = wposix_file;
 using wnative_pipe = wposix_pipe;
+#ifdef _POSIX_C_SOURCE
 using native_file_map = posix_file_map;
-
+#endif
 template<std::integral ch_type>
 using basic_native_io_observer = basic_posix_io_observer<ch_type>;
 

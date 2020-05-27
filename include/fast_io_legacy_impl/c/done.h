@@ -36,8 +36,9 @@ inline void write(basic_c_io_observer_unlocked<T> cfhd,Iter begin,Iter end)
 #endif	
 }
 
-
+/*
 static_assert(buffer_io_stream<c_io_observer_unlocked>);
 static_assert(buffer_io_stream<wc_io_observer_unlocked>);
 static_assert(!buffer_io_stream<basic_c_io_observer_unlocked<char8_t>>);
+*/
 }

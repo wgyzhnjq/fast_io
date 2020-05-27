@@ -705,7 +705,10 @@ inline constexpr void print_define(output& out,basic_c_io_observer<intg> iob)
 #include"msvcrt.h"
 #elif defined(__GLIBC__)
 #include"glibc.h"
+#elif defined(__MUSL__)
+#include"musl.h"
 #else
 #include"general.h"
 #endif
+
 #include"done.h"

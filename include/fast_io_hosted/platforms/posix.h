@@ -9,10 +9,6 @@
 #ifdef __linux__
 #include<sys/sendfile.h>
 #endif
-#ifdef _POSIX_C_SOURCE
-#include<sys/ioctl.h>
-#endif
-
 
 namespace fast_io
 {
@@ -367,17 +363,19 @@ inline decltype(auto) io_control(basic_posix_io_observer<ch_type> h,Args&& ...ar
 	return io_control(static_cast<basic_win32_io_observer<ch_type>>(h),std::forward<Args>(args)...);
 }
 #else
+
+extern "C" int ioctl(int fd, unsigned long request, ...) noexcept;
 template<std::integral ch_type,typename... Args>
 requires requires(basic_posix_io_observer<ch_type> h,Args&& ...args)
 {
-	::ioctl(h.native_handle(),std::forward<Args>(args)...);
+	ioctl(h.native_handle(),std::forward<Args>(args)...);
 }
 inline void io_control(basic_posix_io_observer<ch_type> h,Args&& ...args)
 {
 #if defined(__linux__)&&defined(__x86_64__)
 	system_call_throw_error(system_call<16,int>(h.native_handle(),std::forward<Args>(args)...));
 #else
-	if(::ioctl(h.native_handle(),std::forward<Args>(args)...)==-1)
+	if(ioctl(h.native_handle(),std::forward<Args>(args)...)==-1)
 	{
 #ifdef __cpp_exceptions
 		throw posix_error();
