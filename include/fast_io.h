@@ -27,7 +27,7 @@ using in_buf_type = basic_ibuf<native_io_observer>;
 inline auto in_buf()
 {
 	native_io_handle hd{native_stdin_number};
-	return log_type(hd);
+	return in_buf_type(hd);
 }
 
 }
