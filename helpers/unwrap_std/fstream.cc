@@ -1,7 +1,9 @@
 #include<fstream>
+#include<cstddef>
 
 int main()
 {
 	std::ofstream fout("fst.txt",std::ofstream::binary);
-	fout<<3;
+	std::size_t sz(100);
+	fout<<'\n';
 }
