@@ -80,3 +80,84 @@ See Wiki Page: https://github.com/expnkx/fast_io/wiki
 
 ## Benchmarks
 
+
+1. I/O 10M integers
+
+Goal: Print out ten million integers from 0 to 10M to file. Then reopen that file to scan back.
+
+All benchmarks are in benchmarks/0000.10m_size_t/unit.
+
+Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64, or it performs horribly.
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |                                                      |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |      Input time       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| stdio.h(fprintf/fscanf)        |      2.412987s          |   5.607791s           |                                                      |
+| fstream                        |      0.462012s          |   1.192s              |                                                      |
+| fstream with rdbuf.sputc trick |      0.33895s           |   1.170173s           |                                                      |
+| fast_io::i/obuf_file           |      0.04903s           |   0.080996s           |                                                      |
+| fast_io::i/obuf_file_mutex     |      0.146064s          |   0.113155s           | thread safe                                          |
+| c_locale_i/obuf_file ("C")     |      0.065988s          |   0.086012s           | imbued with locale, locale "C"                       |
+| c_locale_i/obuf_file local     |      0.153995s          |   Meaningless         | imbued with locale, locale ""                        |
+| fmt::format_int+obuf_file      |      0.122999s          |   Meaningless         |                                                      |
+| fmt::format_int+ofstream       |      0.209055s          |   Meaningless         |                                                      |
+| fmt::format+ofstream           |      0.548s             |   Meaningless         | fmt makes things slower                              |
+| fmt::print                     |      0.663996s          |   Meaningless         | fmt makes things slower                              |
+| std::to_chars+obuf_file        |      0.12s              |   Meaningless         |                                                      |
+| std::to_chars+ofstream         |      0.192s             |   Meaningless         |                                                      |
+| fast_io::c_file_unlocked       |      0.098999s          |   0.126003s           | I hacked MSVCRT's FILE* implementation               |
+| fast_io::c_file                |      0.298988s          |   0.318001s           | Thread Safe. I hacked MSVCRET's FILE* implementation |
+| fast_io::filebuf_file          |      0.048999s          |   0.081s              | I hacked libstdc++'s streambuf/filebuf implementation|
+|-----------------------------------------------------------------------------------------------------------------------------------------|
+
+
+Run the same test on MSVC 19.26.28805.
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |      Input time       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| stdio.h(fprintf/fscanf)        |      1.5353597s         |   1.4157233s          |                                                      |
+| fstream                        |      3.6350262s         |   3.8420339s          |                                                      |
+| fstream with rdbuf.sputc trick |      3.3735902s         |   3.8145566s          |                                                      |
+| fast_io::i/obuf_file           |      0.0631433s         |   0.1030554s          |                                                      |
+| fast_io::i/obuf_file_mutex     |      0.2190659s         |   0.2485886s          | thread safe                                          |
+| std::to_chars+obuf_file        |      0.1641641s         |   Meaningless         |                                                      |
+| std::to_chars+ofstream         |      0.5461922s         |   Meaningless         |                                                      |
+| fast_io::c_file_unlocked       |      0.1102575s         |   0.2399757s          | I hacked Universal CRT's FILE* implementation        |
+| fast_io::c_file                |      0.2034755s         |   0.2621148s          | Thread Safe. I hacked UCRT's FILE* implementation    |
+| fast_io::filebuf_file          |      0.126661s          |   0.2378803s          | I hacked MSVC STL's streambuf/filebuf implementation |
+|-----------------------------------------------------------------------------------------------------------------------------------------|
+
+
+You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can improve FILE* and fstream's performance. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
+
+2. Output 10M double in round-trip mode with Ryu algorithm
+We only perform this test for MSVC since only msvc's charconv implements it. Yes. fast_io defeats msvc's charconv for over 20% for running the same algorithm.
+
+Run the same test on MSVC 19.26.28805.
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |      Input time       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| i/obuf_file                    |      0.4653818s         |   Meaningless         |                                                      |
+| charconv + obuf_file           |      0.6011s            |   Meaningless         |                                                      |
+|-----------------------------------------------------------------------------------------------------------------------------------------|
+
+3. Raw I/O Performance
+
+Output 100000000x "Hello World\n"
+Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |                                                      |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |                       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| fwrite                         |      2.625055s          |                       |                                                      |
+| fstream                        |      1.013001s          |                       |                                                      |
+| fast_io::obuf_file             |      0.815372s          |                       |                                                      |
+| fast_io::c_file_unlocked       |      1.28944s           |   0.126003s           | I hacked MSVCRT's FILE* implementation               |
+| fast_io::c_file                |      3.645965s          |   0.318001s           | Thread Safe. I hacked MSVCRET's FILE* implementation |
+|-----------------------------------------------------------------------------------------------------------------------------------------|
