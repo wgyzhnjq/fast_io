@@ -12,8 +12,7 @@ int main()
 	auto& rdbuf(*fout.rdbuf());
 	for(std::size_t i{};i!=N;++i)
 	{
-		fout<<i;
-		rdbuf.sputc('\n');
+		fout<<i<<'\n';
 	}
 	}
 	std::vector<std::size_t> vec(N);

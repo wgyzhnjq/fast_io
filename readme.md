@@ -37,6 +37,7 @@ Replace stdio.h and iostream
 - All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid  
 - Basic/Lua/Python/etc format (print, scan). No support to C and C++ since they are security hazards.
 - Static I/O manipulator
+- Provide APIs to expose the internal implementation of C FILE* and C++ stream.
 
 ### Customizability
 
@@ -89,7 +90,7 @@ All benchmarks are in benchmarks/0000.10m_size_t/unit.
 
 Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64, or it performs horribly.
 ------------------------------------------------------------------------------------------------------------------------------------------|
-| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |                                                      |
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
@@ -130,12 +131,34 @@ Run the same test on MSVC 19.26.28805.
 | fast_io::filebuf_file          |      0.126661s          |   0.2378803s          | I hacked MSVC STL's streambuf/filebuf implementation |
 |-----------------------------------------------------------------------------------------------------------------------------------------|
 
+Run the same test on GCC 11. glibc + libstdc++
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |       Linux             |  GCC 11.0.0           |         glibc + libstdc++                            |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |      Input time       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| stdio.h(fprintf/fscanf)        |      0.532792935s       |   0.591907111s        |                                                      |
+| fstream with rdbuf.sputc trick |      0.318896068s       |   0.429406415s        |                                                      |
+| fast_io::i/obuf_file           |      0.050300857s       |   0.065372395s        |                                                      |
+| fast_io::i/obuf_file_mutex     |      0.05290654s        |   0.083040518s        | thread safe                                          |
+| c_locale_i/obuf_file ("C")     |      0.051939052s       |   0.065820056s        | imbued with locale, locale "C"                       |
+| c_locale_i/obuf_file local     |      0.162406082s       |   Meaningless         | imbued with locale, locale ""                        |
+| std::to_chars+obuf_file        |      0.115453587s       |   Meaningless         |                                                      |
+| fmt::format_int+obuf_file      |      0.1183587s         |   Meaningless         |                                                      |
+| fmt::format_int+ofstream       |      0.195914384s       |   Meaningless         |                                                      |
+| fmt::format+ofstream           |      0.633590975s       |   Meaningless         | fmt makes things slower                              |
+| fmt::print                     |      0.495270371s       |   Meaningless         | fmt makes things slower                              |
+| boost::iostreams               |      0.400906063s       |   0.444717051s        | Using boost iostreams does not make your code faster |
+| fast_io::c_file_unlocked       |      0.060076723s       |   0.073299716s        | I hacked glibc's FILE* implementation                |
+| fast_io::c_file                |      0.092490191s       |   0.104545535s        | Thread Safe. I hacked glibc's FILE* implementation   |
+| fast_io::filebuf_file          |      0.052251608s       |   0.06655806s         | I hacked libstdc++'s streambuf/filebuf implementation|
+|-----------------------------------------------------------------------------------------------------------------------------------------|
 
-You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can improve FILE* and fstream's performance. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
+You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can even improve FILE* and fstream's performance for 10x depending on platforms since I use concepts to abstract them all. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
 
 2. Output 10M double in round-trip mode with Ryu algorithm
 We only perform this test for MSVC since only msvc's charconv implements it. Yes. fast_io defeats msvc's charconv for over 20% for running the same algorithm.
-
+All benchmarks are in benchmarks/0001.10m_double/charconv.
 Run the same test on MSVC 19.26.28805.
 ------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
@@ -148,16 +171,30 @@ Run the same test on MSVC 19.26.28805.
 
 3. Raw I/O Performance
 
+All benchmarks are in benchmarks/0014.file_io/file_io.
 Output 100000000x "Hello World\n"
 Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
 ------------------------------------------------------------------------------------------------------------------------------------------|
-| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |                                                      |
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |                       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | fwrite                         |      2.625055s          |                       |                                                      |
 | fstream                        |      1.013001s          |                       |                                                      |
 | fast_io::obuf_file             |      0.815372s          |                       |                                                      |
-| fast_io::c_file_unlocked       |      1.28944s           |   0.126003s           | I hacked MSVCRT's FILE* implementation               |
-| fast_io::c_file                |      3.645965s          |   0.318001s           | Thread Safe. I hacked MSVCRET's FILE* implementation |
+| fast_io::c_file_unlocked       |      1.28944s           |                       | I hacked MSVCRT's FILE* implementation               |
+| fast_io::c_file                |      3.645965s          |                       | Thread Safe. I hacked MSVCRT's FILE* implementation  |
+|-----------------------------------------------------------------------------------------------------------------------------------------|
+
+------------------------------------------------------------------------------------------------------------------------------------------|
+| Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
+|----------------------------------------------------------------------------------|------------------------------------------------------|
+| Method                         |       Output time       |                       |   Comment                                            |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+| fwrite                         |      1.6696552s         |                       |                                                      |
+| fstream                        |      1.4407874s         |                       |                                                      |
+| fast_io::obuf_file             |      0.8442202s         |                       |                                                      |
+| fast_io::obuf_file_mutex       |      0.8442202s         |                       | Thread safe                                          |
+| fast_io::c_file_unlocked       |      0.922571s          |                       | I hacked glibc's FILE* implementation                |
+| fast_io::c_file                |      1.3223464s         |                       | Thread Safe. I hacked glibc's FILE* implementation   |
 |-----------------------------------------------------------------------------------------------------------------------------------------|
