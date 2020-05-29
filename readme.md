@@ -89,6 +89,8 @@ Goal: Print out ten million integers from 0 to 10M to file. Then reopen that fil
 All benchmarks are in benchmarks/0000.10m_size_t/unit.
 
 Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64, or it performs horribly.
+
+
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -112,6 +114,8 @@ Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 b
 
 
 Run the same test on MSVC 19.26.28805.
+
+
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -126,9 +130,10 @@ Run the same test on MSVC 19.26.28805.
 | fast_io::c_file_unlocked       |      0.1102575s         |   0.2399757s          | I hacked Universal CRT's FILE* implementation        |
 | fast_io::c_file                |      0.2034755s         |   0.2621148s          | Thread Safe. I hacked UCRT's FILE* implementation    |
 | fast_io::filebuf_file          |      0.126661s          |   0.2378803s          | I hacked MSVC STL's streambuf/filebuf implementation |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
 
 Run the same test on GCC 11. glibc + libstdc++
+
+
 | Platform                       |       Linux             |  GCC 11.0.0           |         glibc + libstdc++                            |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -155,6 +160,8 @@ You can see fast_io can also boost the performance of existing facilities for 10
 We only perform this test for MSVC since only msvc's charconv implements it. Yes. fast_io defeats msvc's charconv for over 20% for running the same algorithm.
 All benchmarks are in benchmarks/0001.10m_double/charconv.
 Run the same test on MSVC 19.26.28805.
+
+
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -167,6 +174,8 @@ Run the same test on MSVC 19.26.28805.
 All benchmarks are in benchmarks/0014.file_io/file_io.
 Output 100000000x "Hello World\n"
 Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
+
+
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |                       |   Comment                                            |
@@ -176,6 +185,8 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 | fast_io::obuf_file             |      0.815372s          |                       |                                                      |
 | fast_io::c_file_unlocked       |      1.28944s           |                       | I hacked MSVCRT's FILE* implementation               |
 | fast_io::c_file                |      3.645965s          |                       | Thread Safe. I hacked MSVCRT's FILE* implementation  |
+
+
 
 | Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
