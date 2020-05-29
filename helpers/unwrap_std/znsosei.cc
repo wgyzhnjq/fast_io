@@ -22,3 +22,11 @@ extern "C" std::ostream& __wrap__ZNSo9_M_insertIyEERSoT_(std::ostream& out,unsig
 {
 	return fast_io::wrapped_function(out,v);
 }
+
+extern "C" void __wrap__ZNSt14basic_ofstreamIcSt11char_traitsIcEED1Ev(std::ofstream& out)
+{
+//	fast_io::filebuf_io_observer fiob{out.rdbuf()};
+
+//	static_cast<>
+//	fast_io::c_file cf{static_cast<>};
+}
