@@ -89,7 +89,6 @@ Goal: Print out ten million integers from 0 to 10M to file. Then reopen that fil
 All benchmarks are in benchmarks/0000.10m_size_t/unit.
 
 Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64, or it performs horribly.
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -110,11 +109,9 @@ Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 b
 | fast_io::c_file_unlocked       |      0.098999s          |   0.126003s           | I hacked MSVCRT's FILE* implementation               |
 | fast_io::c_file                |      0.298988s          |   0.318001s           | Thread Safe. I hacked MSVCRET's FILE* implementation |
 | fast_io::filebuf_file          |      0.048999s          |   0.081s              | I hacked libstdc++'s streambuf/filebuf implementation|
-|-----------------------------------------------------------------------------------------------------------------------------------------|
 
 
 Run the same test on MSVC 19.26.28805.
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -132,7 +129,6 @@ Run the same test on MSVC 19.26.28805.
 |-----------------------------------------------------------------------------------------------------------------------------------------|
 
 Run the same test on GCC 11. glibc + libstdc++
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |       Linux             |  GCC 11.0.0           |         glibc + libstdc++                            |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
@@ -152,7 +148,6 @@ Run the same test on GCC 11. glibc + libstdc++
 | fast_io::c_file_unlocked       |      0.060076723s       |   0.073299716s        | I hacked glibc's FILE* implementation                |
 | fast_io::c_file                |      0.092490191s       |   0.104545535s        | Thread Safe. I hacked glibc's FILE* implementation   |
 | fast_io::filebuf_file          |      0.052251608s       |   0.06655806s         | I hacked libstdc++'s streambuf/filebuf implementation|
-|-----------------------------------------------------------------------------------------------------------------------------------------|
 
 You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can even improve FILE* and fstream's performance for 10x depending on platforms since I use concepts to abstract them all. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
 
@@ -160,21 +155,18 @@ You can see fast_io can also boost the performance of existing facilities for 10
 We only perform this test for MSVC since only msvc's charconv implements it. Yes. fast_io defeats msvc's charconv for over 20% for running the same algorithm.
 All benchmarks are in benchmarks/0001.10m_double/charconv.
 Run the same test on MSVC 19.26.28805.
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | i/obuf_file                    |      0.4653818s         |   Meaningless         |                                                      |
 | charconv + obuf_file           |      0.6011s            |   Meaningless         |                                                      |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
 
 3. Raw I/O Performance
 
 All benchmarks are in benchmarks/0014.file_io/file_io.
 Output 100000000x "Hello World\n"
 Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |                       |   Comment                                            |
@@ -184,9 +176,7 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 | fast_io::obuf_file             |      0.815372s          |                       |                                                      |
 | fast_io::c_file_unlocked       |      1.28944s           |                       | I hacked MSVCRT's FILE* implementation               |
 | fast_io::c_file                |      3.645965s          |                       | Thread Safe. I hacked MSVCRT's FILE* implementation  |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
 
-------------------------------------------------------------------------------------------------------------------------------------------|
 | Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
 |----------------------------------------------------------------------------------|------------------------------------------------------|
 | Method                         |       Output time       |                       |   Comment                                            |
@@ -197,4 +187,3 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 | fast_io::obuf_file_mutex       |      0.8442202s         |                       | Thread safe                                          |
 | fast_io::c_file_unlocked       |      0.922571s          |                       | I hacked glibc's FILE* implementation                |
 | fast_io::c_file                |      1.3223464s         |                       | Thread Safe. I hacked glibc's FILE* implementation   |
-|-----------------------------------------------------------------------------------------------------------------------------------------|
