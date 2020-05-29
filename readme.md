@@ -163,8 +163,11 @@ Run the same test on GCC 11. glibc + libstdc++
 You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can even improve FILE* and fstream's performance for 10x depending on platforms since I use concepts to abstract them all. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
 
 2. Output 10M double in round-trip mode with Ryu algorithm
+
 We only perform this test for MSVC since only msvc's charconv implements it. Yes. fast_io defeats msvc's charconv for over 20% for running the same algorithm.
+
 All benchmarks are in benchmarks/0001.10m_double/charconv.
+
 Run the same test on MSVC 19.26.28805.
 
 
@@ -180,8 +183,11 @@ Run the same test on MSVC 19.26.28805.
 3. Raw I/O Performance
 
 All benchmarks are in benchmarks/0014.file_io/file_io.
+
 Output 100000000x "Hello World\n"
+
 Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
+
 
 
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
