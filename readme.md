@@ -92,6 +92,8 @@ Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 b
 
 
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
+
+
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | stdio.h(fprintf/fscanf)        |      2.412987s          |   5.607791s           |                                                      |
@@ -116,6 +118,8 @@ Run the same test on MSVC 19.26.28805.
 
 
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
+
+
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | stdio.h(fprintf/fscanf)        |      1.5353597s         |   1.4157233s          |                                                      |
@@ -133,6 +137,8 @@ Run the same test on GCC 11. glibc + libstdc++
 
 
 | Platform                       |       Linux             |  GCC 11.0.0           |         glibc + libstdc++                            |
+
+
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | stdio.h(fprintf/fscanf)        |      0.532792935s       |   0.591907111s        |                                                      |
@@ -160,6 +166,8 @@ Run the same test on MSVC 19.26.28805.
 
 
 | Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
+
+
 | Method                         |       Output time       |      Input time       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | i/obuf_file                    |      0.4653818s         |   Meaningless         |                                                      |
@@ -173,6 +181,8 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 
 
 | Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
+
+
 | Method                         |       Output time       |                       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | fwrite                         |      2.625055s          |                       |                                                      |
@@ -184,6 +194,10 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 
 
 | Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
+
+
+
+
 | Method                         |       Output time       |                       |   Comment                                            |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 | fwrite                         |      1.6696552s         |                       |                                                      |
