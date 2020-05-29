@@ -749,30 +749,30 @@ inline std::conditional_t<report_einval,std::pair<std::uintmax_t,bool>,std::uint
 
 inline constexpr posix_io_observer posix_stdin()
 {
-	return posix_io_observer(posix_stdin_number);
+	return {posix_stdin_number};
 }
 inline constexpr posix_io_observer posix_stdout()
 {
-	return posix_io_observer(posix_stdout_number);
+	return {posix_stdout_number};
 } 
 inline constexpr posix_io_observer posix_stderr()
 {
-	return posix_io_observer(posix_stderr_number);
+	return {posix_stderr_number};
 }
 #if !defined(__WINNT__) && !defined(_MSC_VER)
 inline constexpr posix_io_observer native_stdin()
 {
-	return  posix_io_observer(posix_stdin_number);
+	return  {posix_stdin_number};
 }
 
 inline constexpr posix_io_observer native_stdout()
 {
-	return posix_io_observer(posix_stdout_number);
+	return {posix_stdout_number};
 }
 
 inline constexpr posix_io_observer native_stderr()
 {
-	return posix_io_observer(posix_stderr_number);
+	return {posix_stderr_number};
 }
 #endif
 template<output_stream output,std::integral intg>
