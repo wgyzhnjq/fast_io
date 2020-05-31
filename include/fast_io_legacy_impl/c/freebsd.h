@@ -26,12 +26,12 @@ inline void obuffer_set_curr(c_io_observer_unlocked cio,char* ptr) noexcept
 	cio.fp->_p=reinterpret_cast<char unsigned*>(ptr);
 }
 
-extern "C" int __overflow (FILE *,int) noexcept;
+extern "C" int __sputc (int,FILE *) noexcept;
 
 inline void overflow(c_io_observer_unlocked cio,char ch)
 {
 	obuffer_set_curr(cio,obuffer_end(cio));
-	if(fputc(static_cast<int>(static_cast<char unsigned>(ch)),cio.fp)==EOF)[[unlikely]]
+	if(__sputc(static_cast<int>(static_cast<char unsigned>(ch)),cio.fp)==EOF)[[unlikely]]
 #ifdef __cpp_exceptions
 		throw posix_error();
 #else
@@ -39,5 +39,39 @@ inline void overflow(c_io_observer_unlocked cio,char ch)
 #endif
 }
 
+inline char* ibuffer_begin(c_io_observer_unlocked cio) noexcept
+{
+	return reinterpret_cast<char*>(cio.fp->_bf._base);
+}
+
+inline char* ibuffer_curr(c_io_observer_unlocked cio) noexcept
+{
+	return reinterpret_cast<char*>(cio.fp->_p);
+}
+
+inline char* ibuffer_end(c_io_observer_unlocked cio) noexcept
+{
+	return reinterpret_cast<char*>(cio.fp->_p+cio.fp->_r);
+}
+
+inline void ibuffer_set_curr(c_io_observer_unlocked cio,char* ptr) noexcept
+{
+	cio.fp->_r-=reinterpret_cast<char unsigned*>(ptr)-cio.fp->_p;
+	cio.fp->_p=reinterpret_cast<char unsigned*>(ptr);
+}
+
+extern "C" int	__srget(FILE *);
+
+inline bool underflow(c_io_observer_unlocked cio)
+{
+	bool eof{__srget(cio.fp)!=EOF};
+	if(!eof&&ferror_unlocked(cio.fp))
+#ifdef __cpp_exceptions
+		throw posix_error();
+#else
+		fast_terminate();
+#endif
+	return eof;
+}
 
 }
