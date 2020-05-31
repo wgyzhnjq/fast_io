@@ -678,7 +678,7 @@ public:
 		if(!(this->native_handle()=fopencookie(up.get(),mode.data(),c_io_cookie_functions<std::remove_cvref_t<stm>>.native_functions)))[[unlikely]]
 			throw posix_error();
 		up.release();
-#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+#elif defined(__BSD_VISIBLE) || defined(__BIONIC__)
 		std::unique_ptr<stm> up{std::make_unique<std::remove_cvref_t<stm>>(std::forward<Args>(args)...)};
 		this->native_handle()=details::funopen_wrapper<std::remove_cvref_t<stm>>(up.get());
 		up.release();
@@ -697,7 +697,7 @@ public:
 #if defined(_GNU_SOURCE) || defined(__MUSL__)
 		if(!(this->native_handle()=fopencookie(std::addressof(reff),mode.data(),c_io_cookie_functions<stm&>.native_functions)))[[unlikely]]
 			throw posix_error();
-#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+#elif defined(__BSD_VISIBLE) || defined(__BIONIC__)
 		this->native_handle()=details::funopen_wrapper<stm&>(std::addressof(reff));
 #else
 #ifdef __cpp_exceptions
@@ -805,8 +805,8 @@ inline constexpr void print_define(output& out,basic_c_io_observer<intg> iob)
 #include"glibc.h"
 #elif defined(__MUSL__)
 #include"musl.h"
-#elif defined(__FreeBSD__)
-#include"freebsd.h"
+#elif defined(__BSD_VISIBLE)
+#include"bsd.h"
 #else
 #include"general.h"
 #endif

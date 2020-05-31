@@ -9,7 +9,7 @@
 #ifdef __linux__
 #include<sys/sendfile.h>
 #endif
-#ifdef __FreeBSD__
+#ifdef __BSD_VISIBLE
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
@@ -342,7 +342,7 @@ inline void flush(basic_posix_io_observer<ch_type>)
 //			throw posix_error();
 }
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#if defined(__linux__) || defined(__BSD_VISIBLE)
 template<std::integral ch_type>
 inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type> h)
 {
@@ -643,7 +643,7 @@ using wposix_pipe=basic_posix_pipe<wchar_t>;
 inline int constexpr posix_stdin_number = 0;
 inline int constexpr posix_stdout_number = 1;
 inline int constexpr posix_stderr_number = 2;
-#if defined(__linux__)||defined(__FreeBSD__)
+#if defined(__linux__)||defined(__BSD_VISIBLE)
 
 //zero copy IO for linux
 
@@ -665,7 +665,7 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	if constexpr(random_access)
 		np=static_cast<off_t>(offset);
 	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes,nullptr,nullptr,0));
-	//it looks like FreeBSD supports async I/O for sendfile. To do
+	//it looks like BSD platforms supports async I/O for sendfile. To do
 #endif
 	if(transmitted_bytes==-1)
 	{
