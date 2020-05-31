@@ -131,7 +131,7 @@ inline std::FILE* funopen_wrapper(void* cookie)
 			return 0;
 		};
 	if constexpr(input_stream<value_type>)
-		readfn=[](void* cookie,char* buf,int size) noexcept->std::ptrdiff_t
+		readfn=[](void* cookie,char* buf,int size) noexcept->int
 		{
 			try
 			{
@@ -149,7 +149,7 @@ inline std::FILE* funopen_wrapper(void* cookie)
 			}
 		};
 	if constexpr(output_stream<value_type>)
-		writefn=[](void* cookie,char const* buf,int size) noexcept->std::ptrdiff_t
+		writefn=[](void* cookie,char const* buf,int size) noexcept->int
 		{
 			try
 			{
@@ -168,12 +168,11 @@ inline std::FILE* funopen_wrapper(void* cookie)
 		};
 	if constexpr(random_access_stream<value_type>)
 	{
-		seekfn=[](void *cookie, fpos_t *offset, int whence) noexcept->int
+		seekfn=[](void *cookie, fpos_t offset, int whence) noexcept->fpos_t
 		{
 			try
 			{
-				*offset=seek(*bit_cast<value_type*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
-				return 0;
+				return static_cast<fpos_t>(seek(*bit_cast<value_type*>(cookie),*offset,static_cast<fast_io::seekdir>(whence)));
 			}
 			catch(fast_io::posix_error const& err)
 			{
