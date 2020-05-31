@@ -128,7 +128,8 @@ inline constexpr c_io_cookie_functions_t<stm> c_io_cookie_functions{};
 namespace details
 {
 //funopen
-template<stream stm>
+template<typename stm>
+requires stream<std::remove_cvref_t<stm>>
 inline std::FILE* funopen_wrapper(void* cookie)
 {
 	using value_type = std::remove_reference_t<stm>;
