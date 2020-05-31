@@ -638,7 +638,7 @@ using wposix_pipe=basic_posix_pipe<wchar_t>;
 inline int constexpr posix_stdin_number = 0;
 inline int constexpr posix_stdout_number = 1;
 inline int constexpr posix_stderr_number = 2;
-#ifdef __linux__
+#if defined(__linux__)||defined(__FreeBSD__)
 
 //zero copy IO for linux
 namespace details
