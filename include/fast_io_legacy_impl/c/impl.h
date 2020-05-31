@@ -171,7 +171,13 @@ inline std::FILE* funopen_wrapper(void* cookie)
 			try
 			{
 #endif
-				return write(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
+				if constexpr(std::same_as<decltype(write(*bit_cast<value_type*>(cookie),buf,buf+size)),void>)
+				{
+					write(*bit_cast<value_type*>(cookie),buf,buf+size);
+					return size;
+				}
+				else
+					return write(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
 #ifdef __cpp_exceptions
 			}
 			catch(fast_io::posix_error const& err)
