@@ -342,7 +342,7 @@ inline void flush(basic_posix_io_observer<ch_type>)
 //			throw posix_error();
 }
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 template<std::integral ch_type>
 inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type> h)
 {
@@ -671,17 +671,7 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	{
 		if constexpr(report_einval)
 		{
-			auto const eno(errno);
-			if(eno==EINVAL)
-				return {0,true};
-			else
-			{
-			#ifdef __cpp_exceptions
-				throw posix_error(eno);
-			#else
-				fast_terminate();
-			#endif
-			}
+			return {0,true};
 		}
 		else
 		{

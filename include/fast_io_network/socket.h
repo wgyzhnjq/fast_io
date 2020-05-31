@@ -106,7 +106,7 @@ template<bool async>
 inline constexpr void flush(basic_socket<async>&)
 {
 }
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 inline auto zero_copy_in_handle(basic_socket<false>& soc)
 {
 	return soc.native_handle();
