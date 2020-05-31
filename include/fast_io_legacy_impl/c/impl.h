@@ -695,7 +695,7 @@ public:
 	basic_c_file_impl(io_cookie_t,std::string_view mode,stm& reff)
 	{
 #if defined(_GNU_SOURCE) || defined(__MUSL__)
-		if(!(this->native_handle()=fopencookie(std::addressof(reff),mode.data(),c_io_cookie_functions<stm&>)))[[unlikely]]
+		if(!(this->native_handle()=fopencookie(std::addressof(reff),mode.data(),c_io_cookie_functions<stm&>.native_functions)))[[unlikely]]
 			throw posix_error();
 #elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
 		this->native_handle()=details::funopen_wrapper<stm&>(std::addressof(reff));
