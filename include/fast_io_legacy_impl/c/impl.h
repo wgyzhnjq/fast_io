@@ -47,12 +47,9 @@ public:
 				{
 					return read(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
 				}
-				catch(std::system_error const& err)
+				catch(fast_io::posix_error const& err)
 				{
-					if(err.code().category()==std::generic_category())
-						errno=err.code().value();
-					else
-						errno=EIO;
+					errno=err.code();
 					return -1;
 				}
 				catch(...)
@@ -75,12 +72,9 @@ public:
 					else
 						return write(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
 				}
-				catch(std::system_error const& err)
+				catch(fast_io::posix_error const& err)
 				{
-					if(err.code().category()==std::generic_category())
-						errno=err.code().value();
-					else
-						errno=EIO;
+					errno=err.code();
 					return -1;
 				}
 				catch(...)
@@ -99,12 +93,9 @@ public:
 					*offset=seek(*bit_cast<value_type*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
 					return 0;
 				}
-				catch(std::system_error const& err)
+				catch(fast_io::posix_error const& err)
 				{
-					if(err.code().category()==std::generic_category())
-						errno=err.code().value();
-					else
-						errno=EIO;
+					errno=err.code();
 					return -1;
 				}
 				catch(...)
@@ -120,6 +111,90 @@ public:
 
 template<typename stm>
 inline constexpr c_io_cookie_functions_t<stm> c_io_cookie_functions{};
+
+#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+namespace details
+{
+//funopen
+template<stream stm>
+inline std::FILE* funopen_wrapper(void* cookie)
+{
+	using value_type = std::remove_reference_t<stm>;
+	int (*readfn)(void *, char *, int)=nullptr;
+	int (*writefn)(void *, const char *, int)=nullptr;
+	int (*closefn)(void *)=nullptr;
+	fpos_t (*seekfn)(void *, fpos_t, int)=nullptr;
+	if constexpr(!std::is_reference_v<stm>)
+		closefn=[](void* cookie) noexcept->int
+		{
+			delete bit_cast<value_type*>(cookie);
+			return 0;
+		};
+	if constexpr(input_stream<value_type>)
+		readfn=[](void* cookie,char* buf,int size) noexcept->std::ptrdiff_t
+		{
+			try
+			{
+				return read(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
+			}
+			catch(fast_io::posix_error const& err)
+			{
+				errno=err.code();
+				return -1;
+			}
+			catch(...)
+			{
+				errno=EIO;
+				return -1;
+			}
+		};
+	if constexpr(output_stream<value_type>)
+		writefn=[](void* cookie,char const* buf,int size) noexcept->std::ptrdiff_t
+		{
+			try
+			{
+				return read(*bit_cast<value_type*>(cookie),buf,buf+size)-buf;
+			}
+			catch(fast_io::posix_error const& err)
+			{
+				errno=err.code();
+				return -1;
+			}
+			catch(...)
+			{
+				errno=EIO;
+				return -1;
+			}
+		};
+	if constexpr(random_access_stream<value_type>)
+	{
+		seekfn=[](void *cookie, fpos_t *offset, int whence) noexcept->int
+		{
+			try
+			{
+				*offset=seek(*bit_cast<value_type*>(cookie),*offset,static_cast<fast_io::seekdir>(whence));
+				return 0;
+			}
+			catch(fast_io::posix_error const& err)
+			{
+				errno=err.code();
+				return -1;
+			}
+			catch(...)
+			{
+				errno=EIO;
+				return -1;
+			}
+		};
+	}
+	auto fp{::funopen(cookie,readfn,writefn,closefn)};
+	if(fp==nullptr)
+		throw posix_error();
+	return fp;
+}
+
+}
+#endif
 
 template<std::integral ch_type>
 class basic_c_io_observer_unlocked
@@ -566,24 +641,20 @@ public:
 	basic_c_file_impl(io_cookie_t,std::string_view mode,std::in_place_type_t<stm>,Args&& ...args)
 	{
 #if defined(_GNU_SOURCE) || defined(__MUSL__)
-		std::unique_ptr<stm> up{std::make_unique<stm>(std::forward<Args>(args)...)};
-		if(!(this->native_handle()=fopencookie(up.get(),mode.data(),c_io_cookie_functions<stm>.native_functions)))[[unlikely]]
+		std::unique_ptr<stm> up{std::make_unique<std::remove_cvref_t<stm>>(std::forward<std::remove_cvref_t<stm>>(args)...)};
+		if(!(this->native_handle()=fopencookie(up.get(),mode.data(),c_io_cookie_functions<std::remove_cvref_t<stm>>.native_functions)))[[unlikely]]
 			throw posix_error();
 		up.release();
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+		std::unique_ptr<stm> up{std::make_unique<std::remove_cvref_t<stm>>(std::forward<Args>(args)...)};
+		this->native_handle()=details::funopen_wrapper<std::remove_cvref_t<stm>>(up.get());
+		up.release();
 #else
-/*
-#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined (__BIONIC__)
-Todo
-	{
-
-	}
-*/
 #ifdef __cpp_exceptions
 		throw posix_error(EOPNOTSUPP);
 #else
 		fast_terminate();
 #endif
-
 #endif
 	}
 
@@ -593,14 +664,9 @@ Todo
 #if defined(_GNU_SOURCE) || defined(__MUSL__)
 		if(!(this->native_handle()=fopencookie(std::addressof(reff),mode.data(),c_io_cookie_functions<stm&>)))[[unlikely]]
 			throw posix_error();
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+		this->native_handle()=details::funopen_wrapper<stm>(std::addressof(reff));
 #else
-/*
-#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined (__BIONIC__)
-Todo
-	{
-
-	}
-*/
 #ifdef __cpp_exceptions
 		throw posix_error(EOPNOTSUPP);
 #else
