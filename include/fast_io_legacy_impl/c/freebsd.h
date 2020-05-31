@@ -17,7 +17,7 @@ inline char* obuffer_curr(c_io_observer_unlocked cio) noexcept
 
 inline char* obuffer_end(c_io_observer_unlocked cio) noexcept
 {
-	return reinterpret_cast<char*>(cio.fp->_bf._p+cio.fp->_bf._w);
+	return reinterpret_cast<char*>(cio.fp._p+cio.fp._w);
 }
 
 inline void obuffer_set_curr(c_io_observer_unlocked cio,char* ptr) noexcept
