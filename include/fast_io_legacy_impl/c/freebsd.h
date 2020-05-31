@@ -26,8 +26,6 @@ inline void obuffer_set_curr(c_io_observer_unlocked cio,char* ptr) noexcept
 	cio.fp->_p=reinterpret_cast<char unsigned*>(ptr);
 }
 
-extern "C" int __sputc (int,FILE *) noexcept;
-
 inline void overflow(c_io_observer_unlocked cio,char ch)
 {
 	obuffer_set_curr(cio,obuffer_end(cio));
