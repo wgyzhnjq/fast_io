@@ -646,6 +646,8 @@ inline int constexpr posix_stderr_number = 2;
 #if defined(__linux__)||defined(__FreeBSD__)
 
 //zero copy IO for linux
+
+//To verify whether other BSD platforms support sendfile
 namespace details
 {
 
@@ -653,14 +655,18 @@ template<bool random_access=false,bool report_einval=false,zero_copy_output_stre
 inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,std::intmax_t offset)
 {
+#ifdef __linux__
 	std::intmax_t *np{};
 	if constexpr(random_access)
 		np=std::addressof(offset);
-	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes
-#ifdef __FreeBSD__
-	,nullptr,nullptr,0		//it looks like FreeBSD supports async I/O for sendfile. To do
+	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes));
+#else
+	off_t np{};
+	if constexpr(random_access)
+		np=static_cast<off_t>(offset);
+	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes,nullptr,nullptr,0));
+	//it looks like FreeBSD supports async I/O for sendfile. To do
 #endif
-	));
 	if(transmitted_bytes==-1)
 	{
 		if constexpr(report_einval)
