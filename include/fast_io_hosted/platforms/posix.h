@@ -9,8 +9,10 @@
 #ifdef __linux__
 #include<sys/sendfile.h>
 #endif
-#if defined(__FreeBSD__)
-#include<sys/uio.h>
+#ifdef __FreeBSD__
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/uio.h>
 #endif
 
 namespace fast_io
