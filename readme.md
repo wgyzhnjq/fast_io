@@ -22,14 +22,15 @@ A general purpose I/O library to replace stdio.h and iostream
 ### Fast.
 
 - As close to system call as possible.
-- Locale support optional  
-- Zero copy IO
+- Locale support optional
 
 ### Safe
 
 - No easily misused stuff like std::endl  
 - No internal iomanip states (since it creates security issues)  
-- Providing RAII for FILE\*&POSIX fd&HANDLE32
+- Providing RAII for C FILE\*&POSIX fd&win32 HANDLE
+- No dual error reporting mechanism. Exception as the ONLY error reporting mechanism.
+- No std::error_code and std::system_error
 
 ### Easy to use
 
@@ -177,10 +178,10 @@ Run the same test on MSVC 19.26.28805.
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
-| Method                         |       Output time       |      Input time       |   Comment                                            |
-|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
-| i/obuf_file                    |      0.4653818s         |   Meaningless         |                                                      |
-| charconv + obuf_file           |      0.6011s            |   Meaningless         |                                                      |
+| Method                         |       Output time       |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| i/obuf_file                    |      0.4653818s         |                                                                              |
+| charconv + obuf_file           |      0.6011s            |                                                                              |
 
 3. Raw I/O Performance
 
@@ -188,7 +189,7 @@ All benchmarks are in benchmarks/0014.file_io/file_io.
 
 Output 100000000x "Hello World\n"
 
-Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
+Notice: I modified libstdc++'s std::filebuf's BUFSIZ to 1048576 due to BUFSIZE is too small (512 bytes) for MinGW-W64 or it performs horribly.
 
 
 
@@ -196,25 +197,26 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
-| Method                         |       Output time       |                       |   Comment                                            |
-|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
-| fwrite                         |      2.625055s          |                       |                                                      |
-| fstream                        |      1.013001s          |                       |                                                      |
-| fast_io::obuf_file             |      0.815372s          |                       |                                                      |
-| fast_io::c_file_unlocked       |      1.28944s           |                       | I hacked MSVCRT's FILE* implementation               |
-| fast_io::c_file                |      3.645965s          |                       | Thread Safe. I hacked MSVCRT's FILE* implementation  |
-
+| Method                         |       Output time       |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| fwrite                         |      2.524001s          |                                                                              |
+| fstream                        |      1.013001s          |                                                                              |
+| fast_io::obuf_file             |      0.437998s          |                                                                              |
+| fast_io::c_file_unlocked       |      1.164997s          |I hacked MSVCRT's FILE* implementation                                        |
+| fast_io::c_file                |      3.337945s          |Thread Safe. I hacked MSVCRT's FILE* implementation.Need further optimization.|
+| fast_io::filebuf_file          |      0.467001s          |I hacked libstdc++ std::filebuf implementation                                |
 
 
 | Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
-| Method                         |       Output time       |                       |   Comment                                            |
-|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
-| fwrite                         |      1.6696552s         |                       |                                                      |
-| fstream                        |      1.4407874s         |                       |                                                      |
-| fast_io::obuf_file             |      0.8442202s         |                       |                                                      |
-| fast_io::obuf_file_mutex       |      0.8843434s         |                       | Thread safe                                          |
-| fast_io::c_file_unlocked       |      0.922571s          |                       | I hacked glibc's FILE* implementation                |
-| fast_io::c_file                |      1.3223464s         |                       | Thread Safe. I hacked glibc's FILE* implementation   |
+| Method                         |       Output time       |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| fwrite                         |      1.6696552s         |                                                                              |
+| fstream                        |      1.4407874s         |                                                                              |
+| fast_io::obuf_file             |      0.8442202s         |                                                                              |
+| fast_io::obuf_file_mutex       |      0.8843434s         |Thread safe                                                                   |
+| fast_io::c_file_unlocked       |      0.922571s          |I hacked glibc's FILE* implementation                                         |
+| fast_io::c_file                |      1.3223464s         |Thread Safe. I hacked glibc's FILE* implementation                            |
+| fast_io::filebuf_file          |      0.467001s          |I hacked libstdc++ std::filebuf implementation                                |
