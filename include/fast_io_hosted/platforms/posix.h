@@ -313,8 +313,12 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_posix_io_observe
 	auto ret(
 #if defined(__linux__)&&defined(__x86_64__)
 		system_call<8,std::ptrdiff_t>
-#else
+#elif defined(__linux__)
 		::lseek64
+#elif defined(__WINNT__) || defined(_MSC_VER)
+		::_lseeki64
+#else
+		::lseek
 #endif
 		(h.native_handle(),seek_precondition<std::int64_t,T,ch_type>(i),static_cast<int>(s)));
 	system_call_throw_error(ret);
