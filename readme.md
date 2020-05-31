@@ -12,10 +12,12 @@ For Linux, you can watch this video to help you install the latest GCC easily. h
 ## Platform Support
 - Windows
 - Linux
+- BSD platforms (Including FreeBSD, NetBSD, OpenBSD and Mac)
+- Todo: Bionic and Webassembly
 
 ## Design Goal
 
-Replace stdio.h and iostream
+A general purpose I/O library to replace stdio.h and iostream
 
 ### Fast.
 
@@ -213,6 +215,6 @@ Notice: I modified libstdc++'s BUFSIZ to 1048576 due to BUFSIZE is too small (51
 | fwrite                         |      1.6696552s         |                       |                                                      |
 | fstream                        |      1.4407874s         |                       |                                                      |
 | fast_io::obuf_file             |      0.8442202s         |                       |                                                      |
-| fast_io::obuf_file_mutex       |      0.8442202s         |                       | Thread safe                                          |
+| fast_io::obuf_file_mutex       |      0.8843434s         |                       | Thread safe                                          |
 | fast_io::c_file_unlocked       |      0.922571s          |                       | I hacked glibc's FILE* implementation                |
 | fast_io::c_file                |      1.3223464s         |                       | Thread Safe. I hacked glibc's FILE* implementation   |

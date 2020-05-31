@@ -172,7 +172,7 @@ std::basic_filebuf<char_type,traits_type>
 #endif
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_MSVC_STL_UPDATE)
 	basic_filebuf_file& operator=(basic_filebuf_file const&)=delete;
 	basic_filebuf_file(basic_filebuf_file const&)=delete;
 	basic_filebuf_file(basic_filebuf_file&& bf) noexcept:fb(std::move(bf.fb))
@@ -180,6 +180,7 @@ std::basic_filebuf<char_type,traits_type>
 	}
 	basic_filebuf_file& operator=(basic_filebuf_file&& bf) noexcept
 	{
+		fb.close();
 		fb=std::move(bf.fb);
 		return *this;
 	}
