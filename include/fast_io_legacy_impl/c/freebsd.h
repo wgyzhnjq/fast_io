@@ -71,6 +71,7 @@ inline bool underflow(c_io_observer_unlocked cio)
 #else
 		fast_terminate();
 #endif
+	ibuffer_set_curr(cio,ibuffer_begin(cio));
 	return eof;
 }
 
