@@ -342,7 +342,7 @@ inline void flush(basic_posix_io_observer<ch_type>)
 //			throw posix_error();
 }
 
-#if defined(__linux__) || defined(__FreeBSD__)
+#if defined(__linux__)
 template<std::integral ch_type>
 inline auto zero_copy_in_handle(basic_posix_io_observer<ch_type> h)
 {
