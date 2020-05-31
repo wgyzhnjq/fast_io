@@ -9,6 +9,9 @@
 #ifdef __linux__
 #include<sys/sendfile.h>
 #endif
+#if defined(__FreeBSD__)
+#include<sys/uio.h>
+#endif
 
 namespace fast_io
 {
@@ -644,7 +647,6 @@ inline int constexpr posix_stderr_number = 2;
 namespace details
 {
 
-
 template<bool random_access=false,bool report_einval=false,zero_copy_output_stream output,zero_copy_input_stream input>
 inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	zero_copy_transmit_once(output& outp,input& inp,std::size_t bytes,std::intmax_t offset)
@@ -652,7 +654,11 @@ inline std::conditional_t<report_einval,std::pair<std::size_t,bool>,std::size_t>
 	std::intmax_t *np{};
 	if constexpr(random_access)
 		np=std::addressof(offset);
-	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes));
+	auto transmitted_bytes(::sendfile(zero_copy_out_handle(outp),zero_copy_in_handle(inp),np,bytes
+#ifdef __FreeBSD__
+	,nullptr,nullptr,0		//it looks like FreeBSD supports async I/O for sendfile. To do
+#endif
+	));
 	if(transmitted_bytes==-1)
 	{
 		if constexpr(report_einval)
