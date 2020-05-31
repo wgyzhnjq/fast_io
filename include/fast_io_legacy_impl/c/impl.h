@@ -14,7 +14,7 @@ inline static constexpr std::string_view value=to_c_mode(om);
 };
 
 }
-
+#if defined(_GNU_SOURCE) || defined(__MUSL__)
 template<typename stm>
 requires stream<std::remove_reference_t<stm>>
 class c_io_cookie_functions_t
@@ -24,7 +24,7 @@ public:
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
 
-#if defined(_GNU_SOURCE) || defined(__MUSL__)
+
 
 //musl libc also supports this I think
 //https://gitlab.com/bminor/musl/-/blob/061843340fbf2493bb615e20e66f60c5d1ef0455/src/stdio/fopencookie.c
@@ -118,13 +118,12 @@ public:
 			};
 		}
 	}
-#endif
+
 };
 
 template<typename stm>
 inline constexpr c_io_cookie_functions_t<stm> c_io_cookie_functions{};
-
-#if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
 namespace details
 {
 //funopen
