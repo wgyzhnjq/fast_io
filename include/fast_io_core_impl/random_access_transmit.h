@@ -60,7 +60,7 @@ inline constexpr auto random_access_transmit_impl(output& outp,input& inp,std::i
 			}
 			if constexpr(buffer_output_stream<output>)
 				flush(outp);
-#if defined(__linux__)||defined(__FreeBSD__)
+#if defined(__linux__)
 			return zero_copy_random_access_transmit_impl(outp,inp,offset,std::forward<Args>(args)...);
 #else
 			return zero_copy_transmit<true>(outp,inp,offset,std::forward<Args>(args)...);
