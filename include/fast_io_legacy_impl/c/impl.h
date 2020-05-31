@@ -707,6 +707,8 @@ inline constexpr void print_define(output& out,basic_c_io_observer<intg> iob)
 #include"glibc.h"
 #elif defined(__MUSL__)
 #include"musl.h"
+#elif defined(__FreeBSD__)
+#include"freebsd.h"
 #else
 #include"general.h"
 #endif
