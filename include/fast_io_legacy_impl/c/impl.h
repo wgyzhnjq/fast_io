@@ -698,7 +698,7 @@ public:
 		if(!(this->native_handle()=fopencookie(std::addressof(reff),mode.data(),c_io_cookie_functions<stm&>)))[[unlikely]]
 			throw posix_error();
 #elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__)) || defined(__BIONIC__)
-		this->native_handle()=details::funopen_wrapper<stm>(std::addressof(reff));
+		this->native_handle()=details::funopen_wrapper<stm&>(std::addressof(reff));
 #else
 #ifdef __cpp_exceptions
 		throw posix_error(EOPNOTSUPP);
