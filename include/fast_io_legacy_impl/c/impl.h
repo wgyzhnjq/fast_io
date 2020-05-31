@@ -187,7 +187,7 @@ inline std::FILE* funopen_wrapper(void* cookie)
 			}
 		};
 	}
-	auto fp{::funopen(cookie,readfn,writefn,closefn)};
+	auto fp{::funopen(cookie,readfn,writefn,seekfn,closefn)};
 	if(fp==nullptr)
 		throw posix_error();
 	return fp;
