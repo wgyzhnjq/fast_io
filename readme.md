@@ -37,7 +37,7 @@ A general purpose I/O library to replace stdio.h and iostream
 - Unicode/UTF-8 support  
 - Compatible with C stdio and C++ iostream  
 - Binary serialization for trivially copyable types and C++ standard library containers  
-- All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf> is valid  
+- All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf_file> is valid  
 - Basic/Lua/Python/etc format (print, scan). No support to C and C++ since they are security hazards.
 - Static I/O manipulator
 - Provide APIs to expose the internal implementation of C FILE* and C++ stream.
