@@ -202,9 +202,10 @@ Notice: I modified libstdc++'s std::filebuf's BUFSIZ to 1048576 due to BUFSIZE i
 | fwrite                         |      2.524001s          |                                                                              |
 | fstream                        |      1.013001s          |                                                                              |
 | fast_io::obuf_file             |      0.437998s          |                                                                              |
+| fast_io::obuf_file_mutex       |      1.371s             |Thread safe                                                                   |
 | fast_io::c_file_unlocked       |      1.164997s          |I hacked MSVCRT's FILE* implementation                                        |
-| fast_io::c_file                |      3.337945s          |Thread Safe. I hacked MSVCRT's FILE* implementation.Need further optimization.|
-| fast_io::filebuf_file          |      0.467001s          |I hacked libstdc++ std::filebuf implementation                                |
+| fast_io::c_file                |      3.337945s          |Thread Safe. I hacked MSVCRT's FILE* implementation. Need further optimization|
+| fast_io::filebuf_file          |      0.467001s          |I hacked libstdc++'s std::filebuf implementation                              |
 
 
 | Platform                       |        Linux            |          GCC 11.0.0   |     glibc + libstdc++                                |
@@ -213,10 +214,25 @@ Notice: I modified libstdc++'s std::filebuf's BUFSIZ to 1048576 due to BUFSIZE i
 
 | Method                         |       Output time       |                           Comment                                            |
 |--------------------------------|-------------------------|------------------------------------------------------------------------------|
-| fwrite                         |      1.6696552s         |                                                                              |
-| fstream                        |      1.4407874s         |                                                                              |
-| fast_io::obuf_file             |      0.8442202s         |                                                                              |
-| fast_io::obuf_file_mutex       |      0.8843434s         |Thread safe                                                                   |
-| fast_io::c_file_unlocked       |      0.922571s          |I hacked glibc's FILE* implementation                                         |
-| fast_io::c_file                |      1.3223464s         |Thread Safe. I hacked glibc's FILE* implementation                            |
-| fast_io::filebuf_file          |      0.467001s          |I hacked libstdc++ std::filebuf implementation                                |
+| fwrite                         |      1.457288317s       |                                                                              |
+| fstream                        |      1.249783346s       |                                                                              |
+| fast_io::obuf_file             |      0.494827134s       |                                                                              |
+| fast_io::obuf_file_mutex       |      0.497138826s       |Thread safe                                                                   |
+| fast_io::c_file_unlocked       |      0.687976666s       |I hacked glibc's FILE* implementation                                         |
+| fast_io::c_file                |      0.910792697s       |Thread Safe. I hacked glibc's FILE* implementation                            |
+| fast_io::filebuf_file          |      0.526955039s       |I hacked libstdc++'s std::filebuf implementation                              |
+
+
+| Platform                       |        Windows          |  MSVC 19.26.28805     |      UCRT + MSVC STL                                 |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+|                                                                                                                                         |
+
+| Method                         |       Output time       |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| fwrite                         |      3.3139122s         |                                                                              |
+| fstream                        |      1.7184119s         |                                                                              |
+| fast_io::obuf_file             |      0.7996034s         |                                                                              |
+| fast_io::obuf_file_mutex       |      2.2949221s         |Thread safe. It looks like std::mutex is horribly slow for MSVC STL.          |
+| fast_io::c_file_unlocked       |      1.2103924s         |I hacked UCRT's FILE* implementation                                          |
+| fast_io::c_file                |      2.3604295s         |Thread Safe. I hacked UCRT's FILE* implementation                             |
+| fast_io::filebuf_file          |      1.2805368s         |I hacked MSVC STL's std::filebuf implementation                               |
