@@ -27,26 +27,24 @@ For Linux, you can watch this video to help you install the latest GCC easily. h
 - Todo: Webassembly
 
 ## Supported libc FILE* hacks platforms
-glibc
-MSVCRT
-Universal CRT
-BSD libc
-MUSL libc
-To do: Bionic
+- glibc
+- MSVCRT
+- Universal CRT
+- BSD libc
+- MUSL libc
+- To do: Bionic
 
 ## Supported C++ standard library std::streambuf/std::filebuf hacks platforms
-GCC libstdc++
-LLVM libc++
-MSVC STL
+- GCC libstdc++
+- LLVM libc++
+- MSVC STL
 
 ## Design Goal
 
 A general purpose I/O library to replace stdio.h and iostream
 
-### Fast.
-
 - As close to system call as possible.
-- Locale support optional
+- No default locale. It is optional.
 
 ### Safe
 
@@ -276,6 +274,6 @@ Dude, you should avoid stream as plague tbh. It is not unhealthy.
 |--------------------------------|-------------------------|------------------------------------------------------------------------------|
 | fstream                        |      925KB              |Use fstream is not good for your health since std::locale bloats your binary. |
 | fast_io::obuf_file             |      155KB              |                                                                              |
-| fast_io::c_file_unlocked       |      157KB              |I hacked UCRT's FILE* implementation                                          |
-| fast_io::c_file                |      157KB              |Thread Safe. I hacked UCRT's FILE* implementation                             |
+| fast_io::c_file_unlocked       |      157KB              |I hacked MSVCRT's FILE* implementation                                        |
+| fast_io::c_file                |      157KB              |Thread Safe. I hacked MSVCRT's FILE* implementation                           |
 | fast_io::filebuf_file          |      933KB              |I hacked libstdc++'s std::filebuf implementation. C++ stream sucks            |
