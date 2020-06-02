@@ -2,6 +2,17 @@
 
 fast_io is a new C++20 library for extremely fast input/output and aims to replace iostream and cstdio. It is header-only (module only in the future) for easy inclusion in your project. It requires a capable C++20 compiler supporting concepts.
 
+## Hello World
+
+```cpp
+#include<fast_io.h>
+
+int main()
+{
+	print("Hello World!\n");
+}
+```
+
 ## Compiler Support
 - GCC 11.
 You can download the latest GCC compiler for windows here. https://bitbucket.org/ejsvifq_mabmip/mingw-gcc/src/master/ 
@@ -13,7 +24,20 @@ For Linux, you can watch this video to help you install the latest GCC easily. h
 - Windows
 - Linux
 - BSD platforms (Including FreeBSD, NetBSD, OpenBSD and Mac)
-- Todo: Bionic and Webassembly
+- Todo: Webassembly
+
+## Supported libc FILE* hacks platforms
+glibc
+MSVCRT
+Universal CRT
+BSD libc
+MUSL libc
+To do: Bionic
+
+## Supported C++ standard library std::streambuf/std::filebuf hacks platforms
+GCC libstdc++
+LLVM libc++
+MSVC STL
 
 ## Design Goal
 
@@ -236,3 +260,22 @@ Notice: I modified libstdc++'s std::filebuf's BUFSIZ to 1048576 due to BUFSIZE i
 | fast_io::c_file_unlocked       |      1.2103924s         |I hacked UCRT's FILE* implementation                                          |
 | fast_io::c_file                |      2.3604295s         |Thread Safe. I hacked UCRT's FILE* implementation                             |
 | fast_io::filebuf_file          |      1.2805368s         |I hacked MSVC STL's std::filebuf implementation                               |
+
+
+4. Binary Size
+Just use the benchmark in benchmarks/0014.file_io/file_io.
+That would introduce Ryu floating table for printing time, and I did not compile the code with -DFAST_IO_OPTIMIZE_SIZE. Or it would be nothing.
+Dude, you should avoid stream as plague tbh. It is not unhealthy.
+
+
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++ + static compile                |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+|                                                                                                                                         |
+
+| Method                         |      Binary Size        |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| fstream                        |      925KB              |Use fstream is not good for your health since std::locale bloats your binary. |
+| fast_io::obuf_file             |      155KB              |                                                                              |
+| fast_io::c_file_unlocked       |      157KB              |I hacked UCRT's FILE* implementation                                          |
+| fast_io::c_file                |      157KB              |Thread Safe. I hacked UCRT's FILE* implementation                             |
+| fast_io::filebuf_file          |      933KB              |I hacked libstdc++'s std::filebuf implementation. C++ stream sucks            |
