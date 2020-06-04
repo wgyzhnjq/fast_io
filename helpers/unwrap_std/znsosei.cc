@@ -13,7 +13,34 @@ inline std::ostream& wrapped_function(std::ostream& out,T v)
 }
 }
 
+extern "C" std::ostream& __wrap__ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_x(std::ostream& out,char ch)
+{
+	fast_io::streambuf_io_observer iob{out.rdbuf()};
+	put(iob,ch);
+	return out;
+}
+
+extern "C" std::ostream& __wrap__ZNSolsEs(std::ostream& out,short v)
+{
+	return fast_io::wrapped_function(out,v);
+}
+
 extern "C" std::ostream& __wrap__ZNSolsEi(std::ostream& out,int v)
+{
+	return fast_io::wrapped_function(out,v);
+}
+
+extern "C" std::ostream& __wrap__ZNSo9_M_insertImEERSoT_(std::ostream& out,unsigned short v)
+{
+	return fast_io::wrapped_function(out,v);
+}
+
+extern "C" std::ostream& __wrap__ZNSo9_M_insertIlEERSoT_(std::ostream& out,long v)
+{
+	return fast_io::wrapped_function(out,v);
+}
+
+extern "C" std::ostream& __wrap__ZNSo9_M_insertIxEERSoT_(std::ostream& out,long long v)
 {
 	return fast_io::wrapped_function(out,v);
 }
@@ -23,10 +50,12 @@ extern "C" std::ostream& __wrap__ZNSo9_M_insertIyEERSoT_(std::ostream& out,unsig
 	return fast_io::wrapped_function(out,v);
 }
 
-extern "C" void __wrap__ZNSt14basic_ofstreamIcSt11char_traitsIcEED1Ev(std::ofstream& out)
+extern "C" std::ostream& __wrap__ZNSo9_M_insertIdEERSoT_(std::ostream& out,double v)
 {
-//	fast_io::filebuf_io_observer fiob{out.rdbuf()};
+	return fast_io::wrapped_function(out,v);
+}
 
-//	static_cast<>
-//	fast_io::c_file cf{static_cast<>};
+extern "C" std::ostream& __wrap__ZNSo9_M_insertIeEERSoT_(std::ostream& out,long double v)
+{
+	return fast_io::wrapped_function(out,v);
 }
