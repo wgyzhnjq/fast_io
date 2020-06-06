@@ -168,9 +168,18 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	bool last_removed_bit((m2>>(shift-1))&1);
 	bool round_up((last_removed_bit) && (!trailing_zeros || ((m2 >> shift) & 1)));
 	mantissa_type ieee_m2((m2 >> shift) + round_up);
-	if(ieee_m2 == (static_cast<mantissa_type>(1) << (floating_trait::mantissa_bits + 1)))
-		++ieee_e2;
-	ieee_m2&=((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
+	if(std::same_as<floating_type,float>)
+	{
+		ieee_m2 &= ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
+		if (ieee_m2 == 0 && round_up)
+			++ieee_e2;
+	}
+	else
+	{
+		if(ieee_m2 == (static_cast<mantissa_type>(1) << (floating_trait::mantissa_bits + 1)))
+			++ieee_e2;
+		ieee_m2&=((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
+	}
 	return bit_cast<F>(((((static_cast<mantissa_type>(negative)) << floating_trait::exponent_bits) | static_cast<mantissa_type>(ieee_e2)) << 
 		floating_trait::mantissa_bits)|(((m2 >> shift) + round_up) & ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1)));
 }
