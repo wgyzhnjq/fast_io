@@ -32,6 +32,7 @@ template<std::integral CharT,std::size_t buffer_size = ((
 65536
 #endif
 /sizeof(CharT)),typename Allocator = io_aligned_allocator<CharT>>
+requires (buffer_size!=0)
 class basic_buf_handler
 {
 	Allocator alloc;
