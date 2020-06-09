@@ -76,7 +76,11 @@ public:
         struct stat file_stat;
         auto fstat_ret(fstat(bf.native_handle(), std::addressof(file_stat)));
         if (fstat_ret == -1)
-            throw posix_error();
+#ifdef __cpp_exceptions
+                throw posix_error();
+#else
+		fast_terminate();
+#endif
         std::size_t file_size_in_bytes(file_stat.st_size);
         if (bytes > file_size_in_bytes)
         {
@@ -87,7 +91,11 @@ public:
         }
         auto ret(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)));
         if (ret == MAP_FAILED)
-			throw posix_error();
+#ifdef __cpp_exceptions
+                throw posix_error();
+#else
+		fast_terminate();
+#endif
         rg = {ret, bytes};
 	}
 	//auto native_handle() const {return wfm.native_handle();}
