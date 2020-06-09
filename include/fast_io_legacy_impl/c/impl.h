@@ -361,7 +361,11 @@ inline auto seek(basic_c_io_observer_unlocked<ch_type> cfhd,seek_type_t<T>,U i,s
 		fseek
 #endif
 	(cfhd.native_handle(),seek_precondition<long,T,char>(i),static_cast<int>(s)))
+#ifdef __cpp_exceptions
 		throw posix_error(); 
+#else
+		fast_terminate();
+#endif
 	auto val(std::ftell(cfhd.native_handle()));
 	if(val<0)
 #ifdef __cpp_exceptions
