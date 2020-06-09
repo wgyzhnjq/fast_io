@@ -110,7 +110,11 @@ inline constexpr T format(std::string_view format,Args&& ...args)
 }
 */
 template<typename T,typename... Args>
-inline constexpr void in_place_to(T& t,Args&& ...args)
+inline
+#if __cpp_lib_constexpr_dynamic_alloc >= 201907L
+constexpr
+#endif
+void in_place_to(T& t,Args&& ...args)
 {
 	basic_ostring<std::string> os;
 	print(os,std::forward<Args>(args)...);

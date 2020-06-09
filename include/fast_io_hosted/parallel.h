@@ -93,9 +93,14 @@ struct span_raii
 };
 
 template<output_stream stm,typename Func>
-inline constexpr void parrallel_details(stm& output,std::size_t count,std::size_t chars_per_element,Func func)
+inline
+#if __cpp_lib_is_constant_evaluated >= 201811L
+constexpr
+#endif
+void parrallel_details(stm& output,std::size_t count,std::size_t chars_per_element,Func func)
 {
 	using char_type = typename stm::char_type;
+#if __cpp_lib_is_constant_evaluated >= 201811L
 	if(std::is_constant_evaluated())
 	{
 		if constexpr(reserve_output_stream<stm>)
@@ -112,6 +117,7 @@ inline constexpr void parrallel_details(stm& output,std::size_t count,std::size_
 	}
 	else
 	{
+#endif
 		std::size_t thread_number{std::thread::hardware_concurrency()};
 
 		if(thread_number<2)[[unlikely]]
@@ -157,7 +163,9 @@ inline constexpr void parrallel_details(stm& output,std::size_t count,std::size_
 		}
 		for(auto& e : thread_result)
 			write(output,e.osp.span().data(),e.osp.span().data()+osize(e.osp));
+#if __cpp_lib_is_constant_evaluated >= 201811L
 	}
+#endif
 }
 
 

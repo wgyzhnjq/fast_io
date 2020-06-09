@@ -7,10 +7,17 @@ namespace fast_io
 inline void fast_terminate()
 {
 #ifndef FAST_IO_NOT_TERMINATE
-	*(reinterpret_cast<char*>(0))=0;
-#endif
+//https://llvm.org/doxygen/Compiler_8h_source.html
+
+#if __has_builtin(__builtin_trap)
+	__builtin_trap();
+#elif defined(_MSC_VER)
+	__debugbreak();
+#else
 	//create a null pointer hardware exception to terminate the program
-//	fast_exit(-1);
+	*(reinterpret_cast<char volatile*>(0))=0;
+#endif
+#endif
 }
 
 }
