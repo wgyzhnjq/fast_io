@@ -87,7 +87,11 @@ public:
             // allocate more space for this file
             auto fallocate_ret(fallocate(bf.native_handle(), 0, file_size_in_bytes, bytes - file_size_in_bytes));
             if (fallocate_ret == -1)
+#ifdef __cpp_exceptions
                 throw posix_error();
+#else
+		fast_terminate();
+#endif
         }
         auto ret(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)));
         if (ret == MAP_FAILED)
