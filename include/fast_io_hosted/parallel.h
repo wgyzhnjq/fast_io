@@ -93,6 +93,57 @@ struct span_raii
 };
 
 template<output_stream stm,typename Func>
+inline void parrallel_details_no_constexpr(stm& output,std::size_t count,std::size_t chars_per_element,Func& func)
+{
+	using char_type = typename stm::char_type;
+	std::size_t thread_number{std::thread::hardware_concurrency()};
+
+	if(thread_number<2)[[unlikely]]
+	{
+		if constexpr(reserve_output_stream<stm>)
+		{
+			func(output,0,count);
+		}
+		else
+		{
+			std::size_t const total_chars{count*chars_per_element};
+			span_raii<char_type> osp{new char_type[total_chars],total_chars};
+			func(osp.osp,0,count);
+			write(output,osp.osp.span().data(),osp.osp.span().data()+osize(osp.osp));
+		}
+		return;
+	}
+
+	std::size_t range{count/thread_number};
+	std::size_t const module{count-range*thread_number};
+	std::size_t const allocation_size{range*chars_per_element};
+
+	std::vector<details::span_raii<char_type>> thread_result;
+	thread_result.reserve(thread_number);
+	{
+	std::vector<std::jthread> jth;
+	jth.reserve(thread_number);
+	std::size_t const offset{(range<<1)+module};
+	std::size_t const offset_allocation_size{(range+module)*chars_per_element};
+	jth.emplace_back(print_out<char_type,Func>,std::addressof(thread_result.emplace_back(new char_type[offset_allocation_size],offset_allocation_size).osp),
+		func,range,offset);
+	for(std::size_t i{2};i<thread_number;++i)
+		jth.emplace_back(print_out<char_type,Func>,std::addressof(thread_result.emplace_back(new char_type[allocation_size],allocation_size).osp),
+		func,offset+(i-2)*range,offset+(i-1)*range);
+	if constexpr(reserve_output_stream<stm>)
+		func(output,0,range);
+	else
+	{
+		span_raii<char_type> osp{new char_type[allocation_size],allocation_size};
+		func(osp.osp,0,range);
+		write(output,osp.osp.span().data(),osp.osp.span().data()+osize(osp.osp));
+	}
+	}
+	for(auto& e : thread_result)
+		write(output,e.osp.span().data(),e.osp.span().data()+osize(e.osp));
+}
+
+template<output_stream stm,typename Func>
 inline
 #if __cpp_lib_is_constant_evaluated >= 201811L
 constexpr
@@ -118,51 +169,7 @@ void parrallel_details(stm& output,std::size_t count,std::size_t chars_per_eleme
 	else
 	{
 #endif
-		std::size_t thread_number{std::thread::hardware_concurrency()};
-
-		if(thread_number<2)[[unlikely]]
-		{
-			if constexpr(reserve_output_stream<stm>)
-			{
-				func(output,0,count);
-			}
-			else
-			{
-				std::size_t const total_chars{count*chars_per_element};
-				span_raii<char_type> osp{new char_type[total_chars],total_chars};
-				func(osp.osp,0,count);
-				write(output,osp.osp.span().data(),osp.osp.span().data()+osize(osp.osp));
-			}
-			return;
-		}
-
-		std::size_t range{count/thread_number};
-		std::size_t const module{count-range*thread_number};
-		std::size_t const allocation_size{range*chars_per_element};
-
-		std::vector<details::span_raii<char_type>> thread_result;
-		thread_result.reserve(thread_number);
-		{
-		std::vector<std::jthread> jth;
-		jth.reserve(thread_number);
-		std::size_t const offset{(range<<1)+module};
-		std::size_t const offset_allocation_size{(range+module)*chars_per_element};
-		jth.emplace_back(print_out<char_type,Func>,std::addressof(thread_result.emplace_back(new char_type[offset_allocation_size],offset_allocation_size).osp),
-			func,range,offset);
-		for(std::size_t i{2};i<thread_number;++i)
-			jth.emplace_back(print_out<char_type,Func>,std::addressof(thread_result.emplace_back(new char_type[allocation_size],allocation_size).osp),
-			func,offset+(i-2)*range,offset+(i-1)*range);
-		if constexpr(reserve_output_stream<stm>)
-			func(output,0,range);
-		else
-		{
-			span_raii<char_type> osp{new char_type[allocation_size],allocation_size};
-			func(osp.osp,0,range);
-			write(output,osp.osp.span().data(),osp.osp.span().data()+osize(osp.osp));
-		}
-		}
-		for(auto& e : thread_result)
-			write(output,e.osp.span().data(),e.osp.span().data()+osize(e.osp));
+		parrallel_details_no_constexpr(output,count,chars_per_element,func);
 #if __cpp_lib_is_constant_evaluated >= 201811L
 	}
 #endif
