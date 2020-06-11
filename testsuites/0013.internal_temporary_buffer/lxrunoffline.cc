@@ -4,7 +4,7 @@
 int main()
 {
 	const auto err_mode = _setmode(2, _O_U16TEXT);
-	print(fast_io::wc_stderr,
+	print(fast_io::werr,
 		L"Supported actions are:\n"
 		L"    l, list            List all installed distributions.\n"
 		L"    gd, get-default    Get the default distribution, which is used by bash.exe.\n"
