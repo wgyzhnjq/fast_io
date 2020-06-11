@@ -4,22 +4,34 @@
 
 namespace fast_io
 {
+namespace details
+{
 
-class com_error:fast_io_error
+inline void report_com_error(error_reporter& report, auto hresult) requires(std::same_as<TCHAR,char>)
+{
+	_com_error ce(hresult);
+	print(report,ce.ErrorMessage());
+}
+
+inline void report_com_error(error_reporter& report, auto hresult) requires(std::same_as<TCHAR,wchar_t>&&sizeof(wchar_t)==2)
+{
+	_com_error ce(hresult);
+	print(report,fast_io::code_cvt(std::wstring_view{ce.ErrorMessage()}));
+}
+}
+
+class com_error : public fast_io_error
 {
 public:
 	HRESULT hresult{};
+	explicit com_error(HRESULT hr):hresult(hr){}
 	constexpr auto code() const noexcept
 	{
 		return hresult;
 	}
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void com_error(error_reporter& report) const override
+	void report(error_reporter& report) const override
 	{
-		_com_error ce(hresult);
-		print(report,fast_io::code_cvt(std::string_view(ce.ErrorMessage())));
+		details::report_com_error(report,hresult);
 	}
 };
 
