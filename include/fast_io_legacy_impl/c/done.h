@@ -28,7 +28,7 @@ inline void write(basic_c_io_observer_unlocked<T> cfhd,Iter begin,Iter end)
 				basic_posix_io_observer<T> piob(cfhd);
 				if(_isatty(piob.fd))
 				{
-					write(static_cast<basic_posix_io_observer<T>>(cfhd),begin,end);
+					write(piob,begin,end);
 					return;
 				}
 			}
