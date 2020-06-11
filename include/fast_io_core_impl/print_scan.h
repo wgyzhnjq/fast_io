@@ -309,6 +309,14 @@ inline constexpr void print_fallback(output &out,Args&& ...args)
 }
 }
 
+template<output_stream output,typename callback>
+inline constexpr void print_transaction(output &out,callback func)
+{
+	internal_temporary_buffer<typename output::char_type> buffer;
+	func(buffer);
+	write(out,buffer.beg_ptr,buffer.end_ptr);
+}
+
 template<output_stream output,typename ...Args>
 inline constexpr void print(output &out,Args&& ...args)
 {
