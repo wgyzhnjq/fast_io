@@ -60,7 +60,6 @@
 #include"fast_io_core_impl/read_write_ranges.h"
 
 #include"fast_io_core_impl/seek.h"
-#include"fast_io_core_impl/sync.h"
 #include"fast_io_core_impl/tie.h"
 #include"fast_io_core_impl/transmit.h"
 #include"fast_io_core_impl/random_access_transmit.h"
