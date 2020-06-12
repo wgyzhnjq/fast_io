@@ -157,7 +157,7 @@ template<std::contiguous_iterator from_iter,std::contiguous_iterator to_iter>
 requires (
 sizeof(std::iter_value_t<from_iter>)<=4&&sizeof(std::iter_value_t<to_iter>)<=4&&sizeof(std::iter_value_t<from_iter>)!=sizeof(std::iter_value_t<to_iter>)
 &&((sizeof(std::iter_value_t<from_iter>)==1&&std::integral<std::iter_value_t<from_iter>>)||std::unsigned_integral<std::iter_value_t<from_iter>>)
-&&((sizeof(std::iter_value_t<to_iter>)==1&&std::integral<std::iter_value_t<from_iter>>)||std::unsigned_integral<std::iter_value_t<to_iter>>))
+&&((sizeof(std::iter_value_t<to_iter>)==1&&std::integral<std::iter_value_t<to_iter>>)||std::unsigned_integral<std::iter_value_t<to_iter>>))
 inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p_src_end_iter,to_iter p_dst_iter)
 {
 	auto p_src{std::to_address(p_src_begin_iter)};
@@ -274,7 +274,7 @@ template<output_stream output,std::integral ch_type>
 requires (
 sizeof(typename output::char_type)<=4&&sizeof(ch_type)<=4&&sizeof(typename output::char_type)!=sizeof(ch_type)
 &&((sizeof(typename output::char_type)==1&&std::integral<typename output::char_type>)||std::unsigned_integral<typename output::char_type>)
-&&((sizeof(ch_type)==1&&std::integral<typename output::char_type>)||std::unsigned_integral<ch_type>))
+&&((sizeof(ch_type)==1&&std::integral<ch_type>)||std::unsigned_integral<ch_type>))
 inline constexpr void print_define(output& out,manip::code_cvt<std::basic_string_view<ch_type>> view)
 {
 	constexpr std::size_t coff{sizeof(typename output::char_type)<sizeof(ch_type)?2:0};
