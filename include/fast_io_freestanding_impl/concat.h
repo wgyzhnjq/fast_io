@@ -55,7 +55,7 @@ inline constexpr T deal_with_one(U&& t)
 }
 
 }
-
+sftest;
 template<typename T=std::string,typename... Args>
 inline constexpr T concat(Args&& ...args)
 {
