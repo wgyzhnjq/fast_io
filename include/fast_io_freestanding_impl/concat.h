@@ -74,7 +74,7 @@ inline constexpr decltype(auto) deal_with_first_is_string_rvalue_reference(U&& u
 		return std::forward<U>(u);
 	else
 	{
-		ostring_ref<T> t{u};
+		ostring_ref t{u};
 		if constexpr(ln)
 			println(t,std::forward<Args>(args)...);
 		else
@@ -96,7 +96,7 @@ inline constexpr T concat(Args&& ...args)
 	}
 	else
 	{
-		if constexpr(details::test_first_is_string_rvalue_reference<T,Args...>())
+		if constexpr(details::test_first_is_string_rvalue_reference<T,Args&&...>())
 			return details::deal_with_first_is_string_rvalue_reference<false,T>(std::forward<Args>(args)...);
 		else
 		{
@@ -119,7 +119,7 @@ inline constexpr T concatln(Args&& ...args)
 	}
 	else
 	{
-		if constexpr(details::test_first_is_string_rvalue_reference<T,Args...>())
+		if constexpr(details::test_first_is_string_rvalue_reference<T,Args&&...>())
 			return details::deal_with_first_is_string_rvalue_reference<true,T>(std::forward<Args>(args)...);
 		else
 		{

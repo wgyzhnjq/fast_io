@@ -66,8 +66,6 @@ template<typename T>
 inline auto hack_M_local_buf(T& str)
 {
 	using model_t = model<T>;
-	using alloc_hider = typename model_t::_Alloc_hider;
-	using pointer = typename T::pointer;
 	using value_type = typename T::value_type;
 	return reinterpret_cast<value_type*>(reinterpret_cast<std::byte*>(std::addressof(str))+__builtin_offsetof(model_t,_M_local_buf));
 }
@@ -83,7 +81,6 @@ inline decltype(auto) hack_M_allocated_capacity(T& str)
 template<typename T>
 inline constexpr bool is_local(T& str)
 {
-	using model_type = model<T>;
 	using const_pointer = typename T::const_pointer;
 	return std::pointer_traits<const_pointer>::pointer_to(*hack_M_local_buf(str))==hack_M_data(str);
 }
@@ -91,7 +88,6 @@ inline constexpr bool is_local(T& str)
 template<typename T>
 inline constexpr bool is_local_and_null(T& str)
 {
-	using model_type = model<T>;
 	using const_pointer = typename T::const_pointer;
 	return std::pointer_traits<const_pointer>::pointer_to(*hack_M_local_buf(str))==hack_M_data(str)+hack_M_string_length(str);
 }

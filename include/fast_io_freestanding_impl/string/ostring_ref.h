@@ -34,6 +34,7 @@ template<std::integral char_type,typename traits_type,typename allocator_type>
 template<std::integral char_type,typename traits_type,typename allocator_type>
 inline constexpr void obuffer_set_curr(ostring_ref<char_type,traits_type,allocator_type> ob,char_type* ptr)
 {
+	traits_type::assign(*ptr, char_type());
 	details::string_hack::set_end_ptr(ob.reference,ptr);
 }
 
@@ -74,7 +75,7 @@ inline constexpr void write(ostring_ref<char_type,traits_type,allocator_type> ob
 		auto curr{obuffer_curr(ob)};
 		auto ed{obuffer_end(ob)};
 		std::size_t const to_write(end-begin);
-		if(curr+to_write<ed)[[likely]]
+		if(curr+to_write<=ed)[[likely]]
 		{
 			memcpy(curr,std::to_address(begin),to_write*sizeof(char_type));
 			obuffer_set_curr(ob,curr+to_write);
