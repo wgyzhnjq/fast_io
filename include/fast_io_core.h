@@ -51,8 +51,6 @@
 #include"fast_io_core_impl/istring_view.h"
 #include"fast_io_core_impl/ospan.h"
 // Provide template prototype for custom string types
-#include"fast_io_core_impl/ostring.h"
-#include"fast_io_core_impl/ostring_ref.h"
 #include"fast_io_core_impl/skip.h"
 
 //#include"fast_io_core_impl/istack.h"

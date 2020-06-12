@@ -8,7 +8,7 @@
 #include<bitset>
 #include<system_error>
 //#include<cmath>
-
+#include"fast_io_freestanding_impl/string/impl.h"
 #include"fast_io_freestanding_impl/transformers/transformers.h"
 #include"fast_io_freestanding_impl/concat.h"
 #include"fast_io_freestanding_impl/manip.h"
@@ -30,12 +30,13 @@
 
 namespace fast_io
 {
+/*
 using ostring = basic_ostring<std::string>;
 using u8ostring = basic_ostring<std::u8string>;
 
 using ostring_ref = basic_ostring_ref<std::string>;
 using u8ostring_ref = basic_ostring_ref<std::u8string>;
-
+*/
 template<std::integral char_type>
 using basic_iobuf_io_io_observer = basic_iobuf<basic_io_io_observer<char_type>>;
 template<std::integral char_type>
