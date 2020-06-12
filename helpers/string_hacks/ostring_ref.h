@@ -40,8 +40,8 @@ inline constexpr void obuffer_set_curr(obasic_string_ref<char_type,traits_type,a
 template<std::integral char_type,typename traits_type,typename allocator_type>
 inline constexpr void otakeover(obasic_string_ref<char_type,traits_type,allocator_type> ob,char_type* beg_ptr,char_type* end_ptr,char_type* cap_ptr)
 {
-	details::string_hack::set_begin_ptr(ob.reference,beg_ptr);
 	traits_type::assign(*end_ptr, char_type());
+	details::string_hack::set_begin_ptr(ob.reference,beg_ptr);
 	details::string_hack::set_end_ptr(ob.reference,end_ptr);
 	details::string_hack::set_cap_ptr(ob.reference,cap_ptr-1);
 }

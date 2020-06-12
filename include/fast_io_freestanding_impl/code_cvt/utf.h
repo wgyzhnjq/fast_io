@@ -252,7 +252,7 @@ sizeof(typename output::char_type)<=4&&sizeof(ch_type)<=4&&sizeof(typename outpu
 inline constexpr void print_define(output& out,manip::code_cvt<std::basic_string_view<ch_type>> view)
 {
 	constexpr std::size_t coff{sizeof(typename output::char_type)<sizeof(ch_type)?2:0};
-	reserve_write(out,view.reference.size()<<coff,[&](std::contiguous_iterator auto ptr)
+	reserve_write(out,view.reference.size()<<coff,[&](auto ptr)
 	{
 		return utf_code_convert(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
 	});
