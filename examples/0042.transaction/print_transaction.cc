@@ -17,6 +17,5 @@ int main()
 		print(m,"Hello  world\n");
 		print(m,"Hello  world\n");
 		print(m,"Hello  world\n");
-
 	});
 }

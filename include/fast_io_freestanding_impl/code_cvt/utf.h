@@ -18,6 +18,63 @@ https://github.com/BobSteagall/utf_utils/blob/master/src/utf_utils.cpp
 namespace fast_io
 {
 
+template<std::integral T>
+requires ((std::unsigned_integral<T>&&sizeof(T)==2)||sizeof(T)==1)
+inline constexpr std::size_t utf_get_code_units(char32_t cdpt, T* pDst)
+{
+	if constexpr(sizeof(T)==2)
+	{
+		if (cdpt < 0x10000)
+		{
+			*pDst = static_cast<T>(cdpt);
+			return 1;
+		}
+		else
+		{
+			*pDst = static_cast<T>(0xD7C0 + (cdpt >> 10));
+			pDst[1] = static_cast<T>(0xDC00 + (cdpt & 0x3FF));
+			return 2;
+		}
+	}
+	else
+	{
+		if (cdpt <= 0x7F)[[likely]]
+		{
+			*pDst = static_cast<T>(cdpt);
+			return 1;
+		}
+		else if (cdpt <= 0x7FF)
+		{
+			*pDst = static_cast<T>(0xC0 | ((cdpt >> 6) & 0x1F));
+			pDst[1] = static_cast<T>(0x80 | (cdpt        & 0x3F));
+			return 2;
+		}
+		else if (cdpt <= 0xFFFF)
+		{
+			*pDst = static_cast<T>(0xE0 | ((cdpt >> 12) & 0x0F));
+			pDst[1] = static_cast<T>(0x80 | ((cdpt >> 6)  & 0x3F));
+			pDst[2] = static_cast<T>(0x80 | (cdpt         & 0x3F));
+			return 3;
+		}
+		else if (cdpt <= 0x10FFFF)
+		{
+			*pDst= static_cast<T>(0xF0 | ((cdpt >> 18) & 0x07));
+			pDst[1] = static_cast<T>(0x80 | ((cdpt >> 12) & 0x3F));
+			pDst[2] = static_cast<T>(0x80 | ((cdpt >> 6)  & 0x3F));
+			pDst[3] = static_cast<T>(0x80 | (cdpt         & 0x3F));
+			return 4;
+		}
+#ifdef __cpp_exceptions
+		throw fast_io_text_error("illegal utf32 code unit");
+#else
+		fast_terminate();
+		return 0;
+#endif
+	}
+
+}
+
+
 namespace details::utf
 {
 #ifdef __SSE__
@@ -64,70 +121,6 @@ inline void convert_ascii_with_sse(T*& pSrc, U*& pDst) noexcept
 }
 #endif
 
-template<std::integral T>
-requires (sizeof(T)==2||sizeof(T)==1)
-inline constexpr std::uint32_t get_code_units(char32_t cdpt, T*& pDst) noexcept
-{
-	if constexpr(sizeof(T)==2)
-	{
-		if (cdpt < 0x10000)
-		{
-			*pDst = static_cast<T>(cdpt);
-			++pDst;
-			return 1;
-		}
-		else
-		{
-			*pDst = static_cast<T>(0xD7C0 + (cdpt >> 10));
-			*++pDst = static_cast<T>(0xDC00 + (cdpt & 0x3FF));
-			++pDst;
-			return 2;
-		}
-	}
-	else
-	{
-		if (cdpt <= 0x7F)
-		{
-			*pDst = static_cast<T>(cdpt);
-			++pDst;
-			return 1;
-		}
-		else if (cdpt <= 0x7FF)
-		{
-			*pDst = static_cast<T>(0xC0 | ((cdpt >> 6) & 0x1F));
-			++pDst;
-			*pDst = static_cast<T>(0x80 | (cdpt        & 0x3F));
-			++pDst;
-			return 2;
-		}
-		else if (cdpt <= 0xFFFF)
-		{
-			*pDst = static_cast<T>(0xE0 | ((cdpt >> 12) & 0x0F));
-			++pDst;
-			*pDst = static_cast<T>(0x80 | ((cdpt >> 6)  & 0x3F));
-			++pDst;
-			*pDst= static_cast<T>(0x80 | (cdpt         & 0x3F));
-			++pDst;
-			return 3;
-		}
-		else if (cdpt <= 0x10FFFF)
-		{
-			*pDst= static_cast<T>(0xF0 | ((cdpt >> 18) & 0x07));
-			++pDst;
-			*pDst = static_cast<T>(0x80 | ((cdpt >> 12) & 0x3F));
-			++pDst;
-			*pDst = static_cast<T>(0x80 | ((cdpt >> 6)  & 0x3F));
-			++pDst;
-			*pDst = static_cast<T>(0x80 | (cdpt         & 0x3F));
-			++pDst;
-			return 4;
-		}
-		return 0;
-
-	}
-
-}
-
 
 template<std::input_iterator input>
 constexpr inline uint32_t advance_with_big_table(input& pSrc, input pSrcEnd, char32_t& cdpt) noexcept
@@ -161,33 +154,74 @@ Assume little endian first until I create a good interface
 */
 
 template<std::contiguous_iterator from_iter,std::contiguous_iterator to_iter>
-requires (std::integral<std::iter_value_t<from_iter>>&&sizeof(std::iter_value_t<from_iter>)==1&&
-(sizeof(std::iter_value_t<to_iter>)==2||sizeof(std::iter_value_t<to_iter>)==4)&&std::unsigned_integral<std::iter_value_t<to_iter>>)
-inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_iter p_src_end,to_iter p_dst)
+requires (
+sizeof(std::iter_value_t<from_iter>)<=4&&sizeof(std::iter_value_t<to_iter>)<=4&&sizeof(std::iter_value_t<from_iter>)!=sizeof(std::iter_value_t<to_iter>)
+&&((sizeof(std::iter_value_t<from_iter>)==1&&std::integral<std::iter_value_t<from_iter>>)||std::unsigned_integral<std::iter_value_t<from_iter>>)
+&&((sizeof(std::iter_value_t<to_iter>)==1&&std::integral<std::iter_value_t<from_iter>>)||std::unsigned_integral<std::iter_value_t<to_iter>>))
+inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p_src_end_iter,to_iter p_dst_iter)
 {
-	auto pSrc(std::to_address(p_src_iter));
-	auto pSrcEnd(std::to_address(p_src_end));
-	auto pDst(std::to_address(p_dst));
-	char32_t cdpt;
+	auto p_src{std::to_address(p_src_begin_iter)};
+	auto p_src_end{std::to_address(p_src_end_iter)};
+	auto p_dst{std::to_address(p_dst_iter)};
+	if constexpr(sizeof(std::iter_value_t<from_iter>)<sizeof(std::iter_value_t<to_iter>))
+	{
+		char32_t cdpt;
+		if constexpr(sizeof(std::iter_value_t<from_iter>)==1)
+		{
 #ifdef __SSE__
 #if __cpp_lib_is_constant_evaluated>=201811L
-	if (!std::is_constant_evaluated())
-	{
-		while (pSrc + sizeof(__m128i)< pSrcEnd)
+		if (!std::is_constant_evaluated())
 		{
-			if (*pSrc < 0x80)
-				details::utf::convert_ascii_with_sse(pSrc, pDst);
+#endif
+		while (p_src + sizeof(__m128i)< p_src_end)
+		{
+			if (*p_src < 0x80)
+				details::utf::convert_ascii_with_sse(p_src, p_dst);
 			else
 			{
-				if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
+				if (details::utf::advance_with_big_table(p_src, p_src_end, cdpt) != 12)[[likely]]
 				{
 					if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
 					{
-						*pDst=cdpt;
-						++pDst;
+						*p_dst=cdpt;
+						++p_dst;
 					}
 					else
-						details::utf::get_code_units(cdpt, pDst);
+						p_dst+=utf_get_code_units(cdpt, p_dst);
+				}
+				else
+#ifdef __cpp_exceptions
+					throw fast_io_text_error("illegal utf8");
+#else
+					fast_terminate();
+#endif
+			}
+		}
+
+#if __cpp_lib_is_constant_evaluated>=201811L
+		}
+#endif
+#endif
+		}
+		while (p_src < p_src_end)
+		{
+			if (*p_src < 0x80)
+			{
+				*p_dst = *p_src;
+				++p_dst;
+				++p_src;
+			}
+			else
+			{
+				if (details::utf::advance_with_big_table(p_src, p_src_end, cdpt) != 12)[[likely]]
+				{
+					if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
+					{
+						*p_dst=cdpt;
+						++p_dst;
+					}
+					else
+						p_dst+=utf_get_code_units(cdpt, p_dst);
 				}
 				else
 #ifdef __cpp_exceptions
@@ -198,90 +232,36 @@ inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_i
 			}
 		}
 	}
-#endif
-#endif
-	while (pSrc < pSrcEnd)
+	else
 	{
-		if (*pSrc < 0x80)
+		if constexpr(sizeof(std::iter_value_t<from_iter>)==4)
 		{
-			*pDst = *pSrc;
-			++pDst;
-			++pSrc;
+			for(;p_src!=p_src_end;++p_src)
+				p_dst+=utf_get_code_units(*p_src, p_dst);	
 		}
 		else
 		{
-		if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
-		{
-			if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
+			for(char32_t cdpt;p_src<p_src_end;)
 			{
-				*pDst=cdpt;
-				++pDst;
+				if (*p_src < 0x80)[[likely]]
+				{
+					*p_dst = *p_src;
+					++p_dst;
+					++p_src;
+				}
+				else
+				{
+					if (details::utf::advance_with_big_table(p_src, p_src_end, cdpt) != 12)[[likely]]
+						p_dst+=utf_get_code_units(cdpt, p_dst);
+					else
+#ifdef __cpp_exceptions
+						throw fast_io_text_error("illegal utf8");
+#else
+						fast_terminate();
+#endif
+				}
 			}
-			else
-				details::utf::get_code_units(cdpt, pDst);
 		}
-		else
-#ifdef __cpp_exceptions
-			throw fast_io_text_error("illegal utf8");
-#else
-			fast_terminate();
-#endif
-		}
-	}
-	return (pDst-std::to_address(p_dst))+p_dst;
-}
-
-
-template<std::contiguous_iterator from_iter,std::contiguous_iterator to_iter>
-requires (std::unsigned_integral<std::iter_value_t<from_iter>>&&sizeof(std::iter_value_t<from_iter>)==2&&
-sizeof(std::iter_value_t<to_iter>)==1&&std::integral<std::iter_value_t<to_iter>>)
-inline constexpr to_iter code_cvt_from_utf16_to_utf8(from_iter p_src_begin_iter,from_iter p_src_end_iter,to_iter p_dst_iter)
-{
-	auto i{std::to_address(p_src_begin_iter)};
-	auto p_src_end{std::to_address(p_src_end_iter)};
-	auto p_dst{std::to_address(p_dst_iter)};
-//https://www.cnblogs.com/chevin/p/8424842.html
-	for(;i!=p_src_end;++i)
-	{
-		std::uint16_t code{*i};
-		if(code<0x80)[[likely]]
-		{
-			*p_dst=code;
-			++p_dst;
-		}
-		else if(code<0x800)
-		{
-			*p_dst=(192 | (31 & (code >> 6)));
-			p_dst[1]=(128 | (63 & code));
-			p_dst+=2;
-		}
-		else if(code<0x10000)
-		{
-			if(static_cast<std::uint16_t>(code-0xd800)<static_cast<std::uint16_t>(0xe000-0xd7ff))[[unlikely]]
-#ifdef __cpp_exceptions
-				throw fast_io_text_error("illegal utf16");
-#else
-				fast_terminate();
-#endif
-			*p_dst=(224 | (15 & (code >> 12)));
-			p_dst[1]=(128 | (63 & (code >> 6)));
-			p_dst[2]=(128 | (63 & code));
-			p_dst+=3;
-		}
-		else if(code<0x110000)
-		{
-			*p_dst=(240 | (7 & (code >> 18)));
-			p_dst[1]=(128 | (63 & (code >> 12)));
-			p_dst[2]=(128 | (63 & (code >> 6)));
-			p_dst[3]=(128 | (63 & code));
-			p_dst+=4;
-		}
-		else[[unlikely]]
-#ifdef __cpp_exceptions
-			throw fast_io_text_error("illegal utf16");
-#else
-			fast_terminate();
-#endif
 	}
 	return p_dst-std::to_address(p_dst_iter) + p_dst_iter;
 }
@@ -291,26 +271,16 @@ requires (std::integral<std::ranges::range_value_t<rg>>&&std::convertible_to<rg,
 inline constexpr manip::code_cvt<std::basic_string_view<std::ranges::range_value_t<rg>>> code_cvt(rg&& f){return {{std::forward<rg>(f)}};}
 
 template<output_stream output,std::integral ch_type>
-requires ((std::same_as<typename output::char_type,char16_t>||
-std::same_as<typename output::char_type,wchar_t>||
-std::same_as<typename output::char_type,char32_t>)&&
-(std::same_as<ch_type,char8_t>||
-std::same_as<ch_type,char>))||
-((std::same_as<typename output::char_type,char8_t>||
-std::same_as<typename output::char_type,char>)&&
-(std::same_as<ch_type,char16_t>||std::same_as<ch_type,wchar_t>))
+requires (
+sizeof(typename output::char_type)<=4&&sizeof(ch_type)<=4&&sizeof(typename output::char_type)!=sizeof(ch_type)
+&&((sizeof(typename output::char_type)==1&&std::integral<typename output::char_type>)||std::unsigned_integral<typename output::char_type>)
+&&((sizeof(ch_type)==1&&std::integral<typename output::char_type>)||std::unsigned_integral<ch_type>))
 inline constexpr void print_define(output& out,manip::code_cvt<std::basic_string_view<ch_type>> view)
 {
-	constexpr bool condi{(std::same_as<typename output::char_type,char16_t>||
-		std::same_as<typename output::char_type,wchar_t>||
-		std::same_as<typename output::char_type,char32_t>)&&
-		(std::same_as<ch_type,char8_t>||std::same_as<ch_type,char>)};
-	reserve_write(out,view.reference.size(),[&](std::contiguous_iterator auto ptr)
+	constexpr std::size_t coff{sizeof(typename output::char_type)<sizeof(ch_type)?2:0};
+	reserve_write(out,view.reference.size()<<coff,[&](std::contiguous_iterator auto ptr)
 	{
-		if constexpr(condi)
-			return code_cvt_from_utf8_to_utf16(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
-		else
-			return code_cvt_from_utf16_to_utf8(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
+		return utf_code_convert(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
 	});
 }
 
