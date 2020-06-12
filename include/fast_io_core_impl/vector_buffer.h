@@ -97,7 +97,7 @@ inline constexpr void otakeover(vector_buffer<char_type>& ob,char_type* beg_ptr,
 {
 	ob.beg_ptr=beg_ptr;
 	ob.end_ptr=end_ptr;
-	ob.cap_ptr=cap_ptr;
+	ob.capacity_ptr=cap_ptr;
 }
 
 template<std::integral char_type>
