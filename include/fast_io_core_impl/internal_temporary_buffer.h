@@ -110,7 +110,7 @@ inline constexpr void otakeover(internal_temporary_buffer<char_type>& ob,char_ty
 template<std::integral char_type>
 inline constexpr bool ocan_takeover(internal_temporary_buffer<char_type>& ob)
 {
-	return ob.beg_ptr==ob.static_buffer.data();
+	return ob.end_ptr==ob.static_buffer.data();
 }
 
 namespace details::internal_temporary_buffer_impl
