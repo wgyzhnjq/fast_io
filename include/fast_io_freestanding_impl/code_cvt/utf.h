@@ -162,7 +162,7 @@ Assume little endian first until I create a good interface
 
 template<std::contiguous_iterator from_iter,std::contiguous_iterator to_iter>
 requires (std::integral<std::iter_value_t<from_iter>>&&sizeof(std::iter_value_t<from_iter>)==1&&
-sizeof(std::iter_value_t<to_iter>)==2&&std::unsigned_integral<std::iter_value_t<to_iter>>)
+(sizeof(std::iter_value_t<to_iter>)==2||sizeof(std::iter_value_t<to_iter>)==4)&&std::unsigned_integral<std::iter_value_t<to_iter>>)
 inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_iter p_src_end,to_iter p_dst)
 {
 	auto pSrc(std::to_address(p_src_iter));
@@ -180,7 +180,15 @@ inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_i
 			else
 			{
 				if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
-					details::utf::get_code_units(cdpt, pDst);
+				{
+					if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
+					{
+						*pDst=cdpt;
+						++pDst;
+					}
+					else
+						details::utf::get_code_units(cdpt, pDst);
+				}
 				else
 #ifdef __cpp_exceptions
 					throw fast_io_text_error("illegal utf8");
@@ -203,7 +211,15 @@ inline constexpr to_iter code_cvt_from_utf8_to_utf16(from_iter p_src_iter,from_i
 		else
 		{
 		if (details::utf::advance_with_big_table(pSrc, pSrcEnd, cdpt) != 12)[[likely]]
+		{
+			if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
+			{
+				*pDst=cdpt;
+				++pDst;
+			}
+			else
 				details::utf::get_code_units(cdpt, pDst);
+		}
 		else
 #ifdef __cpp_exceptions
 			throw fast_io_text_error("illegal utf8");
