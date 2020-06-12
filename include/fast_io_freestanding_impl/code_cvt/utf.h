@@ -234,34 +234,8 @@ inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p
 	}
 	else
 	{
-		if constexpr(sizeof(std::iter_value_t<from_iter>)==4)
-		{
-			for(;p_src!=p_src_end;++p_src)
-				p_dst+=utf_get_code_units(*p_src, p_dst);	
-		}
-		else
-		{
-			for(char32_t cdpt;p_src<p_src_end;)
-			{
-				if (*p_src < 0x80)[[likely]]
-				{
-					*p_dst = *p_src;
-					++p_dst;
-					++p_src;
-				}
-				else
-				{
-					if (details::utf::advance_with_big_table(p_src, p_src_end, cdpt) != 12)[[likely]]
-						p_dst+=utf_get_code_units(cdpt, p_dst);
-					else
-#ifdef __cpp_exceptions
-						throw fast_io_text_error("illegal utf8");
-#else
-						fast_terminate();
-#endif
-				}
-			}
-		}
+		for(;p_src!=p_src_end;++p_src)
+			p_dst+=utf_get_code_units(*p_src, p_dst);
 	}
 	return p_dst-std::to_address(p_dst_iter) + p_dst_iter;
 }
