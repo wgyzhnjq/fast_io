@@ -34,6 +34,7 @@
 
 #include"fast_io_core_impl/memptr.h"
 #include"fast_io_core_impl/internal_temporary_buffer.h"
+#include"fast_io_core_impl/vector_buffer.h"
 #include"fast_io_core_impl/fast_io_error.h"
 #include"fast_io_core_impl/eof.h"
 #include"fast_io_core_impl/manip/impl.h"
