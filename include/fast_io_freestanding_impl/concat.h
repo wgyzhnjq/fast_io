@@ -54,37 +54,80 @@ inline constexpr T deal_with_one(U&& t)
 	}
 }
 
+template<typename T,typename U,typename... Args>
+inline constexpr bool test_first_is_string_rvalue_reference()
+{
+	if constexpr(std::is_rvalue_reference_v<U>)
+	{
+		using no_cvref_t = std::remove_cvref_t<U>;
+		if constexpr(is_std_string<no_cvref_t>::value&&std::same_as<no_cvref_t,T>)
+			return true;
+	}
+	return false;
+}
+
+
+template<bool ln,typename T,typename U,typename... Args>
+inline constexpr decltype(auto) deal_with_first_is_string_rvalue_reference(U&& u,Args&& ...args)
+{
+	if constexpr(!ln&&sizeof...(Args)==0)
+		return std::forward<U>(u);
+	else
+	{
+		ostring_ref<T> t{u};
+		if constexpr(ln)
+			println(t,std::forward<Args>(args)...);
+		else
+			print(t,std::forward<Args>(args)...);
+		return std::forward<U>(u);
+	}
+}
+
 }
 
 template<typename T=std::string,typename... Args>
 inline constexpr T concat(Args&& ...args)
 {
-	if constexpr(sizeof...(Args)==1&&details::test_one<false,T,Args...>())
+	if constexpr(sizeof...(Args)==0)
+		return {};
+	else if constexpr(sizeof...(Args)==1&&details::test_one<false,T,Args...>())
 	{
 		return details::deal_with_one<T,false>(std::forward<Args>(args)...);
 	}
 	else
 	{
-		T v;
-		ostring_ref ref{v};
-		print(ref,std::forward<Args>(args)...);
-		return v;
+		if constexpr(details::test_first_is_string_rvalue_reference<T,Args...>())
+			return details::deal_with_first_is_string_rvalue_reference<false,T>(std::forward<Args>(args)...);
+		else
+		{
+			T v;
+			ostring_ref ref{v};
+			print(ref,std::forward<Args>(args)...);
+			return v;
+		}
 	}
 }
 
 template<typename T=std::string,typename... Args>
 inline constexpr T concatln(Args&& ...args)
 {
-	if constexpr(sizeof...(Args)==1&&details::test_one<true,T,Args...>())
+	if constexpr(sizeof...(Args)==0)
+		return T(1,u8'\n');
+	else if constexpr(sizeof...(Args)==1&&details::test_one<true,T,Args...>())
 	{
 		return details::deal_with_one<T,true>(std::forward<Args>(args)...);
 	}
 	else
 	{
-		T v;
-		ostring_ref<T> t(v);
-		println(t,std::forward<Args>(args)...);
-		return v;
+		if constexpr(details::test_first_is_string_rvalue_reference<T,Args...>())
+			return details::deal_with_first_is_string_rvalue_reference<true,T>(std::forward<Args>(args)...);
+		else
+		{
+			T v;
+			ostring_ref t{v};
+			println(t,std::forward<Args>(args)...);
+			return v;
+		}
 	}
 }
 
