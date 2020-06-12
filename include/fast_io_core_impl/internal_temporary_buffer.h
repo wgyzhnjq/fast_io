@@ -104,7 +104,7 @@ inline constexpr void otakeover(internal_temporary_buffer<char_type>& ob,char_ty
 {
 	ob.beg_ptr=beg_ptr;
 	ob.end_ptr=end_ptr;
-	ob.cap_ptr=cap_ptr;
+	ob.capacity_ptr=cap_ptr;
 }
 
 template<std::integral char_type>

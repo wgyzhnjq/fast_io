@@ -19,24 +19,73 @@ struct is_std_string<std::basic_string<T, Traits, Alloc>>
 {
 inline static constexpr bool value{true};
 };
+
+template<bool ln,typename T,typename U,typename... Args>
+inline constexpr bool test_one()
+{
+	using no_cvref = std::remove_cvref_t<U>;
+	if constexpr(!reserve_printable<no_cvref>)
+		return false;
+	else
+	{
+		constexpr auto size{print_reserve_size(print_reserve_type<no_cvref>)+static_cast<std::size_t>(ln)};
+		return string_hack::local_capacity<T>()<size;
+	}
 }
 
+template<typename T,bool ln,typename U>
+inline constexpr T deal_with_one(U&& t)
+{
+	using value_type = typename T::value_type;
+	using no_cvref = std::remove_cvref_t<U>;
+
+	constexpr auto size{print_reserve_size(print_reserve_type<no_cvref>)+static_cast<std::size_t>(ln)};
+	std::array<value_type,size> array;
+	if constexpr(ln)
+	{
+		auto p {print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t))};
+		*p=u8'\n';
+		return T(array.data(),++p);
+	}
+	else
+	{
+		return T(array.data(),
+		print_reserve_define(print_reserve_type<no_cvref>,array.data(),std::forward<U>(t)));
+	}
+}
+
+}
 
 template<typename T=std::string,typename... Args>
 inline constexpr T concat(Args&& ...args)
 {
-	T v;
-	ostring_ref ref{v};
-	print(ref,std::forward<Args>(args)...);
-	return v;
+	if constexpr(sizeof...(Args)==1&&details::test_one<false,T,Args...>())
+	{
+		return details::deal_with_one<T,false>(std::forward<Args>(args)...);
+	}
+	else
+	{
+		T v;
+		ostring_ref ref{v};
+		print(ref,std::forward<Args>(args)...);
+		return v;
+	}
 }
+
 template<typename T=std::string,typename... Args>
 inline constexpr T concatln(Args&& ...args)
 {
-	T v;
-	ostring_ref<T> t(v);
-	println(t,std::forward<Args>(args)...);
-	return v;
+	if constexpr(sizeof...(Args)==1&&details::test_one<true,T,Args...>())
+	{
+		return details::deal_with_one<T,true>(std::forward<Args>(args)...);
+	}
+	else
+	{
+		T v;
+		ostring_ref<T> t(v);
+		println(t,std::forward<Args>(args)...);
+		return v;
+	}
 }
 
 template<typename T,typename... Args>

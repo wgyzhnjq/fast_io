@@ -114,5 +114,11 @@ inline constexpr void set_cap_ptr(T& str,typename T::value_type* ptr)
 	hack_M_allocated_capacity(str)=ptr-std::to_address(hack_M_data(str));
 }
 
+template<typename T>
+inline constexpr std::size_t local_capacity()
+{
+	using model_type = model<T>;
+	return model_type::_S_local_capacity;
+}
 
 }

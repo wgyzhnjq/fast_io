@@ -3,6 +3,10 @@
 namespace fast_io::details::string_hack
 {
 
+/*
+https://github.com/microsoft/STL/blob/master/stl/inc/xstring
+*/
+
 template <class _Elem, class _Traits = char_traits<_Elem>, class _Alloc = allocator<_Elem>>
 struct model
 {
@@ -42,15 +46,21 @@ template<typename T>
 inline constexpr void set_end_ptr(T& str,typename T::value_type* ptr)
 {
 	decltype(auto) scv{hack_scary_val(str)};
-	scv._Mysize=ptr-scv._Bx._Ptr;
+	scv._Mysize=ptr-str.data();
 }
 
 template<typename T>
 inline constexpr void set_cap_ptr(T& str,typename T::value_type* ptr)
 {
 	decltype(auto) scv{hack_scary_val(str)};
-	scv._Myres=ptr-scv._Bx._Ptr;
+	scv._Myres=ptr-str.data();
 }
-
+template<typename T>
+inline constexpr std::size_t local_capacity()
+{
+	using model_t = model<typename T::value_type,typename T::traits_type,typename T::allocator_type>;
+	using _Scary_val = typename model_t::_Scary_val;
+	return _Scary_val::_BUF_SIZE-1;
+}
 
 }

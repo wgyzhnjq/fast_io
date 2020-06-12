@@ -290,6 +290,12 @@ concept reserve_printable=requires(T&& t,char8_t* ptr)
 	{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,ptr,t)}->std::same_as<char8_t*>;
 };
 
+template<typename T>
+concept reserve_print_testable=requires(T&& t)
+{
+	{print_reserve_test<static_cast<std::size_t>(0)>(print_reserve_type<std::remove_cvref_t<T>>,std::forward<T>(t))}->std::convertible_to<bool>;
+}&&reserve_printable<T>;
+
 template<typename output,typename T>
 concept printable=output_stream<output>&&requires(output& out,T&& t)
 {
