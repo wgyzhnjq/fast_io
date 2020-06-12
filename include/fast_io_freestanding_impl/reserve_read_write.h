@@ -31,7 +31,7 @@ constexpr void reserve_write_cold_path(output& out,std::size_t required_size,Fun
 			if(ocan_takeover(out))[[likely]]
 			{
 				details::temp_unique_allocator_ptr<typename output::char_type> temp_buffer(required_size);
-				otakeover(temp_buffer.data(),func(temp_buffer.data()),temp_buffer.data()+required_size);
+				otakeover(out,temp_buffer.data(),func(temp_buffer.data()),temp_buffer.data()+required_size);
 				temp_buffer.ptr=nullptr;
 				return;
 			}

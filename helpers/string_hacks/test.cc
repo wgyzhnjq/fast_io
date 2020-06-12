@@ -4,6 +4,8 @@
 int main()
 {
 	std::string str;
-	fast_io::details::string_hack::set_end_ptr(str,str.data()+14);
-	println(str.size());
+	fast_io::obasic_string_ref<char> basr{str};
+	print(basr,"Hello World\n");
+	print(basr,fast_io::code_cvt(u"我是猪"));
+	print(str);
 }
