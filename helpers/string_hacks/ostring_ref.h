@@ -32,24 +32,51 @@ template<std::integral char_type,typename traits_type,typename allocator_type>
 }
 
 template<std::integral char_type,typename traits_type,typename allocator_type>
-inline constexpr void obuffer_set_curr(obasic_string_ref<char_type,traits_type,allocator_type> ob,ch_type* ptr)
+inline constexpr void obuffer_set_curr(obasic_string_ref<char_type,traits_type,allocator_type> ob,char_type* ptr)
 {
-	details::string_hack::set_end_ptr(ob,ptr);
+	details::string_hack::set_end_ptr(ob.reference,ptr);
 }
 
 template<std::integral char_type,typename traits_type,typename allocator_type>
 inline constexpr void otakeover(obasic_string_ref<char_type,traits_type,allocator_type> ob,char_type* beg_ptr,char_type* end_ptr,char_type* cap_ptr)
 {
-	details::string_hack::set_begin_ptr(ob,beg_ptr);
-	details::string_hack::set_end_ptr(ob,end_ptr);
-	details::string_hack::set_cap_ptr(ob,cap_ptr);
+	details::string_hack::set_begin_ptr(ob.reference,beg_ptr);
+	details::string_hack::set_end_ptr(ob.reference,end_ptr);
+	details::string_hack::set_cap_ptr(ob.reference,cap_ptr);
 }
 
 template<std::integral char_type,typename traits_type,typename allocator_type>
 inline constexpr bool ocan_takeover(obasic_string_ref<char_type,traits_type,allocator_type> ob)
 {
-	return is_local_and_null(ob);
+	return details::string_hack::is_local_and_null(ob.reference);
 }
 
+template<std::integral char_type,typename traits_type,typename allocator_type>
+inline constexpr void ogrow(obasic_string_ref<char_type,traits_type,allocator_type> ob,std::size_t newsz)
+{
+	ob.reference.reserve(newsz);
+}
+
+template<std::integral char_type,typename traits_type,typename allocator_type>
+inline constexpr void overflow(obasic_string_ref<char_type,traits_type,allocator_type> ob,char_type ch)
+{
+	ob.reference.push_back(ch);
+}
+
+template<std::integral char_type,typename traits_type,typename allocator_type,std::contiguous_iterator Iter>
+requires (std::same_as<char_type,char>||
+	std::same_as<char_type,typename std::iterator_traits<Iter>::value_type>)
+inline constexpr void write(obasic_string_ref<char_type,traits_type,allocator_type> ob,Iter begin,Iter end)
+{
+	if constexpr(std::same_as<char_type,std::iter_value_t<Iter>>)
+		ob.reference.insert(ob.reference.cend(),begin,end);
+	else
+		ob.reference.insert(ob.reference.cend(),reinterpret_cast<char const*>(std::to_address(begin)),reinterpret_cast<char const*>(std::to_address(end)));
+}
+
+template<std::integral char_type,typename traits_type,typename allocator_type>
+inline constexpr void flush(obasic_string_ref<char_type,traits_type,allocator_type>){}
+
+static_assert(dynamic_buffer_output_stream<obasic_string_ref<char>>);
 
 }
