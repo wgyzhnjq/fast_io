@@ -72,7 +72,7 @@ inline constexpr void write(ostring_ref<char_type,traits_type,allocator_type> ob
 {
 	if constexpr(std::same_as<char_type,std::iter_value_t<Iter>>)
 	{
-/*		auto curr{obuffer_curr(ob)};
+		auto curr{obuffer_curr(ob)};
 		auto ed{obuffer_end(ob)};
 		std::size_t const to_write(end-begin);
 		if(curr+to_write<=ed)[[likely]]
@@ -80,7 +80,7 @@ inline constexpr void write(ostring_ref<char_type,traits_type,allocator_type> ob
 			memcpy(curr,std::to_address(begin),to_write*sizeof(char_type));
 			obuffer_set_curr(ob,curr+to_write);
 			return;
-		}*/
+		}
 		ob.reference.append(std::to_address(begin),end-begin);
 	}
 	else
