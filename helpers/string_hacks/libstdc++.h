@@ -89,6 +89,14 @@ inline constexpr bool is_local(T& str)
 }
 
 template<typename T>
+inline constexpr bool is_local_and_null(T& str)
+{
+	using model_type = model<T>;
+	using const_pointer = typename T::const_pointer;
+	return std::pointer_traits<const_pointer>::pointer_to(*hack_M_local_buf(str))==hack_M_data(str)+hack_M_string_length(str);
+}
+
+template<typename T>
 inline constexpr void set_begin_ptr(T& str,typename T::value_type* ptr)
 {
 	hack_M_data(str)=ptr;

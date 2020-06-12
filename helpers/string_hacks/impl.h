@@ -9,3 +9,5 @@
 #else
 #error "Anyone knows how to hack brutal std::basic_string internal on this platform?"
 #endif
+
+#include"ostring_ref.h"
