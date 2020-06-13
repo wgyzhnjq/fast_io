@@ -10,6 +10,7 @@
 //#include<cmath>
 #include"fast_io_freestanding_impl/string/impl.h"
 #include"fast_io_freestanding_impl/transformers/transformers.h"
+#include"fast_io_freestanding_impl/indirect_ibuffer.h"
 #include"fast_io_freestanding_impl/concat.h"
 #include"fast_io_freestanding_impl/manip.h"
 #include"fast_io_freestanding_impl/exception.h"
