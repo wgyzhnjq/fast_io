@@ -1,5 +1,4 @@
 #include"../../timer.h"
-#include<fstream>
 #include"../../../include/fast_io.h"
 #include"../../../include/fast_io_device.h"
 #include"../../../include/fast_io_legacy.h"
@@ -9,17 +8,15 @@ int main()
 	constexpr std::size_t N(10000000);
 	{
 	fast_io::timer t("output");
-	std::ofstream fout("filebuf_io_observer.txt");
-	fast_io::filebuf_io_observer fob{fout.rdbuf()};
+	fast_io::basic_obuf<fast_io::posix_file> obf("basic_obuf_posix_file_text.txt",fast_io::open_mode::out|fast_io::open_mode::trunc|fast_io::open_mode::creat);
 	for(std::size_t i{};i!=N;++i)
-		println(fob,i);
+		println(obf,i);
 	}
 	std::vector<std::size_t> vec(N);
 	{
 	fast_io::timer t("input");
-	std::ifstream fin("filebuf_io_observer.txt");
-	fast_io::filebuf_io_observer fob{fin.rdbuf()};
+	fast_io::basic_ibuf<fast_io::posix_file> ibf("basic_obuf_posix_file_text.txt",fast_io::open_mode::in);
 	for(std::size_t i{};i!=N;++i)
-		scan(fob,vec[i]);
+		scan(ibf,vec[i]);
 	}
 }

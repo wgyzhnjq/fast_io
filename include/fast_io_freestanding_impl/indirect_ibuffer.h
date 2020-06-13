@@ -104,7 +104,7 @@ inline constexpr Iter read_cold(T& in,Iter begin,Iter end)
 		begin+=read_this_round;
 		if(to_read<=available_in_buffer)[[likely]]
 		{
-			in.position+=in.current_position;
+ 			in.position+=in.current_position;
 			break;
 		}
 	}

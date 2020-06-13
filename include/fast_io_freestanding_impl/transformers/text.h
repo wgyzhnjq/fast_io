@@ -30,11 +30,11 @@ struct text_to_binary
 			{
 				for(;begin!=end;++begin)
 				{
-					if(*begin==u8'\r')[[unlikely]]
+					if(*begin==u8'\r')
 					{
-						if(begin+1==end)
+						if(begin+1==end)[[unlikely]]
 							break;
-						if(begin[1]==u8'\n')
+						else if(begin[1]==u8'\n')[[likely]]
 							++begin;
 					}
 					*ptr=*begin;
@@ -62,10 +62,17 @@ struct binary_to_text
 			{
 				for(;begin!=end;++begin)
 				{
-					if(*begin==u8'\n')
+					if(*begin==u8'\n')[[unlikely]]
 					{
-						*ptr=u8'\r';
-						++ptr;
+						if constexpr(sizeof(std::iter_value_t<Iter>)==1)
+							memcpy(ptr,u8"\r\n",2);
+						else
+						{
+							*ptr=u8'\r';
+							ptr[1]=u8'\n';
+						}
+						ptr+=2;
+						continue;
 					}
 					*ptr=*begin;
 					++ptr;
