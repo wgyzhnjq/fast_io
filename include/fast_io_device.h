@@ -14,10 +14,18 @@ using ionative_file = io_file_wrapper<native_file>;
 
 using omap_file = basic_omap<basic_file_wrapper<native_file,open_mode::trunc|open_mode::out|open_mode::binary>,native_file_map>;
 
+template<output_stream output>
+using basic_obuf_text = basic_obuf<basic_indirect_obuffer_ignore_construct_function<typename output::char_type,output,transforms::binary_to_text<>>,true>;
+
+template<input_stream input>
+using basic_ibuf_text = basic_indirect_ibuffer_constructor_source_type<basic_ibuf<input>,vector_buffer<typename input::char_type>,transforms::text_to_binary<>>;
 
 using ibuf_file = basic_ibuf<inative_file>;
 using obuf_file = basic_obuf<onative_file>;
 using iobuf_file = basic_iobuf<ionative_file>;
+
+using ibuf_text_file = basic_ibuf_text<inative_file>;
+using obuf_text_file = basic_obuf_text<onative_file>;
 
 using ibuf_file_mutex = basic_iomutex<ibuf_file>;
 using obuf_file_mutex = basic_iomutex<obuf_file>;

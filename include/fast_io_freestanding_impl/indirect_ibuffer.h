@@ -17,6 +17,20 @@ public:
 	std::size_t current_position{};
 };
 
+template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename func>
+class basic_indirect_ibuffer_constructor_source_type:public basic_indirect_ibuffer<src,indire,func>
+{
+public:
+	using source_buffer_type = src;
+	using indirect_buffer_type = indire;
+	using function_type = func;
+	using char_type = typename indirect_buffer_type::char_type;
+	template<typename... Args>
+	requires std::constructible_from<source_buffer_type,Args...>
+	constexpr basic_indirect_ibuffer_constructor_source_type(Args&& ...args):basic_indirect_ibuffer<src,indire,func>{.source={std::forward<Args>(args)...}}
+	{}
+};
+
 template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr auto ibuffer_begin(basic_indirect_ibuffer<src,indire,function>& in)
 {
@@ -59,7 +73,14 @@ inline constexpr bool underflow(basic_indirect_ibuffer<src,indire,function>& in)
 		obuffer_set_curr(in.indirect,bg+(ed-curr));
 		underflow(in.source);
 	}
-	ibuffer_set_curr(in.source,in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source)));
+	if constexpr(std::same_as<decltype(in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source))),void>)
+	{
+		auto bg{ibuffer_begin(in.source)};
+		in.function(in.indirect,bg,ibuffer_end(in.source));
+		ibuffer_set_curr(in.source,bg);
+	}
+	else
+		ibuffer_set_curr(in.source,in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source)));
 	return true;
 }
 
