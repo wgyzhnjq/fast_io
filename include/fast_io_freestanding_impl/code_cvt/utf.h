@@ -1,7 +1,6 @@
 #pragma once
 
 #include"utf_util_table.h"
-
 #ifdef __SSE__
 #include <emmintrin.h>
 #include <immintrin.h>
@@ -125,14 +124,14 @@ inline void convert_ascii_with_sse(T*& pSrc, U*& pDst) noexcept
 template<std::input_iterator input>
 constexpr inline uint32_t advance_with_big_table(input& pSrc, input pSrcEnd, char32_t& cdpt) noexcept
 {
-	std::array<char8_t,2> const info{utf_util_table<>::first_unit_info[*pSrc]};
+	std::array<char8_t,2> const info{utf_util_table<>::first_unit_info[static_cast<char8_t>(*pSrc)]};
 	cdpt = info.front();                                //- From it, get the initial code point value
 	std::int32_t curr{info.back()};                                 //- From it, get the second state
 	for(++pSrc;12<curr;)
 	{
 		if (pSrc < pSrcEnd)[[likely]]
 		{
-			auto const unit{*pSrc};
+			char8_t const unit(*pSrc);
 			++pSrc;                                 //- Cache the current code unit
 			cdpt = (cdpt << 6) | (unit & 0x3F);             //- Adjust code point with continuation bits
 			curr = utf_util_table<>::transitions[curr + utf_util_table<>::octet_category[unit]];
@@ -175,8 +174,10 @@ inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p
 #endif
 		while (p_src + sizeof(__m128i)< p_src_end)
 		{
-			if (*p_src < 0x80)
+			if (static_cast<char8_t>(*p_src) < 0x80)
+			{
 				details::utf::convert_ascii_with_sse(p_src, p_dst);
+			}
 			else
 			{
 				if (details::utf::advance_with_big_table(p_src, p_src_end, cdpt) != 12)[[likely]]
@@ -205,7 +206,7 @@ inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p
 		}
 		while (p_src < p_src_end)
 		{
-			if (*p_src < 0x80)
+			if (static_cast<char8_t>(*p_src) < 0x80)
 			{
 				*p_dst = *p_src;
 				++p_dst;
