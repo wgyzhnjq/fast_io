@@ -66,15 +66,15 @@ public:
 	using char_type = CharT;
 	using allocator_type = Allocator;
 	char_type *beg{},*curr{},*end{};
-	basic_buf_handler()=default;
-	basic_buf_handler& operator=(basic_buf_handler const&)=delete;
-	basic_buf_handler(basic_buf_handler const&)=delete;
+	constexpr basic_buf_handler()=default;
+	constexpr basic_buf_handler& operator=(basic_buf_handler const&)=delete;
+	constexpr basic_buf_handler(basic_buf_handler const&)=delete;
 	static constexpr std::size_t size = buffer_size;
-	basic_buf_handler(basic_buf_handler&& m) noexcept:beg(m.beg),curr(m.curr),end(m.end)
+	constexpr basic_buf_handler(basic_buf_handler&& m) noexcept:beg(m.beg),curr(m.curr),end(m.end)
 	{
 		m.end=m.curr=m.beg=nullptr;
 	}
-	basic_buf_handler& operator=(basic_buf_handler&& m) noexcept
+	constexpr basic_buf_handler& operator=(basic_buf_handler&& m) noexcept
 	{
 		if(std::addressof(m)!=this)[[likely]]
 		{
@@ -87,17 +87,17 @@ public:
 		}
 		return *this;
 	}
-	inline void init_space()
+	constexpr inline void init_space()
 	{
 		end=curr=beg=alloc.allocate(buffer_size);
 	}
-	inline void release()
+	constexpr inline void release()
 	{
 		if(beg)[[likely]]
 			alloc.deallocate(beg,buffer_size);
 		end=curr=beg=nullptr;
 	}
-	~basic_buf_handler()
+	constexpr ~basic_buf_handler()
 	{
 		if(beg)[[likely]]
 			alloc.deallocate(beg,buffer_size);
@@ -118,7 +118,7 @@ public:
 	using char_type = typename Buf::char_type;
 	template<typename... Args>
 	requires std::constructible_from<Ihandler,Args...>
-	basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){}
+	constexpr basic_ibuf(Args&&... args):ih(std::forward<Args>(args)...){}
 	inline constexpr auto& native_handle()
 	{
 		return ih;
@@ -388,8 +388,8 @@ public:
 	}
 	basic_obuf& operator=(basic_obuf const&)=delete;
 	basic_obuf(basic_obuf const&)=delete;
-	basic_obuf(basic_obuf&& bmv) noexcept:oh(std::move(bmv.oh)),obuffer(std::move(bmv.obuffer)){}
-	basic_obuf& operator=(basic_obuf&& b) noexcept
+	constexpr basic_obuf(basic_obuf&& bmv) noexcept:oh(std::move(bmv.oh)),obuffer(std::move(bmv.obuffer)){}
+	constexpr basic_obuf& operator=(basic_obuf&& b) noexcept
 	{
 		if(std::addressof(b)!=this)
 		{
@@ -487,9 +487,9 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 			if constexpr(forcecopy&&!std::same_as<decltype(write(ob.oh,cbegin,cend)),void>)
 			{
 				auto it{write(ob.oh,cbegin,cend)};
-				if(it!=end)
+				if(it!=cend)
 				{
-					if(T::buffer_type::size<=end-it)
+					if(T::buffer_type::size<=cend-it)
 #ifdef __cpp_exceptions
 						throw posix_error(EIO);
 #else
@@ -497,8 +497,8 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 #endif
 					ob.obuffer.init_space();
 					ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+T::buffer_type::size;
-					memcpy(ob.obuffer.beg,std::to_address(it),(end-it)*sizeof(*cbegin));
-					ob.obuffer.curr=ob.obuffer.beg+end-it;
+					memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
+					ob.obuffer.curr=ob.obuffer.beg+(cend-it);
 				}
 			}
 			else
@@ -529,12 +529,12 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 				fast_terminate();
 #endif
 			else if(it==ob.obuffer.end)
-				ob.obuffer.curr=ob.obuffer.begin;
+				ob.obuffer.curr=ob.obuffer.beg;
 			else
 			{
 				ob.obuffer.curr=ob.obuffer.beg;
-				memcpy(ob.obuffer.beg,std::to_address(it),(end-it)*sizeof(*cbegin));
-				ob.obuffer.curr=ob.obuffer.beg+end-it;
+				memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
+				ob.obuffer.curr=ob.obuffer.beg+(cend-it);
 			}
 			cbegin+=need_to_copy;
 		}

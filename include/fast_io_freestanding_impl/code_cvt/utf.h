@@ -224,6 +224,35 @@ inline constexpr to_iter utf_code_convert_details(from_iter& p_src_begin_iter,fr
 #endif
 			}
 		}
+		if constexpr(stream)
+		{
+			while (p_src < p_src_end)
+			{
+				if (static_cast<char8_t>(*p_src) < 0x80)
+				{
+					*p_dst = *p_src;
+					++p_dst;
+					++p_src;
+				}
+				else
+				{
+					auto newp_src{p_src};
+					if (details::utf::advance_with_big_table(newp_src, p_src_end, cdpt) != 12)[[likely]]
+					{
+						if constexpr(sizeof(std::iter_value_t<to_iter>)==4)
+						{
+							*p_dst=cdpt;
+							++p_dst;
+						}
+						else
+							p_dst+=utf_get_code_units(cdpt, p_dst);
+						p_src=newp_src;
+					}
+					else
+						break;
+				}
+			}
+		}
 	}
 	else
 	{

@@ -77,10 +77,10 @@ template<std::integral new_code_type,input_stream input>
 using basic_ibuf_utf = basic_indirect_ibuffer_constructor_source_type<basic_ibuf<input>,vector_buffer<new_code_type>,transforms::utf>;
 
 template<std::integral new_code_type,std::integral source_code_type>
-using basic_obuf_utf_file = basic_obuf_utf<new_code_type,basic_obuf<basic_onative_file<source_code_type>>>;
+using basic_obuf_utf_file = basic_obuf_utf<new_code_type,basic_onative_file<source_code_type>>;
 
 template<std::integral new_code_type,std::integral source_code_type>
-using basic_ibuf_utf_file = basic_ibuf_utf<new_code_type,basic_ibuf<basic_inative_file<source_code_type>>>;
+using basic_ibuf_utf_file = basic_ibuf_utf<new_code_type,basic_inative_file<source_code_type>>;
 
 template<std::integral new_code_type>
 requires (1<sizeof(new_code_type))
