@@ -186,5 +186,11 @@ inline constexpr void write(internal_temporary_buffer<ch_type>& ob,Iter cbegin,I
 template<std::integral ch_type>
 inline constexpr void flush(internal_temporary_buffer<ch_type>&){}
 
+template<std::integral ch_type>
+inline constexpr auto oallocator(internal_temporary_buffer<ch_type>&)
+{
+	return std::allocator<ch_type>();
+}
+
 static_assert(dynamic_buffer_output_stream<internal_temporary_buffer<char>>);
 }

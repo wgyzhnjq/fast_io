@@ -118,7 +118,7 @@ concept fill_nc_output_stream_impl = requires(T& out,std::size_t n,typename T::c
 template<typename T>
 concept dynamic_buffer_output_stream_impl = requires(T& out,std::size_t size,typename T::char_type* ptr)
 {
-	typename T::allocator_type;
+	oallocator(out);
 	ogrow(out,size);
 	otakeover(out,ptr,ptr,ptr);
 	{ocan_takeover(out)}->std::convertible_to<bool>;

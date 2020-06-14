@@ -91,6 +91,11 @@ inline constexpr void write(ostring_ref<char_type,traits_type,allocator_type> ob
 
 template<std::integral char_type,typename traits_type,typename allocator_type>
 inline constexpr void flush(ostring_ref<char_type,traits_type,allocator_type>){}
+template<std::integral char_type,typename traits_type,typename allocator_type>
+inline constexpr decltype(auto) oallocator(ostring_ref<char_type,traits_type,allocator_type> ref)
+{
+	return ref.reference.get_allocator();
+}
 
 static_assert(dynamic_buffer_output_stream<ostring_ref<char>>);
 

@@ -116,6 +116,11 @@ inline constexpr void write(vector_buffer<ch_type>& ob,Iter cbegin,Iter cend)
 
 template<std::integral ch_type>
 inline constexpr void flush(vector_buffer<ch_type>&){}
+template<std::integral ch_type>
+inline constexpr auto oallocator(vector_buffer<ch_type>&)
+{
+	return std::allocator<ch_type>();
+}
 
 static_assert(dynamic_buffer_output_stream<vector_buffer<char>>);
 

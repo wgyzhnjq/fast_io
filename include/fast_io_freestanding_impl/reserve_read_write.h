@@ -26,7 +26,7 @@ constexpr void reserve_write_cold_path(output& out,std::size_t required_size,Fun
 {
 	if constexpr(dynamic_buffer_output_stream<output>)
 	{
-		if constexpr(std::same_as<typename output::allocator_type,std::allocator<typename output::char_type>>)
+		if constexpr(std::same_as<std::remove_cvref_t<decltype(oallocator(out))>,std::allocator<typename output::char_type>>)
 		{
 			if(ocan_takeover(out))[[likely]]
 			{
