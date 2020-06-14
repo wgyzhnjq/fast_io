@@ -85,7 +85,7 @@ inline void scan_define(input& in,manip::whole<std::basic_string<typename input:
 }
 
 template<buffer_input_stream input>
-inline bool scan_define(input& in,manip::line<std::basic_string<typename input::char_type>> ref)
+inline bool scan_define(input& in,manip::line<std::basic_string<typename input::char_type>&> ref)
 {
 	auto& str{ref.reference};
 	if constexpr(buffer_input_stream<input>)

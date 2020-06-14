@@ -8,6 +8,14 @@ namespace fast_io
 {
 using ibuf_pipe = basic_ibuf<native_pipe>;
 
+template<std::integral char_type>
+using basic_inative_file = input_file_wrapper<basic_native_file<char_type>>;
+template<std::integral char_type>
+using basic_onative_file = output_file_wrapper<basic_native_file<char_type>>;
+template<std::integral char_type>
+using basic_ionative_file = io_file_wrapper<basic_native_file<char_type>>;
+
+
 using inative_file = input_file_wrapper<native_file>;
 using onative_file = output_file_wrapper<native_file>;
 using ionative_file = io_file_wrapper<native_file>;
@@ -31,6 +39,7 @@ using ibuf_file_mutex = basic_iomutex<ibuf_file>;
 using obuf_file_mutex = basic_iomutex<obuf_file>;
 using iobuf_file_mutex = basic_iomutex<iobuf_file>;
 
+// utf-8
 using u8pipe = io_wrapper<u8native_pipe>;
 
 using u8inative_file = input_file_wrapper<u8native_file>;
