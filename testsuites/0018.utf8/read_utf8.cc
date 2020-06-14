@@ -12,6 +12,7 @@ int main()
 		put(fout,test_character);
 	print(fout,fast_io::fill_nc(N,test_character));
 	}
+	{
 	fast_io::ibuf_utf8_file<char32_t> fin("utf_file.txt");
 	std::size_t n{};
 	for(auto ch:fast_io::igenerator(fin))
@@ -29,5 +30,11 @@ int main()
 	{
 		println("failed:incorrect number {",n,"}, should be ",N);
 		return 2;
+	}
+	}
+	{
+	fast_io::ibuf_utf8_file<char32_t> fin("utf_file.txt");
+	fast_io::obuf_utf8_file<char32_t> fout("utf2_file.txt");
+	transmit(fout,fin);
 	}
 }
