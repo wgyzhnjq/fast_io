@@ -21,7 +21,7 @@ inline constexpr auto write(basic_indirect_obuffer<ch_type,dest,func>& ob,Iter c
 }
 
 template<std::integral ch_type,output_stream dest,typename func>
-class basic_indirect_obuffer_ignore_construct_function:public basic_indirect_obuffer<ch_type,dest,func>
+class basic_indirect_obuffer_constructor_source_type:public basic_indirect_obuffer<ch_type,dest,func>
 {
 public:
 	using char_type = ch_type;
@@ -29,7 +29,7 @@ public:
 	using function_type = func;
 	template<typename... Args>
 	requires std::constructible_from<destination_type,Args...>
-	constexpr basic_indirect_obuffer_ignore_construct_function(Args&&...args):basic_indirect_obuffer<ch_type,dest,func>{.destination={std::forward<Args>(args)...}}{}
+	constexpr basic_indirect_obuffer_constructor_source_type(Args&&...args):basic_indirect_obuffer<ch_type,dest,func>{.destination={std::forward<Args>(args)...}}{}
 };
 
 

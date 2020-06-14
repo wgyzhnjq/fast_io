@@ -3,7 +3,7 @@
 namespace fast_io
 {
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename func>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename func>
 class basic_indirect_ibuffer
 {
 public:
@@ -17,7 +17,7 @@ public:
 	std::size_t current_position{};
 };
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename func>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename func>
 class basic_indirect_ibuffer_constructor_source_type:public basic_indirect_ibuffer<src,indire,func>
 {
 public:
@@ -31,53 +31,66 @@ public:
 	{}
 };
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr auto ibuffer_begin(basic_indirect_ibuffer<src,indire,function>& in)
 {
 	return obuffer_begin(in.indirect);
 }
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr auto ibuffer_curr(basic_indirect_ibuffer<src,indire,function>& in)
 {
 	return obuffer_begin(in.indirect)+in.current_position;
 }
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr auto ibuffer_end(basic_indirect_ibuffer<src,indire,function>& in)
 {
 	return obuffer_curr(in.indirect);
 }
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr auto ibuffer_set_curr(basic_indirect_ibuffer<src,indire,function>& in,typename indire::char_type* ptr)
 {
 	in.current_position=ptr-obuffer_begin(in.indirect);
 }
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
 inline constexpr bool underflow(basic_indirect_ibuffer<src,indire,function>& in)
 {
-	auto curr{ibuffer_curr(in)};
-	auto ed{ibuffer_end(in)};
-	if(curr==ed)
+	if(!irefill(in.source))[[unlikely]]
+		return false;
+	in.current_position=0;
+	obuffer_set_curr(in.indirect,obuffer_begin(in.indirect));
+	if constexpr(std::same_as<decltype(in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source))),void>)
 	{
-		if(!underflow(in.source))[[unlikely]]
-			return false;
+		auto ed{ibuffer_end(in.source)};
+		in.function(in.indirect,ibuffer_begin(in.source),ed);
+		ibuffer_set_curr(in.source,ed);
 	}
 	else
+		ibuffer_set_curr(in.source,in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source)));
+	return true;
+}
+
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function>
+inline constexpr bool irefill(basic_indirect_ibuffer<src,indire,function>& in)
+{
+	if(!irefill(in.source))[[unlikely]]
+		return false;
+	auto b{ibuffer_begin(in)};
+	auto c{ibuffer_curr(in)};
+	auto e{ibuffer_end(in)};
+	if(c!=e)
 	{
-		auto bg{ibuffer_begin(in)};
-		std::copy(curr,ed,bg);
-		in.current_position={};
-		obuffer_set_curr(in.indirect,bg+(ed-curr));
-		underflow(in.source);
+		obuffer_set_curr(in.indirect,std::copy(c,e,b));
+		in.current_position=0;
 	}
 	if constexpr(std::same_as<decltype(in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source))),void>)
 	{
-		auto bg{ibuffer_begin(in.source)};
-		in.function(in.indirect,bg,ibuffer_end(in.source));
-		ibuffer_set_curr(in.source,bg);
+		auto ed{ibuffer_end(in.source)};
+		in.function(in.indirect,ibuffer_begin(in.source),ed);
+		ibuffer_set_curr(in.source,ed);
 	}
 	else
 		ibuffer_set_curr(in.source,in.function(in.indirect,ibuffer_begin(in.source),ibuffer_end(in.source)));
@@ -104,7 +117,7 @@ inline constexpr Iter read_cold(T& in,Iter begin,Iter end)
 		begin+=read_this_round;
 		if(to_read<=available_in_buffer)[[likely]]
 		{
- 			in.position+=in.current_position;
+ 			in.current_position+=to_read;
 			break;
 		}
 	}
@@ -113,7 +126,7 @@ inline constexpr Iter read_cold(T& in,Iter begin,Iter end)
 
 }
 
-template<buffer_input_stream src,dynamic_buffer_output_stream indire,typename function,std::contiguous_iterator Iter>
+template<refill_buffer_input_stream src,dynamic_buffer_output_stream indire,typename function,std::contiguous_iterator Iter>
 requires (std::same_as<std::iter_value_t<Iter>,typename indire::char_type>||std::same_as<typename indire::char_type,char>)
 inline constexpr Iter read(basic_indirect_ibuffer<src,indire,function>& in,Iter begin,Iter end)
 {

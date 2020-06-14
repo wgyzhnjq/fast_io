@@ -23,7 +23,7 @@ using ionative_file = io_file_wrapper<native_file>;
 using omap_file = basic_omap<basic_file_wrapper<native_file,open_mode::trunc|open_mode::out|open_mode::binary>,native_file_map>;
 
 template<output_stream output>
-using basic_obuf_text = basic_obuf<basic_indirect_obuffer_ignore_construct_function<typename output::char_type,output,transforms::binary_to_text<>>,true>;
+using basic_obuf_text = basic_obuf<basic_indirect_obuffer_constructor_source_type<typename output::char_type,output,transforms::binary_to_text<>>,true>;
 
 template<input_stream input>
 using basic_ibuf_text = basic_indirect_ibuffer_constructor_source_type<basic_ibuf<input>,vector_buffer<typename input::char_type>,transforms::text_to_binary<>>;
@@ -68,5 +68,25 @@ using wiobuf_file = basic_iobuf<wionative_file>;
 using wibuf_file_mutex = basic_iomutex<wibuf_file>;
 using wobuf_file_mutex = basic_iomutex<wobuf_file>;
 using wiobuf_file_mutex = basic_iomutex<wiobuf_file>;
+
+
+template<std::integral new_code_type,output_stream output>
+using basic_obuf_utf = basic_obuf<basic_indirect_obuffer_constructor_source_type<new_code_type,output,transforms::utf>,true>;
+
+template<std::integral new_code_type,input_stream input>
+using basic_ibuf_utf = basic_indirect_ibuffer_constructor_source_type<basic_ibuf<input>,vector_buffer<new_code_type>,transforms::utf>;
+
+template<std::integral new_code_type,std::integral source_code_type>
+using basic_obuf_utf_file = basic_obuf_utf<new_code_type,basic_obuf<basic_onative_file<source_code_type>>>;
+
+template<std::integral new_code_type,std::integral source_code_type>
+using basic_ibuf_utf_file = basic_ibuf_utf<new_code_type,basic_ibuf<basic_inative_file<source_code_type>>>;
+
+template<std::integral new_code_type>
+using u8obuf_utf_file=basic_obuf_utf_file<new_code_type,char8_t>;
+
+template<std::integral new_code_type>
+using u8ibuf_utf_file=basic_obuf_utf_file<new_code_type,char8_t>;
+
 
 }

@@ -9,9 +9,6 @@
 #include<system_error>
 //#include<cmath>
 #include"fast_io_freestanding_impl/string/impl.h"
-#include"fast_io_freestanding_impl/transformers/transformers.h"
-#include"fast_io_freestanding_impl/indirect_ibuffer.h"
-#include"fast_io_freestanding_impl/indirect_obuffer.h"
 #include"fast_io_freestanding_impl/concat.h"
 #include"fast_io_freestanding_impl/manip.h"
 #include"fast_io_freestanding_impl/exception.h"
@@ -24,6 +21,10 @@
 #include"fast_io_freestanding_impl/natural.h"
 #include"fast_io_freestanding_impl/reserve_read_write.h"
 #include"fast_io_freestanding_impl/code_cvt/utf.h"
+
+#include"fast_io_freestanding_impl/transformers/transformers.h"
+#include"fast_io_freestanding_impl/indirect_ibuffer.h"
+#include"fast_io_freestanding_impl/indirect_obuffer.h"
 //#include"fast_io_freestanding_impl/ucs.h"
 #if __cpp_coroutines >= 201902
 #include<coroutine>		//coroutine is freestanding

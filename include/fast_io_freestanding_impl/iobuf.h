@@ -135,6 +135,26 @@ inline constexpr bool underflow(basic_ibuf<Ihandler,Buf>& ib)
 }
 
 template<input_stream Ihandler,typename Buf>
+inline constexpr bool irefill(basic_ibuf<Ihandler,Buf>& ib)
+{
+	if(ib.ibuffer.end==nullptr)
+		ib.ibuffer.init_space();
+	ib.ibuffer.end=std::copy(ib.ibuffer.curr,ib.ibuffer.end,ib.ibuffer.beg);
+	ib.ibuffer.curr=ib.ibuffer.beg;
+	auto ed{ib.ibuffer.end};
+/*
+	if(ed==ib.ibuffer.beg+Buf::size)
+#ifdef __cpp_exceptions
+		throw posix_error(EIO);
+#else
+		fast_terminate();
+#endif
+*/
+	ib.ibuffer.end=read(ib.ih,ed,ib.ibuffer.beg+Buf::size);
+	return ib.ibuffer.end!=ed;
+}
+
+template<input_stream Ihandler,typename Buf>
 [[nodiscard]] inline constexpr auto ibuffer_begin(basic_ibuf<Ihandler,Buf>& ib)
 {
 	return ib.ibuffer.beg;

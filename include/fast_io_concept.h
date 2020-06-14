@@ -67,6 +67,12 @@ concept buffer_input_stream_impl = requires(T& in)
 };
 
 template<typename T>
+concept refill_buffer_input_stream_impl = requires(T& in)
+{
+	{irefill(in)}->std::convertible_to<bool>;
+};
+
+template<typename T>
 concept contiguous_input_stream_impl = requires(T& in)
 {
 	iremove_prefix(in,static_cast<std::size_t>(0));
@@ -198,6 +204,9 @@ concept reserve_output_stream = output_stream<T>&&details::reserve_output_stream
 
 template<typename T>
 concept buffer_input_stream = input_stream<T>&&details::buffer_input_stream_impl<T>;
+
+template<typename T>
+concept refill_buffer_input_stream = buffer_input_stream<T>&&details::refill_buffer_input_stream_impl<T>;
 
 template<typename T>
 concept contiguous_input_stream = input_stream<T>&&details::contiguous_input_stream_impl<T>;
