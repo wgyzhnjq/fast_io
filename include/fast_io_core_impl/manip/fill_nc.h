@@ -105,3 +105,5 @@ inline constexpr void print_define(output& out,manip::fill_nc<ch_type> ref)
 		obuffer_set_curr(out,curr+ref.count);
 	}
 }
+
+}

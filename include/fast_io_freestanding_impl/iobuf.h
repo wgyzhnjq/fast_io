@@ -431,8 +431,8 @@ inline constexpr void obuffer_set_curr(basic_obuf<Ohandler,forcecopy,Buf>& ob,ty
 
 namespace details
 {
-template<bool init=false,bool punning=false,typename T,std::contiguous_iterator Iter>
-constexpr void obuf_write_force_copy(T& ob,Iter cbegin,Iter cend)
+template<bool init,bool punning=false,output_stream Ohandler,bool forcecopy,typename Buf,std::contiguous_iterator Iter>
+constexpr void obuf_write_force_copy(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegin,Iter cend)
 {
 	if constexpr(forcecopy&&!std::same_as<decltype(write(ob.oh,cbegin,cend)),void>)
 	{
@@ -446,15 +446,19 @@ constexpr void obuf_write_force_copy(T& ob,Iter cbegin,Iter cend)
 				fast_terminate();
 #endif
 			if constexpr(init)
+			{
 				ob.obuffer.init_space();
-			ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+Buf::size;
+				ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+Buf::size;
+			}
+			else
+				ob.obuffer.curr=ob.obuffer.beg;
 			memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
 			ob.obuffer.curr=ob.obuffer.beg+(cend-it);
 		}
 	}
 	else
 	{
-		write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+		write(ob.native_handle(),cbegin,cend);
 	}
 }
 
@@ -465,7 +469,7 @@ inline constexpr void overflow(basic_obuf<Ohandler,forcecopy,Buf>& ob,typename O
 {
 	if(ob.obuffer.beg)
 	{
-		obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
+		details::obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
 	}
 	else	//cold buffer
 	{
