@@ -276,7 +276,7 @@ Assume little endian first until I create a good interface
 template<std::contiguous_iterator from_iter,std::contiguous_iterator to_iter>
 inline constexpr to_iter utf_code_convert(from_iter p_src_begin_iter,from_iter p_src_end_iter,to_iter p_dst_iter)
 {
-	return details::utf::utf_code_convert_details(p_src_begin_iter,p_src_end_iter,p_dst_iter);
+	return details::utf::utf_code_convert_details<false>(p_src_begin_iter,p_src_end_iter,p_dst_iter);
 }
 
 template<std::ranges::contiguous_range rg>
@@ -289,7 +289,7 @@ inline constexpr void print_define(output& out,manip::code_cvt<std::basic_string
 	constexpr std::size_t coff{sizeof(typename output::char_type)<sizeof(ch_type)?2:0};
 	reserve_write(out,view.reference.size()<<coff,[&](auto ptr)
 	{
-		return utf_code_convert(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
+		return details::utf::utf_code_convert_details<false>(view.reference.data(),view.reference.data()+view.reference.size(),ptr);
 	});
 }
 
