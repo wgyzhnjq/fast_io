@@ -449,23 +449,26 @@ inline constexpr void overflow(basic_obuf<Ohandler,forcecopy,Buf>& ob,typename O
 namespace details
 {
 
-template<output_stream Ohandler,typename Buf>
-inline constexpr void iobuf_fill_nc_define_code_path(basic_obuf<Ohandler,true,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
+template<output_stream Ohandler,bool forcecopy,typename Buf>
+inline constexpr void iobuf_fill_nc_define_code_path(basic_obuf<Ohandler,forcecopy,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
 {
 	if(ob.obuffer.end==nullptr)[[unlikely]]
 	{
 		if(n==0)[[unlikely]]
 			return;
 		ob.obuffer.init_space();
+		ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+Buf::size;
 	}
 	auto last{ob.obuffer.end};
 	if(ob.obuffer.beg+n<last)
 		last=ob.obuffer.beg+n;
 	while(n)
 	{
-		my_fill(ob.obuffer.curr,last,ch);
-		std::size_t const mn{std::min(n,ob.obuffer.end-ob.obuffer.beg)};
-		obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
+		details::my_fill(ob.obuffer.curr,last,ch);
+		std::size_t mn(ob.obuffer.end-ob.obuffer.beg);
+		if(n<mn)
+			mn=n;
+		obuf_write_force_copy<false>(ob,ob.obuffer.beg,ob.obuffer.curr+mn);
 		last=ob.obuffer.curr;
 		n-=mn;
 	}
@@ -473,8 +476,8 @@ inline constexpr void iobuf_fill_nc_define_code_path(basic_obuf<Ohandler,true,Bu
 
 }
 
-template<output_stream Ohandler,typename Buf>
-inline constexpr void fill_nc_define(basic_obuf<Ohandler,true,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
+template<output_stream Ohandler,bool forcecopy,typename Buf>
+inline constexpr void fill_nc_define(basic_obuf<Ohandler,forcecopy,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
 {
 	auto newcurr{n+ob.obuffer.curr};
 	if(ob.obuffer.end<newcurr)
@@ -482,7 +485,7 @@ inline constexpr void fill_nc_define(basic_obuf<Ohandler,true,Buf>& ob,std::size
 		details::iobuf_fill_nc_define_code_path(ob,n,ch);
 		return;
 	}
-	my_fill_n(ob.obuffer.curr,n,ch);
+	details::my_fill_n(ob.obuffer.curr,n,ch);
 	ob.obuffer.curr=newcurr;
 }
 

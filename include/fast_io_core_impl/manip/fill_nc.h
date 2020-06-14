@@ -32,11 +32,11 @@ inline constexpr manip::fill_nc<ch_type> fill_nc(std::size_t count,ch_type ch)
 
 namespace details
 {
-template<buffer_output_stream output,std::integral ch_type>
+template<dynamic_buffer_output_stream output,std::integral ch_type>
 constexpr void fill_nc_bad_path(output& out,manip::fill_nc<ch_type> ref)
 {
-	if constexpr(dynamic_buffer_output_stream<output>)
-	{
+//	if constexpr(dynamic_buffer_output_stream<output>)
+//	{
 		auto beg_ptr(obuffer_begin(out));
 		std::size_t new_capacity((obuffer_end(out)-beg_ptr)<<1);
 		std::size_t to_write_chars(obuffer_curr(out)-beg_ptr+ref.count);
@@ -46,7 +46,7 @@ constexpr void fill_nc_bad_path(output& out,manip::fill_nc<ch_type> ref)
 		auto curr{obuffer_curr(out)};
 		my_fill_n(curr,ref.count,ref.character);
 		obuffer_set_curr(out,curr+ref.count);
-	}
+/*	}
 	else
 	{
 		auto curr{obuffer_curr(out)};
@@ -82,7 +82,7 @@ constexpr void fill_nc_bad_path(output& out,manip::fill_nc<ch_type> ref)
 			details::my_fill_n(b,remain,ref.character);
 			obuffer_set_curr(out,b+remain);
 		}
-	}
+	}*/
 }
 }
 
