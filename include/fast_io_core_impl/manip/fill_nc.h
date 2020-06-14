@@ -86,18 +86,22 @@ constexpr void fill_nc_bad_path(output& out,manip::fill_nc<ch_type> ref)
 }
 }
 
-template<buffer_output_stream output,std::integral ch_type>
+template<output_stream output,std::integral ch_type>
+requires (dynamic_buffer_output_stream<output>||fill_nc_output_stream<output>)
 inline constexpr void print_define(output& out,manip::fill_nc<ch_type> ref)
 {
-	auto curr(obuffer_curr(out));
-	auto ed(obuffer_end(out));
-	if(ed-curr<ref.count)[[unlikely]]
+	if constexpr(fill_nc_output_stream<output>)
+		fill_nc_define(out,ref.count,ref.character);
+	else
 	{
-		details::fill_nc_bad_path(out,ref);
-		return;
+		auto curr(obuffer_curr(out));
+		auto ed(obuffer_end(out));
+		if(ed-curr<ref.count)[[unlikely]]
+		{
+			details::fill_nc_bad_path(out,ref);
+			return;
+		}
+		details::my_fill_n(curr,ref.count,ref.character);
+		obuffer_set_curr(out,curr+ref.count);
 	}
-	details::my_fill_n(curr,ref.count,ref.character);
-	obuffer_set_curr(out,curr+ref.count);
-}
-
 }

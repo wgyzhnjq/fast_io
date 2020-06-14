@@ -110,6 +110,12 @@ concept flush_output_stream_impl = requires(T& out)
 };
 
 template<typename T>
+concept fill_nc_output_stream_impl = requires(T& out,std::size_t n,typename T::char_type ch)
+{
+	fill_nc_define(out,n,ch);
+};
+
+template<typename T>
 concept dynamic_buffer_output_stream_impl = requires(T& out,std::size_t size,typename T::char_type* ptr)
 {
 	typename T::allocator_type;
@@ -214,6 +220,8 @@ concept contiguous_input_stream = input_stream<T>&&details::contiguous_input_str
 template<typename T>
 concept buffer_output_stream = output_stream<T>&&details::buffer_output_stream_impl<T>;
 
+template<typename T>
+concept fill_nc_output_stream = output_stream<T>&&details::fill_nc_output_stream_impl<T>;
 
 //Unfortunately, FILE* is a mess here. We have to support this to prevent the operating system not buffering anything
 template<typename T>

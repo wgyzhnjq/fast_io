@@ -429,18 +429,91 @@ inline constexpr void obuffer_set_curr(basic_obuf<Ohandler,forcecopy,Buf>& ob,ty
 	ob.obuffer.curr=ptr;
 }
 
+namespace details
+{
+template<bool init=false,bool punning=false,typename T,std::contiguous_iterator Iter>
+constexpr void obuf_write_force_copy(T& ob,Iter cbegin,Iter cend)
+{
+	if constexpr(forcecopy&&!std::same_as<decltype(write(ob.oh,cbegin,cend)),void>)
+	{
+		auto it{write(ob.oh,cbegin,cend)};
+		if(it!=cend)
+		{
+			if(Buf::size<=cend-it)
+#ifdef __cpp_exceptions
+				throw posix_error(EIO);
+#else
+				fast_terminate();
+#endif
+			if constexpr(init)
+				ob.obuffer.init_space();
+			ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+Buf::size;
+			memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
+			ob.obuffer.curr=ob.obuffer.beg+(cend-it);
+		}
+	}
+	else
+	{
+		write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+	}
+}
+
+}
+
 template<output_stream Ohandler,bool forcecopy,typename Buf>
 inline constexpr void overflow(basic_obuf<Ohandler,forcecopy,Buf>& ob,typename Ohandler::char_type ch)
 {
 	if(ob.obuffer.beg)
-		write(ob.native_handle(),ob.obuffer.beg,ob.obuffer.end);
+	{
+		obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
+	}
 	else	//cold buffer
 	{
 		ob.obuffer.init_space();
-		ob.obuffer.end=ob.obuffer.beg+Buf::size;
+		ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+Buf::size;
 	}
-	*(ob.obuffer.curr=ob.obuffer.beg)=ch;
+	*ob.obuffer.curr=ch;
 	++ob.obuffer.curr;
+}
+
+namespace details
+{
+
+template<output_stream Ohandler,typename Buf>
+inline constexpr void iobuf_fill_nc_define_code_path(basic_obuf<Ohandler,true,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
+{
+	if(ob.obuffer.end==nullptr)[[unlikely]]
+	{
+		if(n==0)[[unlikely]]
+			return;
+		ob.obuffer.init_space();
+	}
+	auto last{ob.obuffer.end};
+	if(ob.obuffer.beg+n<last)
+		last=ob.obuffer.beg+n;
+	while(n)
+	{
+		my_fill(ob.obuffer.curr,last,ch);
+		std::size_t const mn{std::min(n,ob.obuffer.end-ob.obuffer.beg)};
+		obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
+		last=ob.obuffer.curr;
+		n-=mn;
+	}
+}
+
+}
+
+template<output_stream Ohandler,typename Buf>
+inline constexpr void fill_nc_define(basic_obuf<Ohandler,true,Buf>& ob,std::size_t n,typename Ohandler::char_type ch)
+{
+	auto newcurr{n+ob.obuffer.curr};
+	if(ob.obuffer.end<newcurr)
+	{
+		details::iobuf_fill_nc_define_code_path(ob,n,ch);
+		return;
+	}
+	my_fill_n(ob.obuffer.curr,n,ch);
+	ob.obuffer.curr=newcurr;
 }
 
 template<buffer_input_stream Ohandler,bool forcecopy,typename Buf>
@@ -484,25 +557,7 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 	{
 		if(T::buffer_type::size<=diff)
 		{
-			if constexpr(forcecopy&&!std::same_as<decltype(write(ob.oh,cbegin,cend)),void>)
-			{
-				auto it{write(ob.oh,cbegin,cend)};
-				if(it!=cend)
-				{
-					if(T::buffer_type::size<=cend-it)
-#ifdef __cpp_exceptions
-						throw posix_error(EIO);
-#else
-						fast_terminate();
-#endif
-					ob.obuffer.init_space();
-					ob.obuffer.end=(ob.obuffer.curr=ob.obuffer.beg)+T::buffer_type::size;
-					memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
-					ob.obuffer.curr=ob.obuffer.beg+(cend-it);
-				}
-			}
-			else
-				write(ob.native_handle(),cbegin,cend);
+			obuf_write_force_copy<true,punning>(ob,cbegin,cend);
 			return;
 		}
 		ob.obuffer.init_space();
@@ -521,21 +576,7 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 		{
 			std::size_t const need_to_copy(ob.obuffer.end-ob.obuffer.curr);
 			memcpy(ob.obuffer.curr,std::to_address(cbegin),need_to_copy*sizeof(*cbegin));
-			auto it{write(ob.oh,ob.obuffer.beg,ob.obuffer.end)};
-			if(it==ob.obuffer.beg)[[unlikely]]
-#ifdef __cpp_exceptions
-				throw posix_error(EIO);
-#else
-				fast_terminate();
-#endif
-			else if(it==ob.obuffer.end)
-				ob.obuffer.curr=ob.obuffer.beg;
-			else
-			{
-				ob.obuffer.curr=ob.obuffer.beg;
-				memcpy(ob.obuffer.beg,std::to_address(it),(cend-it)*sizeof(*cbegin));
-				ob.obuffer.curr=ob.obuffer.beg+(cend-it);
-			}
+			obuf_write_force_copy<false,punning>(ob,ob.obuffer.curr,ob.obuffer.end);			
 			cbegin+=need_to_copy;
 		}
 		std::size_t const need_to_copy(cend-cbegin);
