@@ -5,9 +5,6 @@
 
 int main()
 {
-	fast_io::ibuf_utf8_file<char32_t> ifile("utf_file.txt");
-	for (std::u32string u32_str;scan<true>(ifile, fast_io::line(u32_str));)
-	{
-		println(fast_io::code_cvt(u32_str));
-	}
+	fast_io::ibuf_utf8_file<char32_t> utf8_file("utf_file.txt");
+	for(std::u32string utf32str;scan<true>(utf8_file,fast_io::line(utf32str));println(fast_io::code_cvt(utf32str)));
 }
