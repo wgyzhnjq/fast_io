@@ -13,6 +13,7 @@ int main()
         u32_str.clear();
         fast_io::ostring_ref ref(u32_str);
         print(ref,fast_io::code_cvt(u8s));
+        print(fast_io::code_cvt(u32_str));
     }
     return 0;
 }

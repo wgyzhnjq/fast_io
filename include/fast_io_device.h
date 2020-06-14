@@ -83,10 +83,12 @@ template<std::integral new_code_type,std::integral source_code_type>
 using basic_ibuf_utf_file = basic_ibuf_utf<new_code_type,basic_ibuf<basic_inative_file<source_code_type>>>;
 
 template<std::integral new_code_type>
-using u8obuf_utf_file=basic_obuf_utf_file<new_code_type,char8_t>;
+requires (1<sizeof(new_code_type))
+using obuf_utf8_file=basic_obuf_utf_file<new_code_type,char8_t>;
 
 template<std::integral new_code_type>
-using u8ibuf_utf_file=basic_obuf_utf_file<new_code_type,char8_t>;
+requires (1<sizeof(new_code_type))
+using ibuf_utf8_file=basic_ibuf_utf_file<new_code_type,char8_t>;
 
 
 }
