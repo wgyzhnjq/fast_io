@@ -11,8 +11,7 @@ try
 	}
 	fast_io::ibuf_utf8_file<char16_t> utf8_file_in{argv[1]};
 	fast_io::basic_obuf_file<char16_t> utf16_file{argv[2]};
-	char16_t const bom{65279};	//write bom. 65279 is the code page for UTF-16 and UTF-32
-	write(utf16_file,std::addressof(bom),std::addressof(bom)+1);
+	put(utf16_file,65279);	//write bom. 65279 is the code page for UTF-16 and UTF-32
 	transmit(utf16_file,utf8_file_in);
 }
 catch(std::exception const& e)
