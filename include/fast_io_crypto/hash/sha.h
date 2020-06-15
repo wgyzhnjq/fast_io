@@ -1,5 +1,7 @@
 #pragma once
 #include"sha1.h"
+#include"sha256.h"
+#include"sha512.h"
 namespace fast_io
 {
 template<typename T>
@@ -39,6 +41,8 @@ public:
 };
 
 using sha1 = sha<sha1_function>;
+using sha256 = sha<sha256_function>;
+using sha512 = sha<sha512_function>;
 
 template<typename T>
 inline constexpr std::size_t print_reserve_size(print_reserve_type_t<sha<T>>)
