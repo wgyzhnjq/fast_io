@@ -498,6 +498,8 @@ constexpr void obuf_write_cold(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbegi
 	using T = basic_obuf<Ohandler,forcecopy,Buf>;
 	if(ob.obuffer.end==nullptr)		//cold buffer
 	{
+		if(cend-cbegin==0)
+			return;
 		if(T::buffer_type::size<=diff)
 		{
 			obuf_write_force_copy<true,punning>(ob,cbegin,cend);
