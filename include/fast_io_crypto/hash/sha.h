@@ -2,7 +2,6 @@
 #include"sha1.h"
 namespace fast_io
 {
-
 template<typename T>
 struct sha
 {
@@ -16,28 +15,29 @@ public:
 	{
 		function(digest_block,process_block);
 		++transform_counter;
-//		::debug_print("no crash\n");
 	}
 	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<64
 	{
-//		::debug_print("crash\n");
-		std::uint64_t const total_bits(static_cast<std::uint64_t>(transform_counter*block_size+final_block.size())*8);
-		std::array<std::byte,64> blocks{};
+		std::uint64_t total_bits(static_cast<std::uint64_t>(transform_counter*block_size+final_block.size())*8);
+		std::array<std::byte,block_size> blocks{};
 		memcpy(blocks.data(),final_block.data(),final_block.size());
 		blocks[final_block.size()]=std::byte{0x80};
-		if(block_size<=final_block.size()+9)
+		auto start{blocks.data()+blocks.size()-8};
+		if(block_size<=final_block.size()+8)
 		{
 			function(digest_block,blocks);
 			blocks.fill({});
 		}
+		total_bits=details::byte_swap(total_bits);
 		std::uint32_t bu3(static_cast<std::uint32_t>(total_bits));
+		memcpy(start,std::addressof(bu3),4);
 		std::uint32_t bu4(static_cast<std::uint32_t>(total_bits>>32));
-		memcpy(blocks.data()-8,std::addressof(bu3),4);
-		memcpy(blocks.data()-4,std::addressof(bu4),4);
+		memcpy(start+4,std::addressof(bu4),4);
+		function(digest_block,blocks);
 	}
 };
 
-using sha1 = sha<details::sha1_function>;
+using sha1 = sha<sha1_function>;
 
 template<typename T>
 inline constexpr std::size_t print_reserve_size(print_reserve_type_t<sha<T>>)

@@ -13,6 +13,9 @@ public:
 	inline static constexpr std::size_t block_size = function_type::block_size;
 	std::array<std::byte,block_size> temporary_buffer{};
 	std::size_t current_position{};
+	basic_block_processor(function_type& func):function(func){}
+	basic_block_processor(basic_block_processor const&)=delete;
+	basic_block_processor& operator=(basic_block_processor const&)=delete;
 	~basic_block_processor()
 	{
 		function.digest(std::as_bytes(std::span<std::byte const>{temporary_buffer.data(),current_position}));
@@ -27,7 +30,7 @@ requires (std::same_as<std::iter_value_t<Iter>,ch_type>||std::same_as<ch_type,ch
 inline constexpr void write_cold_path(basic_block_processor<ch_type,Func>& out,Iter begin,Iter end)
 {
 	out.function(std::as_bytes(std::span{out.temporary_buffer}));
-	for(;begin+Func::block_size<end;begin+=Func::block_size)
+	for(;begin+Func::block_size<=end;begin+=Func::block_size)
 		out.function(std::as_bytes(std::span<char const,Func::block_size>{std::to_address(begin),Func::block_size}));
 	std::size_t const to_copy(end-begin);
 	memcpy(out.temporary_buffer.data(),std::to_address(begin),to_copy);
@@ -52,8 +55,7 @@ inline void write(basic_block_processor<ch_type,Func>& out,Iter begin,Iter end)
 			return;
 		}
 		memcpy(out.temporary_buffer.data()+out.current_position,std::to_address(begin),to_copy);
-		details::block_processor::write_cold_path(out,begin+out.current_position,end);
-		out.current_position=0;
+		details::block_processor::write_cold_path(out,begin+to_copy,end);
 	}
 	else
 		write(out,reinterpret_cast<char const*>(begin),reinterpret_cast<char const*>(end));
@@ -65,7 +67,7 @@ public:
 	using basic_block_processor<char,Func>::char_type;
 	using basic_block_processor<char,Func>::function_type;
 	using basic_block_processor<char,Func>::block_size;
-	constexpr block_processor(Func& func):basic_block_processor<char,Func>{func}{}
+	constexpr block_processor(Func& func):basic_block_processor<char,Func>(func){}
 };
 
 template<typename Func>
