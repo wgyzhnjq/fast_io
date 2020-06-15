@@ -13,7 +13,7 @@ try
 	std::size_t transmitted{};
 	{
 	fast_io::posix_iconv picov(argv[2],argv[1]);
-	fast_io::basic_ibuf_posix_iconv_file<char,char8_t> utf8_file(picov,argv[3]);
+	fast_io::basic_ibuf_posix_iconv_file<char,char> utf8_file(picov,argv[3]);
 	fast_io::obuf_file file(argv[4]);
 	transmitted=transmit(file,utf8_file);
 	}
