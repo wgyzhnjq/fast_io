@@ -5,14 +5,14 @@
 int main(int argc,char** argv)
 try
 {
-	if(argc!=2)
+	if(argc!=3)
 	{
-		print(fast_io::err,"Usage: ",*argv," <file>\n");
+		print(fast_io::err,"Usage: ",*argv," <file> <hmac sha1 key>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
 	std::size_t transmitted{};
-	fast_io::sha1 sha;
+	fast_io::hmac_sha1 sha(argv[2]);
 	{
 	fast_io::block_processor processor(sha);
 	fast_io::ibuf_file ibf(argv[1]);

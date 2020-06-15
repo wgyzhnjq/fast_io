@@ -7,7 +7,8 @@ struct sha
 {
 public:
 	using function_type = T;
-	typename T::digest_type digest_block = T::digest_initial_value;
+	using digest_type = typename T::digest_type;
+	digest_type digest_block = T::digest_initial_value;
 	inline static constexpr std::size_t block_size = T::block_size;
 	T function;
 	std::size_t transform_counter{};
@@ -16,7 +17,7 @@ public:
 		function(digest_block,process_block);
 		++transform_counter;
 	}
-	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<64
+	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<8*block_size
 	{
 		std::uint64_t total_bits(static_cast<std::uint64_t>(transform_counter*block_size+final_block.size())*8);
 		std::array<std::byte,block_size> blocks{};

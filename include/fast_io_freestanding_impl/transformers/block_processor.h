@@ -13,7 +13,14 @@ public:
 	inline static constexpr std::size_t block_size = function_type::block_size;
 	std::array<std::byte,block_size> temporary_buffer{};
 	std::size_t current_position{};
-	basic_block_processor(function_type& func):function(func){}
+	basic_block_processor(function_type& func):function(func)
+	{
+		if constexpr(requires(Func& func)
+		{
+			func.block_init(temporary_buffer);
+		})
+			current_position+=func.block_init(temporary_buffer);
+	}
 	basic_block_processor(basic_block_processor const&)=delete;
 	basic_block_processor& operator=(basic_block_processor const&)=delete;
 	~basic_block_processor()
@@ -58,7 +65,7 @@ inline void write(basic_block_processor<ch_type,Func>& out,Iter begin,Iter end)
 		details::block_processor::write_cold_path(out,begin+to_copy,end);
 	}
 	else
-		write(out,reinterpret_cast<char const*>(begin),reinterpret_cast<char const*>(end));
+		write(out,reinterpret_cast<char const*>(std::to_address(begin)),reinterpret_cast<char const*>(std::to_address(end)));
 }
 template<typename Func>
 class block_processor:public basic_block_processor<char,Func>
