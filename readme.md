@@ -310,7 +310,7 @@ iconv test:
 | Method                         |       Elapsed time      |                           Comment                                            |
 |--------------------------------|-------------------------|------------------------------------------------------------------------------|
 | iconv command                  |      0.967s             |  GNU iconv. No BOM which sucks                                              |
-| utf8_file_to_utf32_file.cc     |      0.498s             |  I use SSE algorithms provided by the utf-utils project.                       |
+| utf8_file_to_utf16_file.cc     |      0.498s             |  I use the SSE algorithms provided by the utf-utils project.                |
 
 UTF8->UTF32LE
 
@@ -324,4 +324,4 @@ iconv test:
 | Method                         |       Elapsed time      |                           Comment                                            |
 |--------------------------------|-------------------------|------------------------------------------------------------------------------|
 | iconv command                  |      0.844s             |  GNU iconv. No BOM which sucks                                           |
-| utf8_file_to_utf32_file.cc     |      0.442s             |  I use SSE algorithms provided by the utf-utils project.                       |
+| utf8_file_to_utf32_file.cc     |      0.442s             |  I use the SSE algorithms provided by the utf-utils project.                   |
