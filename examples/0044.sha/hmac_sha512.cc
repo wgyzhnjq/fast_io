@@ -2,8 +2,6 @@
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_crypto.h"
 
-//result is not correct To fix
-
 int main(int argc,char** argv)
 try
 {

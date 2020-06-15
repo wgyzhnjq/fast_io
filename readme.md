@@ -83,6 +83,7 @@ A general purpose I/O library to replace stdio.h and iostream
 - Freestanding mode
 - Round-trip floating point algorithm
 - Network
+- Intrinsic SHA-1, Intrinsic HMAC-SHA1, Intrinsic SHA-256, Intrinsic HMAC-SHA256, SHA-512, HMAC-SHA512
 
 ## Post C++20 Plan
   1. Module support
