@@ -53,10 +53,11 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<sha<T>>)
 template<std::random_access_iterator caiter,typename T>
 inline constexpr caiter print_reserve_define(print_reserve_type_t<sha<T>>,caiter iter,auto& i)
 {
+	constexpr std::size_t offset{sizeof(typename T::digest_type::value_type)*2};
 	for(auto e : i.digest_block)
 	{
-		fast_io::details::optimize_size::output_unsigned_dummy<8,16>(iter,e);
-		iter+=8;
+		fast_io::details::optimize_size::output_unsigned_dummy<offset,16>(iter,e);
+		iter+=offset;
 	}
 	return iter;
 }
