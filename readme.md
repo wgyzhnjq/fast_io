@@ -279,3 +279,49 @@ Dude, you should avoid stream as plague tbh. It is not healthy.
 | fast_io::c_file_unlocked       |      157KB              |I hacked MSVCRT's FILE* implementation                                        |
 | fast_io::c_file                |      157KB              |Thread Safe. I hacked MSVCRT's FILE* implementation                           |
 | fast_io::filebuf_file          |      933KB              |I hacked libstdc++'s std::filebuf implementation. C++ stream sucks            |
+
+
+5. Code Convert
+
+Generate 100000000 🚄 emojis by using the program in benchmarks/0020.utf/fill_nc.cc
+
+Benchmarks are in examples/0043.iconv
+Universal iconv.
+iconv test:
+| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++ + libiconv                |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+|                                                                                                                                         |
+
+| Method                         |       Elapsed time      |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| iconv command                  |      1.529s             |                                                                              |
+| universal.cc                   |      1.293s             |  use POSIX libiconv                                                        |
+
+
+UTF8->UTF16LE
+
+Benchmarks are in examples/0022.utf
+
+iconv test:
+| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++                |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+|                                                                                                                                         |
+
+| Method                         |       Elapsed time      |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| iconv command                  |      0.967s             |  GNU iconv. No BOM which sucks                                              |
+| utf8_file_to_utf32_file.cc     |      0.498s             |  I use SSE algorithms provided by the utf-utils project.                       |
+
+UTF8->UTF32LE
+
+Benchmarks are in examples/0022.utf
+
+iconv test:
+| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++                |
+|--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
+|                                                                                                                                         |
+
+| Method                         |       Elapsed time      |                           Comment                                            |
+|--------------------------------|-------------------------|------------------------------------------------------------------------------|
+| iconv command                  |      0.844s             |  GNU iconv. No BOM which sucks                                           |
+| utf8_file_to_utf32_file.cc     |      0.442s             |  I use SSE algorithms provided by the utf-utils project.                       |
