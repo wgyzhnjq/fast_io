@@ -559,7 +559,7 @@ inline constexpr void obuf_write(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter cbe
 	std::size_t const diff(cend-cbegin);
 	auto curr{ob.obuffer.curr};
 	auto e{curr+diff};
-	if(e<=ob.obuffer.end)[[likely]]
+	if(e<ob.obuffer.end)[[likely]]
 	{
 		if constexpr(punning)
 			memcpy(curr,cbegin,diff*sizeof(std::iter_value_t<Iter>));
