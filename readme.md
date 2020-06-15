@@ -57,7 +57,8 @@ A general purpose I/O library to replace stdio.h and iostream
 
 ### Easy to use
 
-- Unicode/UTF-8 support  
+- Unicode/UTF-8 support
+- Support POSIX iconv. You can use fast_io for your coding conversion.
 - Compatible with C stdio and C++ iostream  
 - Binary serialization for trivially copyable types and C++ standard library containers  
 - All fast_io devices can be natively put in C++ containers. std::vector<fast_io::obuf_file> is valid  
