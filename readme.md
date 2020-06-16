@@ -292,7 +292,7 @@ Generate 100000000 🚄 emojis by using the program in benchmarks/0020.utf/fill_
 Benchmarks are in examples/0043.iconv
 Universal iconv. (UTF-8 to GB18030 as an example)
 iconv test:
-| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++ + libiconv                |
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
@@ -307,7 +307,7 @@ UTF8->UTF16LE
 Benchmarks are in examples/0022.utf
 
 iconv test:
-| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++                |
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
@@ -321,7 +321,7 @@ UTF8->UTF32LE
 Benchmarks are in examples/0022.utf
 
 iconv test:
-| Platform                       |        Ubuntu 20.04 LTS |   GCC 11.0.0     |   glibc + libstdc++                |
+| Platform                       |        Windows          |MinGW-W64 GCC 11.0.0   |   MSVCRT + libstdc++                                 |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
