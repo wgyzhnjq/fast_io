@@ -90,10 +90,7 @@ inline constexpr void print(T&& t,Args&& ...args)
 	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
 		fast_io::print(std::forward<T>(t),std::forward<Args>(args)...);
 	else
-	{
-		fast_io::c_io_observer c_stdout{stdout};
-		fast_io::print(c_stdout,std::forward<T>(t),std::forward<Args>(args)...);
-	}
+		fast_io::print(fast_io::c_io_observer{stdout},std::forward<T>(t),std::forward<Args>(args)...);
 }
 
 template<typename T,typename... Args>
@@ -102,66 +99,48 @@ inline constexpr void println(T&& t,Args&& ...args)
 	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
 		fast_io::println(std::forward<T>(t),std::forward<Args>(args)...);
 	else
-	{
-		fast_io::c_io_observer c_stdout{stdout};
-		fast_io::println(c_stdout,std::forward<T>(t),std::forward<Args>(args)...);
-	}
+		fast_io::println(fast_io::c_io_observer{stdout},std::forward<T>(t),std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline constexpr void print_err(Args&&... args)
 {
-	auto err{fast_io::err()};
-	fast_io::print(err,std::forward<Args>(args)...);
+	fast_io::print(fast_io::err(),std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline constexpr void println_err(Args&&... args)
 {
-	auto err{fast_io::err()};
-	fast_io::println(err,std::forward<Args>(args)...);
+	fast_io::println(fast_io::err(),std::forward<Args>(args)...);
 }
 
 
 //Allow debug print
 #ifndef NDEBUG
 
-template<typename T,typename... Args>
-inline constexpr void debug_print(T&& t,Args&& ...args)
+template<typename... Args>
+inline constexpr void debug_print(Args&& ...args)
 {
-	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
-		fast_io::debug_print(std::forward<T>(t),std::forward<Args>(args)...);
-	else
-	{
-		fast_io::c_io_observer c_stdout{stdout};
-		fast_io::debug_print(c_stdout,std::forward<T>(t),std::forward<Args>(args)...);
-	}
+	::print(std::forward<Args>(args)...);
 }
 
-template<typename T,typename... Args>
-inline constexpr void debug_println(T&& t,Args&& ...args)
+template<typename... Args>
+inline constexpr void debug_println(Args&& ...args)
 {
-	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
-		fast_io::debug_println(std::forward<T>(t),std::forward<Args>(args)...);
-	else
-	{
-		fast_io::c_io_observer c_stdout{stdout};
-		fast_io::debug_println(c_stdout,std::forward<T>(t),std::forward<Args>(args)...);
-	}
+	::println(std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline constexpr void debug_print_err(Args&&... args)
 {
-	print_err(std::forward<Args>(args)...);
+	::print_err(std::forward<Args>(args)...);
 }
 
 template<typename... Args>
 inline constexpr void debug_println_err(Args&&... args)
 {
-	println_err(std::forward<Args>(args)...);
+	::println_err(std::forward<Args>(args)...);
 }
-
 #endif
 
 template<bool report_eof=false,typename T,typename... Args>
@@ -170,8 +149,5 @@ inline constexpr auto scan(T&& t,Args&& ...args)
 	if constexpr(fast_io::input_stream<std::remove_cvref_t<T>>)
 		return fast_io::scan<report_eof>(std::forward<T>(t),std::forward<Args>(args)...);
 	else
-	{
-		fast_io::c_io_observer c_stdin{stdin};
-		return scan<report_eof>(c_stdin,std::forward<T>(t),std::forward<Args>(args)...);
-	}
+		return scan<report_eof>(fast_io::c_io_observer{stdin},std::forward<T>(t),std::forward<Args>(args)...);
 }
