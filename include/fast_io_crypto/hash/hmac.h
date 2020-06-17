@@ -16,11 +16,10 @@ struct hmac
 		if(block_size<init_key.size())
 		{
 			function_type temp;
-			{
-				block_processor processor(temp);
-				write(processor,reinterpret_cast<char const*>(init_key.data()),
-					reinterpret_cast<char const*>(init_key.data()+init_key.size()));
-			}
+			hash_processor processor(temp);
+			write(processor,reinterpret_cast<char const*>(init_key.data()),
+				reinterpret_cast<char const*>(init_key.data()+init_key.size()));
+			processor.do_final();
 			if constexpr(std::endian::native==std::endian::little)
 				for(auto & e : temp.digest_block)
 					e=details::byte_swap(e);
@@ -51,13 +50,12 @@ struct hmac
 			for(auto& e : digest_block)
 				e=details::byte_swap(e);
 		function={};
-		{
-			block_processor processor(function);
-			write(processor,reinterpret_cast<char const*>(outer_key.data()),
-				reinterpret_cast<char const*>(outer_key.data()+outer_key.size()));
-			write(processor,reinterpret_cast<char const*>(digest_block.data()),
-				reinterpret_cast<char const*>(digest_block.data()+digest_block.size()));
-		}
+		hash_processor processor(function);
+		write(processor,reinterpret_cast<char const*>(outer_key.data()),
+			reinterpret_cast<char const*>(outer_key.data()+outer_key.size()));
+		write(processor,reinterpret_cast<char const*>(digest_block.data()),
+			reinterpret_cast<char const*>(digest_block.data()+digest_block.size()));
+		processor.do_final();
 	}
 };
 
