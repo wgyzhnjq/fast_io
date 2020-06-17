@@ -343,7 +343,7 @@ inline constexpr void space_scan_define(input& in,manip::base_t<base,uppercase,T
 template<character_input_stream input>
 inline constexpr void space_scan_define(input& in,std::byte& a)
 {
-	a=std::byte(details::input_base_number<char unsigned,10>(in));
+	a=std::byte(details::input_base_number<char8_t,10>(in));
 }
 
 /*
