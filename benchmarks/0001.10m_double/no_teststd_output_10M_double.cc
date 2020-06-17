@@ -90,6 +90,6 @@ try
 }
 catch(std::exception const& e)
 {
-	println(fast_io::err,e);
+	println_err(e);
 	return 1;
 }

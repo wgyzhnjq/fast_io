@@ -3,5 +3,5 @@
 
 int main()
 {
-	while(transmit_once(fast_io::out,fast_io::in));
+	while(transmit_once(fast_io::out(),fast_io::in()));
 }

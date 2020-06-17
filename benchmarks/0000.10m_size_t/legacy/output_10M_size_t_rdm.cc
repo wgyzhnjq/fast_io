@@ -45,7 +45,7 @@ try
 #ifdef __cpp_exceptions
 catch(std::exception const& e)
 {
-	println(fast_io::err,e);
+	println_err(e);
 	return 1;
 }
 #endif

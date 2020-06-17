@@ -7,16 +7,65 @@
 namespace fast_io
 {
 
-static inline constexpr posix_io_observer in{posix_stdin_number};
-static inline constexpr posix_io_observer out{posix_stdout_number};
-static inline constexpr posix_io_observer err{posix_stderr_number};
+inline c_io_observer c_stdin() noexcept
+{
+	return {stdin};
+}
 
-static inline constexpr wposix_io_observer wout{posix_stdout_number};
-static inline constexpr wposix_io_observer werr{posix_stderr_number};
+inline c_io_observer c_stdout() noexcept
+{
+	return {stdout};
+}
 
+inline c_io_observer c_stderr() noexcept
+{
+	return {stderr};
+}
+
+inline wc_io_observer wc_stdin() noexcept
+{
+	return {stdin};
+}
+
+inline wc_io_observer wc_stdout() noexcept
+{
+	return {stdout};
+}
+
+inline wc_io_observer wc_stderr() noexcept
+{
+	return {stderr};
+}
+
+inline
+#if !defined(__WINNT__) && !defined(_MSC_VER)
+constexpr
+#endif
+decltype(auto) in() noexcept
+{
+	return native_stdin();
+}
+
+inline 
+#if !defined(__WINNT__) && !defined(_MSC_VER)
+constexpr
+#endif
+decltype(auto) out() noexcept
+{
+	return native_stdout();
+}
+
+inline
+#if !defined(__WINNT__) && !defined(_MSC_VER)
+constexpr
+#endif
+decltype(auto) err() noexcept
+{
+	return native_stderr();
+}
 
 using in_buf_type = basic_ibuf<native_io_observer>;
-using log_type = basic_obuf<native_io_observer>;
+using out_buf_type = basic_obuf<native_io_observer>;
 
 inline auto in_buf()
 {
@@ -25,12 +74,12 @@ inline auto in_buf()
 
 inline auto out_buf()
 {
-	return log_type(native_stdout());
+	return out_buf_type(native_stdout());
 }
 
-inline auto log()
+inline auto err_buf()
 {
-	return log_type(native_stderr());
+	return out_buf_type(native_stderr());
 }
 
 }
@@ -59,6 +108,20 @@ inline constexpr void println(T&& t,Args&& ...args)
 	}
 }
 
+template<typename... Args>
+inline constexpr void print_err(Args&&... args)
+{
+	auto err{fast_io::err()};
+	fast_io::print(err,std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline constexpr void println_err(Args&&... args)
+{
+	auto err{fast_io::err()};
+	fast_io::println(err,std::forward<Args>(args)...);
+}
+
 
 //Allow debug print
 #ifndef NDEBUG
@@ -85,6 +148,18 @@ inline constexpr void debug_println(T&& t,Args&& ...args)
 		fast_io::c_io_observer c_stdout{stdout};
 		fast_io::debug_println(c_stdout,std::forward<T>(t),std::forward<Args>(args)...);
 	}
+}
+
+template<typename... Args>
+inline constexpr void debug_print_err(Args&&... args)
+{
+	print_err(std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline constexpr void debug_println_err(Args&&... args)
+{
+	println_err(std::forward<Args>(args)...);
 }
 
 #endif

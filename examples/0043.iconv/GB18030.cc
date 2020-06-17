@@ -6,7 +6,7 @@ try
 {
 	if(argc!=3)
 	{
-		print(fast_io::err,"Usage: ",*argv," <source UTF8 file name> <dest GB18030 file name>\n");
+		print_err("Usage: ",std::string_view(*argv)," <source UTF8 file name> <dest GB18030 file name>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
@@ -21,6 +21,6 @@ try
 }
 catch(std::exception const& e)
 {
-	println(fast_io::err,e);
+	println_err(e);
 	return 2;
 }
