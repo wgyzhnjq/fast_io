@@ -15,15 +15,15 @@ struct hmac
 	{
 		if(block_size<init_key.size())
 		{
-			function_type temp;
-			hash_processor processor(temp);
+			hash_processor processor(function);
 			write(processor,reinterpret_cast<char const*>(init_key.data()),
 				reinterpret_cast<char const*>(init_key.data()+init_key.size()));
 			processor.do_final();
 			if constexpr(std::endian::native==std::endian::little)
-				for(auto & e : temp.digest_block)
+				for(auto & e : function.digest_block)
 					e=details::byte_swap(e);
-			memcpy(outer_key.data(),temp.digest_block.data(),temp.digest_block.size());
+			memcpy(outer_key.data(),function.digest_block.data(),function.digest_block.size());
+			function={};
 		}
 		else
 			memcpy(outer_key.data(),init_key.data(),init_key.size());
