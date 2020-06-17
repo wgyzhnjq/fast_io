@@ -272,11 +272,17 @@ inline void print_define(output& out,manip::chvw<T> a)
 }
 
 template<output_stream output,std::integral T>
-requires std::same_as<typename output::char_type,std::remove_cvref_t<T>>
-inline void print_define(output& out,manip::chvw<T*> a)
+requires (std::same_as<typename output::char_type,std::remove_cvref_t<T>>||
+(std::same_as<typename output::char_type,char>&&std::same_as<std::remove_cvref_t<T>,char8_t>))
+inline constexpr void print_define(output& out,manip::chvw<T*> a)
 {
 	if constexpr(std::same_as<typename output::char_type,char>)
-		write(out,a.reference,a.reference+strlen(a.reference));
+	{
+		if constexpr(std::same_as<std::remove_cvref_t<T>,char>)
+			write(out,a.reference,a.reference+strlen(a.reference));
+		else
+			write(out,a.reference,a.reference+strlen(reinterpret_cast<char const*>(a.reference)));
+	}
 	else
 		print(out,std::basic_string_view<typename output::char_type>(a.reference));
 }
