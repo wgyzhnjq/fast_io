@@ -84,6 +84,7 @@ A general purpose I/O library to replace stdio.h and iostream
 - Round-trip floating point algorithm
 - Network
 - Intrinsic SHA-1, Intrinsic HMAC-SHA1, Intrinsic SHA-256, Intrinsic HMAC-SHA256, SHA-512, HMAC-SHA512
+- zlib compression/decompression support
 
 ## Post C++20 Plan
   1. Module support
@@ -91,7 +92,6 @@ A general purpose I/O library to replace stdio.h and iostream
   3. Improve and refactor code once [Zero-overhead deterministic exceptions](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0709r0.pdf) are added to the standard
 
 ## Possible Improvements
-  1. Compression/Decompression
   2. Interfaces for cloud computing algorithms like MapReduce
 
 I'm aiming for this to be in the C++ standard library in the future :)
