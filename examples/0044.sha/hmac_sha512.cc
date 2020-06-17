@@ -7,7 +7,7 @@ try
 {
 	if(argc!=3)
 	{
-		print_err("Usage: ",std::string_view(*argv)," <file> <hmac sha512 key>\n");
+		print_err("Usage: ",fast_io::chvw(*argv)," <file> <hmac sha512 key>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
@@ -18,7 +18,7 @@ try
 	fast_io::ibuf_file ibf(argv[1]);
 	transmitted=transmit(processor,ibf);
 	}
-	println(sha," *",argv[1],"\nTransmitted:",transmitted,u8" bytes\tElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
+	println(sha," *",fast_io::chvw(argv[1]),"\nTransmitted:",transmitted,u8" bytes\tElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
 }
 catch(std::exception const& e)
 {

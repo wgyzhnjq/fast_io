@@ -7,10 +7,10 @@ namespace manip
 {
 
 template<typename T>
-struct char_view
+struct chvw
 {
 	using manip_tag = manip_tag_t;
-	T& reference;
+	T reference;
 };
 
 template<std::integral T>
@@ -161,15 +161,15 @@ struct space
 };
 
 }
-template<typename T>
-requires (std::floating_point<T>||std::integral<T>)
-inline constexpr manip::char_view<T> char_view(T& ch)
+
+
+template<std::integral T>
+inline constexpr manip::chvw<T> chvw(T ch)
 {
 	return {ch};
 }
-template<typename T>
-requires (std::floating_point<T>||std::integral<T>)
-inline constexpr manip::char_view<T const> char_view(T const& ch)
+template<std::integral T>
+inline constexpr manip::chvw<T*> chvw(T* ch)
 {
 	return {ch};
 }
@@ -266,9 +266,19 @@ template<typename T,typename Func>
 inline constexpr manip::space<T&,Func&> space(T&& f,Func&& func){return {f,func};}
 
 template<character_output_stream output,std::integral T>
-inline void print_define(output& out,manip::char_view<T> a)
+inline void print_define(output& out,manip::chvw<T> a)
 {
 	put(out,static_cast<typename output::char_type>(a.reference));
+}
+
+template<output_stream output,std::integral T>
+requires std::same_as<typename output::char_type,std::remove_cvref_t<T>>
+inline void print_define(output& out,manip::chvw<T*> a)
+{
+	if constexpr(std::same_as<typename output::char_type,char>)
+		write(out,a.reference,a.reference+strlen(a.reference));
+	else
+		print(out,std::basic_string_view<typename output::char_type>(a.reference));
 }
 
 template<output_stream output>

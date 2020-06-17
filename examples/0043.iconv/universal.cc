@@ -17,7 +17,7 @@ try
 	fast_io::obuf_file file(argv[4]);
 	transmitted=transmit(file,utf8_file);
 	}
-	println(argv[1]," => ",argv[2]," code cvt (with POSIX iconv system) success!\nTransmitted:",transmitted," bytes\nElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
+	println(fast_io::chvw(argv[1])," => ",fast_io::chvw(argv[2])," code cvt (with POSIX iconv system) success!\nTransmitted:",transmitted," bytes\nElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
 }
 catch(std::exception const& e)
 {
