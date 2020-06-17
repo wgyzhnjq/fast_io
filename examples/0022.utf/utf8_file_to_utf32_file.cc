@@ -6,7 +6,7 @@ try
 {
 	if(argc!=3)
 	{
-		print_err("Usage: ",std::string_view(*argv)," <source UTF8 file name> <dest UTF32 (",std::endian::native==std::endian::little?"LE":"BE",") file name>\n");
+		perr("Usage: ",fast_io::chvw(*argv)," <source UTF8 file name> <dest UTF32 (",std::endian::native==std::endian::little?"LE":"BE",") file name>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
@@ -18,7 +18,6 @@ try
 	transmitted=transmit(utf32_file,utf8_file_in);
 	}
 	println(u8"UTF8 => UTF32 (",std::endian::native==std::endian::little?"LE":"BE",") code cvt success!\nTransmitted:",transmitted,u8" UTF32 code points\nElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
-
 }
 catch(std::exception const& e)
 {
