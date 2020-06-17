@@ -3,21 +3,19 @@
 namespace fast_io
 {
 
-template<typename outputstm,typename inputstm>
-requires output_stream<std::remove_cvref_t<outputstm>>&&input_stream<std::remove_cvref_t<inputstm>>
-inline constexpr std::uintmax_t transmit_once(outputstm&& outp,inputstm&& inp)
+template<output_stream output,input_stream input>
+inline constexpr std::size_t transmit_once(output&& outp,input&& inp)
 {
-	using output=std::remove_cvref_t<outputstm>;
-	using input=std::remove_cvref_t<inputstm>;
+
 	if constexpr(mutex_input_stream<input>)
 	{
-		typename input::lock_guard_type lg{mutex(inp)};
+		typename std::remove_cvref_t<input>::lock_guard_type lg{mutex(inp)};
 		decltype(auto) uh{unlocked_handle(inp)};
 		return transmit_once(outp,uh);
 	}
 	else if constexpr(buffer_input_stream<input>)
 	{
-		std::uintmax_t bytes{};
+		std::size_t bytes{};
 		if(ibuffer_curr(inp)!=ibuffer_end(inp))[[unlikely]]
 		{
 			write(outp,ibuffer_curr(inp),ibuffer_end(inp));
@@ -32,7 +30,7 @@ inline constexpr std::uintmax_t transmit_once(outputstm&& outp,inputstm&& inp)
 	}
 	else
 	{
-		using char_type = typename input::char_type;
+		using char_type = typename std::remove_cvref_t<input>::char_type;
 		std::array<char_type,65536> buffer;
 		auto it{read(inp,buffer.data(),buffer.data()+buffer.size())};
 		write(outp,buffer.data(),it);
