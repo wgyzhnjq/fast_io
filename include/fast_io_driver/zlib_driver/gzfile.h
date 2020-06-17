@@ -45,7 +45,20 @@ inline int hack_gz_file_fd(gzFile gzfile)
 	memcpy(std::addressof(fdn),reinterpret_cast<std::byte const*>(gzfile)+offsetof(gz_state_model,fd),sizeof(int));
 	return fdn;
 }
-
+/*
+inline char* hack_gz_file_in(gzFile gzfile)
+{
+	char* ptr;
+	memcpy(std::addressof(ptr),reinterpret_cast<std::byte const*>(gzfile)+offsetof(gz_state_model,in),sizeof(char *));
+	return ptr;
+}
+inline char* hack_gz_file_out(gzFile gzfile)
+{
+	char* ptr;
+	memcpy(std::addressof(ptr),reinterpret_cast<std::byte const*>(gzfile)+offsetof(gz_state_model,out),sizeof(char *));
+	return ptr;
+}
+*/
 }
 
 template<std::integral ch_type>
@@ -67,7 +80,7 @@ public:
 	{
 		return gzfile;
 	}
-	explicit operator basic_posix_io_observer<char_type>() const
+	explicit operator basic_posix_io_observer<char_type>() const noexcept
 	{
 		return {details::hack_gz_file_fd(gzfile)};
 	}
@@ -187,7 +200,7 @@ inline Iter read(basic_gz_io_observer<char_type> giob,Iter b,Iter e)
 		return b+static_cast<std::size_t>(readed)/sizeof(*b);
 	}
 	else
-		return read(giob,reinterpret_cast<char const*>(std::to_address(b)),reinterpret_cast<char const*>(std::to_address(e)));
+		return b+(read(giob,reinterpret_cast<char*>(std::to_address(b)),reinterpret_cast<char*>(std::to_address(e)))-reinterpret_cast<char*>(std::to_address(b)))/sizeof(*b);
 }
 
 template<std::integral char_type,std::contiguous_iterator Iter>
@@ -201,7 +214,7 @@ inline Iter write(basic_gz_io_observer<char_type> giob,Iter b,Iter e)
 			if(static_cast<std::size_t>(std::numeric_limits<unsigned>::max())<to_write)
 				to_write=std::numeric_limits<unsigned>::max();
 		int written{gzwrite(giob.gzfile,std::to_address(b),static_cast<unsigned>(to_write))};
-		if(written==0)
+		if(written<0)
 #ifdef __cpp_exceptions
 			throw posix_error();
 #else
@@ -210,7 +223,7 @@ inline Iter write(basic_gz_io_observer<char_type> giob,Iter b,Iter e)
 		return b+static_cast<std::size_t>(written)/sizeof(*b);
 	}
 	else
-		return write(giob,reinterpret_cast<char const*>(std::to_address(b)),reinterpret_cast<char const*>(std::to_address(e)));
+		return b+(write(giob,reinterpret_cast<char const*>(std::to_address(b)),reinterpret_cast<char const*>(std::to_address(e)))-reinterpret_cast<char const*>(std::to_address(b)))/sizeof(*b);
 }
 
 template<std::integral char_type>
@@ -226,5 +239,11 @@ inline void flush(basic_gz_io_observer<char_type> giob)
 
 static_assert(input_stream<gz_file>);
 static_assert(output_stream<gz_file>);
+
+
+template<std::integral char_type>
+using basic_ibuf_gz_file=basic_ibuf<basic_gz_file<char_type>>;
+
+using ibuf_gz_file = basic_ibuf_gz_file<char>;
 
 }
