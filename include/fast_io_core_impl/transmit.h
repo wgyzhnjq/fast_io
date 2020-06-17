@@ -178,19 +178,21 @@ inline constexpr void print_define(output& outp,manip::transmission_with_size<in
 	ref.transmitted=static_cast<sz_type>(details::transmit_impl(outp,ref.reference,ref.size));
 }
 
-template<output_stream output,input_stream input,std::integral sz_type>
-inline constexpr sz_type transmit(output& outp,input& in,sz_type s)
+template<typename output,typename input,std::integral sz_type>
+requires (output_stream<std::remove_cvref_t<output>>&&input_stream<std::remove_cvref_t<input>>)
+inline constexpr sz_type transmit(output&& outp,input&& in,sz_type s)
 {
 	sz_type transmitted{};
-	print(outp,manip::transmission_with_size<input,sz_type>{transmitted,in,s});
+	print(outp,manip::transmission_with_size<std::remove_cvref_t<input>,sz_type>{transmitted,in,s});
 	return transmitted;
 }
 
-template<output_stream output,input_stream input>
-inline constexpr std::uintmax_t transmit(output& outp,input& in)
+template<typename output,typename input>
+requires (output_stream<std::remove_cvref_t<output>>&&input_stream<std::remove_cvref_t<input>>)
+inline constexpr std::uintmax_t transmit(output&& outp,input&& in)
 {
 	std::uintmax_t transmitted{};
-	print(outp,manip::transmission<input,std::uintmax_t>{transmitted,in});
+	print(outp,manip::transmission<std::remove_cvref_t<input>,std::uintmax_t>{transmitted,in});
 	return transmitted;
 }
 

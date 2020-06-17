@@ -3,9 +3,12 @@
 namespace fast_io
 {
 
-template<output_stream output,input_stream input>
-inline constexpr std::size_t transmit_once(output& outp,input& inp)
+template<typename outputstm,typename inputstm>
+requires output_stream<std::remove_cvref_t<outputstm>>&&input_stream<std::remove_cvref_t<inputstm>>
+inline constexpr std::uintmax_t transmit_once(outputstm&& outp,inputstm&& inp)
 {
+	using output=std::remove_cvref_t<outputstm>;
+	using input=std::remove_cvref_t<inputstm>;
 	if constexpr(mutex_input_stream<input>)
 	{
 		typename input::lock_guard_type lg{mutex(inp)};
@@ -14,7 +17,7 @@ inline constexpr std::size_t transmit_once(output& outp,input& inp)
 	}
 	else if constexpr(buffer_input_stream<input>)
 	{
-		std::size_t bytes{};
+		std::uintmax_t bytes{};
 		if(ibuffer_curr(inp)!=ibuffer_end(inp))[[unlikely]]
 		{
 			write(outp,ibuffer_curr(inp),ibuffer_end(inp));
