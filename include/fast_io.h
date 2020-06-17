@@ -103,13 +103,13 @@ inline constexpr void println(T&& t,Args&& ...args)
 }
 
 template<typename... Args>
-inline constexpr void print_err(Args&&... args)
+inline constexpr void perr(Args&&... args)
 {
 	fast_io::print(fast_io::err(),std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline constexpr void println_err(Args&&... args)
+inline constexpr void perrln(Args&&... args)
 {
 	fast_io::println(fast_io::err(),std::forward<Args>(args)...);
 }
@@ -131,15 +131,15 @@ inline constexpr void debug_println(Args&& ...args)
 }
 
 template<typename... Args>
-inline constexpr void debug_print_err(Args&&... args)
+inline constexpr void debug_perr(Args&&... args)
 {
-	::print_err(std::forward<Args>(args)...);
+	::perr(std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline constexpr void debug_println_err(Args&&... args)
+inline constexpr void debug_perrln(Args&&... args)
 {
-	::println_err(std::forward<Args>(args)...);
+	::perrln(std::forward<Args>(args)...);
 }
 #endif
 

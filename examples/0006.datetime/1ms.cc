@@ -3,5 +3,5 @@
 
 int main()
 {
-	print_err("Hello World\n",std::chrono::milliseconds(1));
+	perr("Hello World\n",std::chrono::milliseconds(1));
 }

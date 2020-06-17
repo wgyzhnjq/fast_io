@@ -7,5 +7,5 @@ try
 }
 catch(std::exception const& e)
 {
-	println_err(e);
+	perrln(e);
 }

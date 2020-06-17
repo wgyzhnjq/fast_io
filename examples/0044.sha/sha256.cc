@@ -7,7 +7,7 @@ try
 {
 	if(argc!=2)
 	{
-		print_err("Usage: ",fast_io::chvw(*argv)," <file>\n");
+		perr("Usage: ",fast_io::chvw(*argv)," <file>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};

@@ -7,7 +7,7 @@ try
 {
 	if(argc!=3)
 	{
-		print_err("Usage: ",fast_io::chvw(*argv)," <file> <hmac sha256 key>\n");
+		perr("Usage: ",fast_io::chvw(*argv)," <file> <hmac sha256 key>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
@@ -22,6 +22,6 @@ try
 }
 catch(std::exception const& e)
 {
-	println_err(e);
+	perrln(e);
 	return 2;
 }

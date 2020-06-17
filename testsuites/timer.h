@@ -17,7 +17,7 @@ public:
 	timer& operator=(const timer&) = delete;
 	~timer()
 	{
-		println_err(s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
+		perrln(s,u8":\t",std::chrono::high_resolution_clock::now()-t0);
 	}
 };
 

@@ -204,7 +204,7 @@ try
 #ifdef __cpp_exceptions
 catch(std::exception const& e)
 {
-	println_err(e);
+	perrln(e);
 	return 1;
 }
 #endif
