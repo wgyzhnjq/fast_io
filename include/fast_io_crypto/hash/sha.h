@@ -19,7 +19,7 @@ public:
 		function(digest_block,process_block);
 		++transform_counter;
 	}
-	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<8*block_size
+	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<block_size
 	{
 		std::uint64_t total_bits(static_cast<std::uint64_t>(transform_counter*block_size+final_block.size())*8);
 		std::array<std::byte,block_size> blocks{};
