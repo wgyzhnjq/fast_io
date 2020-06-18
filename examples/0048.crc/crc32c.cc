@@ -11,13 +11,12 @@ try
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
-	fast_io::crc32 c;
+	fast_io::crc32c c;
 	fast_io::hash_processor processor(c);
 	fast_io::ibuf_file ibf(argv[1]);
 	auto transmitted{transmit(processor,ibf)};
 	processor.do_final();
-	using namespace std::string_view_literals;
-	println(c," *",fast_io::chvw(argv[1]),__SSE4_2__?"\n(SSE"sv:""sv,") Transmitted:",transmitted,u8" bytes\tElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
+	println(c," *",fast_io::chvw(argv[1]),"\nTransmitted:",transmitted,u8" bytes\tElapsed Time:",std::chrono::high_resolution_clock::now()-t0);
 }
 catch(std::exception const& e)
 {

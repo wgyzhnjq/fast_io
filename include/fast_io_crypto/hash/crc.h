@@ -4,7 +4,7 @@ namespace fast_io
 {
 
 #ifdef __SSE4_2__
-class crc32
+class crc32c
 {
 public:
 	static inline constexpr std::size_t block_size = 8;
@@ -78,13 +78,13 @@ public:
 	}
 };
 
-inline constexpr std::size_t print_reserve_size(print_reserve_type_t<crc32>)
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<crc32c>)
 {
 	return 8;
 }
 
 template<std::random_access_iterator caiter>
-inline constexpr caiter print_reserve_define(print_reserve_type_t<crc32>,caiter iter,auto i)
+inline constexpr caiter print_reserve_define(print_reserve_type_t<crc32c>,caiter iter,auto i)
 {
 	fast_io::details::optimize_size::output_unsigned_dummy<8,16>(iter,i.crc);
 	return iter+8;
