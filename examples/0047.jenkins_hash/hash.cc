@@ -11,4 +11,16 @@ int main()
 	static_assert(fast_io::jenkins_hash("Four score and seven years ago",1,0)==0xcd6281616cbea4b3L);
 	static_assert(fast_io::jenkins_hash("Four score and seven years ago",0)==0x17770551);
 	static_assert(fast_io::jenkins_hash("Four score and seven years ago",1)==0xcd628161);
+//https://wow.tools/files/#search=interface%2Ficons%2Ftemp.blp&page=1&sort=2&desc=asc
+/*
+https://wowdev.wiki/TACT#hashpath
+Path must be upper case
+all / should be replaced with \
+*/
+	static_assert(fast_io::jenkins_hash64("INTERFACE\\ICONS\\TEMP.BLP")==0x7335d62c984ecc1b);
+
+/*
+https://wow.tools/files/#search=humanfemale.m2&page=1&sort=2&desc=asc
+*/
+	static_assert(fast_io::jenkins_hash64("CHARACTER\\HUMAN\\FEMALE\\HUMANFEMALE.M2")==0xa7ac55143c1830bf);//Human female SD model file in World of Warcraft
 }
