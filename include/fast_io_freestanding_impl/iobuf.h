@@ -97,7 +97,10 @@ public:
 			alloc.deallocate(beg,buffer_size);
 		end=curr=beg=nullptr;
 	}
-	constexpr ~basic_buf_handler()
+#if __cpp_lib_is_constant_evaluated >= 201811L && __cpp_constexpr_dynamic_alloc >= 201907L
+	constexpr
+#endif
+	~basic_buf_handler()
 	{
 		if(beg)[[likely]]
 			alloc.deallocate(beg,buffer_size);
