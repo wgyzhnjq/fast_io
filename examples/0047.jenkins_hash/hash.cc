@@ -1,5 +1,5 @@
 #include"../../include/fast_io.h"
-#include"../../include/fast_io_crypto/hash/jenkins.h"
+#include"../../include/fast_io_crypto.h"
 //https://github.com/vkandy/jenkins-hash-java/blob/master/test/JenkinsHashTest.java
 int main()
 {
@@ -16,6 +16,14 @@ int main()
 https://wowdev.wiki/TACT#hashpath
 Path must be upper case
 all / should be replaced with \
+
+hashpath (string path) → uint32_t
+{
+  string normalized = toupper (path).replace (from: '/', to: '\\')
+  uint32_t pc = 0, pb = 0;
+  hashlittle2 (normalized, strlen (normalized), &pc, &pb);
+  return pc;
+}
 */
 	static_assert(fast_io::jenkins_hash64("INTERFACE\\ICONS\\TEMP.BLP")==0x7335d62c984ecc1b);
 
