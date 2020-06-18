@@ -7,8 +7,6 @@ namespace fast_io
 {
 namespace details::sha512
 {
-namespace
-{
 inline constexpr std::uint64_t K512[] =
 {
 0x428a2f98d728ae22, 0x7137449123ef65cd,
@@ -151,7 +149,6 @@ inline constexpr void process(std::span<std::uint64_t,8> state,std::span<std::by
 	state[5] += f;
 	state[6] += g;
 	state[7] += h;
-}
 }
 }
 class sha512_function

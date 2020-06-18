@@ -8,8 +8,6 @@ namespace fast_io
 #ifndef __SSE4_1__
 namespace details::sha256
 {
-namespace
-{
 inline constexpr std::uint32_t K256[] =
 {
 0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
@@ -126,7 +124,6 @@ inline constexpr void process(std::span<std::uint32_t,8> state,std::span<std::by
 	state[5] += f;
 	state[6] += g;
 	state[7] += h;
-}
 }
 }
 #endif

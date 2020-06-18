@@ -12,7 +12,7 @@ F,G,H,I
 };
 
 template<operation op>
-inline constexpr auto unit(auto x,auto y,auto z)
+inline constexpr auto unit(auto const& x,auto const& y,auto const& z)
 {
 	if constexpr(op==operation::F)
 		return (x&y)|(~x)&z;
@@ -26,11 +26,11 @@ inline constexpr auto unit(auto x,auto y,auto z)
 template<operation op>
 inline constexpr void uu(auto& a,auto const& b,auto const& c,auto const& d,auto const& x,auto const& s,auto const& ac)
 {
-	a+=unit<op>(b,c,d)+x+ac;
-	a=std::rotl(a,s)+b;
+	a=std::rotl(a+unit<op>(b,c,d)+x+ac,s)+b;
 }
 
 /*
+https://github.com/krisprice/simd_md5/blob/master/simd_md5/md5_rfc.c
 namespace avx2
 {
 inline auto rotate_left(auto& x,auto& n){return _mm256_or_si256(_mm256_slli_epi32(x, n), _mm256_srli_epi32(x, 32-n));}
@@ -57,27 +57,10 @@ public:
 		std::uint32_t a{state.front()},b{state[1]},c{state[2]},d{state[3]};
 		std::array<std::uint32_t,16> x;
 		memcpy(x.data(),blocks.data(),block_size);
+		for(auto & e : x)
+			e=details::byte_swap(e);
 		using namespace details::md5;
 
-/*
-
-#define s11 7
-#define s12 12
-#define s13 17
-#define s14 22
-#define s21 5
-#define s22 9
-#define s23 14
-#define s24 20
-#define s31 4
-#define s32 11
-#define s33 16
-#define s34 23
-#define s41 6
-#define s42 10
-#define s43 15
-#define s44 21
-*/
 		uu<operation::F>(a, b, c, d, x[ 0], 7, 0xd76aa478);
 		uu<operation::F>(d, a, b, c, x[ 1], 12, 0xe8c7b756);
 		uu<operation::F>(c, d, a, b, x[ 2], 17, 0x242070db);
@@ -148,6 +131,11 @@ public:
 		uu<operation::I>(d, a, b, c, x[11], 10, 0xbd3af235);
 		uu<operation::I>(c, d, a, b, x[ 2], 15, 0x2ad7d2bb);
 		uu<operation::I>(b, c, d, a, x[ 9], 21, 0xeb86d391);
+
+		state.front()+=a;
+		state[1]+=b;
+		state[2]+=c;
+		state[3]+=d;
 	}
 };
 
