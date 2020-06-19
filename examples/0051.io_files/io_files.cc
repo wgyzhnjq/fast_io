@@ -14,7 +14,7 @@ try
 		"Accept-Type:*/*\r\n"
 		"Connection:close\r\n\r\n");
 	skip_http_header(hd);
-//Download the webpage and the calculate its sha256.
+//Download the webpage and calculate its sha256.
 	fast_io::io_files files;
 	fast_io::sha256 sha;
 	fast_io::hash_processor processor(sha);
