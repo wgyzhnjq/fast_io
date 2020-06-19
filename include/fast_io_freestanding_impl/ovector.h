@@ -3,7 +3,7 @@
 namespace fast_io
 {
 
-template<output_stream output,typename vect_type = std::vector<typename output::char_type>>
+template<output_stream output,typename vect_type = std::vector<output>>
 class basic_ovector:public vect_type
 {
 public:
