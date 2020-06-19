@@ -7,3 +7,4 @@
 #include"fast_io_core.h"
 //#include"fast_io_crypto/symmetric_crypto.h"
 #include"fast_io_crypto/hash/hash.h"
+#include"fast_io_crypto/gcm.h"
