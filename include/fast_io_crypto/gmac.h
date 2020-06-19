@@ -6,7 +6,7 @@ namespace fast_io
 namespace crypto::details
 {
 
-static constexpr std::uint64_t gf128_last4[16] = {
+inline constexpr std::uint64_t gf128_last4[16] = {
     0x0000, 0x1c20, 0x3840, 0x2460, 0x7080, 0x6ca0, 0x48c0, 0x54e0,
     0xe100, 0xfd20, 0xd940, 0xc560, 0x9180, 0x8da0, 0xa9c0, 0xb5e0  };
 
@@ -22,7 +22,7 @@ inline constexpr void gf128_mult(std::array<std::uint64_t, 16> const& HL,
     std::uint64_t zh(static_cast<std::uint64_t>(HH[lo]));
     std::uint64_t zl(static_cast<std::uint64_t>(HL[lo]));
 
-    for (std::size_t i(15); i >= 0; --i) {
+    for (std::size_t i(16); i--;) {
         lo = static_cast<std::uint8_t>(static_cast<std::uint8_t const>(x[i]) & 0x0f);
         hi = static_cast<std::uint8_t>(static_cast<std::uint8_t const>(x[i]) >> 4);
 
