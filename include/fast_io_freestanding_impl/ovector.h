@@ -13,7 +13,7 @@ public:
 
 template<output_stream output,typename vect_type = std::vector<typename output::char_type>,std::contiguous_iterator Iter>
 requires (std::same_as<typename output::char_type,std::iter_value_t<Iter>>&&std::same_as<typename output::char_type,char>)
-inline constexpr void write(basic_ovector<output,vec_type>& vec,Iter begin,Iter end)
+inline constexpr void write(basic_ovector<output,vect_type>& vec,Iter begin,Iter end)
 {
 	for(auto& e : vec)
 		write(e,begin,end);
