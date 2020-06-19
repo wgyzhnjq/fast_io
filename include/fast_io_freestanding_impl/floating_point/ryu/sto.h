@@ -3,6 +3,84 @@
 namespace fast_io::details::ryu
 {
 
+template<std::floating_point floating_type>
+inline constexpr typename floating_traits<floating_type>::mantissa_type me10_to_me2(typename floating_traits<floating_type>::mantissa_type m10,std::uint32_t ue10,std::uint32_t m10digits,std::int32_t dot_index,std::int32_t e_index,std::uint32_t index,bool exp_negative)
+{
+	using floating_trait = floating_traits<floating_type>;
+	using mantissa_type = typename floating_trait::mantissa_type;
+	using exponent_type = typename floating_trait::exponent_type;
+	using signed_exponent_type = std::make_signed_t<exponent_type>;
+	constexpr exponent_type real_bits{floating_trait::exponent_bits+floating_trait::mantissa_bits+1};
+	std::int32_t e10(static_cast<std::int32_t>(ue10));
+	if(exp_negative)
+		e10=-e10;
+	if(e_index==-1)
+		e_index=index;
+	if(dot_index==-1)
+		dot_index=index;
+	e10-=dot_index<e_index?e_index-dot_index-1:0;
+	constexpr exponent_type maximum_representable_e2{(1<<floating_trait::exponent_bits)-1};
+	if((static_cast<std::int32_t>(m10digits+e10)<floating_trait::minimum_exp)||(!m10))
+		return {};
+	if(floating_trait::maximum_exp<static_cast<std::int32_t>(m10digits+e10))
+		return static_cast<mantissa_type>(static_cast<mantissa_type>(maximum_representable_e2) << floating_trait::mantissa_bits);
+	bool trailing_zeros{};
+	std::int32_t e2(static_cast<std::int32_t>(std::bit_width(m10))+e10-(2+floating_trait::mantissa_bits));
+	mantissa_type m2{};
+	if(e10<0)
+	{
+		auto const p5bme10(pow5bits(-e10));
+		e2-=p5bme10;
+		auto j{e2-e10+p5bme10-1+floating_trait::pow5_inv_bitcount};
+		if constexpr(std::same_as<floating_type,long double>)
+			m2=mul_shift_generic(m10, generic_compute_pow5_inv(-e10), j);
+		else if constexpr(std::same_as<floating_type,float>)
+			m2=mul_pow5_inv_div_pow2(m10,-e10,j);
+		else
+			m2=mul_shift(m10,pow5<floating_type,true>::inv_split[-e10],j);
+		trailing_zeros=multiple_of_power_of_5(m10,-e10);
+	}
+	else
+	{
+		e2+=log2pow5(e10);
+		auto j{e2-e10-pow5bits(e10)+floating_trait::pow5_bitcount};
+		if constexpr(std::same_as<floating_type,long double>)
+			m2=mul_shift_generic(m10, generic_compute_pow5(e10),j);
+		else if constexpr(std::same_as<floating_type,float>)
+			m2=mul_pow5_div_pow2(m10,e10,j);
+		else
+			m2=mul_shift(m10,pow5<floating_type,true>::split[e10],j);
+		trailing_zeros = e2 < e10 || (e2 - e10 < static_cast<std::int32_t>(real_bits) && multiple_of_power_of_2(m10, e2 - e10));
+	}
+	std::int32_t ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
+	if(ieee_e2<0)
+		ieee_e2=0;
+	if(maximum_representable_e2<=ieee_e2)[[unlikely]]
+	{
+		return static_cast<mantissa_type>(static_cast<mantissa_type>(maximum_representable_e2) << floating_trait::mantissa_bits);
+	}
+	std::int32_t shift((!ieee_e2?1:ieee_e2)-e2-(floating_trait::bias+floating_trait::mantissa_bits));
+	trailing_zeros &= !(m2 & ((static_cast<mantissa_type>(1) << (shift - 1)) - 1));
+	bool last_removed_bit((m2>>(shift-1))&1);
+	bool round_up((last_removed_bit) && (!trailing_zeros || ((m2 >> shift) & 1)));
+	mantissa_type ieee_m2((m2 >> shift) + round_up);
+	if(std::same_as<floating_type,float>)
+	{
+		ieee_m2 &= ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
+		if (ieee_m2 == 0 && round_up)
+			++ieee_e2;
+	}
+	else
+	{
+		if(ieee_m2 == (static_cast<mantissa_type>(1) << (floating_trait::mantissa_bits + 1)))
+			++ieee_e2;
+		ieee_m2&=((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
+	}
+	return (static_cast<mantissa_type>(ieee_e2) << floating_trait::mantissa_bits)|
+		(((m2 >> shift) + round_up) & ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1));
+}
+
+
 template<char32_t decimal_point,std::floating_point F,typename It_First,typename It_Second>
 inline constexpr F input_floating(It_First iter,It_Second ed)
 {
@@ -129,75 +207,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 #else
 		fast_terminate();
 #endif
-	signed_exponent_type e10(static_cast<signed_exponent_type>(ue10));
-	if(exp_negative)
-		e10=-e10;
-	if(e_index==-1)
-		e_index=index;
-	if(dot_index==-1)
-		dot_index=index;
-	e10-=dot_index<e_index?e_index-dot_index-1:0;
-	constexpr exponent_type maximum_representable_e2{(1<<floating_trait::exponent_bits)-1};
-	if((static_cast<signed_exponent_type>(m10digits+e10)<floating_trait::minimum_exp)||(!m10))
-		return (static_cast<mantissa_type>(negative)<<(floating_trait::exponent_bits+floating_trait::mantissa_bits));
-	if(floating_trait::maximum_exp<static_cast<signed_exponent_type>(m10digits+e10))
-		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << (real_bits-1)))
-				|static_cast<mantissa_type>(static_cast<mantissa_type>(maximum_representable_e2) << floating_trait::mantissa_bits));
-	bool trailing_zeros{};
-	signed_exponent_type e2(static_cast<signed_exponent_type>(std::bit_width(m10))+e10-(2+floating_trait::mantissa_bits));
-	mantissa_type m2{};
-	if(e10<0)
-	{
-		auto const p5bme10(pow5bits(-e10));
-		e2-=p5bme10;
-		auto j{e2-e10+p5bme10-1+floating_trait::pow5_inv_bitcount};
-		if constexpr(std::same_as<floating_type,long double>)
-			m2=mul_shift_generic(m10, generic_compute_pow5_inv(-e10), j);
-		else if constexpr(std::same_as<floating_type,float>)
-			m2=mul_pow5_inv_div_pow2(m10,-e10,j);
-		else
-			m2=mul_shift(m10,pow5<F,true>::inv_split[-e10],j);
-		trailing_zeros=multiple_of_power_of_5(m10,-e10);
-	}
-	else
-	{
-		e2+=log2pow5(e10);
-		auto j{e2-e10-pow5bits(e10)+floating_trait::pow5_bitcount};
-		if constexpr(std::same_as<floating_type,long double>)
-			m2=mul_shift_generic(m10, generic_compute_pow5(e10),j);
-		else if constexpr(std::same_as<floating_type,float>)
-			m2=mul_pow5_div_pow2(m10,e10,j);
-		else
-			m2=mul_shift(m10,pow5<F,true>::split[e10],j);
-		trailing_zeros = e2 < e10 || (e2 - e10 < static_cast<signed_exponent_type>(real_bits) && multiple_of_power_of_2(m10, e2 - e10));
-	}
-	signed_exponent_type ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
-	if(ieee_e2<0)
-		ieee_e2=0;
-	if(maximum_representable_e2<=ieee_e2)[[unlikely]]
-	{
-		return bit_cast<F>((static_cast<mantissa_type>(static_cast<mantissa_type>(negative) << (real_bits-1)))
-			|static_cast<mantissa_type>(static_cast<mantissa_type>(maximum_representable_e2) << floating_trait::mantissa_bits));
-	}
-	signed_exponent_type shift((!ieee_e2?1:ieee_e2)-e2-(floating_trait::bias+floating_trait::mantissa_bits));
-	trailing_zeros &= !(m2 & ((static_cast<mantissa_type>(1) << (shift - 1)) - 1));
-	bool last_removed_bit((m2>>(shift-1))&1);
-	bool round_up((last_removed_bit) && (!trailing_zeros || ((m2 >> shift) & 1)));
-	mantissa_type ieee_m2((m2 >> shift) + round_up);
-	if(std::same_as<floating_type,float>)
-	{
-		ieee_m2 &= ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
-		if (ieee_m2 == 0 && round_up)
-			++ieee_e2;
-	}
-	else
-	{
-		if(ieee_m2 == (static_cast<mantissa_type>(1) << (floating_trait::mantissa_bits + 1)))
-			++ieee_e2;
-		ieee_m2&=((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1);
-	}
-	return bit_cast<F>(((((static_cast<mantissa_type>(negative)) << floating_trait::exponent_bits) | static_cast<mantissa_type>(ieee_e2)) << 
-		floating_trait::mantissa_bits)|(((m2 >> shift) + round_up) & ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1)));
+	return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | me10_to_me2<F>(m10,ue10,m10digits,dot_index,e_index,index,exp_negative));
 }
 
 }
