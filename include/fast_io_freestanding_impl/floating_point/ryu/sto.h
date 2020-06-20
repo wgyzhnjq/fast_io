@@ -313,12 +313,15 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 					memset(buffer.data()+buffer.size(),0,to_set);
 					buffer.position+=to_set;
 				}
+//				::debug_println("\n\nafter:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
+
 				if(!fake_minus_assignment(cl_buffer,buffer))
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
 				if(!fake_minus_assignment(buffer,fl_buffer))
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
 //				::debug_println("\n\nafter:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
 				int res{memcmp(cl_buffer.data()+roundup,buffer.data(),larger_buffer_size)};
+//				::debug_println("res=",res);
 				if(res<0)
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
 				else if(0<res)

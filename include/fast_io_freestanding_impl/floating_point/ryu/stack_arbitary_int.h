@@ -66,7 +66,7 @@ inline constexpr bool fake_minus_assignment(stack_arbitary_int<buffer_size>& lar
 	auto small_end{small.digits.data()+small.size()};
 	auto large_end{large.digits.data()+large.size()};
 	bool carry{};
-	for(;small.digits.data()<small_end+1;)
+	for(;small.digits.data()+1<small_end;)
 	{
 		*--large_end-=*--small_end+carry;
 		if(carry=(9<*large_end))
