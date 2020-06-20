@@ -28,6 +28,7 @@ int main()
 	std::uniform_int_distribution<std::size_t> digits2(0,300);
 	for(std::size_t i{};i!=N;++i)
 	{
+		put(obf,u8'0');
 		put(obf,u8'.');
 		auto sz{digits2(eng)};
 		for(std::size_t j{};j!=sz;++j)
