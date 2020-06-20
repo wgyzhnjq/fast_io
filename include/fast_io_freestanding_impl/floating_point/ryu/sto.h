@@ -275,7 +275,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 				fl_buffer.position=precise<floating_type>(fl,fl_buffer.data())-fl_buffer.data();
 				stack_arbitary_int<1024> cl_buffer;
 				cl_buffer.position=precise<floating_type>(cl,cl_buffer.data())-cl_buffer.data();
-
+//				::debug_println("before:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
 				std::size_t cl_buffer_size{cl_buffer.size()};
 				bool const roundup{cl_buffer.digits.front()==1&&fl_buffer.digits.front()==9};
 				if(roundup)
@@ -313,8 +313,11 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 					memset(buffer.data()+buffer.size(),0,to_set);
 					buffer.position+=to_set;
 				}
-				fake_minus_assignment(cl_buffer,buffer);
-				fake_minus_assignment(buffer,fl_buffer);
+				if(!fake_minus_assignment(cl_buffer,buffer))
+					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
+				if(!fake_minus_assignment(buffer,fl_buffer))
+					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
+//				::debug_println("\n\nafter:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
 				int res{memcmp(cl_buffer.data()+roundup,buffer.data(),larger_buffer_size)};
 				if(res<0)
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);

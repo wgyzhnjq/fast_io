@@ -56,23 +56,37 @@ inline constexpr auto end(stack_arbitary_int<buffer_size> const& val) noexcept
 template<buffer_output_stream output,std::size_t buffer_size>
 inline constexpr void print_define(output& out,stack_arbitary_int<buffer_size> const& e)
 {
-	println(out,"size():",e.size());
 	for(auto const & ch : e)
 		put(out,ch+u8'0');
 }
 
 template<std::size_t buffer_size>
-inline constexpr void fake_minus_assignment(stack_arbitary_int<buffer_size>& large,stack_arbitary_int<buffer_size> const& small)
+inline constexpr bool fake_minus_assignment(stack_arbitary_int<buffer_size>& large,stack_arbitary_int<buffer_size> const& small)
 {
 	auto small_end{small.digits.data()+small.size()};
 	auto large_end{large.digits.data()+large.size()};
 	bool carry{};
-	for(;small_end!=small.digits.data();)
+	for(;small.digits.data()<small_end+1;)
 	{
 		*--large_end-=*--small_end+carry;
 		if(carry=(9<*large_end))
 			*large_end+=10;
 	}
+	if(small.size()==large.size())
+	{
+		--small_end;
+		--large_end;
+		auto sum{*small_end+carry};
+		if(*large_end<sum)
+			return false;
+	}
+	else
+	{
+		*--large_end-=*--small_end+carry;
+		if(carry=(9<*large_end))
+			*large_end+=10;
+	}
+	return true;
 }
 
 }
