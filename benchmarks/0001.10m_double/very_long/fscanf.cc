@@ -4,13 +4,13 @@
 
 int main()
 {
-	constexpr std::size_t N{500000};
+	constexpr std::size_t N{2000000};
 	std::vector<double> buffer(N);
 	{
 		fast_io::timer tm("input");
 		fast_io::c_file cf("very_long.txt","rb");
 		for(std::size_t i{};i!=N;++i)
-			fscanf(cf.native_handle(),"%g",buffer.data()+i);
+			fscanf(cf.native_handle(),"%f",buffer.data()+i);
 	}
 	{
 		fast_io::timer t("output");
