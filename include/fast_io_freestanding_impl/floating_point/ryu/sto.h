@@ -269,8 +269,71 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1))|fl);
 		else
 		{
-//			::debug_println("m10=",m10," ue10=",ue10," fl=",fl," cl=",cl);
-			throw fast_io_text_error("ryu to do with multiprecision");
+			stack_arbitary_int<1024> fl_buffer;
+			fl_buffer.position=precise<floating_type>(fl,fl_buffer.data())-fl_buffer.data();
+			stack_arbitary_int<1024> cl_buffer;
+			cl_buffer.position=precise<floating_type>(cl,cl_buffer.data())-cl_buffer.data();
+
+			std::size_t cl_buffer_size{cl_buffer.size()};
+			bool const roundup{cl_buffer.digits.front()==1&&fl_buffer.digits.front()==9};
+			if(roundup)
+				--cl_buffer_size;
+			std::size_t larger_buffer_size;
+			if(cl_buffer_size<fl_buffer.size())
+			{
+				larger_buffer_size=fl_buffer.size();
+				memset(cl_buffer.data()+cl_buffer.size(),0,fl_buffer.size()-cl_buffer_size);
+				cl_buffer.position+=fl_buffer.size()-cl_buffer_size;
+			}
+			else
+			{
+				larger_buffer_size=cl_buffer_size;
+				memset(fl_buffer.data()+fl_buffer.size(),0,cl_buffer_size-fl_buffer.size());
+				fl_buffer.position+=cl_buffer_size-fl_buffer.size();
+			}
+			if(larger_buffer_size<buffer.size())
+			{
+				if(!non_zero_remain)
+				{
+					std::size_t i{larger_buffer_size};
+					for(;i!=buffer.size();++i)
+						if(buffer.digits[i])
+						{
+							non_zero_remain=true;
+							break;
+						}
+				}
+				buffer.position=larger_buffer_size;
+			}
+			else
+			{
+				std::size_t const to_set{larger_buffer_size-buffer.size()};
+				memset(buffer.data()+buffer.size(),0,to_set);
+				buffer.position+=to_set;
+			}
+/*
+			::debug_println("fl_buffer:",fl_buffer);
+			::debug_println("cl_buffer:",cl_buffer);
+			::debug_println("buffer:",buffer);
+*/	
+			fake_minus_assignment(cl_buffer,buffer);
+			fake_minus_assignment(buffer,fl_buffer);
+/*
+			::debug_println("c - b :",cl_buffer);
+			::debug_println("b - f :",buffer);
+*/
+			int res{memcmp(cl_buffer.data()+roundup,buffer.data(),larger_buffer_size)};
+//			::debug_println("compare result:",res);
+			if(res<0)
+				return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
+			else if(0<res)
+				return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
+			else
+			{
+				if(non_zero_remain||fl&1)
+					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
+				return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
+			}
 		}
 	}
 	else

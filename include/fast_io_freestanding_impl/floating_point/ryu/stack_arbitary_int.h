@@ -61,4 +61,18 @@ inline constexpr void print_define(output& out,stack_arbitary_int<buffer_size> c
 		put(out,ch+u8'0');
 }
 
+template<std::size_t buffer_size>
+inline constexpr void fake_minus_assignment(stack_arbitary_int<buffer_size>& large,stack_arbitary_int<buffer_size> const& small)
+{
+	auto small_end{small.digits.data()+small.size()};
+	auto large_end{large.digits.data()+large.size()};
+	bool carry{};
+	for(;small_end!=small.digits.data();)
+	{
+		*--large_end-=*--small_end+carry;
+		if(carry=(9<*large_end))
+			*large_end+=10;
+	}
+}
+
 }
