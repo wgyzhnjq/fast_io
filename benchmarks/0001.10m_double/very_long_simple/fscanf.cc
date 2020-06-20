@@ -10,7 +10,7 @@ int main()
 		fast_io::timer tm("input");
 		fast_io::c_file cf("very_long.txt","rb");
 		for(std::size_t i{};i!=N;++i)
-			fscanf(cf.native_handle(),"%f",buffer.data()+i);
+			fscanf(cf.native_handle(),"%lf",buffer.data()+i);
 	}
 	{
 		fast_io::timer t("output");
