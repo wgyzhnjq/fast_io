@@ -79,6 +79,7 @@ inline constexpr bool fake_minus_assignment(stack_arbitary_int<buffer_size>& lar
 		auto sum{*small_end+carry};
 		if(*large_end<sum)
 			return false;
+		*large_end-=sum;
 	}
 	else
 	{

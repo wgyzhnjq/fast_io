@@ -162,18 +162,20 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 				find_decimal_point=true;
 			}
 		}
-		for(;iter!=ed&&*iter==u8'0';++iter);
+		std::size_t zero{0};
+		for(;iter!=ed&&*iter==u8'0';++iter)
+			++zero;
 		if(iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'1')<9)[[unlikely]]
 		{
 			need_verify=true;
-			std::size_t m10e{extra_e10+m10digits};
-			if(floating_trait::required_buffer_size<m10e)
+			std::size_t t_m10e{extra_e10+m10digits+zero};
+			if(floating_trait::required_buffer_size<t_m10e)
 			{
 				buffer.final_zeros();
 				non_zero_remain=true;
 			}
 			else
-				buffer.fillnz(extra_e10);
+				buffer.fillnz(extra_e10+zero);
 			if(dot_index==-1&&!find_decimal_point)
 			{
 				for(;iter!=ed&&!buffer.full();++iter)
@@ -215,7 +217,6 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 				}
 		}
 	}
-//	::debug_println(buffer);
 	signed_exponent_type e_index{-1};
 	bool exp_negative{};
 	exponent_type ue10{};
@@ -313,15 +314,11 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 					memset(buffer.data()+buffer.size(),0,to_set);
 					buffer.position+=to_set;
 				}
-//				::debug_println("\n\nafter:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
-
 				if(!fake_minus_assignment(cl_buffer,buffer))
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
 				if(!fake_minus_assignment(buffer,fl_buffer))
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
-//				::debug_println("\n\nafter:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
 				int res{memcmp(cl_buffer.data()+roundup,buffer.data(),larger_buffer_size)};
-//				::debug_println("res=",res);
 				if(res<0)
 					return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | cl);
 				else if(0<res)
