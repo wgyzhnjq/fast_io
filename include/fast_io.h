@@ -117,19 +117,28 @@ inline constexpr void perrln(Args&&... args)
 
 //Allow debug print
 #ifndef NDEBUG
-
-template<typename... Args>
-inline constexpr void debug_print(Args&& ...args)
+#ifndef FAST_IO_BOOTSTRAP
+//bootstrap mode will automatically enable this since we need to use fast_io to debug fast_io. It requires bootstrap
+//With debugging. We output to POSIX fd or Win32 Handle directly instead of C's stdout.
+template<typename T,typename... Args>
+inline constexpr void debug_print(T&& t,Args&& ...args)
 {
-	::print(std::forward<Args>(args)...);
+	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
+		fast_io::print(std::forward<T>(t),std::forward<Args>(args)...);
+	else
+		fast_io::println(fast_io::native_stdout(),std::forward<T>(t),std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline constexpr void debug_println(Args&& ...args)
+template<typename T,typename... Args>
+inline constexpr void debug_println(T&& t,Args&& ...args)
 {
-	::println(std::forward<Args>(args)...);
+	if constexpr(fast_io::output_stream<std::remove_cvref_t<T>>)
+		fast_io::println(std::forward<T>(t),std::forward<Args>(args)...);
+	else
+		fast_io::println(fast_io::native_stdout(),std::forward<T>(t),std::forward<Args>(args)...);
 }
 
+#endif
 template<typename... Args>
 inline constexpr void debug_perr(Args&&... args)
 {

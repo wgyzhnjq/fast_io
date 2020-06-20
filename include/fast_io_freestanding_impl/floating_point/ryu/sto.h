@@ -80,7 +80,9 @@ inline constexpr typename floating_traits<floating_type>::mantissa_type me10_to_
 		(((m2 >> shift) + round_up) & ((static_cast<mantissa_type>(1) << floating_trait::mantissa_bits) - 1));
 }
 
-
+/*
+https://baseconvert.com/ieee-754-floating-point
+*/
 template<char32_t decimal_point,std::floating_point F,typename It_First,typename It_Second>
 inline constexpr F input_floating(It_First iter,It_Second ed)
 {
@@ -143,23 +145,33 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 		++index;
 	}
 	std::size_t extra_e10{};
+	bool need_verify{};
 	if(m10digits==floating_trait::digits10)[[unlikely]]
 	{
+		bool find_decimal_point{};
 		if(dot_index==-1)
 		{
 			for(;iter!=ed&&*iter==u8'0';++iter)
 				++extra_e10;
 			if(iter!=ed&&*iter==decimal_point)
+			{
 				++iter;
+				find_decimal_point=true;
+			}
 		}
 		for(;iter!=ed&&*iter==u8'0';++iter);
 		if(iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'1')<9)[[unlikely]]
 		{
-#ifdef __cpp_exceptions
-			throw fast_io_text_error("out of precision of ryu algorithm. To do with multiprecision");
-#else
-			fast_terminate();
-#endif
+			need_verify=true;
+			if(dot_index==-1&&!find_decimal_point)
+			{
+				for(;iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'0')<10;++iter)
+					++extra_e10;
+				if(iter!=ed&&*iter==decimal_point)
+					++iter;
+			}
+			for(;iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'0')<10;++iter)
+				;//should store data;
 		}
 	}
 	signed_exponent_type e_index{-1};
@@ -207,7 +219,21 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 #else
 		fast_terminate();
 #endif
-	return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | me10_to_me2<F>(m10,ue10,m10digits,dot_index,e_index,index,exp_negative));
+	auto fl{me10_to_me2<F>(m10,ue10,m10digits,dot_index,e_index,index,exp_negative)};
+	if(need_verify)[[unlikely]]
+	{
+		
+		auto cl{me10_to_me2<F>(m10+1,ue10,m10digits,dot_index,e_index,index,exp_negative)};
+
+//		::debug_println("fl=",fl," cl=",cl);
+
+		if(fl==cl)
+			return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1))|fl);
+		else
+			throw fast_io_text_error("ryu to do with multiprecision");
+	}
+	else
+		return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);
 }
 
 }
