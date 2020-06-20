@@ -428,6 +428,7 @@ constexpr void obuf_write_force_copy(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter
 	else
 	{
 		write(ob.native_handle(),cbegin,cend);
+		ob.obuffer.curr=ob.obuffer.beg;
 	}
 }
 
@@ -438,7 +439,7 @@ inline constexpr void overflow(basic_obuf<Ohandler,forcecopy,Buf>& ob,typename O
 {
 	if(ob.obuffer.beg)
 	{
-		details::obuf_write_force_copy<false>(ob,ob.obuffer.curr,ob.obuffer.end);
+		details::obuf_write_force_copy<false>(ob,ob.obuffer.beg,ob.obuffer.end);
 	}
 	else	//cold buffer
 	{
