@@ -118,6 +118,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	mantissa_type m10{};
 	signed_exponent_type dot_index{-1};
 	exponent_type index{};
+	stack_arbitary_int<1024> buffer;//To change with long double
 	for(;iter!=ed&&m10digits!=floating_trait::digits10;++iter)
 	{
 		unsigned_char_type const ch(*iter-u8'0');
@@ -139,6 +140,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 				break;
 
 		}
+		buffer.push_back_unchecked(ch);
 		m10*=10;
 		if(m10+=ch)[[likely]]
 			++m10digits;
@@ -146,6 +148,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	}
 	std::size_t extra_e10{};
 	bool need_verify{};
+	bool non_zero_remain{};
 	if(m10digits==floating_trait::digits10)[[unlikely]]
 	{
 		bool find_decimal_point{};
@@ -163,17 +166,56 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 		if(iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'1')<9)[[unlikely]]
 		{
 			need_verify=true;
+			std::size_t m10e{extra_e10+m10digits};
+			if(floating_trait::required_buffer_size<m10e)
+			{
+				buffer.final_zeros();
+				non_zero_remain=true;
+			}
+			else
+				buffer.fillnz(extra_e10);
 			if(dot_index==-1&&!find_decimal_point)
 			{
-				for(;iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'0')<10;++iter)
+				for(;iter!=ed&&!buffer.full();++iter)
+				{
+					unsigned_char_type const ch(*iter-u8'0');
+					if(9<ch)[[unlikely]]
+						break;
+					buffer.push_back_unchecked(ch);
 					++extra_e10;
+				}
+				if(buffer.full())[[unlikely]]
+				{
+					for(;iter!=ed;++iter)
+					{
+						unsigned_char_type const ch(*iter-u8'0');
+						if(9<ch)[[unlikely]]
+							break;
+						++extra_e10;
+						non_zero_remain|=ch;
+					}
+				}
 				if(iter!=ed&&*iter==decimal_point)
 					++iter;
 			}
-			for(;iter!=ed&&static_cast<unsigned_char_type>(*iter-u8'0')<10;++iter)
-				;//should store data;
+			for(;iter!=ed&&!buffer.full();++iter)
+			{
+				unsigned_char_type const ch(*iter-u8'0');
+				if(9<ch)[[unlikely]]
+					break;
+				buffer.push_back_unchecked(ch);
+			}
+			if(buffer.full())
+				for(;iter!=ed;++iter)
+				{
+					unsigned_char_type const ch(*iter-u8'0');
+					if(9<ch)[[unlikely]]
+						break;
+					non_zero_remain|=ch;
+				}
 		}
 	}
+//	::debug_println(buffer);
 	signed_exponent_type e_index{-1};
 	bool exp_negative{};
 	exponent_type ue10{};
@@ -222,15 +264,14 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	auto fl{me10_to_me2<F>(m10,ue10,m10digits,dot_index,e_index,index,exp_negative)};
 	if(need_verify)[[unlikely]]
 	{
-		
 		auto cl{me10_to_me2<F>(m10+1,ue10,m10digits,dot_index,e_index,index,exp_negative)};
-
-//		::debug_println("fl=",fl," cl=",cl);
-
 		if(fl==cl)
 			return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1))|fl);
 		else
+		{
+//			::debug_println("m10=",m10," ue10=",ue10," fl=",fl," cl=",cl);
 			throw fast_io_text_error("ryu to do with multiprecision");
+		}
 	}
 	else
 		return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1)) | fl);

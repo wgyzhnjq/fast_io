@@ -5,4 +5,5 @@
 #include"operations.h"
 #include"fixed.h"
 #include"tos.h"
+#include"stack_arbitary_int.h"
 #include"sto.h"
