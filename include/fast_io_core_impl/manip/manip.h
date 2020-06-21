@@ -1,5 +1,5 @@
 #pragma once
-
+#undef unix
 namespace fast_io
 {
 
