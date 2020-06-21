@@ -43,8 +43,6 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 			namespace algo_decision = 
 #ifdef FAST_IO_OPTIMIZE_SIZE
 				details::optimize_size;
-#elif defined(FAST_IO_FMT_BENCHMARK)		//fmt uses a stupid benchmark. let's swap algorithm when we detect someone is using fmt.
-				details::twodigits;
 #else
 				details::jiaendu;//Jiaendu is objectively the fastest algorithm since it avoids division. There is no point this isn't the fastest
 #endif
@@ -72,7 +70,7 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 #ifdef FAST_IO_OPTIMIZE_SIZE
 				details::optimize_size;
 #else
-				details::twodigits;
+				details::jiaendu;
 #endif
 			if constexpr(my_unsigned_integral<int_type>)
 				return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<std::remove_cvref_t<int_type>>(i));
@@ -126,6 +124,23 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::base_t<
 }
 
 
+template<std::contiguous_iterator caiter,details::my_integral int_type>
+inline constexpr caiter print_reverse_reserve_define(print_reserve_type_t<int_type>,caiter iter,int_type u)
+{
+	if constexpr(details::my_unsigned_integral<int_type>)
+		return details::twodigits::output_unsigned_reverse(iter,u);
+	else
+	{
+		if(u<0)
+		{
+			auto ptr{details::twodigits::output_unsigned_reverse(iter,-static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(u))};
+			*--ptr=u8'-';
+			return ptr;
+		}
+		else
+			return details::twodigits::output_unsigned_reverse(iter,static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(u));
+	}
+}
 
 //std::byte
 

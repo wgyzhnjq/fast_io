@@ -7,7 +7,7 @@ This print_reserver will defeat every excuse he has.
 
 int main()
 {
-	double d(435.4362346);
+	int d(45);
 	auto p{fast_io::print_reserve(d)};
 	println(fast_io::chvw(p.c_str()));
 }

@@ -151,21 +151,13 @@ inline constexpr bool is_space(T const u)
 
 namespace twodigits
 {
-/*
-template<std::unsigned_integral value>
-constexpr inline int count_digits(uint64_t n)
-{
-	int t = (64 - FMT_BUILTIN_CLZLL(n | 1)) * 1233 >> 12;
-	return t - (n < data::zero_or_powers_of_10_64[t]) + 1;
-}
-*/
+//THIS IS OBJECTIVELY STUPID. FMT AUTHOR IS A LOSER
 template<std::contiguous_iterator Iter,my_unsigned_integral U>
-constexpr inline std::uint32_t output_unsigned(Iter str,U value)
+constexpr inline auto output_unsigned_reverse(Iter ptr,U value)
 {
+	auto i{std::to_address(ptr)};
 	constexpr auto tb_ptr(details::shared_static_base_table<std::iter_value_t<Iter>,10,false>::table.data());
 	constexpr std::uint32_t val_size(2*sizeof(std::iter_value_t<Iter>));
-	std::uint32_t const chars(chars_len<10>(value));
-	auto i{std::to_address(str)+chars};
 	for(;100<=value;)
 	{
 		memcpy(i-=2,tb_ptr+static_cast<std::uint32_t>(value%100),val_size);
@@ -173,11 +165,11 @@ constexpr inline std::uint32_t output_unsigned(Iter str,U value)
 	}
 	if(value<10)
 	{
-		i[-1]=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
-		return chars;
+		*--i=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
+		return ptr-(std::to_address(ptr)-i);
 	}
-	memcpy(i-2,tb_ptr+static_cast<std::uint32_t>(value),val_size);
-	return chars;
+	memcpy(i-=2,tb_ptr+static_cast<std::uint32_t>(value),val_size);
+	return ptr-(std::to_address(ptr)-i);
 }
 
 }

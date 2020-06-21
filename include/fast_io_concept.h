@@ -307,6 +307,13 @@ concept reserve_printable=requires(T&& t,char8_t* ptr)
 	{print_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,ptr,t)}->std::same_as<char8_t*>;
 };
 
+
+template<typename T>
+concept reverse_reserve_printable=reserve_printable<T>&&requires(T&& t,char8_t* ptr)
+{
+	{print_reverse_reserve_define(print_reserve_type<std::remove_cvref_t<T>>,ptr,t)}->std::same_as<char8_t*>;
+};
+
 template<typename T>
 concept reserve_print_testable=requires(T&& t)
 {

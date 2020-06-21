@@ -43,6 +43,7 @@ inline constexpr auto power10table{power10_table_generator<uint_type>()};
 template<std::uint32_t base,bool ryu_mode=false,my_unsigned_integral U>
 inline constexpr std::uint32_t chars_len(U value) noexcept
 {
+/*
 #ifdef FAST_IO_FMT_BENCHMARK
 	if constexpr(base==10&&sizeof(U)<=8)
 	{
@@ -51,6 +52,7 @@ inline constexpr std::uint32_t chars_len(U value) noexcept
 	}
 	else
 #endif
+*/
 	if constexpr(base==10&&sizeof(U)<=16)
 	{
 		if constexpr(15<sizeof(U))

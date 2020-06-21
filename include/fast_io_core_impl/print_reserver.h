@@ -44,12 +44,6 @@ public:
 	}
 };
 
-template<std::integral char_type=char,reserve_printable type>
-inline constexpr print_reserver<std::remove_cvref_t<type>,char_type> print_reserve(type const& t)
-{
-	return {t};
-}
-
 template<reserve_printable type,std::integral char_type>
 inline constexpr std::size_t print_reserve_size(print_reserve_type_t<print_reserver<type,char_type>>)
 {
@@ -59,6 +53,72 @@ inline constexpr std::size_t print_reserve_size(print_reserve_type_t<print_reser
 template<reserve_printable type,std::integral char_type,std::contiguous_iterator Iter>
 requires (std::same_as<char_type,std::iter_value_t<Iter>>||(std::same_as<std::iter_value_t<Iter>,char>&&std::same_as<char_type,char8_t>))
 inline constexpr Iter print_reserve_define(print_reserve_type_t<print_reserver<type,char_type>>,Iter beg,auto& ref)
+{
+#ifdef __cpp_lib_is_constant_evaluated
+	if(std::is_constant_evaluated())
+		my_copy_n(beg,ref.size(),ref.data());
+	else
+	{
+#endif
+		memcpy(std::to_address(beg),ref.data(),ref.size()*sizeof(char_type));
+#ifdef __cpp_lib_is_constant_evaluated
+	}
+#endif
+	return beg+ref.size();
+}
+
+template<reserve_printable type,std::integral char_type=char>
+class reverse_print_reserver
+{
+public:
+	std::array<char_type,print_reserve_size(print_reserve_type<type>)+1> mutable buffer;
+	std::size_t position;
+	constexpr reverse_print_reserver(type const& t):position(print_reverse_reserve_define(print_reserve_type<type>,buffer.size()-1+buffer.data(),t)-buffer.data()){}
+	constexpr std::size_t size() const noexcept
+	{
+		return buffer.size()-1-position;
+	}
+	constexpr char_type* data() noexcept
+	{
+		return buffer.data()+position;
+	}
+	constexpr char_type const* data() const noexcept
+	{
+		return buffer.data()+position;
+	}
+	constexpr char_type const* c_str() const noexcept
+	{
+		buffer.back()=0;
+		return buffer.data()+position;
+	}
+	inline static constexpr std::size_t reserve_size() noexcept
+	{
+		constexpr std::size_t val{print_reserve_size(print_reserve_type<type>)+1};
+		return val;
+	}
+	constexpr std::basic_string_view<char_type> strvw() const noexcept
+	{
+		return {buffer.data()+position,size()};
+	}
+};
+
+
+template<std::integral char_type=char,reserve_printable type>
+inline constexpr std::conditional_t<reverse_reserve_printable<type>,reverse_print_reserver<type,char_type>,print_reserver<type,char_type>> print_reserve(type const& t)
+{
+	return {t};
+}
+
+
+template<reserve_printable type,std::integral char_type>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<reverse_print_reserver<type,char_type>>)
+{
+	return reverse_print_reserver<type,char_type>::reserve_size();
+}
+
+template<reserve_printable type,std::integral char_type,std::contiguous_iterator Iter>
+requires (std::same_as<char_type,std::iter_value_t<Iter>>||(std::same_as<std::iter_value_t<Iter>,char>&&std::same_as<char_type,char8_t>))
+inline constexpr Iter print_reserve_define(print_reserve_type_t<reverse_print_reserver<type,char_type>>,Iter beg,auto& ref)
 {
 #ifdef __cpp_lib_is_constant_evaluated
 	if(std::is_constant_evaluated())
