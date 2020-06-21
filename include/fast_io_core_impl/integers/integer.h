@@ -43,8 +43,10 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 			namespace algo_decision = 
 #ifdef FAST_IO_OPTIMIZE_SIZE
 				details::optimize_size;
+#elif defined(FAST_IO_FMT_BENCHMARK)		//fmt uses a stupid benchmark. let's swap algorithm when we detect someone is using fmt.
+				details::twodigits;
 #else
-				details::jiaendu;
+				details::jiaendu;//Jiaendu is objectively the fastest algorithm since it avoids division. There is no point this isn't the fastest
 #endif
 			if constexpr(my_unsigned_integral<int_type>)
 				return iter+algo_decision::output_unsigned(iter,static_cast<std::remove_cvref_t<int_type>>(i));

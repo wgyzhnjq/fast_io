@@ -151,11 +151,22 @@ inline constexpr bool is_space(T const u)
 
 namespace twodigits
 {
-template<char8_t base=10,bool uppercase=false,std::random_access_iterator Iter,my_unsigned_integral U>
+template<std::contiguous_iterator Iter,my_unsigned_integral U>
 inline constexpr std::size_t output_unsigned(Iter str,U value)
 {
-	std::size_t const len{chars_len<base>(value)};
-	output_base_number_impl<base,uppercase>(str+=len,value);
+	constexpr auto &table(details::shared_static_base_table<10,false>::table);
+	auto ptr{std::to_address(str)};
+	std::size_t const len{chars_len<10>(value)};
+	std::size_t i{len-2};
+	for(;i<len;i-=2)
+	{
+		auto val{value/100};
+		auto mod{value-val*100};
+		memcpy(ptr+i,table[mod].data(),2*sizeof(std::iter_value_t<Iter>));
+		value=val;
+	}
+	if(len&1)
+		*ptr=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
 	return len;
 }
 
