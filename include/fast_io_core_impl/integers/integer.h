@@ -131,11 +131,11 @@ inline constexpr caiter print_reverse_reserve_define(print_reserve_type_t<int_ty
 		return details::twodigits::output_unsigned_reverse(iter,u);
 	else
 	{
-		auto abs_value{static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(value)};
-		bool const negative(value<0);
+		auto abs_value{static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(u)};
+		bool const negative(u<0);
 		if(negative)
 			abs_value = 0 - abs_value;
-		auto ptr{details::twodigits::output_unsigned_reverse(iter,-static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(u))};
+		auto ptr{details::twodigits::output_unsigned_reverse(iter,abs_value)};
 		if(negative)
 			*--ptr=u8'-';
 		return ptr;
