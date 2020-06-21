@@ -23,17 +23,18 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 			return iter+algo_decision::output_unsigned<base>(iter,static_cast<std::remove_cvref_t<int_type>>(i));
 		else
 		{
-			if(i<0)
+			auto abs_value{static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)};
+			bool const negative(i<0);
+			if(negative)
 			{
+				abs_value = 0 - abs_value;
 				if constexpr(!ignore_sign)
 				{
-					*iter=u8'-';
-					++iter;
+				*iter=u8'-';
+				++iter;
 				}
-				return iter+algo_decision::output_unsigned<base>(iter,static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 			}
-			else
-				return iter+algo_decision::output_unsigned<base>(iter,static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+			return iter+algo_decision::output_unsigned<base>(iter,abs_value);
 		}
 	}
 	else
@@ -50,18 +51,18 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 				return iter+algo_decision::output_unsigned(iter,static_cast<std::remove_cvref_t<int_type>>(i));
 			else
 			{
-				if(i<0)
+				auto abs_value{static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)};
+				bool const negative(i<0);
+				if(negative)
 				{
+					abs_value = 0 - abs_value;
 					if constexpr(!ignore_sign)
 					{
-						*iter=u8'-';
-						++iter;
+					*iter=u8'-';
+					++iter;
 					}
-					return iter+algo_decision::output_unsigned(iter,
-					static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 				}
-				else
-					return iter+algo_decision::output_unsigned(iter,static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+				return iter+algo_decision::output_unsigned(iter,abs_value);
 			}
 		}
 		else
@@ -76,17 +77,18 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 				return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<std::remove_cvref_t<int_type>>(i));
 			else
 			{
-				if(i<0)
+				auto abs_value{static_cast<details::my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)};
+				bool const negative(i<0);
+				if(negative)
 				{
+					abs_value = 0 - abs_value;
 					if constexpr(!ignore_sign)
 					{
 						*iter=u8'-';
 						++iter;
 					}
-					return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(-static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i)));
 				}
-				else
-					return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<my_make_unsigned_t<std::remove_cvref_t<int_type>>>(i));
+				return iter+algo_decision::output_unsigned<base,uppercase>(iter,abs_value);
 			}
 		}
 	}
