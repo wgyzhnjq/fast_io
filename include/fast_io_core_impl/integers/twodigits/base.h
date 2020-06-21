@@ -153,23 +153,22 @@ namespace twodigits
 {
 //THIS IS OBJECTIVELY STUPID. FMT AUTHOR IS A LOSER
 template<std::contiguous_iterator Iter,my_unsigned_integral U>
-constexpr inline auto output_unsigned_reverse(Iter ptr,U value)
+constexpr inline auto output_unsigned_reverse(Iter i,U value)
 {
-	auto i{std::to_address(ptr)};
 	constexpr auto tb_ptr(details::shared_static_base_table<std::iter_value_t<Iter>,10,false>::table.data());
 	constexpr std::uint32_t val_size(2*sizeof(std::iter_value_t<Iter>));
 	for(;100<=value;)
 	{
-		memcpy(i-=2,tb_ptr+static_cast<std::uint32_t>(value%100),val_size);
+		memcpy(std::to_address(i-=2),tb_ptr+static_cast<std::uint32_t>(value%100),val_size);
 		value/=100;
 	}
 	if(value<10)
 	{
-		*--i=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
-		return ptr-(std::to_address(ptr)-i);
+		*--i=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value+u8'0');
+		return i;
 	}
-	memcpy(i-=2,tb_ptr+static_cast<std::uint32_t>(value),val_size);
-	return ptr-(std::to_address(ptr)-i);
+	memcpy(std::to_address(i-=2),tb_ptr+static_cast<std::uint32_t>(value),val_size);
+	return i;
 }
 
 }
