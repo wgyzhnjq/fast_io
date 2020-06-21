@@ -5,7 +5,7 @@
 
 int main()
 {
-	constexpr std::size_t N{2000000};
+	constexpr std::size_t N{400000};
 	std::vector<double> buffer(N);
 	{
 		fast_io::timer tm("input");

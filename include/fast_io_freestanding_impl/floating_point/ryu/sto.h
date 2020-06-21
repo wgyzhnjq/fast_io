@@ -118,7 +118,7 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 	mantissa_type m10{};
 	signed_exponent_type dot_index{-1};
 	exponent_type index{};
-	stack_arbitary_int<1024> buffer;//To change with long double
+	stack_arbitary_int<786> buffer;//To change with long double
 	for(;iter!=ed&&m10digits!=floating_trait::digits10;++iter)
 	{
 		unsigned_char_type const ch(*iter-u8'0');
@@ -276,11 +276,12 @@ inline constexpr F input_floating(It_First iter,It_Second ed)
 			return bit_cast<F>(((static_cast<mantissa_type>(negative)) << (real_bits-1))|fl);
 		else
 		{
+
 			if constexpr(std::same_as<double,floating_type>)
 			{
-				stack_arbitary_int<1024> fl_buffer;
+				stack_arbitary_int<786> fl_buffer;
 				fl_buffer.position=precise<floating_type>(fl,fl_buffer.data())-fl_buffer.data();
-				stack_arbitary_int<1024> cl_buffer;
+				stack_arbitary_int<786> cl_buffer;
 				cl_buffer.position=precise<floating_type>(cl,cl_buffer.data())-cl_buffer.data();
 //				::debug_println("before:\ncl_buffer (LARGER):",cl_buffer,"\nbuffer:",buffer,"\nfl_buffer (SMALLER):",fl_buffer);
 				std::size_t cl_buffer_size{cl_buffer.size()};
