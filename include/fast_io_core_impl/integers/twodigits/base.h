@@ -13,7 +13,7 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 //number: 0:48 9:57
 //upper: 65 :A 70: F
 //lower: 97 :a 102 :f
-	constexpr auto &table(details::shared_static_base_table<base,uppercase>::table);
+	constexpr auto &table(details::shared_static_base_table<std::iter_value_t<Iter>,base,uppercase>::table);
 	constexpr std::uint32_t pw(static_cast<std::uint32_t>(table.size()));
 	constexpr std::size_t chars(table.front().size());
 	for(;pw<=a;)
@@ -151,23 +151,33 @@ inline constexpr bool is_space(T const u)
 
 namespace twodigits
 {
-template<std::contiguous_iterator Iter,my_unsigned_integral U>
-inline constexpr std::size_t output_unsigned(Iter str,U value)
+/*
+template<std::unsigned_integral value>
+constexpr inline int count_digits(uint64_t n)
 {
-	constexpr auto &table(details::shared_static_base_table<10,false>::table);
-	auto ptr{std::to_address(str)};
-	std::size_t const len{chars_len<10>(value)};
-	std::size_t i{len-2};
-	for(;i<len;i-=2)
+	int t = (64 - FMT_BUILTIN_CLZLL(n | 1)) * 1233 >> 12;
+	return t - (n < data::zero_or_powers_of_10_64[t]) + 1;
+}
+*/
+template<std::contiguous_iterator Iter,my_unsigned_integral U>
+constexpr inline std::uint32_t output_unsigned(Iter str,U value)
+{
+	constexpr auto tb_ptr(details::shared_static_base_table<std::iter_value_t<Iter>,10,false>::table.data());
+	constexpr std::uint32_t val_size(2*sizeof(std::iter_value_t<Iter>));
+	std::uint32_t const chars(chars_len<10>(value));
+	auto i{std::to_address(str)+chars};
+	for(;100<=value;)
 	{
-		auto val{value/100};
-		auto mod{value-val*100};
-		memcpy(ptr+i,table[mod].data(),2*sizeof(std::iter_value_t<Iter>));
-		value=val;
+		memcpy(i-=2,tb_ptr+static_cast<std::uint32_t>(value%100),val_size);
+		value/=100;
 	}
-	if(len&1)
-		*ptr=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
-	return len;
+	if(value<10)
+	{
+		i[-1]=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value)+u8'0';
+		return chars;
+	}
+	memcpy(i-2,tb_ptr+static_cast<std::uint32_t>(value),val_size);
+	return chars;
 }
 
 }
