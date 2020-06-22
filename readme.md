@@ -147,7 +147,7 @@ Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 b
 | std::wofstream             |      2.64s       |   3.843735s             | wofstream with std::locale codecvt. Extremely slow tbh.|
 | fast_io::wfilebuf_io_observer  |      2.415692s       |   2.497704s         | wofstream with std::locale codecvt. This proves fstream can never get fixed.|
 | Rust language  |      0.483s       |             |  RUST IS SLOW. Also Rust does not deal with locale. Think how bad it is.  |
-
+| Rust itoa library 0.4.6 | > 0.165s | | I ignore the \n part for it to ensure no biase. Even so it is still 3x slower. |
 RUST I/O IS FUCKING STUPID. ONLY LOSERS USE SUCH A SLOW AND GARBAGE LANGUAGE. 10x slower than fast\_io. + binary bloat
 
 
