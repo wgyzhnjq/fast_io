@@ -151,7 +151,7 @@ Notice: I modified libstdc++'s BUFSIZ 1048576 due to BUFSIZE is too small (512 b
 
 
 RUST I/O IS FUCKING STUPID. ONLY LOSERS USE SUCH A SLOW AND GARBAGE LANGUAGE. 10x slower than fast\_io. + binary bloat
-itoa library is still extremely slow and usable for me. It is still 3x slower than fast\_io.
+Rust itoa library is still extremely slow and usable for me. It is still 3x slower than fast\_io.
 
 
 Run the same test on MSVC 19.26.28805.
