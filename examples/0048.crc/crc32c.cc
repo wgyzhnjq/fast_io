@@ -2,6 +2,12 @@
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_crypto.h"
 
+/*
+This is just for demo purpose.
+CRC is not a crypto hash algorithm. Do not use it for verification.
+*/
+
+
 int main(int argc,char** argv)
 try
 {

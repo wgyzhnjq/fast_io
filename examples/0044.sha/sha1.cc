@@ -2,6 +2,11 @@
 #include"../../include/fast_io_device.h"
 #include"../../include/fast_io_crypto.h"
 
+/*
+This is just for demo purpose. You should avoid sha1 in general because it is insecure.
+https://en.wikipedia.org/wiki/SHA-1
+*/
+
 int main(int argc,char** argv)
 try
 {

@@ -10,13 +10,13 @@ https://en.wikipedia.org/wiki/MD5
 int main(int argc,char** argv)
 try
 {
-	if(argc!=2)
+	if(argc!=3)
 	{
-		perr("Usage: ",fast_io::chvw(*argv)," <file>\n");
+		perr("Usage: ",fast_io::chvw(*argv)," <file> <hmac md5 key>\n");
 		return 1;
 	}
 	auto t0{std::chrono::high_resolution_clock::now()};
-	fast_io::md5 m;
+	fast_io::hmac_md5 m(argv[2]);
 	fast_io::hash_processor processor(m);
 	fast_io::ibuf_file ibf(argv[1]);
 	auto transmitted{transmit(processor,ibf)};

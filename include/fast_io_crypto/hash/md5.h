@@ -15,9 +15,9 @@ template<operation op>
 inline constexpr auto unit(auto const& x,auto const& y,auto const& z)
 {
 	if constexpr(op==operation::F)
-		return (x&y)|(~x)&z;
+		return (x&y)|(~x&z);
 	else if constexpr(op==operation::G)
-		return (x&z)|(y&(~z));
+		return (x&z)|(y&~z);
 	else if constexpr(op==operation::H)
 		return x^y^z;
 	else
@@ -57,8 +57,6 @@ public:
 		std::uint32_t a{state.front()},b{state[1]},c{state[2]},d{state[3]};
 		std::array<std::uint32_t,16> x;
 		memcpy(x.data(),blocks.data(),block_size);
-		for(auto & e : x)
-			e=details::byte_swap(e);
 		using namespace details::md5;
 
 		uu<operation::F>(a, b, c, d, x[ 0], 7, 0xd76aa478);
@@ -98,7 +96,7 @@ public:
 
 		/* Round 3 */
 		uu<operation::H>(a, b, c, d, x[ 5], 4, 0xfffa3942);
-		uu<operation::H>(d, a, b, c, x[ 8], 1, 0x8771f681);
+		uu<operation::H>(d, a, b, c, x[ 8], 11, 0x8771f681);
 		uu<operation::H>(c, d, a, b, x[11], 16, 0x6d9d6122);
 		uu<operation::H>(b, c, d, a, x[14], 23, 0xfde5380c);
 		uu<operation::H>(a, b, c, d, x[ 1], 4, 0xa4beea44);
@@ -138,7 +136,5 @@ public:
 		state[3]+=d;
 	}
 };
-
-using md5 = sha<md5_function>;
 
 }
