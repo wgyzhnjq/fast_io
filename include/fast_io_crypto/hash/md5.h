@@ -222,10 +222,10 @@ public:
 			ct+=c;
 			dt+=d;
 		}
-		state.front()+=at;
-		state[1]+=bt;
-		state[2]+=ct;
-		state[3]+=dt;
+		state.front()=at;
+		state[1]=bt;
+		state[2]=ct;
+		state[3]=dt;
 	}
 };
 
