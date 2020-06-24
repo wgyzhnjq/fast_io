@@ -9,7 +9,6 @@ inline constexpr Iter precise(typename floating_traits<floating_type>::mantissa_
 	using mantissa_type = typename floating_trait::mantissa_type;
 	using exponent_type = typename floating_trait::exponent_type;
 	using signed_exponent_type = std::make_signed_t<exponent_type>;
-	using char_type = char8_t;
 	mantissa_type const mantissa(bits & ((static_cast<mantissa_type>(1u) << floating_trait::mantissa_bits) - 1u));
 	exponent_type const exponent(static_cast<exponent_type>(((bits >> floating_trait::mantissa_bits) & floating_trait::exponent_max)));
 	auto const r2(init_rep<floating_type>(mantissa,static_cast<signed_exponent_type>(exponent)));
