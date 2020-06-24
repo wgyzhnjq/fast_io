@@ -5,7 +5,7 @@
 namespace fast_io
 {
 template<typename T,bool endian_reverse=true>
-struct sha
+class sha
 {
 public:
 	using function_type = T;
@@ -14,11 +14,19 @@ public:
 	inline static constexpr std::size_t block_size = T::block_size;
 	T function;
 	std::uint64_t transform_counter{};
+
 	void operator()(std::span<std::byte const,block_size> process_block)
 	{
 		function(digest_block,process_block);
 		++transform_counter;
 	}
+
+	void operator()(std::span<std::byte const> process_blocks)//This is multiple blocks
+	{
+		function(digest_block,process_blocks);
+		transform_counter+=process_blocks.size()/block_size;
+	}
+
 	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<block_size
 	{
 		std::uint64_t total_bits(static_cast<std::uint64_t>(transform_counter*block_size+final_block.size())*8);
@@ -28,7 +36,7 @@ public:
 		auto start{blocks.data()+blocks.size()-8};
 		if(block_size<=final_block.size()+8)
 		{
-			function(digest_block,blocks);
+			function(digest_block,std::span<std::byte const,block_size>{blocks});
 			blocks.fill({});
 		}
 		if constexpr(endian_reverse)
@@ -41,14 +49,16 @@ public:
 		}
 		else
 			memcpy(start,std::addressof(total_bits),8);
-		function(digest_block,blocks);
+		function(digest_block,std::span<std::byte const,block_size>{blocks});
 	}
 };
 
 using sha1
 [[deprecated("SHA1 is no longer a secure algorithm. See wikipedia https://en.wikipedia.org/wiki/SHA-1")]]
 = sha<sha1_function>;
+
 using sha256 = sha<sha256_function>;
+
 using sha512 = sha<sha512_function>;
 using md5
 [[deprecated("The weaknesses of MD5 have been exploited in the field, most infamously by the Flame malware in 2012. See wikipedia https://en.wikipedia.org/wiki/MD5")]]

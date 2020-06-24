@@ -33,11 +33,20 @@ template<std::integral ch_type,typename Func,std::contiguous_iterator Iter>
 requires (std::same_as<std::iter_value_t<Iter>,ch_type>||std::same_as<ch_type,char>)
 inline constexpr void write_cold_path(basic_hash_processor<ch_type,Func>& out,Iter begin,Iter end)
 {
-	out.function(std::as_bytes(std::span{out.temporary_buffer}));
-	for(;begin+Func::block_size<=end;begin+=Func::block_size)
-		out.function(std::as_bytes(std::span<char const,Func::block_size>{std::to_address(begin),Func::block_size}));
-	std::size_t const to_copy(end-begin);
-	memcpy(out.temporary_buffer.data(),std::to_address(begin),to_copy);
+	if(out.current_position)
+	{
+		std::size_t to_copy{Func::block_size-out.current_position};
+		memcpy(out.temporary_buffer.data()+out.current_position,std::to_address(begin),to_copy);
+		out.function(std::span<std::byte const,Func::block_size>{out.temporary_buffer});
+		begin+=to_copy;
+		out.current_position={};
+	}
+	std::size_t const total_bytes((end-begin)*sizeof(*begin));
+	std::size_t const blocks(total_bytes/Func::block_size);
+	std::size_t const blocks_bytes(blocks*Func::block_size);
+	out.function(std::span<std::byte const>{reinterpret_cast<std::byte const*>(std::to_address(begin)),blocks_bytes});	
+	std::size_t const to_copy(total_bytes-blocks_bytes);
+	memcpy(out.temporary_buffer.data(),reinterpret_cast<std::byte const*>(std::to_address(end))-to_copy,to_copy);
 	out.current_position=to_copy;
 }
 
@@ -51,15 +60,14 @@ inline void write(basic_hash_processor<ch_type,Func>& out,Iter begin,Iter end)
 	{
 		std::size_t const bytes(end-begin);
 		std::size_t to_copy{Func::block_size-out.current_position};
-		if(bytes<to_copy)[[likely]]
+		if(bytes<to_copy)
 		{
 			to_copy=bytes;
 			memcpy(out.temporary_buffer.data()+out.current_position,std::to_address(begin),to_copy);
 			out.current_position+=to_copy;
 			return;
 		}
-		memcpy(out.temporary_buffer.data()+out.current_position,std::to_address(begin),to_copy);
-		details::hash_processor::write_cold_path(out,begin+to_copy,end);
+		details::hash_processor::write_cold_path(out,begin,end);
 	}
 	else
 		write(out,reinterpret_cast<char const*>(std::to_address(begin)),reinterpret_cast<char const*>(std::to_address(end)));

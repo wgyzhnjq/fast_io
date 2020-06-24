@@ -15,6 +15,15 @@ public:
 		memcpy(std::addressof(v),process_block.data(),block_size);
 		crc = _mm_crc32_u64(crc,v);
 	}
+	void operator()(std::span<std::byte const> blocks)
+	{
+		for(auto block(blocks.data()),ed(blocks.data()+blocks.size());block!=ed;block+=block_size)
+		{
+			std::uint64_t v;
+			memcpy(std::addressof(v),block,block_size);
+			crc = _mm_crc32_u64(crc,v);
+		}
+	}
 	void digest(std::span<std::byte const> final_block)//contracts: final_block.size()<8
 	{
 		switch(final_block.size())

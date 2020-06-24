@@ -40,6 +40,10 @@ struct hmac
 	{
 		function(process_block);
 	}
+	void operator()(std::span<std::byte const> process_blocks)
+	{
+		function(process_blocks);
+	}
 	void digest(std::span<std::byte const> final_block)
 	{
 		function.digest(final_block);
@@ -75,8 +79,9 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<hmac<T,endian_
 using hmac_sha1
 [[deprecated("SHA1 is no longer a secure algorithm. See wikipedia https://en.wikipedia.org/wiki/SHA-1")]]
 =hmac<sha<sha1_function>,true>;
+
 using hmac_sha256=hmac<sha256,true>;
-using hmac_sha512=hmac<sha512,true>;
+
 using hmac_sha512=hmac<sha512,true>;
 
 
