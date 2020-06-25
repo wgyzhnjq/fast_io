@@ -786,6 +786,17 @@ inline constexpr basic_posix_io_observer<char_type> native_stderr()
 {
 	return basic_posix_io_observer<char_type>{posix_stderr_number};
 }
+
+template<std::integral ch_type>
+inline constexpr auto scatter_in_handle(basic_posix_io_observer<ch_type> h)
+{
+	return h.fd;
+}
+template<std::integral ch_type>
+inline constexpr auto scatter_out_handle(basic_posix_io_observer<ch_type> h)
+{
+	return h.fd;
+}
 #endif
 template<output_stream output,std::integral intg>
 inline constexpr void print_define(output& out,basic_posix_io_observer<intg> iob)

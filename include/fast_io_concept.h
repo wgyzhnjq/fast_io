@@ -160,6 +160,19 @@ concept status_stream_impl = requires(T&& stm)
 	typename std::remove_cvref_t<T>::char_type::status_type;
 };
 
+
+template<typename T>
+concept scatter_input_stream_impl = requires(T& in)
+{
+	scatter_in_handle(in);
+};
+
+template<typename T>
+concept scatter_output_stream_impl = requires(T& out)
+{
+	scatter_out_handle(out);
+};
+
 }
 
 
@@ -345,5 +358,18 @@ concept manipulator = std::same_as<typename T::manip_tag,manip_tag_t>&&requires(
 {
 	{t.reference};
 };
+
+template<typename T>
+concept scatter_input_stream = requires(T& in)
+{
+	scatter_in_handle(in);
+};
+
+template<typename T>
+concept scatter_output_stream = requires(T& out)
+{
+	scatter_out_handle(out);
+};
+
 
 }
