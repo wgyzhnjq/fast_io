@@ -127,6 +127,38 @@ inline auto zero_copy_out_handle(basic_socket<false>& soc)
 }
 
 */
+/*
+namespace sock::details
+{
+
+inline std::size_t win32_socket_scatter_write_impl(sock::details::socket_type soc,std::span<io_scatter_t const> scat,WSABUF* buf)
+{
+	for(std::size_t i{};i!=scat.size();++i)
+	{
+		buf[i].len=scat[i].len;
+		buf[i].buf=reinterpret_cast<char*>(scat[i].base);
+	}
+	long unsigned dwbufcount;
+	wsasend(soc,buf,scat.size(),std::addressof(dwbufcount),0,nullptr,nullptr);
+	return dwbufcount;
+}
+
+}
+
+inline std::size_t scatter_write(basic_socket<false>& soc,std::span<io_scatter_t const> scat)
+{
+	if(scat.size()<=1024)
+	{
+		std::array<WSABUF,1024> buf;
+		return sock::details::win32_socket_scatter_write_impl(soc.native_handle(),scat,buf.data());
+	}
+	else
+	{
+		std::unique_ptr<WSABUF[]> uptr(new WSABUF[scat.size()]);
+		return sock::details::win32_socket_scatter_write_impl(soc.native_handle(),scat,uptr.get());
+	}
+}
+*/
 #endif
 
 struct address_info
