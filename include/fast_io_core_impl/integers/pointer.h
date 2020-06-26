@@ -49,4 +49,36 @@ inline caiter print_reserve_define(print_reserve_type_t<Iter>,caiter iter,U&& v)
 }
 
 
+template<std::integral char_type,std::integral array_value_type,std::size_t n>
+requires (std::same_as<char_type,std::remove_cvref_t<array_value_type>>||
+(std::same_as<char_type,char>&&std::same_as<std::remove_cvref_t<array_value_type>,char8_t>)
+&&n!=0)	//array cannot be zero size. but we do the check too
+constexpr auto print_scatter_define(array_value_type (&s)[n])
+{
+	return io_scatter(s,s+(n-1));
+}
+
+template<std::integral char_type>
+constexpr auto print_scatter_define(char_type const*)=delete;
+
+template<std::integral char_type>
+constexpr auto print_scatter_define(std::basic_string_view<char_type> str)
+{
+	return {str.data(),str.size()*sizeof(char_type)};
+}
+
+template<std::integral char_type>
+requires std::same_as<char_type,char>
+constexpr auto print_scatter_define(std::basic_string_view<char8_t> str)
+{
+	return {str.data(),str.size()*sizeof(char_type)};
+}
+
+template<output_stream output>
+inline constexpr void print_define(output& out,std::basic_string_view<typename output::char_type> str)
+{
+	write(out,str.data(),str.data()+str.size());
+}
+
+
 }

@@ -4,6 +4,7 @@
 #include<io.h>
 #else
 #include<unistd.h>
+#include <sys/uio.h>
 #endif
 #include<fcntl.h>
 #ifdef __linux__
@@ -12,7 +13,6 @@
 #ifdef __BSD_VISIBLE
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/uio.h>
 #endif
 
 namespace fast_io
@@ -786,17 +786,98 @@ inline constexpr basic_posix_io_observer<char_type> native_stderr()
 {
 	return basic_posix_io_observer<char_type>{posix_stderr_number};
 }
+/*
+template<std::integral ch_type>
+inline std::size_t scatter_read(basic_posix_io_observer<ch_type> h,std::span<io_scatter_t> sp)
+{
+	return h.fd;
+}
+template<std::integral ch_type>
+inline std::size_t scatter_write(basic_posix_io_observer<ch_type> h,std::span<io_scatter_t> sp)
+{
+}*/
 
-template<std::integral ch_type>
-inline constexpr auto scatter_in_handle(basic_posix_io_observer<ch_type> h)
+namespace details
 {
-	return h.fd;
-}
-template<std::integral ch_type>
-inline constexpr auto scatter_out_handle(basic_posix_io_observer<ch_type> h)
+
+struct __attribute__((__may_alias__)) iovec_may_alias:iovec
+{};
+
+inline std::size_t posix_scatter_read_impl(int fd,std::span<io_scatter_t const> sp)
 {
-	return h.fd;
+
+#if defined(__linux__)&&defined(__x86_64__)
+	static_assert(sizeof(unsigned long)==sizeof(std::size_t));
+	auto val{system_call<19,std::ptrdiff_t>(static_cast<unsigned int>(fd),sp.data(),sp.size())};
+	system_call_throw_error(val);
+	return val;
+#else
+
+	std::size_t sz{sp.size()};
+	if(static_cast<std::size_t>(std::numeric_limits<int>::max())<sz)
+		sz=static_cast<std::size_t>(std::numeric_limits<int>::max());
+	auto ptr{reinterpret_cast<iovec_may_alias const*>(sp.data())};
+	std::ptrdiff_t val{::readv(fd,ptr,static_cast<int>(sz))};
+	if(val<0)
+#ifdef __cpp_exceptions
+		throw posix_error();
+#else
+		fast_terminate();
+#endif
+	return val;
+#endif
 }
+
+inline std::size_t posix_scatter_write_impl(int fd,std::span<io_scatter_t const> sp)
+{
+
+#if defined(__linux__)&&defined(__x86_64__)
+	static_assert(sizeof(unsigned long)==sizeof(std::size_t));
+	auto val{system_call<20,std::ptrdiff_t>(static_cast<unsigned int>(fd),sp.data(),sp.size())};
+	system_call_throw_error(val);
+	return val;
+#else
+	std::size_t sz{sp.size()};
+	if(static_cast<std::size_t>(std::numeric_limits<int>::max())<sz)
+		sz=static_cast<std::size_t>(std::numeric_limits<int>::max());
+	auto ptr{reinterpret_cast<iovec_may_alias const*>(sp.data())};
+	std::ptrdiff_t val{::writev(fd,ptr,static_cast<int>(sz))};
+	if(val<0)
+#ifdef __cpp_exceptions
+		throw posix_error();
+#else
+		fast_terminate();
+#endif
+	return val;
+#endif
+}
+
+}
+
+template<std::integral ch_type,typename... Args>
+inline auto scatter_read(basic_posix_io_observer<ch_type> h,Args&& ...args)
+{
+	return details::posix_scatter_read_impl(h.fd,std::forward<Args>(args)...);
+}
+
+template<std::integral ch_type,typename... Args>
+inline auto scatter_write(basic_posix_io_observer<ch_type> h,Args&& ...args)
+{
+	return details::posix_scatter_write_impl(h.fd,std::forward<Args>(args)...);
+}
+
+template<std::integral ch_type,typename... Args>
+inline auto scatter_read(basic_posix_pipe<ch_type>& h,Args&& ...args)
+{
+	return details::posix_scatter_read_impl(h.in().fd,std::forward<Args>(args)...);
+}
+
+template<std::integral ch_type,typename... Args>
+inline auto scatter_write(basic_posix_pipe<ch_type>& h,Args&& ...args)
+{
+	return details::posix_scatter_write_impl(h.out().fd,std::forward<Args>(args)...);
+}
+
 #endif
 template<output_stream output,std::integral intg>
 inline constexpr void print_define(output& out,basic_posix_io_observer<intg> iob)
