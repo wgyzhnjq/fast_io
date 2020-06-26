@@ -53,25 +53,34 @@ template<std::integral char_type,std::integral array_value_type,std::size_t n>
 requires (std::same_as<char_type,std::remove_cvref_t<array_value_type>>||
 (std::same_as<char_type,char>&&std::same_as<std::remove_cvref_t<array_value_type>,char8_t>)
 &&n!=0)	//array cannot be zero size. but we do the check too
-constexpr auto print_scatter_define(array_value_type (&s)[n])
+constexpr io_scatter_t print_scatter_define(array_value_type (&s)[n])
 {
 	return io_scatter(s,s+(n-1));
 }
 
-template<std::integral char_type>
-constexpr auto print_scatter_define(char_type const*)=delete;
+template<std::integral char_type,std::integral T>
+requires (std::same_as<char_type,std::remove_cvref_t<T>>||
+(std::same_as<char_type,char>&&std::same_as<std::remove_cvref_t<T>,char8_t>))
+constexpr io_scatter_t print_scatter_define(manip::chvw<T*> a)
+{
+	std::basic_string_view<std::remove_cvref_t<T>> bsv(a.reference);
+	return io_scatter(a.reference,a.reference+bsv.size());
+}
 
 template<std::integral char_type>
-constexpr auto print_scatter_define(std::basic_string_view<char_type> str)
+constexpr io_scatter_t print_scatter_define(char_type const*)=delete;
+
+template<std::integral char_type>
+constexpr io_scatter_t print_scatter_define(std::basic_string_view<char_type> str)
 {
-	return {str.data(),str.size()*sizeof(char_type)};
+	return io_scatter(str.data(),str.data()+str.size());
 }
 
 template<std::integral char_type>
 requires std::same_as<char_type,char>
-constexpr auto print_scatter_define(std::basic_string_view<char8_t> str)
+constexpr io_scatter_t print_scatter_define(std::basic_string_view<char8_t> str)
 {
-	return {str.data(),str.size()*sizeof(char_type)};
+	return io_scatter(str.data(),str.data()+str.size());
 }
 
 template<output_stream output>
