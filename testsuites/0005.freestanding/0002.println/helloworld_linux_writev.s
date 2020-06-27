@@ -1,15 +1,5 @@
 	.file	"helloworld_linux_writev.cc"
 	.text
-	.p2align 4
-	.weak	_ZNSt7__n486122__dummy_resume_destroyEv
-	.type	_ZNSt7__n486122__dummy_resume_destroyEv, @function
-_ZNSt7__n486122__dummy_resume_destroyEv:
-.LFB13480:
-	.cfi_startproc
-	ret
-	.cfi_endproc
-.LFE13480:
-	.size	_ZNSt7__n486122__dummy_resume_destroyEv, .-_ZNSt7__n486122__dummy_resume_destroyEv
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
 	.string	"Hello World\n"
@@ -23,7 +13,7 @@ _ZNSt7__n486122__dummy_resume_destroyEv:
 	.globl	_start
 	.type	_start, @function
 _start:
-.LFB13629:
+.LFB13574:
 	.cfi_startproc
 	leaq	-84(%rsp), %rax
 	movb	$53, -84(%rsp)
@@ -47,7 +37,7 @@ _start:
 # 0 "" 2
 #NO_APP
 	cmpq	$-4096, %rax
-	jnb	.L5
+	jnb	.L3
 	movl	$60, %eax
 	xorl	%edi, %edi
 #APP
@@ -59,12 +49,12 @@ _start:
 	.cfi_startproc
 	.type	_start.cold, @function
 _start.cold:
-.LFSB13629:
+.LFSB13574:
 #NO_APP
-.L5:
+.L3:
 	ud2
 	.cfi_endproc
-.LFE13629:
+.LFE13574:
 	.text
 	.size	_start, .-_start
 	.section	.text.unlikely
@@ -72,14 +62,5 @@ _start.cold:
 .LCOLDE2:
 	.text
 .LHOTE2:
-	.weak	_ZNSt7__n486114__noop_coro_frE
-	.data
-	.align 16
-	.type	_ZNSt7__n486114__noop_coro_frE, @object
-	.size	_ZNSt7__n486114__noop_coro_frE, 24
-_ZNSt7__n486114__noop_coro_frE:
-	.quad	_ZNSt7__n486122__dummy_resume_destroyEv
-	.quad	_ZNSt7__n486122__dummy_resume_destroyEv
-	.zero	8
 	.ident	"GCC: (cqwrteur) 11.0.0 20200605 (experimental)"
 	.section	.note.GNU-stack,"",@progbits
