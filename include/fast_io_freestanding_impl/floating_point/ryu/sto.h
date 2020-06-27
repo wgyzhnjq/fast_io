@@ -54,7 +54,7 @@ inline constexpr typename floating_traits<floating_type>::mantissa_type me10_to_
 	std::int32_t ieee_e2(e2 + (floating_trait::bias-1) + std::bit_width(m2));
 	if(ieee_e2<0)
 		ieee_e2=0;
-	if(maximum_representable_e2<=ieee_e2)[[unlikely]]
+	if(static_cast<std::int32_t>(maximum_representable_e2)<=ieee_e2)[[unlikely]]
 	{
 		return static_cast<mantissa_type>(static_cast<mantissa_type>(maximum_representable_e2) << floating_trait::mantissa_bits);
 	}

@@ -99,7 +99,6 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 	return iter;
 }
 
-
 template<bool sign,std::uint8_t base>
 requires (0x2<base&&base<=0x36)
 struct is_numerical
@@ -151,6 +150,15 @@ inline constexpr bool is_space(T const u)
 
 namespace twodigits
 {
+
+template<char8_t base=10,bool uppercase=false,std::random_access_iterator Iter,my_unsigned_integral U>
+inline constexpr std::size_t output_unsigned(Iter str,U value)
+{
+	std::size_t const len{chars_len<base>(value)};
+	output_base_number_impl<base,uppercase>(str+len,value);
+	return len;
+}
+
 //THIS IS OBJECTIVELY STUPID. FMT AUTHOR IS A LOSER
 template<std::contiguous_iterator Iter,my_unsigned_integral U>
 constexpr inline auto output_unsigned_reverse(Iter i,U value)

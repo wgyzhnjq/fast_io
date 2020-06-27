@@ -95,7 +95,8 @@ inline constexpr std::size_t output_unsigned(Iter str,U value)
 	{
 		U const temp(value/10);
 		char_type const res(value%10);
-		*str=start;
+		*str=res;
+		value=temp;
 	}
 	return len;
 }

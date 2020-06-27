@@ -31,14 +31,16 @@ std::vector<std::size_t> vec(100,2);
 println("vec.begin():",vec.begin()," vec.end()",vec.end());
 */
 
-template<std::contiguous_iterator Iter>
+template<typename Iter>
+requires (std::contiguous_iterator<Iter>||std::same_as<std::remove_cvref_t<Iter>,void*>)
 inline constexpr std::size_t print_reserve_size(print_reserve_type_t<Iter>)
 {
 	constexpr std::size_t sz{sizeof(std::uintptr_t)*2+4};
 	return sz;
 }
 
-template<std::contiguous_iterator Iter,std::contiguous_iterator caiter,typename U>
+template<typename Iter,std::contiguous_iterator caiter,typename U>
+requires (std::contiguous_iterator<Iter>||std::same_as<std::remove_cvref_t<Iter>,void*>)
 inline caiter print_reserve_define(print_reserve_type_t<Iter>,caiter iter,U&& v)
 {
 	constexpr std::size_t uisz{sizeof(std::uintptr_t)*2+2};

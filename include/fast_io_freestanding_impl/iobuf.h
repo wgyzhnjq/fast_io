@@ -408,7 +408,7 @@ constexpr void obuf_write_force_copy(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter
 		auto it{write(ob.oh,cbegin,cend)};
 		if(it!=cend)
 		{
-			if(Buf::size<=cend-it)
+			if(Buf::size<=static_cast<std::size_t>(cend-it))
 #ifdef __cpp_exceptions
 				throw posix_error(EIO);
 #else

@@ -71,7 +71,7 @@ inline constexpr Iter process_integer_output(Iter iter,int_type i)
 #ifdef FAST_IO_OPTIMIZE_SIZE
 				details::optimize_size;
 #else
-				details::jiaendu;
+				details::twodigits;
 #endif
 			if constexpr(my_unsigned_integral<int_type>)
 				return iter+algo_decision::output_unsigned<base,uppercase>(iter,static_cast<std::remove_cvref_t<int_type>>(i));
