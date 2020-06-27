@@ -58,16 +58,6 @@ inline constexpr uint32_t B2U32(std::byte val, uint8_t sh)
     return (std::to_integer<uint32_t>(val)) << sh;
 }
 
-inline constexpr void process_blocks(std::span<std::uint32_t,8> state,std::span<std::span<std::byte const,64>> blocks)
-{
-
-}
-
-inline constexpr void process_block(std::span<std::uint32_t,8> state,std::span<std::span<std::byte const,64>> block)
-{
-
-}
-
 }
 #endif
 class sha256_function

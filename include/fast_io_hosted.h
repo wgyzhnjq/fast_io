@@ -19,6 +19,7 @@ For hosted implementations the set of standard library headers required by the C
 #if __cpp_impl_coroutine >= 201902
 #include<coroutine>
 #include"fast_io_hosted/async_coro.h"
+#include"fast_io_freestanding/generator.h"
 #endif
 
 //#include<clocale>

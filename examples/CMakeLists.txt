@@ -63,4 +63,29 @@ add_executable(0007.c_file_unlocked_from_posix_out "./0007.legacy/c_file_unlocke
 add_executable(0007.stream_io_observer "./0007.legacy/streambuf_io_observer.cc")
 add_executable(0007.stream_fd "./0007.legacy/stream_fd.cc")
 
+add_executable(0009.transmit "./0009.transmit/transmit.cc")
+add_executable(0009.http_test_zero_copy "./0009.transmit/http_test_zero_copy.cc")
+add_executable(0009.transmit_bytes "./0009.transmit/transmit_bytes.cc")
+add_executable(0009.transmit_to_c_stdout "./0009.transmit/transmit_to_c_stdout.cc")
+
+add_executable(0010.http "./0010.http/http.cc")
+
+add_executable(0011.black_hole "./0011.black_hole/black_hole.cc")
+
+add_executable(0013.client "./0013.tcp/client.cc")
+add_executable(0013.server "./0013.tcp/server.cc")
+
+add_executable(0016.process "./0016.process/process.cc")
+if (WIN32)
+add_executable(0019.win32 "./0019.win32/win32.cc")
+endif (WIN32)
+
+add_executable(0039.filebuf_file "./0039.filebuf_file/filebuf_file.cc")
+add_executable(0039.posix_file "./0039.filebuf_file/posix_file.cc")
+if (WIN32)
+add_executable(0039.win32_file "./0039.filebuf_file/win32_file.cc")
+endif (WIN32)
+add_executable(0044.sha256 "./0044.sha/sha256.cc")
+add_executable(0044.hmac_sha256 "./0044.sha/hmac_sha256.cc")
+
 add_executable(0022.utf8_file "./0022.utf/utf8_file.cc")
