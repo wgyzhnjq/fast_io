@@ -346,7 +346,7 @@ iconv test:
 
 You guys should never trust any benchmarks made by fmt author. All his benchmarks, including benchmarks to other methods or libraries (including to boost for example), are completely pointless. (2-4 digits length for example. format_int to avoid calculating length leads to non-in-place formatting problem).
 
-And he is mad at this library now because he has lost all his benchmarks against this fast_io library. If you are trying to defend my library on his twitter, he will instantly block you. Please do not do this and just ignore all his nonsenses.
+And he is mad at this library now because he has lost all his benchmarks against this fast_io library (including time performance, binary size). If you are trying to defend my library on his twitter, he will instantly block you. Please do not do this and just ignore all his nonsenses.
 
 I show a horrible benchmark as an example. https://gist.github.com/vitaut/7ec12070347e4f4ee3f70d64950f7a10
 
