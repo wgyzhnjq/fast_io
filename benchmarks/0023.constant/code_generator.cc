@@ -2,7 +2,7 @@
 
 int main()
 {
-	constexpr std::size_t N{10000};
+	constexpr std::size_t N{20};
 	{
 	fast_io::obuf_file obf("fast_io.cc");
 	print(obf,"#include\"../../include/fast_io.h\"\n\nint main()\n{\n\tstd::size_t a,b;\n\tscan(a,b);\n");
@@ -21,7 +21,7 @@ int main()
 	fast_io::obuf_file obf("printf.cc");
 	print(obf,"#include<cstdio>\nint main()\n{\n\tstd::size_t a,b;\n\tscanf(\"%zu%zu\",&a,&b);\n");
 	for(std::size_t i{};i!=N;++i)
-		print(obf,"\tprintf(\"%d\\n\",a+b);\n");
+		print(obf,"\tprintf(\"%zu\\n\",a+b);\n");
 	put(obf,u8'}');
 	}
 }
