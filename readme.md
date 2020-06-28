@@ -342,7 +342,7 @@ iconv test:
 | utf8_file_to_utf32_file.cc     |      0.442s             |  I use the SSE algorithms provided by the utf-utils project.                   |
 
 
-
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 You guys should never trust any benchmarks made by fmt author. All his benchmarks, including benchmarks to other methods or libraries (including to boost for example), are completely pointless. (2-4 digits length for example. format_int to avoid calculating length leads to non-in-place formatting problem).
 
@@ -359,6 +359,8 @@ The thing that std::cout does very wrong was about the problem of
 std::cout<<int8_t(4);
 ```
 would print out a character even you expect it to be an integer. The behavior is nowhere near consistent.
+See the discussion here:
+https://stackoverflow.com/questions/19562103/uint8-t-cant-be-printed-with-cout
 
 ```cpp
 //THIS CODE IS NOT VALID
