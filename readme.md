@@ -2,6 +2,10 @@
 
 fast_io is a new C++20 library for extremely fast input/output and aims to replace iostream and cstdio. It is header-only (module only in the future) for easy inclusion in your project. It requires a capable C++20 compiler supporting concepts.
 
+## What does "fast" means in fast_io?
+
+It does not necessary mean it will be faster than everything else. (Or it would be named as fastest_io. Of course those fmt trolls would claim that.) It means it is significantly faster than stdio.h and iostream for all cases. fast means faster than stdio.h and iostream.
+
 ## Hello World
 
 ```cpp
@@ -337,3 +341,35 @@ iconv test:
 |--------------------------------|-------------------------|------------------------------------------------------------------------------|
 | iconv command                  |      0.844s             |  GNU iconv. No BOM which sucks                                           |
 | utf8_file_to_utf32_file.cc     |      0.442s             |  I use the SSE algorithms provided by the utf-utils project.                   |
+
+
+
+
+You guys should never trust any benchmarks made by fmt author. All his benchmarks, including benchmarks to other methods or libraries (including to boost for example), are completely pointless. (2-4 digits length for example. format_int to avoid calculating length leads to non-in-place formatting problem).
+
+And he is mad at this library now because he has lost all his benchmarks against this fast_io library. If you are trying to defend my library on his twitter, he will instantly block you. Please do not do this and just ignore all his nonsenses.
+
+I show a horrible benchmark as an example. https://gist.github.com/vitaut/7ec12070347e4f4ee3f70d64950f7a10
+
+fast_io does not accept char const* as a c style-string. It treats it as a pointer. char const* as a string was a historical mistake, leading to the null terminating chaos of the entire computer industry.
+
+Let's assume fast_io accepts char const* as a c_str. It leads to overloading problems and confusion. For example, why print out std::int8_t const* is to print out a string while std::int16_t const* would be treated as a pointer?
+
+The thing that std::cout does very wrong was about the problem of
+```cpp
+std::cout<<int8_t(4);
+```
+would print out a character even you expect it to be an integer. The behavior is nowhere near consistent.
+
+```cpp
+//THIS CODE IS NOT VALID
+char const* ptr;
+print(ptr);	//DANGER. Security vulnerability.
+```
+
+See the detailed explanations here:
+https://github.com/expnkx/fast_io/issues/16
+
+The simple fact is that format string was a HISTORICAL mistake made by C. format string is pitfall of security vulnerability and still a security issue today. For example, CVE-2016-0799 https://www.cvedetails.com/cve/CVE-2016-0799/ Even fmt has its security issues with format strings. https://www.cvedetails.com/cve/CVE-2018-1000052/
+
+Of course, you can argue about format string as a localization tool. However, you should not use that for all your formatting jobs. That is clearly an abuse. That is also why I think Rust language still sucks since it makes the same mistake and nonsense again.
