@@ -199,7 +199,7 @@ Run the same test on GCC 11. glibc + libstdc++
 | fast_io::c_file                |      0.092490191s       |   0.104545535s        | Thread Safe. I hacked glibc's FILE* implementation   |
 | fast_io::filebuf_file          |      0.052251608s       |   0.06655806s         | I hacked libstdc++'s streambuf/filebuf implementation|
 
-You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can even improve FILE* and fstream's performance for 10x depending on platforms since I use concepts to abstract them all. fmtlib actually slows down I/O performance. In general, fmtlib and charconv fucking sucks.
+You can see fast_io can also boost the performance of existing facilities for 10x! Yes, it can even improve FILE* and fstream's performance for 10x depending on platforms since I use concepts to abstract them all. fmtlib actually slows down I/O performance.
 
 2. Output 10M double in round-trip mode with Ryu algorithm
 
@@ -210,7 +210,7 @@ All benchmarks are in benchmarks/0001.10m_double/charconv.
 Run the same test on MSVC 19.26.28805.
 
 
-| Platform                       |       Windows           |  MSVC 19.26.28805     |  Install fmtlib wastes time of my life               |
+| Platform                       |       Windows           |  MSVC 19.26.28805     |                  |
 |--------------------------------|-------------------------|-----------------------|------------------------------------------------------|
 |                                                                                                                                         |
 
