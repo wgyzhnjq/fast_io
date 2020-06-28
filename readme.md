@@ -372,4 +372,4 @@ https://github.com/expnkx/fast_io/issues/16
 
 The simple fact is that format string was a HISTORICAL mistake made by C. format string is pitfall of security vulnerability and still a security issue today. For example, CVE-2016-0799 https://www.cvedetails.com/cve/CVE-2016-0799/ Even fmt has its security issues with format strings. https://www.cvedetails.com/cve/CVE-2018-1000052/
 
-Of course, you can argue about format string as a localization tool. However, you should not use that for all your formatting jobs. That is clearly an abuse. That is also why I think Rust language still sucks since it makes the same mistake and nonsense again.
+Of course, you can argue about format string as a localization tool. However, you should not use that for all your formatting jobs. That is clearly an abuse. That is also why I think Rust language still sucks since it makes the same mistake again.
