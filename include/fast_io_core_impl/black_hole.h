@@ -16,6 +16,7 @@ public:
 template<std::integral ch_type,std::contiguous_iterator Iter>
 inline constexpr void write(black_hole<ch_type>,Iter,Iter){}
 
-
+template<std::integral ch_type,std::contiguous_iterator Iter>
+inline constexpr Iter read(black_hole<ch_type>,Iter b,Iter){return b;}
 
 }
