@@ -352,4 +352,5 @@ This project is made possible by referencing from other open-source projects. (I
 |SHA-Intrinsics| https://github.com/noloader/SHA-Intrinsics |
 |SHA1| https://github.com/vog/sha1 |
 |UTF-utils| https://github.com/BobSteagall/utf_utils|
+|jenkins-hash-java|https://github.com/vkandy/jenkins-hash-java |
 |md5|https://github.com/JieweiWei/md5 |
