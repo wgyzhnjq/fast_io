@@ -159,26 +159,6 @@ inline constexpr std::size_t output_unsigned(Iter str,U value)
 	return len;
 }
 
-//THIS IS OBJECTIVELY STUPID. FMT AUTHOR IS A LOSER
-template<std::contiguous_iterator Iter,my_unsigned_integral U>
-constexpr inline auto output_unsigned_reverse(Iter i,U value)
-{
-	constexpr auto tb_ptr(details::shared_static_base_table<std::iter_value_t<Iter>,10,false>::table.data());
-	constexpr std::uint32_t val_size(2*sizeof(std::iter_value_t<Iter>));
-	for(;100<=value;)
-	{
-		memcpy(std::to_address(i-=2),tb_ptr+static_cast<std::uint32_t>(value%100),val_size);
-		value/=100;
-	}
-	if(value<10)
-	{
-		*--i=static_cast<std::make_unsigned_t<std::iter_value_t<Iter>>>(value+u8'0');
-		return i;
-	}
-	memcpy(std::to_address(i-=2),tb_ptr+static_cast<std::uint32_t>(value),val_size);
-	return i;
-}
-
 }
 
 }

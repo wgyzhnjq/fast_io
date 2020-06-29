@@ -341,36 +341,15 @@ iconv test:
 | iconv command                  |      0.844s             |  GNU iconv. No BOM which sucks                                           |
 | utf8_file_to_utf32_file.cc     |      0.442s             |  I use the SSE algorithms provided by the utf-utils project.                   |
 
+## Credit
 
-------------------------------------------------------------------------------------------------------------------------------------------------
+This project is made possible by referencing from other open-source projects. (I won't take their code directly. They are reimplemented by myself to fit the purpose of this library or it might have integration issues.)
 
-You guys should never trust any benchmarks made by fmt author. All his benchmarks, including benchmarks to other methods or libraries (including to boost for example), are completely pointless. (2-4 digits length for example. format_int to avoid calculating length leads to non-in-place formatting problem).
-
-And he is mad at this library now because he has lost all his benchmarks against this fast_io library (including time performance, binary size). If you are trying to defend my library on his twitter, he will instantly block you. Please do not do this and just ignore all his nonsenses.
-
-I show a horrible benchmark as an example. https://gist.github.com/vitaut/7ec12070347e4f4ee3f70d64950f7a10
-
-fast_io does not accept char const* as a c style-string. It treats it as a pointer. char const* as a string was a historical mistake, leading to the null terminating chaos of the entire computer industry.
-
-Let's assume fast_io accepts char const* as a c_str. It leads to overloading problems and confusion. For example, why print out std::int8_t const* is to print out a string while std::int16_t const* would be treated as a pointer?
-
-The thing that std::cout does very wrong was about the problem of
-```cpp
-std::cout<<int8_t(4);
-```
-would print out a character even you expect it to be an integer. The behavior is nowhere near consistent.
-See the discussion here:
-https://stackoverflow.com/questions/19562103/uint8-t-cant-be-printed-with-cout
-
-```cpp
-//THIS CODE IS NOT VALID
-char const* ptr;
-print(ptr);	//DANGER. Security vulnerability.
-```
-
-See the detailed explanations here:
-https://github.com/expnkx/fast_io/issues/16
-
-The simple fact is that format string was a HISTORICAL mistake made by C. format string is pitfall of security vulnerability and still a security issue today. For example, CVE-2016-0799 https://www.cvedetails.com/cve/CVE-2016-0799/ Even fmt has its security issues with format strings. https://www.cvedetails.com/cve/CVE-2018-1000052/
-
-Of course, you can argue about format string as a localization tool. However, you should not use that for all your formatting jobs. That is clearly an abuse. That is also why I think Rust language still sucks since it makes the same mistake again.
+|Project  | Url                                 |
+|---------|-----------------------------------------|
+|Grisu-Exact| https://github.com/jk-jeon/Grisu-Exact |
+|Ryu| https://github.com/ulfjack/ryu  |
+|SHA-Intrinsics| https://github.com/noloader/SHA-Intrinsics |
+|SHA1| https://github.com/vog/sha1 |
+|UTF-utils| https://github.com/BobSteagall/utf_utils|
+|md5|https://github.com/JieweiWei/md5 |
