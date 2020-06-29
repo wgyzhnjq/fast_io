@@ -114,6 +114,46 @@ inline constexpr void perrln(Args&&... args)
 	fast_io::println(fast_io::err(),std::forward<Args>(args)...);
 }
 
+template<typename... Args>
+inline constexpr void panic(Args&&... args)
+{
+	if constexpr(sizeof...(Args)!=0)
+	{
+#ifdef __cpp_exceptions
+	try
+	{
+#endif
+		fast_io::print(fast_io::err(),std::forward<Args>(args)...);
+#ifdef __cpp_exceptions
+	}
+	catch(...){}
+#endif
+	}
+#if __has_builtin(__builtin_trap)
+	__builtin_trap();
+#elif defined(_MSC_VER)
+	__debugbreak();
+#endif
+}
+
+template<typename... Args>
+inline constexpr void panicln(Args&&... args)
+{
+#ifdef __cpp_exceptions
+	try
+	{
+#endif
+		fast_io::println(fast_io::err(),std::forward<Args>(args)...);
+#ifdef __cpp_exceptions
+	}
+	catch(...){}
+#endif
+#if __has_builtin(__builtin_trap)
+	__builtin_trap();
+#elif defined(_MSC_VER)
+	__debugbreak();
+#endif
+}
 
 //Allow debug print
 #ifndef NDEBUG
@@ -149,6 +189,18 @@ template<typename... Args>
 inline constexpr void debug_perrln(Args&&... args)
 {
 	::perrln(std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline constexpr void debug_panic(Args&&... args)
+{
+	::panic(std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline constexpr void debug_panicln(Args&&... args)
+{
+	::panicln(std::forward<Args>(args)...);
 }
 #endif
 
