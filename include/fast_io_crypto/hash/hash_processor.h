@@ -18,7 +18,7 @@ public:
 	using function_type = Func;
 	function_type& function;
 	inline static constexpr std::size_t block_size = function_type::block_size;
-	std::array<std::byte,block_size> temporary_buffer{};
+	[[no_unique_address]] std::array<std::byte,block_size> temporary_buffer{};
 	[[no_unique_address]] std::conditional_t<block_size==0,details::compress_current_position,std::size_t> current_position{};
 	constexpr basic_hash_processor(function_type& func):function(func)
 	{
