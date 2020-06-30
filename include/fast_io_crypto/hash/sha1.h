@@ -351,7 +351,8 @@ public:
 		ABCD = _mm_shuffle_epi32(ABCD, 0x1B);
 		_mm_storeu_si128((__m128i*) state.data(), ABCD);
 		state[4] = _mm_extract_epi32(E0, 3);
-#elif defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM)
+
+#elif defined(FAST_IO_ARM_SHA) && ( defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM) )
 
 		uint32x4_t ABCD, ABCD_SAVED;
 		uint32x4_t TMP0, TMP1;
@@ -709,7 +710,7 @@ public:
 		ABCD = _mm_shuffle_epi32(ABCD, 0x1B);
 		_mm_storeu_si128((__m128i*) state.data(), ABCD);
 		state[4] = _mm_extract_epi32(E0, 3);
-#elif defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM)
+#elif defined(FAST_IO_ARM_SHA) && ( defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM) )
 
 
 		uint32x4_t ABCD, ABCD_SAVED;

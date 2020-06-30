@@ -255,7 +255,7 @@ public:
 		/* Save state */
 		_mm_storeu_si128((__m128i*) (state.data()), STATE0);
 		_mm_storeu_si128((__m128i*) (state.data()+4), STATE1);
-#elif defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM)
+#elif defined(FAST_IO_ARM_SHA) && ( defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM) )
 		uint32x4_t STATE0, STATE1, ABEF_SAVE, CDGH_SAVE;
 		uint32x4_t MSG0, MSG1, MSG2, MSG3;
 		uint32x4_t TMP0, TMP1, TMP2;
@@ -665,7 +665,7 @@ public:
 		/* Save state */
 		_mm_storeu_si128((__m128i*) (state.data()), STATE0);
 		_mm_storeu_si128((__m128i*) (state.data()+4), STATE1);
-#elif defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM)
+#elif defined(FAST_IO_ARM_SHA) && ( defined(__arm__) || defined(__aarch32__) || defined(__arm64__) || defined(__aarch64__) || defined(_M_ARM) )
 		uint32x4_t STATE0, STATE1, ABEF_SAVE, CDGH_SAVE;
 		uint32x4_t MSG0, MSG1, MSG2, MSG3;
 		uint32x4_t TMP0, TMP1, TMP2;
