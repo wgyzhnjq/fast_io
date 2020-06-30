@@ -168,7 +168,7 @@ public:
 	using digest_type = std::array<std::uint32_t,5>;
 	static inline constexpr digest_type digest_initial_value{0x67452301,0xefcdab89,0x98badcfe,0x10325476,0xc3d2e1f0};
 	static inline constexpr std::size_t block_size{64};
-	void operator()(std::span<std::uint32_t,5> state,std::span<std::byte const,64> blocks)
+	void operator()(std::span<std::uint32_t,5> state,std::span<std::byte const,64> block)
 	{
 #ifdef __SSE4_1__
 //https://stackoverflow.com/questions/21107350/how-can-i-access-sha-intrinsic
@@ -188,14 +188,14 @@ public:
 		E0_SAVE = E0;
 
 		// Rounds 0-3
-		MSG0 = _mm_loadu_si128((__m128i*) blocks.data());
+		MSG0 = _mm_loadu_si128((__m128i*) block.data());
 		MSG0 = _mm_shuffle_epi8(MSG0, MASK);
 		E0 = _mm_add_epi32(E0, MSG0);
 		E1 = ABCD;
 		ABCD = _mm_sha1rnds4_epu32(ABCD, E0, 0);
 
 		// Rounds 4-7
-		MSG1 = _mm_loadu_si128((__m128i*) (blocks.data()+16));
+		MSG1 = _mm_loadu_si128((__m128i*) (block.data()+16));
 		MSG1 = _mm_shuffle_epi8(MSG1, MASK);
 		E1 = _mm_sha1nexte_epu32(E1, MSG1);
 		E0 = ABCD;
@@ -203,7 +203,7 @@ public:
 		MSG0 = _mm_sha1msg1_epu32(MSG0, MSG1);
 
 		// Rounds 8-11
-		MSG2 = _mm_loadu_si128((__m128i*) (blocks.data()+32));
+		MSG2 = _mm_loadu_si128((__m128i*) (block.data()+32));
 		MSG2 = _mm_shuffle_epi8(MSG2, MASK);
 		E0 = _mm_sha1nexte_epu32(E0, MSG2);
 		E1 = ABCD;
@@ -212,7 +212,7 @@ public:
 		MSG0 = _mm_xor_si128(MSG0, MSG2);
 
 		// Rounds 12-15
-		MSG3 = _mm_loadu_si128((__m128i*) (blocks.data()+48));
+		MSG3 = _mm_loadu_si128((__m128i*) (block.data()+48));
 		MSG3 = _mm_shuffle_epi8(MSG3, MASK);
 		E1 = _mm_sha1nexte_epu32(E1, MSG3);
 		E0 = ABCD;
@@ -517,11 +517,11 @@ public:
 		vst1q_u32(state.data(), ABCD);
 		state[4] = E0;
 #else
-		std::array<std::uint32_t,16> tblocks;
-		memcpy(tblocks.data(),blocks.data(),block_size);
-		for(auto& e : tblocks)
+		std::array<std::uint32_t,16> tblock;
+		memcpy(tblock.data(),block.data(),block_size);
+		for(auto& e : tblock)
 			e=details::byte_swap(e);
-		details::sha1::transform(state,tblocks);
+		details::sha1::transform(state,tblock);
 #endif
 	}
 
