@@ -129,11 +129,7 @@ inline constexpr void panic(Args&&... args)
 	catch(...){}
 #endif
 	}
-#if __has_builtin(__builtin_trap)
-	__builtin_trap();
-#elif defined(_MSC_VER)
-	__debugbreak();
-#endif
+	fast_io::fast_terminate();
 }
 
 template<typename... Args>
@@ -148,11 +144,7 @@ inline constexpr void panicln(Args&&... args)
 	}
 	catch(...){}
 #endif
-#if __has_builtin(__builtin_trap)
-	__builtin_trap();
-#elif defined(_MSC_VER)
-	__debugbreak();
-#endif
+	fast_io::fast_terminate();
 }
 
 //Allow debug print
