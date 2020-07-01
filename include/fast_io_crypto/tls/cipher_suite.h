@@ -149,6 +149,16 @@ inline constexpr void print_define(output& outp,cipher_suite_type const& e)
 		print(outp,u8"TLS_DHE_DSS_WITH_AES_256_CBC_SHA256{0x00,0x6a}");
 	else if(e==tls_dhe_rsa_with_aes_256_cbc_sha256)
 		print(outp,u8"TLS_DHE_RSA_WITH_AES_256_CBC_SHA256{0x00,0x6b}");
+	else if(e==tls_aes_128_gcm_sha256)
+		print(outp,u8"TLS_AES_128_GCM_SHA256{0x13,0x01}");
+	else if(e==tls_aes_256_gcm_sha256)
+		print(outp,u8"TLS_AES_256_GCM_SHA256{0x13,0x02}");
+	else if(e==tls_chacha20_poly1305_sha256)
+		print(outp,u8"TLS_CHACHA20_POLY1305_SHA256{0x13,0x03}");
+	else if(e==tls_aes_128_ccm_sha256)
+		print(outp,u8"TLS_AES_128_CCM_SHA256{0x13,0x04}");
+	else if(e==tls_aes_128_ccm_8_sha256)
+		print(outp,u8"TLS_AES_128_CCM_8_SHA256{0x13,0x05}");
 	else
 		print(outp,u8"Unknown TLS cipher suite{",e.array.front(),fast_io::chvw(u8','),e.array.back(),fast_io::chvw(u8'}'));
 }
