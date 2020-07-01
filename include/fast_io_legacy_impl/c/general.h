@@ -39,7 +39,7 @@ inline auto fgetc_unlocked_impl(std::FILE* fp)
 	}
 	else
 	{
-#if defined(_MSC_VER)
+#if defined(__WINNT__) || defined(_MSC_VER)
 		return _fgetwc_nolock(fp);
 #elif _POSIX_C_SOURCE >= 1 || _XOPEN_SOURCE || _POSIX_SOURCE || _BSD_SOURCE || _SVID_SOURCE
 		return fgetwc_unlocked(fp);
