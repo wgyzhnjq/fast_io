@@ -128,6 +128,31 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::base_t<
 }
 
 
+
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<std::byte>)
+{
+	return details::cal_max_int_size<details::my_make_unsigned_t<std::uint8_t>>();
+}
+
+template<std::random_access_iterator caiter,typename U>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<std::byte>,caiter iter,U i)
+{
+	return details::process_integer_output<10,false>(iter,std::to_integer<std::uint8_t>(i));
+}
+
+template<char8_t base,bool uppercase>
+inline constexpr std::size_t print_reserve_size(print_reserve_type_t<manip::base_t<base,uppercase,std::byte>>)
+{
+	return details::cal_max_int_size<std::uint8_t,base>();
+}
+
+template<std::random_access_iterator caiter,char8_t base,bool uppercase,typename P>
+inline constexpr caiter print_reserve_define(print_reserve_type_t<manip::base_t<base,uppercase,std::byte>>,caiter iter,P ref)
+{
+	return details::process_integer_output<base,uppercase>(iter,std::to_integer<std::uint8_t>(ref.reference));
+}
+
+
 }
 
 #include"pointer.h"
