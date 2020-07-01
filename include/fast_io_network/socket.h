@@ -79,7 +79,7 @@ public:
 #else
 		auto newfd(
 #if defined(__linux__)&&(defined(__x86_64__) || defined(__arm64__) || defined(__aarch64__) )
-		system_call
+		system_call<
 		#if defined(__x86_64__)
 			33
 		#elif defined(__arm64__) || defined(__aarch64__)
