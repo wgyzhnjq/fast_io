@@ -6,14 +6,13 @@ namespace fast_io
 namespace details
 {
 
-template<char8_t base,bool uppercase,bool point=false,char32_t dec=u8'.',std::random_access_iterator Iter,typename U>
-requires (!std::signed_integral<U>)
+template<char8_t base,bool uppercase,bool point=false,char32_t dec=u8'.',bool transparent=false,std::random_access_iterator Iter,my_unsigned_integral U>
 inline constexpr auto output_base_number_impl(Iter iter,U a)
 {
 //number: 0:48 9:57
 //upper: 65 :A 70: F
 //lower: 97 :a 102 :f
-	constexpr auto &table(details::shared_static_base_table<std::iter_value_t<Iter>,base,uppercase>::table);
+	constexpr auto &table(details::shared_static_base_table<std::iter_value_t<Iter>,base,uppercase,transparent>::table);
 	constexpr std::uint32_t pw(static_cast<std::uint32_t>(table.size()));
 	constexpr std::size_t chars(table.front().size());
 	for(;pw<=a;)
@@ -43,20 +42,25 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		{
 			if constexpr(point)
 				*--iter=dec;
-			if constexpr(10 < base)
-			{
-				if(a<10)
-					*--iter = a+0x30;
-				else
-				{
-					if constexpr (uppercase)
-						*--iter = a+55;	
-					else
-						*--iter = a+87;
-				}
-			}
+			if constexpr(transparent)
+				*--iter=a;
 			else
-				*--iter=a+0x30;
+			{
+				if constexpr(10 < base)
+				{
+					if(a<10)
+						*--iter = a+0x30;
+					else
+					{
+						if constexpr (uppercase)
+							*--iter = a+55;	
+						else
+							*--iter = a+87;
+					}
+				}
+				else
+					*--iter=a+0x30;
+			}
 		}
 	}
 	else
@@ -80,20 +84,25 @@ inline constexpr auto output_base_number_impl(Iter iter,U a)
 		{
 			if constexpr(point)
 				*--iter=dec;
-			if constexpr(10 < base)
-			{
-				if(a<10)
-					*--iter = a+0x30;
-				else
-				{
-					if constexpr (uppercase)
-						*--iter = a+55;	
-					else
-						*--iter = a+87;
-				}
-			}
+			if constexpr(transparent)
+				*--iter=a;
 			else
-				*--iter=a+0x30;
+			{
+				if constexpr(10 < base)
+				{
+					if(a<10)
+						*--iter = a+0x30;
+					else
+					{
+						if constexpr (uppercase)
+							*--iter = a+55;	
+						else
+							*--iter = a+87;
+					}
+				}
+				else
+					*--iter=a+0x30;
+			}
 		}
 	}
 	return iter;
@@ -158,8 +167,31 @@ inline constexpr std::size_t output_unsigned(Iter str,U value)
 	output_base_number_impl<base,uppercase>(str+len,value);
 	return len;
 }
-
+namespace fp
+{
+template<char8_t start=u8'0',std::random_access_iterator Iter,my_unsigned_integral U>
+requires (start==0||start==u8'0')
+inline constexpr std::size_t output_unsigned(Iter str,U value)
+{
+	std::size_t const len{chars_len<10,true>(value)};
+	output_base_number_impl<10,false,false,u8'.',start==0>(str+len,value);
+	return len;
+}
 }
 
+namespace with_length
+{
+template<char8_t start=u8'0',std::random_access_iterator Iter,my_unsigned_integral U>
+requires (start==0||start==u8'0')
+inline constexpr void output_unsigned(Iter str,U value,std::size_t const len)
+{
+	output_base_number_impl<10,false,false,u8'.',start==0>(str+len,value);
 }
+}
+
+
+
+}
+}
+
 }
