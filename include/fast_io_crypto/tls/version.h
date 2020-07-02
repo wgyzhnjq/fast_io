@@ -2,12 +2,7 @@
 
 namespace fast_io::tls
 {
-
-enum class version
-{
-tls1_2,tls1_3
-};
-
+/*
 template<output_stream output>
 inline constexpr void print_define(output& outp,version tls)
 {
@@ -23,5 +18,5 @@ inline constexpr void print_define(output& outp,version tls)
 		print(outp,u8"TLS unknown version");
 	}
 }
-
+*/
 }
