@@ -19,7 +19,6 @@ inline constexpr void append_nine_digits_dummy(Iter str,std::uint32_t value)
 template<char8_t start=u8'0',std::random_access_iterator Iter>
 inline constexpr void append_nine_digits(Iter str,std::uint32_t value)
 {
-	using char_type = std::iter_value_t<Iter>;
 #ifndef FAST_IO_OPTIMIZE_SIZE
 	if(std::is_constant_evaluated())
 #endif
@@ -28,6 +27,7 @@ inline constexpr void append_nine_digits(Iter str,std::uint32_t value)
 
 	else
 	{
+		using char_type = std::iter_value_t<Iter>;
 #ifdef FAST_IO_OPTIMIZE_TIME
 
 	#if (_WIN64 || __x86_64__ || __ppc64__)
@@ -46,7 +46,7 @@ inline constexpr void append_nine_digits(Iter str,std::uint32_t value)
 		my_copy_n(jiaendu::static_tables<char_type,start>::table4[remains1].data(),4,++str);
 		my_copy_n(jiaendu::static_tables<char_type,start>::table4[remains0].data(),4,str += 4);
 #else
-		constexpr auto &table(shared_static_base_table<std::iter_value_t<Iter>,10,false,start==0>::table);
+		constexpr auto &table(shared_static_base_table<char_type,10,false,start==0>::table);
 		constexpr std::uint32_t pw(static_cast<std::uint32_t>(table.size()));
 		constexpr std::size_t chars(table.front().size());
 		str+=9;

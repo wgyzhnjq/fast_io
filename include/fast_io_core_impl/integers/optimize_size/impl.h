@@ -65,7 +65,6 @@ inline constexpr void output_unsigned(Iter str,U value,std::size_t const len)
 template<char8_t base=10,bool uppercase=false,std::random_access_iterator Iter,my_unsigned_integral U>
 inline constexpr std::size_t output_unsigned(Iter str,U value)
 {
-	using char_type = std::iter_value_t<Iter>;
 	std::size_t const len{chars_len<base>(value)};
 	with_length::output_unsigned(str,value,len);
 	return len;

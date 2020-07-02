@@ -1,716 +1,335 @@
 	.file	"fast_io.cc"
 	.text
-	.section .rdata,"dr"
+	.section	.rodata._ZNK7fast_io3eof4whatEv.str1.1,"aMS",@progbits,1
 .LC0:
-	.ascii "EOF\0"
-	.section	.text$_ZNK7fast_io3eof4whatEv,"x"
-	.linkonce discard
+	.string	"EOF"
+	.section	.text._ZNK7fast_io3eof4whatEv,"axG",@progbits,_ZNK7fast_io3eof4whatEv,comdat
 	.align 2
-	.globl	_ZNK7fast_io3eof4whatEv
-	.def	_ZNK7fast_io3eof4whatEv;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZNK7fast_io3eof4whatEv
+	.p2align 4
+	.weak	_ZNK7fast_io3eof4whatEv
+	.type	_ZNK7fast_io3eof4whatEv, @function
 _ZNK7fast_io3eof4whatEv:
-.LFB5420:
-	.seh_endprologue
-	leaq	.LC0(%rip), %rax
+.LFB5560:
+	.cfi_startproc
+	movl	$.LC0, %eax
 	ret
-	.seh_endproc
-	.section	.text$_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy,"x"
-	.linkonce discard
+	.cfi_endproc
+.LFE5560:
+	.size	_ZNK7fast_io3eof4whatEv, .-_ZNK7fast_io3eof4whatEv
+	.section	.text._ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm,"axG",@progbits,_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm,comdat
 	.align 2
-	.globl	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy
-	.def	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy
-_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy:
-.LFB14969:
-	.seh_endprologue
-	movq	8(%rcx), %rcx
-	movq	4104(%rcx), %rax
-	addq	%rax, %rdx
-	cmpq	%rdx, 4112(%rcx)
+	.p2align 4
+	.weak	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm
+	.type	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm, @function
+_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm:
+.LFB15267:
+	.cfi_startproc
+	movq	8(%rdi), %rdx
+	movq	4104(%rdx), %rax
+	addq	%rax, %rsi
+	cmpq	%rsi, 4112(%rdx)
 	movl	$0, %edx
 	cmovbe	%rdx, %rax
 	ret
-	.seh_endproc
-	.section	.text$_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc,"x"
-	.linkonce discard
+	.cfi_endproc
+.LFE15267:
+	.size	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm, .-_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm
+	.section	.text._ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc,"axG",@progbits,_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc,comdat
 	.align 2
-	.globl	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc
-	.def	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc
+	.p2align 4
+	.weak	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc
+	.type	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc, @function
 _ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc:
-.LFB14971:
-	.seh_endprologue
-	movq	8(%rcx), %rax
-	movq	%rdx, 4104(%rax)
+.LFB15269:
+	.cfi_startproc
+	movq	8(%rdi), %rax
+	movq	%rsi, 4104(%rax)
 	ret
-	.seh_endproc
-	.section	.text$_ZN7fast_io3eofD1Ev,"x"
-	.linkonce discard
+	.cfi_endproc
+.LFE15269:
+	.size	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc, .-_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc
+	.section	.text._ZN7fast_io3eofD2Ev,"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
 	.align 2
-	.globl	_ZN7fast_io3eofD1Ev
-	.def	_ZN7fast_io3eofD1Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io3eofD1Ev
-_ZN7fast_io3eofD1Ev:
-.LFB14304:
-	.seh_endprologue
-	leaq	16+_ZTVN7fast_io3eofE(%rip), %rax
-	movq	%rax, (%rcx)
+	.p2align 4
+	.weak	_ZN7fast_io3eofD2Ev
+	.type	_ZN7fast_io3eofD2Ev, @function
+_ZN7fast_io3eofD2Ev:
+.LFB14246:
+	.cfi_startproc
+	movq	$_ZTVN7fast_io3eofE+16, (%rdi)
 	jmp	_ZNSt9exceptionD2Ev
-	.seh_endproc
-	.section	.text$_ZN7fast_io3eofD0Ev,"x"
-	.linkonce discard
+	.cfi_endproc
+.LFE14246:
+	.size	_ZN7fast_io3eofD2Ev, .-_ZN7fast_io3eofD2Ev
+	.weak	_ZN7fast_io3eofD1Ev
+	.set	_ZN7fast_io3eofD1Ev,_ZN7fast_io3eofD2Ev
+	.section	.text._ZN7fast_io3eofD0Ev,"axG",@progbits,_ZN7fast_io3eofD5Ev,comdat
 	.align 2
-	.globl	_ZN7fast_io3eofD0Ev
-	.def	_ZN7fast_io3eofD0Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io3eofD0Ev
+	.p2align 4
+	.weak	_ZN7fast_io3eofD0Ev
+	.type	_ZN7fast_io3eofD0Ev, @function
 _ZN7fast_io3eofD0Ev:
-.LFB14305:
-	pushq	%r12
-	.seh_pushreg	%r12
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %r12
-	leaq	16+_ZTVN7fast_io3eofE(%rip), %rax
-	movq	%rax, (%rcx)
+.LFB14248:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rdi, %rbp
+	movq	$_ZTVN7fast_io3eofE+16, (%rdi)
 	call	_ZNSt9exceptionD2Ev
-	movl	$8, %edx
-	movq	%r12, %rcx
-	addq	$32, %rsp
-	popq	%r12
-	jmp	_ZdlPvy
-	.seh_endproc
-	.section	.text$_ZN7fast_io18fast_io_text_errorD0Ev,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZN7fast_io18fast_io_text_errorD0Ev
-	.def	_ZN7fast_io18fast_io_text_errorD0Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io18fast_io_text_errorD0Ev
-_ZN7fast_io18fast_io_text_errorD0Ev:
-.LFB14947:
-	pushq	%r12
-	.seh_pushreg	%r12
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %r12
-	leaq	16+_ZTVN7fast_io13fast_io_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	8(%rcx), %rcx
-	testq	%rcx, %rcx
-	je	.L9
-	call	_ZdaPv
-.L9:
-	movq	%r12, %rcx
-	call	_ZNSt9exceptionD2Ev
-	movl	$32, %edx
-	movq	%r12, %rcx
-	addq	$32, %rsp
-	popq	%r12
-	jmp	_ZdlPvy
-	.seh_endproc
-	.section .rdata,"dr"
+	movq	%rbp, %rdi
+	movl	$8, %esi
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	jmp	_ZdlPvm
+	.cfi_endproc
+.LFE14248:
+	.size	_ZN7fast_io3eofD0Ev, .-_ZN7fast_io3eofD0Ev
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC1:
-	.ascii "unsigned overflow\0"
-	.section	.text.unlikely,"x"
-	.def	_ZN7fast_io7details15detect_overflowILDu10EyEEvRKT0_y.part.0;	.scl	3;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details15detect_overflowILDu10EyEEvRKT0_y.part.0
-_ZN7fast_io7details15detect_overflowILDu10EyEEvRKT0_y.part.0:
-.LFB14978:
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movl	$32, %ecx
+	.string	"unsigned overflow"
+	.section	.text.unlikely,"ax",@progbits
+	.type	_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0, @function
+_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0:
+.LFB15274:
+	.cfi_startproc
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	movl	$32, %edi
 	call	__cxa_allocate_exception
-	movq	%rax, %rcx
+	movl	$_ZN7fast_io18fast_io_text_errorD1Ev, %edx
+	movl	$_ZTIN7fast_io18fast_io_text_errorE, %esi
 	movq	$0, 8(%rax)
-	leaq	16+_ZTVN7fast_io18fast_io_text_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	$17, 16(%rcx)
-	leaq	.LC1(%rip), %rax
-	movq	%rax, 24(%rcx)
-	leaq	_ZN7fast_io18fast_io_text_errorD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io18fast_io_text_errorE(%rip), %rdx
+	movq	%rax, %rdi
+	movq	$_ZTVN7fast_io18fast_io_text_errorE+16, (%rax)
+	movq	$17, 16(%rax)
+	movq	$.LC1, 24(%rax)
 	call	__cxa_throw
-	nop
-	.seh_endproc
-	.section .rdata,"dr"
+	.cfi_endproc
+.LFE15274:
+	.size	_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0, .-_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0
+	.section	.rodata.str1.1
 .LC2:
-	.ascii "malformed input\0"
-	.section	.text.unlikely,"x"
-	.def	_ZN7fast_io7details17input_base_numberIyLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0;	.scl	3;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details17input_base_numberIyLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
-_ZN7fast_io7details17input_base_numberIyLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0:
-.LFB14979:
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movl	$32, %ecx
+	.string	"malformed input"
+	.section	.text.unlikely
+	.type	_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0, @function
+_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0:
+.LFB15275:
+	.cfi_startproc
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	movl	$32, %edi
 	call	__cxa_allocate_exception
-	movq	%rax, %rcx
+	movl	$_ZN7fast_io18fast_io_text_errorD1Ev, %edx
+	movl	$_ZTIN7fast_io18fast_io_text_errorE, %esi
 	movq	$0, 8(%rax)
-	leaq	16+_ZTVN7fast_io18fast_io_text_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	$15, 16(%rcx)
-	leaq	.LC2(%rip), %rax
-	movq	%rax, 24(%rcx)
-	leaq	_ZN7fast_io18fast_io_text_errorD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io18fast_io_text_errorE(%rip), %rdx
+	movq	%rax, %rdi
+	movq	$_ZTVN7fast_io18fast_io_text_errorE+16, (%rax)
+	movq	$15, 16(%rax)
+	movq	$.LC2, 24(%rax)
 	call	__cxa_throw
-	nop
-	.seh_endproc
-	.def	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERyEEvRT_OT0_.part.0;	.scl	3;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERyEEvRT_OT0_.part.0
-_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERyEEvRT_OT0_.part.0:
-.LFB14980:
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movl	$8, %ecx
+	.cfi_endproc
+.LFE15275:
+	.size	_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0, .-_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
+	.type	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0, @function
+_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0:
+.LFB15276:
+	.cfi_startproc
+	pushq	%rax
+	.cfi_def_cfa_offset 16
+	movl	$8, %edi
 	call	__cxa_allocate_exception
-	movq	%rax, %rcx
-	leaq	16+_ZTVN7fast_io3eofE(%rip), %rax
-	movq	%rax, (%rcx)
-	leaq	_ZN7fast_io3eofD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io3eofE(%rip), %rdx
+	movl	$_ZN7fast_io3eofD1Ev, %edx
+	movl	$_ZTIN7fast_io3eofE, %esi
+	movq	$_ZTVN7fast_io3eofE+16, (%rax)
+	movq	%rax, %rdi
 	call	__cxa_throw
-	nop
-	.seh_endproc
-	.section	.text$_ZN7fast_io11posix_errorD1Ev,"x"
-	.linkonce discard
+	.cfi_endproc
+.LFE15276:
+	.size	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0, .-_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0
+	.section	.rodata._ZNK7fast_io13fast_io_error4whatEv.str1.1,"aMS",@progbits,1
+.LC3:
+	.string	"unknown fast_io_error"
+	.section	.text._ZNK7fast_io13fast_io_error4whatEv,"axG",@progbits,_ZNK7fast_io13fast_io_error4whatEv,comdat
 	.align 2
-	.globl	_ZN7fast_io11posix_errorD1Ev
-	.def	_ZN7fast_io11posix_errorD1Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io11posix_errorD1Ev
-_ZN7fast_io11posix_errorD1Ev:
-.LFB14942:
+	.p2align 4
+	.weak	_ZNK7fast_io13fast_io_error4whatEv
+	.type	_ZNK7fast_io13fast_io_error4whatEv, @function
+_ZNK7fast_io13fast_io_error4whatEv:
+.LFB5520:
+	.cfi_startproc
+	.cfi_personality 0x3,__gxx_personality_v0
+	.cfi_lsda 0x3,.LLSDA5520
+	pushq	%r15
+	.cfi_def_cfa_offset 16
+	.cfi_offset 15, -16
+	pushq	%r14
+	.cfi_def_cfa_offset 24
+	.cfi_offset 14, -24
+	pushq	%r13
+	.cfi_def_cfa_offset 32
+	.cfi_offset 13, -32
 	pushq	%r12
-	.seh_pushreg	%r12
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %r12
-	leaq	16+_ZTVN7fast_io13fast_io_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	8(%rcx), %rcx
-	testq	%rcx, %rcx
-	je	.L17
-	call	_ZdaPv
-.L17:
-	movq	%r12, %rcx
-	addq	$32, %rsp
-	popq	%r12
-	jmp	_ZNSt9exceptionD2Ev
-	.seh_endproc
-	.section	.text$_ZN7fast_io18fast_io_text_errorD1Ev,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZN7fast_io18fast_io_text_errorD1Ev
-	.def	_ZN7fast_io18fast_io_text_errorD1Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io18fast_io_text_errorD1Ev
-_ZN7fast_io18fast_io_text_errorD1Ev:
-.LFB14946:
-	pushq	%r12
-	.seh_pushreg	%r12
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %r12
-	leaq	16+_ZTVN7fast_io13fast_io_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	8(%rcx), %rcx
-	testq	%rcx, %rcx
+	.cfi_def_cfa_offset 40
+	.cfi_offset 12, -40
+	pushq	%rbp
+	.cfi_def_cfa_offset 48
+	.cfi_offset 6, -48
+	movq	%rdi, %rbp
+	pushq	%rbx
+	.cfi_def_cfa_offset 56
+	.cfi_offset 3, -56
+	subq	$4152, %rsp
+	.cfi_def_cfa_offset 4208
+	leaq	16(%rsp), %r12
+	leaq	4112(%rsp), %rax
+	movq	%rsp, %rsi
+	movq	%r12, %xmm0
+	movq	%rax, 4128(%rsp)
+	movl	$_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE+16, %eax
+	movq	%r12, %xmm1
+	punpcklqdq	%xmm0, %xmm0
+	movaps	%xmm0, 4112(%rsp)
+	movq	%rax, %xmm0
+	movq	(%rdi), %rax
+	punpcklqdq	%xmm1, %xmm0
+	movaps	%xmm0, (%rsp)
+.LEHB0:
+	call	*24(%rax)
+	movq	4120(%rsp), %rdi
+	cmpq	4128(%rsp), %rdi
+	je	.L38
+	movb	$0, (%rdi)
+	movq	4112(%rsp), %r13
+	addq	$1, %rdi
+	movq	%rdi, 4120(%rsp)
+	cmpq	%r12, %r13
+	je	.L39
+.L19:
+	movq	8(%rbp), %rdi
+	testq	%rdi, %rdi
 	je	.L22
 	call	_ZdaPv
 .L22:
-	movq	%r12, %rcx
-	addq	$32, %rsp
-	popq	%r12
-	jmp	_ZNSt9exceptionD2Ev
-	.seh_endproc
-	.section	.text$_ZN7fast_io11posix_errorD0Ev,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZN7fast_io11posix_errorD0Ev
-	.def	_ZN7fast_io11posix_errorD0Ev;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io11posix_errorD0Ev
-_ZN7fast_io11posix_errorD0Ev:
-.LFB14943:
-	pushq	%r12
-	.seh_pushreg	%r12
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %r12
-	leaq	16+_ZTVN7fast_io13fast_io_errorE(%rip), %rax
-	movq	%rax, (%rcx)
-	movq	8(%rcx), %rcx
-	testq	%rcx, %rcx
-	je	.L27
-	call	_ZdaPv
-.L27:
-	movq	%r12, %rcx
-	call	_ZNSt9exceptionD2Ev
-	movl	$24, %edx
-	movq	%r12, %rcx
-	addq	$32, %rsp
-	popq	%r12
-	jmp	_ZdlPvy
-	.seh_endproc
-	.section	.text$_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_
-	.def	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_
-_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_:
-.LFB14968:
-	pushq	%r14
-	.seh_pushreg	%r14
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rdx, %r13
-	movq	%r8, %r12
-	movq	8(%rcx), %rbx
-	movq	%r8, %rsi
-	subq	%rdx, %rsi
-	movq	4112(%rbx), %rax
-	movq	4104(%rbx), %rcx
-	movq	%rax, %rdx
-	subq	%rcx, %rdx
-	cmpq	%rdx, %rsi
-	ja	.L36
-	movq	%rsi, %r8
-	movq	%r13, %rdx
-	call	memcpy
-	addq	%rsi, 4104(%rbx)
-.L35:
-	movq	%r12, %rax
-	addq	$32, %rsp
+	movq	%r13, 8(%rbp)
+.L15:
+	addq	$4152, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	movq	%r13, %rax
 	popq	%rbx
-	popq	%rsi
-	popq	%rdi
+	.cfi_def_cfa_offset 48
 	popq	%rbp
+	.cfi_def_cfa_offset 40
 	popq	%r12
+	.cfi_def_cfa_offset 32
 	popq	%r13
+	.cfi_def_cfa_offset 24
 	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
 	ret
-.L36:
-	subq	4096(%rbx), %rax
-	leaq	(%rax,%rax), %rdi
-	cmpq	%rdi, %rsi
-	cmovnb	%rsi, %rdi
-	testq	%rdi, %rdi
-	js	.L37
-	movq	%rdi, %rcx
-	call	_Znwy
-	movq	%rax, %rbp
-	movq	4096(%rbx), %rdx
-	movq	4104(%rbx), %r8
-	subq	%rdx, %r8
-	movq	%rax, %rcx
-	call	memcpy
-	movq	4096(%rbx), %rcx
-	movq	4104(%rbx), %r14
-	subq	%rcx, %r14
-	cmpq	%rbx, %rcx
-	je	.L34
-	movq	4112(%rbx), %rdx
-	subq	%rcx, %rdx
-	call	_ZdlPvy
-.L34:
-	movq	%rbp, 4096(%rbx)
-	leaq	0(%rbp,%r14), %rcx
-	movq	%rcx, 4104(%rbx)
-	addq	%rdi, %rbp
-	movq	%rbp, 4112(%rbx)
-	movq	%rsi, %r8
-	movq	%r13, %rdx
-	call	memcpy
-	addq	%rsi, 4104(%rbx)
-	jmp	.L35
-.L37:
-	call	_ZSt17__throw_bad_allocv
-	nop
-	.seh_endproc
-	.section	.text$_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE
-	.def	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE
-_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE:
-.LFB5415:
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rax
-	movq	%rdx, %rcx
-	movq	24(%rax), %r12
-	movq	16(%rax), %rsi
-	movq	(%rdx), %rax
-	movq	(%rax), %rax
-	leaq	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_(%rip), %rdx
-	cmpq	%rdx, %rax
-	jne	.L39
-	movq	8(%rcx), %rbx
-	movq	4112(%rbx), %rax
-	movq	4104(%rbx), %rcx
-	movq	%rax, %rdx
-	subq	%rcx, %rdx
-	cmpq	%rdx, %rsi
-	ja	.L44
-	movq	%rsi, %r8
-	movq	%r12, %rdx
-	call	memcpy
-	addq	%rsi, 4104(%rbx)
-.L38:
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	ret
+	.p2align 4,,10
+	.p2align 3
 .L39:
-	leaq	(%r12,%rsi), %r8
-	movq	%r12, %rdx
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	rex.W jmp	*%rax
-.L44:
-	subq	4096(%rbx), %rax
-	leaq	(%rax,%rax), %rdi
-	cmpq	%rdi, %rsi
-	cmovnb	%rsi, %rdi
+	.cfi_restore_state
+	subq	%r12, %rdi
+	call	_Znam
+	movq	8(%rbp), %rdi
+	movq	%rax, %r13
 	testq	%rdi, %rdi
-	js	.L45
-	movq	%rdi, %rcx
-	call	_Znwy
-	movq	%rax, %rbp
-	movq	4096(%rbx), %rdx
-	movq	4104(%rbx), %r8
-	subq	%rdx, %r8
-	movq	%rax, %rcx
-	call	memcpy
-	movq	4096(%rbx), %rcx
-	movq	4104(%rbx), %r13
-	subq	%rcx, %r13
-	cmpq	%rbx, %rcx
-	je	.L42
-	movq	4112(%rbx), %rdx
-	subq	%rcx, %rdx
-	call	_ZdlPvy
-.L42:
-	movq	%rbp, 4096(%rbx)
-	leaq	0(%rbp,%r13), %rcx
-	movq	%rcx, 4104(%rbx)
-	addq	%rdi, %rbp
-	movq	%rbp, 4112(%rbx)
-	movq	%rsi, %r8
-	movq	%r12, %rdx
-	call	memcpy
-	addq	%rsi, 4104(%rbx)
-	jmp	.L38
-.L45:
-	call	_ZSt17__throw_bad_allocv
-	nop
-	.seh_endproc
-	.section	.text$_ZNK7fast_io11posix_error6reportERNS_14error_reporterE,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE
-	.def	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE
-_ZNK7fast_io11posix_error6reportERNS_14error_reporterE:
-.LFB11407:
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rdx, %r13
-	movl	16(%rcx), %ecx
-	call	strerror
-	movq	%rax, %r12
-	movq	%rax, %rcx
-	call	strlen
-	movq	%rax, %rbx
-	movq	0(%r13), %rax
-	movq	(%rax), %rax
-	leaq	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_(%rip), %rdx
-	cmpq	%rdx, %rax
-	jne	.L47
-	movq	8(%r13), %r13
-	movq	4112(%r13), %rax
-	movq	4104(%r13), %rcx
-	movq	%rax, %rdx
-	subq	%rcx, %rdx
-	cmpq	%rdx, %rbx
-	ja	.L52
-	movq	%rbx, %r8
-	movq	%r12, %rdx
-	call	memcpy
-	addq	%rbx, 4104(%r13)
-.L46:
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	ret
-.L47:
-	leaq	(%r12,%rbx), %r8
-	movq	%r12, %rdx
-	movq	%r13, %rcx
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	rex.W jmp	*%rax
-.L52:
-	subq	4096(%r13), %rax
-	leaq	(%rax,%rax), %rsi
-	cmpq	%rsi, %rbx
-	cmovnb	%rbx, %rsi
-	testq	%rsi, %rsi
-	js	.L53
-	movq	%rsi, %rcx
-	call	_Znwy
-	movq	%rax, %rdi
-	movq	4096(%r13), %rdx
-	movq	4104(%r13), %r8
-	subq	%rdx, %r8
-	movq	%rax, %rcx
-	call	memcpy
-	movq	4096(%r13), %rcx
-	movq	4104(%r13), %rbp
-	subq	%rcx, %rbp
-	cmpq	%r13, %rcx
-	je	.L50
-	movq	4112(%r13), %rdx
-	subq	%rcx, %rdx
-	call	_ZdlPvy
-.L50:
-	movq	%rdi, 4096(%r13)
-	leaq	(%rdi,%rbp), %rcx
-	movq	%rcx, 4104(%r13)
-	addq	%rsi, %rdi
-	movq	%rdi, 4112(%r13)
-	movq	%rbx, %r8
-	movq	%r12, %rdx
-	call	memcpy
-	addq	%rbx, 4104(%r13)
-	jmp	.L46
-.L53:
-	call	_ZSt17__throw_bad_allocv
-	nop
-	.seh_endproc
-	.section .rdata,"dr"
-.LC3:
-	.ascii "unknown fast_io_error\0"
-	.section	.text$_ZNK7fast_io13fast_io_error4whatEv,"x"
-	.linkonce discard
-	.align 2
-	.globl	_ZNK7fast_io13fast_io_error4whatEv
-	.def	_ZNK7fast_io13fast_io_error4whatEv;	.scl	2;	.type	32;	.endef
-	.seh_proc	_ZNK7fast_io13fast_io_error4whatEv
-_ZNK7fast_io13fast_io_error4whatEv:
-.LFB5380:
-	pushq	%r14
-	.seh_pushreg	%r14
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	movl	$4184, %eax
-	call	___chkstk_ms
-	subq	%rax, %rsp
-	.seh_stackalloc	4184
-	.seh_endprologue
-	movq	%rcx, %rsi
-	leaq	48(%rsp), %rdi
-	movq	%rdi, 4144(%rsp)
-	movq	%rdi, 4152(%rsp)
-	leaq	4144(%rsp), %rax
-	movq	%rax, 4160(%rsp)
-	leaq	16+_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE(%rip), %rax
-	movq	%rax, 32(%rsp)
-	movq	%rdi, 40(%rsp)
-	leaq	32(%rsp), %rdx
-	movq	(%rcx), %rax
-.LEHB0:
-	call	*24(%rax)
-	movq	4152(%rsp), %rcx
-	cmpq	4160(%rsp), %rcx
-	je	.L76
-	movb	$0, (%rcx)
-	addq	$1, %rcx
-	movq	%rcx, 4152(%rsp)
-	movq	4144(%rsp), %r12
-	cmpq	%rdi, %r12
-	je	.L77
-.L58:
-	movq	8(%rsi), %rcx
-	testq	%rcx, %rcx
-	je	.L61
+	je	.L20
 	call	_ZdaPv
-.L61:
-	movq	%r12, 8(%rsi)
-.L54:
-	movq	%r12, %rax
-	addq	$4184, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	ret
-.L77:
-	subq	%rdi, %rcx
-	call	_Znay
-	movq	%rax, %r12
-	movq	8(%rsi), %rcx
-	testq	%rcx, %rcx
-	je	.L59
-	call	_ZdaPv
-.L59:
-	movq	%r12, 8(%rsi)
-	movq	4144(%rsp), %r13
-	movq	4152(%rsp), %r8
-	subq	%r13, %r8
-	jne	.L78
-.L60:
-	cmpq	%rdi, %r13
-	je	.L54
-	movq	4160(%rsp), %rdx
-	subq	%r13, %rdx
-	movq	%r13, %rcx
-	call	_ZdlPvy
-	jmp	.L54
-.L76:
-	subq	4144(%rsp), %rcx
-	movq	%rcx, %rbx
+.L20:
+	movq	%r13, 8(%rbp)
+	movq	4120(%rsp), %rdx
+	movq	4112(%rsp), %rbp
+	subq	%rbp, %rdx
+	jne	.L40
+.L21:
+	cmpq	%r12, %rbp
+	je	.L15
+	movq	4128(%rsp), %rsi
+	movq	%rbp, %rdi
+	subq	%rbp, %rsi
+	call	_ZdlPvm
+	jmp	.L15
+	.p2align 4,,10
+	.p2align 3
+.L38:
+	subq	4112(%rsp), %rdi
+	movq	%rdi, %rbx
 	addq	%rbx, %rbx
-	js	.L79
-	movq	%rbx, %rcx
-	call	_Znwy
-	movq	%rax, %r12
-	movq	4144(%rsp), %r14
-	movq	4152(%rsp), %r13
-	subq	%r14, %r13
-	movq	%r13, %r8
+	js	.L41
+	movq	%rbx, %rdi
+	call	_Znwm
+	movq	4112(%rsp), %r15
+	movq	4120(%rsp), %r14
+	movq	%rax, %rdi
+	movq	%rax, %r13
+	subq	%r15, %r14
+	movq	%r15, %rsi
 	movq	%r14, %rdx
-	movq	%rax, %rcx
 	call	memcpy
-	cmpq	%rdi, %r14
-	je	.L57
-	movq	4160(%rsp), %rdx
-	subq	%r14, %rdx
-	movq	%r14, %rcx
-	call	_ZdlPvy
-.L57:
-	movq	%r12, 4144(%rsp)
-	addq	%r12, %r13
-	addq	%r12, %rbx
-	movq	%rbx, 4160(%rsp)
-	movb	$0, 0(%r13)
-	addq	$1, %r13
-	movq	%r13, 4152(%rsp)
-	jmp	.L58
-.L78:
-	movq	%r13, %rdx
-	movq	%r12, %rcx
+	cmpq	%r12, %r15
+	je	.L18
+	movq	4128(%rsp), %rsi
+	movq	%r15, %rdi
+	subq	%r15, %rsi
+	call	_ZdlPvm
+.L18:
+	addq	%r13, %r14
+	addq	%r13, %rbx
+	movq	%r13, 4112(%rsp)
+	movb	$0, (%r14)
+	addq	$1, %r14
+	movq	%rbx, 4128(%rsp)
+	movq	%r14, 4120(%rsp)
+	jmp	.L19
+	.p2align 4,,10
+	.p2align 3
+.L40:
+	movq	%rbp, %rsi
+	movq	%r13, %rdi
 	call	memmove
-	jmp	.L60
-.L79:
+	jmp	.L21
+.L41:
 	call	_ZSt17__throw_bad_allocv
 .LEHE0:
-.L66:
-	movq	%rax, %r12
-	movq	4144(%rsp), %rcx
-	cmpq	%rdi, %rcx
-	je	.L64
-	movq	4160(%rsp), %rdx
-	subq	%rcx, %rdx
-	call	_ZdlPvy
-.L64:
-	movq	%r12, %rcx
+.L27:
+	movq	%rax, %rbp
+.L24:
+	movq	4112(%rsp), %rdi
+	cmpq	%r12, %rdi
+	je	.L25
+	movq	4128(%rsp), %rsi
+	subq	%rdi, %rsi
+	call	_ZdlPvm
+.L25:
+	movq	%rbp, %rdi
+	movl	$.LC3, %r13d
 	call	__cxa_begin_catch
 	call	__cxa_end_catch
-	leaq	.LC3(%rip), %r12
-	jmp	.L54
-	.def	__gxx_personality_seh0;	.scl	2;	.type	32;	.endef
-	.seh_handler	__gxx_personality_seh0, @unwind, @except
-	.seh_handlerdata
+	jmp	.L15
+	.cfi_endproc
+.LFE5520:
+	.globl	__gxx_personality_v0
+	.section	.gcc_except_table._ZNK7fast_io13fast_io_error4whatEv,"aG",@progbits,_ZNK7fast_io13fast_io_error4whatEv,comdat
 	.align 4
-.LLSDA5380:
+.LLSDA5520:
 	.byte	0xff
-	.byte	0x9b
-	.uleb128 .LLSDATT5380-.LLSDATTD5380
-.LLSDATTD5380:
+	.byte	0x3
+	.uleb128 .LLSDATT5520-.LLSDATTD5520
+.LLSDATTD5520:
 	.byte	0x1
-	.uleb128 .LLSDACSE5380-.LLSDACSB5380
-.LLSDACSB5380:
-	.uleb128 .LEHB0-.LFB5380
+	.uleb128 .LLSDACSE5520-.LLSDACSB5520
+.LLSDACSB5520:
+	.uleb128 .LEHB0-.LFB5520
 	.uleb128 .LEHE0-.LEHB0
-	.uleb128 .L66-.LFB5380
+	.uleb128 .L27-.LFB5520
 	.uleb128 0x3
-.LLSDACSE5380:
+.LLSDACSE5520:
 	.byte	0x1
 	.byte	0
 	.byte	0
@@ -718,1204 +337,1559 @@ _ZNK7fast_io13fast_io_error4whatEv:
 	.align 4
 	.long	0
 
-.LLSDATT5380:
-	.section	.text$_ZNK7fast_io13fast_io_error4whatEv,"x"
-	.linkonce discard
-	.seh_endproc
-	.section	.text$_Z7printlnIyJEEvOT_DpOT0_,"x"
-	.linkonce discard
-	.globl	_Z7printlnIyJEEvOT_DpOT0_
-	.def	_Z7printlnIyJEEvOT_DpOT0_;	.scl	2;	.type	32;	.endef
-	.seh_proc	_Z7printlnIyJEEvOT_DpOT0_
-_Z7printlnIyJEEvOT_DpOT0_:
-.LFB14306:
+.LLSDATT5520:
+	.section	.text._ZNK7fast_io13fast_io_error4whatEv,"axG",@progbits,_ZNK7fast_io13fast_io_error4whatEv,comdat
+	.size	_ZNK7fast_io13fast_io_error4whatEv, .-_ZNK7fast_io13fast_io_error4whatEv
+	.section	.text._ZN7fast_io11posix_errorD2Ev,"axG",@progbits,_ZN7fast_io11posix_errorD5Ev,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZN7fast_io11posix_errorD2Ev
+	.type	_ZN7fast_io11posix_errorD2Ev, @function
+_ZN7fast_io11posix_errorD2Ev:
+.LFB15239:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rdi, %rbp
+	movq	$_ZTVN7fast_io13fast_io_errorE+16, (%rdi)
+	movq	8(%rdi), %rdi
+	testq	%rdi, %rdi
+	je	.L43
+	call	_ZdaPv
+.L43:
+	movq	%rbp, %rdi
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	jmp	_ZNSt9exceptionD2Ev
+	.cfi_endproc
+.LFE15239:
+	.size	_ZN7fast_io11posix_errorD2Ev, .-_ZN7fast_io11posix_errorD2Ev
+	.weak	_ZN7fast_io11posix_errorD1Ev
+	.set	_ZN7fast_io11posix_errorD1Ev,_ZN7fast_io11posix_errorD2Ev
+	.section	.text._ZN7fast_io18fast_io_text_errorD2Ev,"axG",@progbits,_ZN7fast_io18fast_io_text_errorD5Ev,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZN7fast_io18fast_io_text_errorD2Ev
+	.type	_ZN7fast_io18fast_io_text_errorD2Ev, @function
+_ZN7fast_io18fast_io_text_errorD2Ev:
+.LFB15243:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rdi, %rbp
+	movq	$_ZTVN7fast_io13fast_io_errorE+16, (%rdi)
+	movq	8(%rdi), %rdi
+	testq	%rdi, %rdi
+	je	.L49
+	call	_ZdaPv
+.L49:
+	movq	%rbp, %rdi
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	jmp	_ZNSt9exceptionD2Ev
+	.cfi_endproc
+.LFE15243:
+	.size	_ZN7fast_io18fast_io_text_errorD2Ev, .-_ZN7fast_io18fast_io_text_errorD2Ev
+	.weak	_ZN7fast_io18fast_io_text_errorD1Ev
+	.set	_ZN7fast_io18fast_io_text_errorD1Ev,_ZN7fast_io18fast_io_text_errorD2Ev
+	.section	.text._ZN7fast_io18fast_io_text_errorD0Ev,"axG",@progbits,_ZN7fast_io18fast_io_text_errorD5Ev,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZN7fast_io18fast_io_text_errorD0Ev
+	.type	_ZN7fast_io18fast_io_text_errorD0Ev, @function
+_ZN7fast_io18fast_io_text_errorD0Ev:
+.LFB15245:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rdi, %rbp
+	movq	$_ZTVN7fast_io13fast_io_errorE+16, (%rdi)
+	movq	8(%rdi), %rdi
+	testq	%rdi, %rdi
+	je	.L55
+	call	_ZdaPv
+.L55:
+	movq	%rbp, %rdi
+	call	_ZNSt9exceptionD2Ev
+	movq	%rbp, %rdi
+	movl	$32, %esi
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	jmp	_ZdlPvm
+	.cfi_endproc
+.LFE15245:
+	.size	_ZN7fast_io18fast_io_text_errorD0Ev, .-_ZN7fast_io18fast_io_text_errorD0Ev
+	.section	.text._ZN7fast_io11posix_errorD0Ev,"axG",@progbits,_ZN7fast_io11posix_errorD5Ev,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZN7fast_io11posix_errorD0Ev
+	.type	_ZN7fast_io11posix_errorD0Ev, @function
+_ZN7fast_io11posix_errorD0Ev:
+.LFB15241:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rdi, %rbp
+	movq	$_ZTVN7fast_io13fast_io_errorE+16, (%rdi)
+	movq	8(%rdi), %rdi
+	testq	%rdi, %rdi
+	je	.L61
+	call	_ZdaPv
+.L61:
+	movq	%rbp, %rdi
+	call	_ZNSt9exceptionD2Ev
+	movq	%rbp, %rdi
+	movl	$24, %esi
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	jmp	_ZdlPvm
+	.cfi_endproc
+.LFE15241:
+	.size	_ZN7fast_io11posix_errorD0Ev, .-_ZN7fast_io11posix_errorD0Ev
+	.section	.text._ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_,"axG",@progbits,_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_
+	.type	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_, @function
+_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_:
+.LFB15266:
+	.cfi_startproc
+	pushq	%r15
+	.cfi_def_cfa_offset 16
+	.cfi_offset 15, -16
 	pushq	%r14
-	.seh_pushreg	%r14
+	.cfi_def_cfa_offset 24
+	.cfi_offset 14, -24
 	pushq	%r13
-	.seh_pushreg	%r13
+	.cfi_def_cfa_offset 32
+	.cfi_offset 13, -32
+	movq	%rsi, %r13
 	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
+	.cfi_def_cfa_offset 40
+	.cfi_offset 12, -40
+	movq	%rdx, %r12
+	pushq	%rbp
+	.cfi_def_cfa_offset 48
+	.cfi_offset 6, -48
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$72, %rsp
-	.seh_stackalloc	72
-	.seh_endprologue
-	movq	%rcx, %rbx
-	movl	$1, %ecx
-.LEHB1:
-	call	*__imp___acrt_iob_func(%rip)
-	movq	%rax, %r12
-	movq	%rax, %rcx
-	call	*__imp__lock_file(%rip)
-.LEHE1:
-	movq	(%r12), %r8
-	movslq	36(%r12), %rax
-	addq	16(%r12), %rax
-	leaq	21(%r8), %rdx
-	movq	(%rbx), %rcx
-	cmpq	%rdx, %rax
-	jbe	.L82
-	testq	%r8, %r8
-	je	.L82
-	movabsq	$9999999999999999, %rax
-	cmpq	%rax, %rcx
-	jbe	.L108
-	movabsq	$4153837486827862103, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$51, %rdx
-	movq	%rdx, %r11
-	movabsq	$10000000000000000, %rax
-	imulq	%rdx, %rax
-	movq	%rcx, %r9
-	subq	%rax, %r9
-	movabsq	$2535301200456458803, %rbx
-	movq	%r9, %rax
-	mulq	%rbx
+	.cfi_def_cfa_offset 56
+	.cfi_offset 3, -56
 	movq	%rdx, %rbx
-	movq	%rdx, %r10
-	shrq	$37, %r10
-	movabsq	$1000000000000, %rax
-	imulq	%r10, %rax
-	movq	%r9, %r10
-	subq	%rax, %r10
-	movabsq	$-6067343680855748867, %r9
-	movq	%r10, %rax
-	mulq	%r9
-	shrq	$26, %rdx
-	leaq	0(,%rdx,4), %rax
-	leaq	(%rax,%rdx), %r9
-	leaq	(%r9,%r9,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdi
-	salq	$4, %rdi
-	shrq	$37, %rbx
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %r9
-	leaq	(%r9,%rbx,4), %rsi
-	leaq	(%rax,%r9), %rbx
-	movabsq	$3777893186295716171, %rdx
-	movq	%r10, %rax
-	mulq	%rdx
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%rdi, %rax
-	leaq	(%r9,%rax,4), %rdi
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	subq	%rax, %r10
-	leaq	(%r9,%r10,4), %rdx
-	leaq	0(,%r11,4), %r10
-	movabsq	$-8446744073709551617, %rax
-	cmpq	%rax, %rcx
-	ja	.L130
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rax
-	movl	(%rax,%r10), %eax
-	movl	%eax, (%r8)
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rax
-	movzbl	(%rax,%r11), %eax
-	addq	%r8, %rax
-	movl	(%rsi), %ecx
-	movl	%ecx, (%rax)
-	movl	(%rbx), %ecx
-	movl	%ecx, 4(%rax)
-	movl	(%rdi), %ecx
-	movl	%ecx, 8(%rax)
-	movl	(%rdx), %edx
-	movl	%edx, 12(%rax)
-	leaq	16(%rax), %r8
-.L110:
-	movb	$10, (%r8)
-	addq	$1, %r8
-	orl	$65536, 24(%r12)
-	movq	%r8, %rax
-	subq	(%r12), %rax
-	subl	%eax, 8(%r12)
-	movq	%r8, (%r12)
-.L106:
-	movq	%r12, %rcx
-	call	*__imp__unlock_file(%rip)
-	nop
-	addq	$72, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	ret
-.L108:
-	movabsq	$999999999999, %rax
-	cmpq	%rax, %rcx
-	jbe	.L111
-	movabsq	$2535301200456458803, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$37, %rdx
-	movq	%rdx, %r10
-	movabsq	$1000000000000, %rax
-	imulq	%rdx, %rax
-	movq	%rcx, %r11
-	subq	%rax, %r11
-	movabsq	$-6067343680855748867, %r9
-	movq	%r11, %rax
-	mulq	%r9
-	shrq	$26, %rdx
-	leaq	0(,%rdx,4), %rax
-	leaq	(%rax,%rdx), %r9
-	leaq	(%r9,%r9,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rsi
-	salq	$4, %rsi
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %rbx
-	leaq	(%rax,%rbx), %r9
-	movabsq	$3777893186295716171, %rdx
-	movq	%r11, %rax
-	mulq	%rdx
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%rsi, %rax
-	leaq	(%rbx,%rax,4), %rsi
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	subq	%rax, %r11
-	leaq	(%rbx,%r11,4), %rdx
-	leaq	0(,%r10,4), %r11
-	movabsq	$999999999999999, %rax
-	cmpq	%rax, %rcx
-	ja	.L131
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rax
-	movl	(%rax,%r11), %eax
-	movl	%eax, (%r8)
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rax
-	movzbl	(%rax,%r10), %eax
-	addq	%r8, %rax
-	movl	(%r9), %ecx
-	movl	%ecx, (%rax)
-	movl	(%rsi), %ecx
-	movl	%ecx, 4(%rax)
-	movl	(%rdx), %edx
-	movl	%edx, 8(%rax)
-	leaq	12(%rax), %r8
-	jmp	.L110
-.L111:
-	cmpq	$99999999, %rcx
-	jbe	.L113
-	movabsq	$-6067343680855748867, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$26, %rdx
-	movq	%rdx, %r9
-	leaq	0(,%rdx,4), %r11
-	leaq	(%r11,%rdx), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %r10
-	salq	$4, %r10
-	movabsq	$3777893186295716171, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%r10, %rax
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %r10
-	leaq	(%r10,%rax,4), %rbx
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	movq	%rcx, %rdx
-	subq	%rax, %rdx
-	leaq	(%r10,%rdx,4), %rdx
-	movabsq	$99999999999, %rax
-	cmpq	%rax, %rcx
-	ja	.L132
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rax
-	movl	(%rax,%r11), %eax
-	movl	%eax, (%r8)
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rax
-	movzbl	(%rax,%r9), %eax
-	addq	%r8, %rax
-	movl	(%rbx), %ecx
-	movl	%ecx, (%rax)
-	movl	(%rdx), %edx
-	movl	%edx, 4(%rax)
-	leaq	8(%rax), %r8
-	jmp	.L110
-.L113:
-	cmpq	$9999, %rcx
-	jbe	.L115
-	movl	$3518437209, %eax
-	imulq	%rcx, %rax
-	shrq	$45, %rax
-	leaq	0(,%rax,4), %r9
-	leaq	(%r9,%rax), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	salq	$4, %rdx
-	subq	%rdx, %rcx
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %rdx
-	leaq	(%rdx,%rcx,4), %rcx
-	cmpq	$999, %rax
-	ja	.L133
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rdx
-	movl	(%rdx,%r9), %edx
-	movl	%edx, (%r8)
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rdx
-	movzbl	(%rdx,%rax), %eax
-	addq	%r8, %rax
-	movl	(%rcx), %edx
-	movl	%edx, (%rax)
-	leaq	4(%rax), %r8
-	jmp	.L110
-.L131:
-	movl	(%rbx,%r11), %eax
-	movl	%eax, (%r8)
-	movl	(%r9), %eax
-	movl	%eax, 4(%r8)
-	movl	(%rsi), %eax
-	movl	%eax, 8(%r8)
-	movl	(%rdx), %eax
-	movl	%eax, 12(%r8)
-	addq	$16, %r8
-	jmp	.L110
-.L82:
-	movabsq	$9999999999999999, %rax
-	cmpq	%rax, %rcx
-	jbe	.L84
-	movabsq	$4153837486827862103, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$51, %rdx
-	movq	%rdx, %r9
-	movabsq	$10000000000000000, %rax
-	imulq	%rdx, %rax
-	movq	%rcx, %r11
-	subq	%rax, %r11
-	movabsq	$2535301200456458803, %r10
-	movq	%r11, %rax
-	mulq	%r10
-	movq	%rdx, %r10
-	movq	%rdx, %r8
-	shrq	$37, %r8
-	movabsq	$1000000000000, %rax
-	imulq	%r8, %rax
-	subq	%rax, %r11
-	movq	%r11, %r8
-	movabsq	$-6067343680855748867, %rdx
-	movq	%r11, %rax
-	mulq	%rdx
-	shrq	$26, %rdx
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rbx
-	salq	$4, %rbx
-	shrq	$37, %r10
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %r11
-	movl	(%r11,%r10,4), %r10d
-	movl	(%r11,%rdx,4), %esi
-	movabsq	$3777893186295716171, %rdx
-	movq	%r8, %rax
-	mulq	%rdx
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%rbx, %rax
-	movl	(%r11,%rax,4), %edi
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	subq	%rax, %r8
-	movl	(%r11,%r8,4), %edx
-	leaq	0(,%r9,4), %r8
-	movabsq	$-8446744073709551617, %rax
-	cmpq	%rax, %rcx
-	ja	.L134
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rax
-	movl	(%rax,%r8), %eax
-	movl	%eax, 32(%rsp)
-	leaq	32(%rsp), %r13
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rax
-	movzbl	(%rax,%r9), %eax
-	leaq	32(%rsp,%rax), %rbx
-	movl	%r10d, (%rbx)
-	movl	%esi, 4(%rbx)
-	movl	%edi, 8(%rbx)
-	movl	%edx, 12(%rbx)
-	addq	$16, %rbx
-.L86:
-	movb	$10, (%rbx)
-	addq	$1, %rbx
-	subq	%r13, %rbx
-	movq	(%r12), %rcx
-	movq	16(%r12), %rdx
-	leaq	(%rcx,%rbx), %rsi
-	movslq	36(%r12), %rax
-	addq	%rdx, %rax
-	cmpq	%rax, %rsi
-	jnb	.L96
-	movq	%rbx, %r8
-	movq	%r13, %rdx
+	subq	%rsi, %rbx
+	subq	$24, %rsp
+	.cfi_def_cfa_offset 80
+	movq	8(%rdi), %rbp
+	movq	4112(%rbp), %rax
+	movq	4104(%rbp), %rdi
+	movq	%rax, %rdx
+	subq	%rdi, %rdx
+	cmpq	%rdx, %rbx
+	ja	.L72
+	movq	%rbx, %rdx
 	call	memcpy
-	orl	$65536, 24(%r12)
-	movq	%rsi, %rax
-	subq	(%r12), %rax
-	subl	%eax, 8(%r12)
-	movq	%rsi, (%r12)
-	jmp	.L106
-.L130:
-	movl	(%r9,%r10), %eax
-	movl	%eax, (%r8)
-	movl	(%rsi), %eax
-	movl	%eax, 4(%r8)
-	movl	(%rbx), %eax
-	movl	%eax, 8(%r8)
-	movl	(%rdi), %eax
-	movl	%eax, 12(%r8)
-	movl	(%rdx), %eax
-	movl	%eax, 16(%r8)
-	addq	$20, %r8
-	jmp	.L110
-.L84:
-	movabsq	$999999999999, %rax
-	cmpq	%rax, %rcx
-	ja	.L135
-	cmpq	$99999999, %rcx
-	jbe	.L89
-	movabsq	$-6067343680855748867, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$26, %rdx
-	movq	%rdx, %r9
-	leaq	0(,%rdx,4), %r11
-	leaq	(%r11,%rdx), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %r10
-	salq	$4, %r10
-	movabsq	$3777893186295716171, %r8
-	movq	%rcx, %rax
-	mulq	%r8
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%r10, %rax
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %r8
-	movl	(%r8,%rax,4), %r10d
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	salq	$4, %rax
-	movq	%rcx, %rdx
-	subq	%rax, %rdx
-	movl	(%r8,%rdx,4), %eax
-	movabsq	$99999999999, %rdx
-	cmpq	%rdx, %rcx
-	ja	.L136
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rdx
-	movl	(%rdx,%r11), %edx
-	movl	%edx, 32(%rsp)
-	leaq	32(%rsp), %r13
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rdx
-	movzbl	(%rdx,%r9), %edx
-	leaq	32(%rsp,%rdx), %rbx
-	movl	%r10d, (%rbx)
-	movl	%eax, 4(%rbx)
-	addq	$8, %rbx
-	jmp	.L86
-.L115:
-	cmpq	$999, %rcx
-	ja	.L137
-	cmpq	$99, %rcx
-	ja	.L138
-	cmpq	$9, %rcx
-	ja	.L139
-	addl	$48, %ecx
-	movb	%cl, (%r8)
-	addq	$1, %r8
-	jmp	.L110
-.L135:
-	movabsq	$2535301200456458803, %rdx
-	movq	%rcx, %rax
-	mulq	%rdx
-	shrq	$37, %rdx
-	movq	%rdx, %r8
-	movabsq	$1000000000000, %rax
-	imulq	%rdx, %rax
-	movq	%rcx, %r9
-	subq	%rax, %r9
-	movabsq	$-6067343680855748867, %rdx
-	movq	%r9, %rax
-	mulq	%rdx
-	shrq	$26, %rdx
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rbx
-	salq	$4, %rbx
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %r10
-	movl	(%r10,%rdx,4), %r11d
-	movabsq	$3777893186295716171, %rdx
-	movq	%r9, %rax
-	mulq	%rdx
-	shrq	$11, %rdx
-	movq	%rdx, %rax
-	subq	%rbx, %rax
-	movl	(%r10,%rax,4), %esi
-	leaq	(%rdx,%rdx,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rax
-	leaq	(%rax,%rax,4), %rdx
-	salq	$4, %rdx
-	movq	%r9, %rax
-	subq	%rdx, %rax
-	movl	(%r10,%rax,4), %r9d
-	leaq	0(,%r8,4), %rdx
-	movabsq	$999999999999999, %rax
-	cmpq	%rax, %rcx
-	ja	.L140
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rax
-	movl	(%rax,%rdx), %eax
-	movl	%eax, 32(%rsp)
-	leaq	32(%rsp), %r13
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rax
-	movzbl	(%rax,%r8), %eax
-	leaq	32(%rsp,%rax), %rbx
-	movl	%r11d, (%rbx)
-	movl	%esi, 4(%rbx)
-	movl	%r9d, 8(%rbx)
-	addq	$12, %rbx
-	jmp	.L86
-.L133:
-	movl	(%rdx,%r9), %eax
-	movl	%eax, (%r8)
-	movl	(%rcx), %eax
-	movl	%eax, 4(%r8)
-	addq	$8, %r8
-	jmp	.L110
-.L137:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %rax
-	movl	(%rax,%rcx,4), %eax
-	movl	%eax, (%r8)
-	addq	$4, %r8
-	jmp	.L110
-.L132:
-	movl	(%r10,%r11), %eax
-	movl	%eax, (%r8)
-	movl	(%rbx), %eax
-	movl	%eax, 4(%r8)
-	movl	(%rdx), %eax
-	movl	%eax, 8(%r8)
-	addq	$12, %r8
-	jmp	.L110
-.L134:
-	movl	(%r11,%r8), %eax
-	movl	%eax, 32(%rsp)
-	movl	%r10d, 36(%rsp)
-	movl	%esi, 40(%rsp)
-	movl	%edi, 44(%rsp)
-	movl	%edx, 48(%rsp)
-	leaq	52(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L89:
-	cmpq	$9999, %rcx
-	jbe	.L91
-	movl	$3518437209, %eax
-	imulq	%rcx, %rax
-	shrq	$45, %rax
-	leaq	0(,%rax,4), %r8
-	leaq	(%r8,%rax), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	leaq	(%rdx,%rdx,4), %rdx
-	salq	$4, %rdx
-	subq	%rdx, %rcx
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %rdx
-	movl	(%rdx,%rcx,4), %ecx
-	cmpq	$999, %rax
-	ja	.L141
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(%rip), %rdx
-	movl	(%rdx,%r8), %edx
-	movl	%edx, 32(%rsp)
-	leaq	32(%rsp), %r13
-	leaq	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rip), %rdx
-	movzbl	(%rdx,%rax), %eax
-	leaq	32(%rsp,%rax), %rbx
-	movl	%ecx, (%rbx)
-	addq	$4, %rbx
-	jmp	.L86
-.L96:
-	testq	%rdx, %rdx
-	je	.L142
-.L98:
-	movq	%r12, %r9
-	movq	%rbx, %r8
-	movl	$1, %edx
-	movq	%r13, %rcx
-.LEHB2:
-	call	fwrite
-.LEHE2:
-	cmpq	%rax, %rbx
-	jbe	.L106
-	movl	$24, %ecx
-	call	__cxa_allocate_exception
-	movq	%rax, %r14
-.LEHB3:
-	call	*__imp__errno(%rip)
-.LEHE3:
-	movl	(%rax), %eax
-	movq	$0, 8(%r14)
-	leaq	16+_ZTVN7fast_io11posix_errorE(%rip), %rdi
-	movq	%rdi, (%r14)
-	movl	%eax, 16(%r14)
-	leaq	_ZN7fast_io11posix_errorD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io11posix_errorE(%rip), %rdx
-	movq	%r14, %rcx
-.LEHB4:
-	call	__cxa_throw
-.L140:
-	movl	(%r10,%rdx), %eax
-	movl	%eax, 32(%rsp)
-	movl	%r11d, 36(%rsp)
-	movl	%esi, 40(%rsp)
-	movl	%r9d, 44(%rsp)
-	leaq	48(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L139:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E(%rip), %rax
-	movzwl	(%rax,%rcx,2), %eax
-	movw	%ax, (%r8)
-	addq	$2, %r8
-	jmp	.L110
-.L91:
-	cmpq	$999, %rcx
-	ja	.L143
-	cmpq	$99, %rcx
-	ja	.L144
-	cmpq	$9, %rcx
-	ja	.L145
-	addl	$48, %ecx
-	movb	%cl, 32(%rsp)
-	leaq	33(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L136:
-	movl	(%r8,%r11), %edx
-	movl	%edx, 32(%rsp)
-	movl	%r10d, 36(%rsp)
-	movl	%eax, 40(%rsp)
-	leaq	44(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L138:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E(%rip), %rax
-	leaq	(%rax,%rcx,4), %rax
-	movzwl	(%rax), %edx
-	movw	%dx, (%r8)
-	movzbl	2(%rax), %eax
-	movb	%al, 2(%r8)
-	addq	$3, %r8
-	jmp	.L110
-.L141:
-	movl	(%rdx,%r8), %eax
-	movl	%eax, 32(%rsp)
-	movl	%ecx, 36(%rsp)
-	leaq	40(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L145:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E(%rip), %rax
-	movzwl	(%rax,%rcx,2), %eax
-	movw	%ax, 32(%rsp)
-	leaq	34(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L143:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(%rip), %rax
-	movl	(%rax,%rcx,4), %eax
-	movl	%eax, 32(%rsp)
-	leaq	36(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L142:
-	movq	%r12, %rcx
-	call	*__imp__fileno(%rip)
-	movl	%eax, %r14d
-	testl	%eax, %eax
-	js	.L146
-	movl	%eax, %ecx
-	call	*__imp__isatty(%rip)
-	testl	%eax, %eax
-	je	.L98
-	movl	%ebx, %r8d
-	movq	%r13, %rdx
-	movl	%r14d, %ecx
-	call	write
-.LEHE4:
-	testl	%eax, %eax
-	jns	.L106
-	movl	$24, %ecx
-	call	__cxa_allocate_exception
-	movq	%rax, %r14
-.LEHB5:
-	call	*__imp__errno(%rip)
-.LEHE5:
-	movl	(%rax), %eax
-	movq	$0, 8(%r14)
-	leaq	16+_ZTVN7fast_io11posix_errorE(%rip), %rdi
-	movq	%rdi, (%r14)
-	movl	%eax, 16(%r14)
-	leaq	_ZN7fast_io11posix_errorD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io11posix_errorE(%rip), %rdx
-	movq	%r14, %rcx
-.LEHB6:
-	call	__cxa_throw
-.LEHE6:
-.L144:
-	leaq	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E(%rip), %rax
-	leaq	(%rax,%rcx,4), %rax
-	movzwl	(%rax), %edx
-	movw	%dx, 32(%rsp)
-	movzbl	2(%rax), %eax
-	movb	%al, 34(%rsp)
-	leaq	35(%rsp), %rbx
-	leaq	32(%rsp), %r13
-	jmp	.L86
-.L120:
-	movq	%rax, %r13
-.L102:
-	movq	%r12, %rcx
-	call	*__imp__unlock_file(%rip)
-	movq	%r13, %rcx
-.LEHB7:
-	call	_Unwind_Resume
-.LEHE7:
-.L121:
-.L129:
-	movq	%rax, %r13
-	movq	%r14, %rcx
-	call	__cxa_free_exception
-	jmp	.L102
-.L146:
-	movl	$24, %ecx
-	call	__cxa_allocate_exception
-	movq	%rax, %r14
-.LEHB8:
-	call	*__imp__errno(%rip)
-.LEHE8:
-	movl	(%rax), %eax
-	movq	$0, 8(%r14)
-	leaq	16+_ZTVN7fast_io11posix_errorE(%rip), %rdi
-	movq	%rdi, (%r14)
-	movl	%eax, 16(%r14)
-	leaq	_ZN7fast_io11posix_errorD1Ev(%rip), %r8
-	leaq	_ZTIN7fast_io11posix_errorE(%rip), %rdx
-	movq	%r14, %rcx
-.LEHB9:
-	call	__cxa_throw
-.LEHE9:
-.L123:
-	jmp	.L129
-.L122:
-	jmp	.L129
-	.seh_handler	__gxx_personality_seh0, @unwind, @except
-	.seh_handlerdata
-.LLSDA14306:
-	.byte	0xff
-	.byte	0xff
-	.byte	0x1
-	.uleb128 .LLSDACSE14306-.LLSDACSB14306
-.LLSDACSB14306:
-	.uleb128 .LEHB1-.LFB14306
-	.uleb128 .LEHE1-.LEHB1
-	.uleb128 0
-	.uleb128 0
-	.uleb128 .LEHB2-.LFB14306
-	.uleb128 .LEHE2-.LEHB2
-	.uleb128 .L120-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB3-.LFB14306
-	.uleb128 .LEHE3-.LEHB3
-	.uleb128 .L121-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB4-.LFB14306
-	.uleb128 .LEHE4-.LEHB4
-	.uleb128 .L120-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB5-.LFB14306
-	.uleb128 .LEHE5-.LEHB5
-	.uleb128 .L123-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB6-.LFB14306
-	.uleb128 .LEHE6-.LEHB6
-	.uleb128 .L120-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB7-.LFB14306
-	.uleb128 .LEHE7-.LEHB7
-	.uleb128 0
-	.uleb128 0
-	.uleb128 .LEHB8-.LFB14306
-	.uleb128 .LEHE8-.LEHB8
-	.uleb128 .L122-.LFB14306
-	.uleb128 0
-	.uleb128 .LEHB9-.LFB14306
-	.uleb128 .LEHE9-.LEHB9
-	.uleb128 .L120-.LFB14306
-	.uleb128 0
-.LLSDACSE14306:
-	.section	.text$_Z7printlnIyJEEvOT_DpOT0_,"x"
-	.linkonce discard
-	.seh_endproc
-	.def	__main;	.scl	2;	.type	32;	.endef
-	.section	.text.startup,"x"
-	.globl	main
-	.def	main;	.scl	2;	.type	32;	.endef
-	.seh_proc	main
-main:
-.LFB13723:
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$56, %rsp
-	.seh_stackalloc	56
-	.seh_endprologue
-	call	__main
-	xorl	%ecx, %ecx
-.LEHB10:
-	call	*__imp___acrt_iob_func(%rip)
-	movq	%rax, %r12
-	movq	%rax, %rcx
-	call	*__imp__lock_file(%rip)
-.LEHE10:
-.L154:
-	movq	(%r12), %r9
-	movslq	8(%r12), %rcx
-	movq	%rcx, %r8
-	addq	%r9, %rcx
-	movq	%r9, %rax
-	cmpq	%rcx, %r9
-	jne	.L151
-	jmp	.L148
-.L186:
-	addq	$1, %rax
-	cmpq	%rax, %rcx
-	je	.L148
-.L151:
-	movzbl	(%rax), %edx
-	cmpb	$13, %dl
-	jbe	.L186
-	cmpb	$32, %dl
-	je	.L186
-	movq	%rax, %rdx
-	subq	%r9, %rdx
-	subl	%edx, %r8d
-	movl	%r8d, 8(%r12)
-	movq	%rax, (%r12)
-	cmpq	%rax, %rcx
-	je	.L182
-	testl	%r8d, %r8d
-	je	.L217
-.L181:
-	movq	(%r12), %rdx
-	xorl	%ebx, %ebx
-	xorl	%r13d, %r13d
-	jmp	.L156
-.L219:
-	leaq	0(%r13,%r13,4), %rcx
-	movzbl	%al, %eax
-	leaq	(%rax,%rcx,2), %r13
-	addq	$1, %rbx
-	addq	$1, %rdx
-	subl	$1, 8(%r12)
-	movq	%rdx, (%r12)
-	je	.L218
-.L156:
-	movzbl	(%rdx), %eax
-	subl	$48, %eax
-	cmpb	$9, %al
-	jbe	.L219
-.L157:
-	testq	%rbx, %rbx
-	je	.L159
-	cmpq	$19, %rbx
-	ja	.L220
-.L168:
-	movq	(%r12), %r9
-	movslq	8(%r12), %rcx
-	movq	%rcx, %r8
-	addq	%r9, %rcx
-	movq	%r9, %rax
-	cmpq	%rcx, %r9
-	jne	.L165
-	jmp	.L162
-.L188:
-	addq	$1, %rax
-	cmpq	%rax, %rcx
-	je	.L162
-.L165:
-	movzbl	(%rax), %edx
-	cmpb	$13, %dl
-	jbe	.L188
-	cmpb	$32, %dl
-	je	.L188
-	movq	%rax, %rdx
-	subq	%r9, %rdx
-	subl	%edx, %r8d
-	movl	%r8d, 8(%r12)
-	movq	%rax, (%r12)
-	cmpq	%rcx, %rax
-	je	.L179
-	testl	%r8d, %r8d
-	je	.L221
-.L178:
-	movq	(%r12), %rdx
-	xorl	%esi, %esi
-	xorl	%ebx, %ebx
-	jmp	.L170
-.L223:
-	leaq	(%rbx,%rbx,4), %rcx
-	movzbl	%al, %eax
-	leaq	(%rax,%rcx,2), %rbx
-	addq	$1, %rsi
-	addq	$1, %rdx
-	subl	$1, 8(%r12)
-	movq	%rdx, (%r12)
-	je	.L222
-.L170:
-	movzbl	(%rdx), %eax
-	subl	$48, %eax
-	cmpb	$9, %al
-	jbe	.L223
-.L171:
-	testq	%rsi, %rsi
-	je	.L173
-	cmpq	$19, %rsi
-	ja	.L224
-.L174:
-	movq	%r12, %rcx
-	call	*__imp__unlock_file(%rip)
-	addq	%r13, %rbx
-	movq	%rbx, 40(%rsp)
-	leaq	40(%rsp), %r13
-	movq	%r13, %rcx
-.LEHB11:
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-	movq	%rbx, 40(%rsp)
-	movq	%r13, %rcx
-	call	_Z7printlnIyJEEvOT_DpOT0_
-.LEHE11:
-	xorl	%eax, %eax
-	addq	$56, %rsp
+	addq	4104(%rbp), %rbx
+.L70:
+	movq	%rbx, 4104(%rbp)
+	addq	$24, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	movq	%r12, %rax
 	popq	%rbx
-	popq	%rsi
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
 	popq	%r12
+	.cfi_def_cfa_offset 32
 	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
 	ret
-.L222:
-	movq	%r12, %rcx
-.LEHB12:
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L171
-	addl	$1, 8(%r12)
-	movq	(%r12), %rax
-	leaq	-1(%rax), %rdx
-	movq	%rdx, (%r12)
-	jmp	.L170
-.L218:
-	movq	%r12, %rcx
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L157
-	addl	$1, 8(%r12)
-	movq	(%r12), %rax
-	leaq	-1(%rax), %rdx
-	movq	%rdx, (%r12)
-	jmp	.L156
-.L162:
+	.p2align 4,,10
+	.p2align 3
+.L72:
+	.cfi_restore_state
+	subq	4096(%rbp), %rax
+	leaq	(%rax,%rax), %r14
+	cmpq	%rbx, %r14
+	cmovb	%rbx, %r14
+	testq	%r14, %r14
+	js	.L73
+	movq	%r14, %rdi
+	call	_Znwm
+	movq	4096(%rbp), %rsi
+	movq	4104(%rbp), %rdx
+	movq	%rax, %rdi
+	movq	%rax, %r15
+	subq	%rsi, %rdx
+	call	memcpy
+	movq	4096(%rbp), %rdi
+	movq	4104(%rbp), %rax
+	subq	%rdi, %rax
+	cmpq	%rbp, %rdi
+	je	.L69
+	movq	4112(%rbp), %rsi
+	movq	%rax, 8(%rsp)
+	subq	%rdi, %rsi
+	call	_ZdlPvm
+	movq	8(%rsp), %rax
+.L69:
+	leaq	(%r15,%rax), %rdi
+	movq	%r15, 4096(%rbp)
+	addq	%r14, %r15
+	movq	%rbx, %rdx
+	movq	%rdi, 4104(%rbp)
+	movq	%r13, %rsi
+	movq	%r15, 4112(%rbp)
+	call	memcpy
+	addq	4104(%rbp), %rbx
+	jmp	.L70
+.L73:
+	call	_ZSt17__throw_bad_allocv
+	.cfi_endproc
+.LFE15266:
+	.size	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_, .-_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_
+	.section	.text._ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE,"axG",@progbits,_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE
+	.type	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE, @function
+_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE:
+.LFB5555:
+	.cfi_startproc
+	pushq	%r15
+	.cfi_def_cfa_offset 16
+	.cfi_offset 15, -16
+	movq	%rdi, %rax
+	movq	%rsi, %rdi
+	pushq	%r14
+	.cfi_def_cfa_offset 24
+	.cfi_offset 14, -24
+	pushq	%r13
+	.cfi_def_cfa_offset 32
+	.cfi_offset 13, -32
+	pushq	%r12
+	.cfi_def_cfa_offset 40
+	.cfi_offset 12, -40
+	pushq	%rbp
+	.cfi_def_cfa_offset 48
+	.cfi_offset 6, -48
+	pushq	%rbx
+	.cfi_def_cfa_offset 56
+	.cfi_offset 3, -56
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 64
+	movq	24(%rax), %r13
+	movq	16(%rax), %rbp
+	movq	(%rsi), %rax
+	movq	(%rax), %rax
+	cmpq	$_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_, %rax
+	jne	.L75
+	movq	8(%rsi), %rbx
+	movq	4112(%rbx), %rax
+	movq	4104(%rbx), %rdi
 	movq	%rax, %rdx
-	subq	%r9, %rdx
-	subl	%edx, %r8d
-	movl	%r8d, 8(%r12)
-	movq	%rax, (%r12)
-.L179:
-	movq	%r12, %rcx
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L167
-	addl	$1, 8(%r12)
-	subq	$1, (%r12)
-	jmp	.L168
-.L148:
+	subq	%rdi, %rdx
+	cmpq	%rdx, %rbp
+	ja	.L81
+	movq	%rbp, %rdx
+	movq	%r13, %rsi
+	call	memcpy
+	addq	%rbp, 4104(%rbx)
+.L74:
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	popq	%rbx
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
+	popq	%r12
+	.cfi_def_cfa_offset 32
+	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L75:
+	.cfi_restore_state
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	leaq	0(%r13,%rbp), %rdx
+	movq	%r13, %rsi
+	popq	%rbx
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
+	popq	%r12
+	.cfi_def_cfa_offset 32
+	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
+	jmp	*%rax
+	.p2align 4,,10
+	.p2align 3
+.L81:
+	.cfi_restore_state
+	subq	4096(%rbx), %rax
+	leaq	(%rax,%rax), %r12
+	cmpq	%rbp, %r12
+	cmovb	%rbp, %r12
+	testq	%r12, %r12
+	js	.L82
+	movq	%r12, %rdi
+	call	_Znwm
+	movq	4096(%rbx), %rsi
+	movq	4104(%rbx), %rdx
+	movq	%rax, %rdi
+	movq	%rax, %r14
+	subq	%rsi, %rdx
+	call	memcpy
+	movq	4096(%rbx), %rdi
+	movq	4104(%rbx), %r15
+	subq	%rdi, %r15
+	cmpq	%rbx, %rdi
+	je	.L78
+	movq	4112(%rbx), %rsi
+	subq	%rdi, %rsi
+	call	_ZdlPvm
+.L78:
+	leaq	(%r14,%r15), %rdi
+	movq	%r14, 4096(%rbx)
+	addq	%r12, %r14
+	movq	%rbp, %rdx
+	movq	%rdi, 4104(%rbx)
+	movq	%r13, %rsi
+	movq	%r14, 4112(%rbx)
+	call	memcpy
+	addq	%rbp, 4104(%rbx)
+	jmp	.L74
+.L82:
+	call	_ZSt17__throw_bad_allocv
+	.cfi_endproc
+.LFE5555:
+	.size	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE, .-_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE
+	.section	.text._ZNK7fast_io11posix_error6reportERNS_14error_reporterE,"axG",@progbits,_ZNK7fast_io11posix_error6reportERNS_14error_reporterE,comdat
+	.align 2
+	.p2align 4
+	.weak	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE
+	.type	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE, @function
+_ZNK7fast_io11posix_error6reportERNS_14error_reporterE:
+.LFB11559:
+	.cfi_startproc
+	pushq	%r15
+	.cfi_def_cfa_offset 16
+	.cfi_offset 15, -16
+	pushq	%r14
+	.cfi_def_cfa_offset 24
+	.cfi_offset 14, -24
+	pushq	%r13
+	.cfi_def_cfa_offset 32
+	.cfi_offset 13, -32
+	pushq	%r12
+	.cfi_def_cfa_offset 40
+	.cfi_offset 12, -40
+	pushq	%rbp
+	.cfi_def_cfa_offset 48
+	.cfi_offset 6, -48
+	movq	%rsi, %rbp
+	pushq	%rbx
+	.cfi_def_cfa_offset 56
+	.cfi_offset 3, -56
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 64
+	movl	16(%rdi), %edi
+	call	strerror
+	movq	%rax, %rdi
+	movq	%rax, %r12
+	call	strlen
+	movq	%rax, %rbx
+	movq	0(%rbp), %rax
+	movq	(%rax), %rax
+	cmpq	$_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_, %rax
+	jne	.L84
+	movq	8(%rbp), %rbp
+	movq	4112(%rbp), %rax
+	movq	4104(%rbp), %rdi
 	movq	%rax, %rdx
-	subq	%r9, %rdx
-	subl	%edx, %r8d
-	movl	%r8d, 8(%r12)
-	movq	%rax, (%r12)
-.L182:
+	subq	%rdi, %rdx
+	cmpq	%rdx, %rbx
+	ja	.L90
+	movq	%rbx, %rdx
+	movq	%r12, %rsi
+	call	memcpy
+	addq	%rbx, 4104(%rbp)
+.L83:
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	popq	%rbx
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
+	popq	%r12
+	.cfi_def_cfa_offset 32
+	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L84:
+	.cfi_restore_state
+	addq	$8, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 56
+	leaq	(%r12,%rbx), %rdx
+	movq	%r12, %rsi
+	movq	%rbp, %rdi
+	popq	%rbx
+	.cfi_def_cfa_offset 48
+	popq	%rbp
+	.cfi_def_cfa_offset 40
+	popq	%r12
+	.cfi_def_cfa_offset 32
+	popq	%r13
+	.cfi_def_cfa_offset 24
+	popq	%r14
+	.cfi_def_cfa_offset 16
+	popq	%r15
+	.cfi_def_cfa_offset 8
+	jmp	*%rax
+	.p2align 4,,10
+	.p2align 3
+.L90:
+	.cfi_restore_state
+	subq	4096(%rbp), %rax
+	leaq	(%rax,%rax), %r13
+	cmpq	%rbx, %r13
+	cmovb	%rbx, %r13
+	testq	%r13, %r13
+	js	.L91
+	movq	%r13, %rdi
+	call	_Znwm
+	movq	4096(%rbp), %rsi
+	movq	4104(%rbp), %rdx
+	movq	%rax, %rdi
+	movq	%rax, %r14
+	subq	%rsi, %rdx
+	call	memcpy
+	movq	4096(%rbp), %rdi
+	movq	4104(%rbp), %r15
+	subq	%rdi, %r15
+	cmpq	%rbp, %rdi
+	je	.L87
+	movq	4112(%rbp), %rsi
+	subq	%rdi, %rsi
+	call	_ZdlPvm
+.L87:
+	leaq	(%r14,%r15), %rdi
+	movq	%r14, 4096(%rbp)
+	addq	%r13, %r14
+	movq	%rbx, %rdx
+	movq	%rdi, 4104(%rbp)
+	movq	%r12, %rsi
+	movq	%r14, 4112(%rbp)
+	call	memcpy
+	addq	%rbx, 4104(%rbp)
+	jmp	.L83
+.L91:
+	call	_ZSt17__throw_bad_allocv
+	.cfi_endproc
+.LFE11559:
+	.size	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE, .-_ZNK7fast_io11posix_error6reportERNS_14error_reporterE
+	.section	.text._ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,"axG",@progbits,_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,comdat
+	.p2align 4
+	.weak	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	.type	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_, @function
+_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_:
+.LFB14753:
+	.cfi_startproc
+	.cfi_personality 0x3,__gxx_personality_v0
+	.cfi_lsda 0x3,.LLSDA14753
+	pushq	%r13
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
+	movq	%rsi, %r13
+	pushq	%r12
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
+	pushq	%rbp
+	.cfi_def_cfa_offset 32
+	.cfi_offset 6, -32
+	pushq	%rbx
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
+	movq	%rdi, %rbx
+	subq	$40, %rsp
+	.cfi_def_cfa_offset 80
+	movq	(%rdi), %rbp
+	movq	%rbp, %rdi
+	call	flockfile
+	movq	(%rbx), %r12
+	movq	0(%r13), %rsi
+	movq	40(%r12), %rcx
+	leaq	21(%rcx), %rax
+	cmpq	%rax, 48(%r12)
+	movabsq	$9999999999999999, %rax
+	jbe	.L124
+	testq	%rcx, %rcx
+	je	.L124
+	cmpq	%rax, %rsi
+	jbe	.L110
+	movabsq	$4153837486827862103, %rdx
+	movq	%rsi, %rax
+	movq	%rsi, %rdi
+	movabsq	$2535301200456458803, %r11
+	mulq	%rdx
+	movabsq	$10000000000000000, %rax
+	shrq	$51, %rdx
+	imulq	%rdx, %rax
+	movq	%rdx, %r9
+	subq	%rax, %rdi
+	movq	%rdi, %rax
+	mulq	%r11
+	movabsq	$1000000000000, %rax
+	movq	%rdx, %r8
+	movq	%rdx, %r11
+	movabsq	$-6067343680855748867, %rdx
+	shrq	$37, %r8
+	shrq	$37, %r11
+	imulq	%r8, %rax
+	subq	%rax, %rdi
+	movq	%rdi, %rax
+	movq	%rdi, %r8
+	movabsq	$3777893186295716171, %rdi
+	mulq	%rdx
+	movq	%r8, %rax
+	shrq	$26, %rdx
+	imulq	$10000, %rdx, %rbx
+	movq	%rdx, %r10
+	mulq	%rdi
+	movabsq	$-8446744073709551617, %rax
+	movq	%rdx, %rdi
+	shrq	$11, %rdi
+	movq	%rdi, %rdx
+	imulq	$10000, %rdi, %rdi
+	subq	%rbx, %rdx
+	subq	%rdi, %r8
+	cmpq	%rax, %rsi
+	ja	.L126
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%r9,4), %eax
+	movl	%eax, (%rcx)
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%r9), %eax
+	addq	%rcx, %rax
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r11,4), %ecx
+	movl	%ecx, (%rax)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r10,4), %ecx
+	movl	%ecx, 4(%rax)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %edx
+	leaq	16(%rax), %rcx
+	movl	%edx, 8(%rax)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r8,4), %edx
+	movl	%edx, 12(%rax)
+.L112:
+	movb	$10, (%rcx)
+	addq	$1, %rcx
+	movq	%rcx, 40(%r12)
+.L109:
+	addq	$40, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	movq	%rbp, %rdi
+	popq	%rbx
+	.cfi_def_cfa_offset 32
+	popq	%rbp
+	.cfi_def_cfa_offset 24
+	popq	%r12
+	.cfi_def_cfa_offset 16
+	popq	%r13
+	.cfi_def_cfa_offset 8
+	jmp	funlockfile
+	.p2align 4,,10
+	.p2align 3
+.L110:
+	.cfi_restore_state
+	movabsq	$999999999999, %rax
+	cmpq	%rax, %rsi
+	jbe	.L113
+	movabsq	$2535301200456458803, %rdx
+	movq	%rsi, %rax
+	movq	%rsi, %r10
+	movabsq	$3777893186295716171, %rdi
+	mulq	%rdx
+	movabsq	$1000000000000, %rax
+	shrq	$37, %rdx
+	imulq	%rdx, %rax
+	movq	%rdx, %r8
+	movabsq	$-6067343680855748867, %rdx
+	subq	%rax, %r10
+	movq	%r10, %rax
+	mulq	%rdx
+	movq	%r10, %rax
+	shrq	$26, %rdx
+	imulq	$10000, %rdx, %r11
+	movq	%rdx, %r9
+	mulq	%rdi
+	movabsq	$999999999999999, %rax
+	shrq	$11, %rdx
+	imulq	$10000, %rdx, %rdi
+	movq	%rdx, %rbx
+	subq	%r11, %rbx
+	subq	%rdi, %r10
+	cmpq	%rax, %rsi
+	ja	.L127
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%r8,4), %eax
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%r8), %edx
+	movl	%eax, (%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r9,4), %eax
+	addq	%rcx, %rdx
+	leaq	12(%rdx), %rcx
+	movl	%eax, (%rdx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rbx,4), %eax
+	movl	%eax, 4(%rdx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r10,4), %eax
+	movl	%eax, 8(%rdx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L113:
+	cmpq	$99999999, %rsi
+	jbe	.L115
+	movabsq	$-6067343680855748867, %rdx
+	movq	%rsi, %rax
+	mulq	%rdx
+	movq	%rsi, %rax
+	movq	%rdx, %rdi
+	movabsq	$3777893186295716171, %rdx
+	mulq	%rdx
+	shrq	$26, %rdi
+	imulq	$10000, %rdi, %r8
+	shrq	$11, %rdx
+	imulq	$10000, %rdx, %rax
+	movq	%rdx, %r9
+	movq	%rsi, %rdx
+	subq	%r8, %r9
+	subq	%rax, %rdx
+	movabsq	$99999999999, %rax
+	cmpq	%rax, %rsi
+	ja	.L128
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%rdi,4), %eax
+	movl	%eax, (%rcx)
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rdi), %eax
+	addq	%rcx, %rax
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r9,4), %ecx
+	movl	%ecx, (%rax)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %edx
+	leaq	8(%rax), %rcx
+	movl	%edx, 4(%rax)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L115:
+	cmpq	$9999, %rsi
+	jbe	.L117
+	movl	$3518437209, %eax
+	imulq	%rsi, %rax
+	shrq	$45, %rax
+	imulq	$10000, %rax, %rdx
+	subq	%rdx, %rsi
+	cmpq	$999, %rax
+	ja	.L129
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%rax,4), %edx
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rax), %eax
+	movl	%edx, (%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rsi,4), %edx
+	addq	%rcx, %rax
+	leaq	4(%rax), %rcx
+	movl	%edx, (%rax)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L127:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r8,4), %eax
+	addq	$16, %rcx
+	movl	%eax, -16(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r9,4), %eax
+	movl	%eax, -12(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rbx,4), %eax
+	movl	%eax, -8(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r10,4), %eax
+	movl	%eax, -4(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L124:
+	cmpq	%rax, %rsi
+	jbe	.L95
+	movabsq	$4153837486827862103, %rdx
+	movq	%rsi, %rax
+	movq	%rsi, %r8
+	movabsq	$2535301200456458803, %rcx
+	mulq	%rdx
+	movabsq	$10000000000000000, %rax
+	shrq	$51, %rdx
+	imulq	%rdx, %rax
+	movq	%rdx, %r11
+	subq	%rax, %r8
+	movq	%r8, %rax
+	mulq	%rcx
+	movabsq	$1000000000000, %rax
+	movq	%rdx, %rdi
+	movq	%rdx, %rcx
+	movabsq	$-6067343680855748867, %rdx
+	shrq	$37, %rdi
+	shrq	$37, %rcx
+	imulq	%rdi, %rax
+	movq	%r8, %rdi
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rcx,4), %r9d
+	subq	%rax, %rdi
+	movq	%rdi, %rax
+	mulq	%rdx
+	movq	%rdi, %rax
+	shrq	$26, %rdx
+	imulq	$10000, %rdx, %r8
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %r10d
+	movabsq	$3777893186295716171, %rdx
+	mulq	%rdx
+	shrq	$11, %rdx
+	imulq	$10000, %rdx, %rcx
+	movq	%rdx, %rax
+	movabsq	$-8446744073709551617, %rdx
+	subq	%r8, %rax
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rax,4), %eax
+	subq	%rcx, %rdi
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdi,4), %ecx
+	cmpq	%rdx, %rsi
+	ja	.L130
+	movd	%eax, %xmm1
+	movd	%ecx, %xmm2
+	movd	%r9d, %xmm0
+	movq	%rsp, %r8
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%r11), %r13d
+	movd	%r10d, %xmm3
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%r11,4), %edx
+	punpckldq	%xmm2, %xmm1
+	punpckldq	%xmm3, %xmm0
+	addq	%r8, %r13
+	punpcklqdq	%xmm1, %xmm0
+	movl	%edx, (%rsp)
+	addq	$16, %r13
+	movups	%xmm0, -16(%r13)
+.L97:
+	movb	$10, 0(%r13)
+	addq	$1, %r13
+	movq	40(%r12), %rdi
+	subq	%r8, %r13
+	leaq	(%rdi,%r13), %rbx
+	cmpq	%rbx, 48(%r12)
+	jbe	.L107
+	movq	%r13, %rdx
+	movq	%r8, %rsi
+	call	memcpy
+	movq	%rbx, 40(%r12)
+	jmp	.L109
+	.p2align 4,,10
+	.p2align 3
+.L126:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r9,4), %eax
+	addq	$20, %rcx
+	movl	%eax, -20(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r11,4), %eax
+	movl	%eax, -16(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r10,4), %eax
+	movl	%eax, -12(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %eax
+	movl	%eax, -8(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r8,4), %eax
+	movl	%eax, -4(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L95:
+	movabsq	$999999999999, %rax
+	cmpq	%rax, %rsi
+	ja	.L131
+	cmpq	$99999999, %rsi
+	jbe	.L100
+	movabsq	$-6067343680855748867, %rdx
+	movq	%rsi, %rax
+	movabsq	$3777893186295716171, %rcx
+	mulq	%rdx
+	movq	%rsi, %rax
+	movq	%rdx, %rdi
+	mulq	%rcx
+	shrq	$26, %rdi
+	imulq	$10000, %rdi, %r8
+	shrq	$11, %rdx
+	movq	%rdx, %rax
+	subq	%r8, %rax
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rax,4), %ecx
+	imulq	$10000, %rdx, %rax
+	movq	%rsi, %rdx
+	subq	%rax, %rdx
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %eax
+	movabsq	$99999999999, %rdx
+	cmpq	%rdx, %rsi
+	ja	.L132
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rdi), %r13d
+	movq	%rsp, %r8
+	movd	%ecx, %xmm0
+	movd	%eax, %xmm5
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%rdi,4), %edx
+	punpckldq	%xmm5, %xmm0
+	addq	%r8, %r13
+	movl	%edx, (%rsp)
+	addq	$8, %r13
+	movq	%xmm0, -8(%r13)
+	jmp	.L97
+	.p2align 4,,10
+	.p2align 3
+.L117:
+	cmpq	$999, %rsi
+	ja	.L133
+	cmpq	$99, %rsi
+	ja	.L134
+	cmpq	$9, %rsi
+	ja	.L135
+	addl	$48, %esi
+	addq	$1, %rcx
+	movb	%sil, -1(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L131:
+	movabsq	$2535301200456458803, %rdx
+	movq	%rsi, %rax
+	movq	%rsi, %r8
+	mulq	%rdx
+	movabsq	$1000000000000, %rax
+	movq	%rdx, %rdi
+	movabsq	$-6067343680855748867, %rdx
+	shrq	$37, %rdi
+	imulq	%rdi, %rax
+	subq	%rax, %r8
+	movq	%r8, %rax
+	mulq	%rdx
+	movq	%r8, %rax
+	shrq	$26, %rdx
+	imulq	$10000, %rdx, %rcx
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %r9d
+	movabsq	$3777893186295716171, %rdx
+	mulq	%rdx
+	shrq	$11, %rdx
+	movq	%rdx, %rax
+	subq	%rcx, %rax
+	imulq	$10000, %rdx, %rcx
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rax,4), %r10d
+	movabsq	$999999999999999, %rax
+	subq	%rcx, %r8
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r8,4), %edx
+	cmpq	%rax, %rsi
+	ja	.L136
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rdi), %r13d
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%rdi,4), %eax
+	movq	%rsp, %r8
+	movd	%r9d, %xmm0
+	movd	%r10d, %xmm4
+	addq	%r8, %r13
+	punpckldq	%xmm4, %xmm0
+	movl	%eax, (%rsp)
+	movl	%edx, 8(%r13)
+	addq	$12, %r13
+	movq	%xmm0, -12(%r13)
+	jmp	.L97
+	.p2align 4,,10
+	.p2align 3
+.L129:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rax,4), %eax
+	addq	$8, %rcx
+	movl	%eax, -8(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rsi,4), %eax
+	movl	%eax, -4(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L133:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rsi,4), %eax
+	addq	$4, %rcx
+	movl	%eax, -4(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L128:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdi,4), %eax
+	addq	$12, %rcx
+	movl	%eax, -12(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r9,4), %eax
+	movl	%eax, -8(%rcx)
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %eax
+	movl	%eax, -4(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L130:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%r11,4), %edx
+	movl	%eax, 12(%rsp)
+	leaq	20(%rsp), %r13
+	movq	%rsp, %r8
+	movl	%r9d, 4(%rsp)
+	movl	%edx, (%rsp)
+	movl	%r10d, 8(%rsp)
+	movl	%ecx, 16(%rsp)
+	jmp	.L97
+	.p2align 4,,10
+	.p2align 3
+.L100:
+	cmpq	$9999, %rsi
+	jbe	.L102
+	movl	$3518437209, %edx
+	movq	%rsi, %rax
+	imulq	%rsi, %rdx
+	shrq	$45, %rdx
+	imulq	$10000, %rdx, %rcx
+	subq	%rcx, %rax
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rax,4), %eax
+	cmpq	$999, %rdx
+	ja	.L137
+	movzbl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE(%rdx), %r13d
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E(,%rdx,4), %ecx
+	movq	%rsp, %r8
+	addq	%r8, %r13
+	movl	%ecx, (%rsp)
+	addq	$4, %r13
+	movl	%eax, -4(%r13)
+	jmp	.L97
+	.p2align 4,,10
+	.p2align 3
+.L107:
 	movq	%r12, %rcx
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L225
-	addl	$1, 8(%r12)
-	subq	$1, (%r12)
-	jmp	.L154
-.L217:
-	movq	%r12, %rcx
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L159
-	addl	$1, 8(%r12)
-	subq	$1, (%r12)
-	jmp	.L181
-.L224:
-	cmpq	$20, %rsi
-	ja	.L189
-	cmpq	$10, %rbx
-	ja	.L174
-.L189:
-	call	_ZN7fast_io7details15detect_overflowILDu10EyEEvRKT0_y.part.0
-.L220:
-	cmpq	$20, %rbx
-	ja	.L187
-	cmpq	$10, %r13
-	ja	.L168
-.L187:
-	call	_ZN7fast_io7details15detect_overflowILDu10EyEEvRKT0_y.part.0
-.L221:
-	movq	%r12, %rcx
-	call	*__imp__filbuf(%rip)
-	addl	$1, %eax
-	je	.L173
-	addl	$1, 8(%r12)
-	subq	$1, (%r12)
-	jmp	.L178
-.L173:
-	call	_ZN7fast_io7details17input_base_numberIyLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
-.LEHE12:
-.L185:
-	movq	%rax, %r13
-	movq	%r12, %rcx
-	call	*__imp__unlock_file(%rip)
-	movq	%r13, %rcx
-.LEHB13:
+	movq	%r13, %rdx
+	movl	$1, %esi
+	movq	%r8, %rdi
+.LEHB1:
+	call	fwrite_unlocked
+	cmpq	%rax, %r13
+	jbe	.L109
+	movl	$24, %edi
+	call	__cxa_allocate_exception
+	movq	%rax, %r12
+	call	__errno_location
+	movq	$_ZTVN7fast_io11posix_errorE+16, (%r12)
+	movl	$_ZN7fast_io11posix_errorD1Ev, %edx
+	movq	%r12, %rdi
+	movq	$0, 8(%r12)
+	movl	(%rax), %eax
+	movl	$_ZTIN7fast_io11posix_errorE, %esi
+	movl	%eax, 16(%r12)
+	call	__cxa_throw
+.LEHE1:
+	.p2align 4,,10
+	.p2align 3
+.L136:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdi,4), %eax
+	movl	%edx, 12(%rsp)
+	leaq	16(%rsp), %r13
+	movq	%rsp, %r8
+	movl	%r9d, 4(%rsp)
+	movl	%eax, (%rsp)
+	movl	%r10d, 8(%rsp)
+	jmp	.L97
+	.p2align 4,,10
+	.p2align 3
+.L135:
+	movzwl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E(%rsi,%rsi), %eax
+	addq	$2, %rcx
+	movw	%ax, -2(%rcx)
+	jmp	.L112
+	.p2align 4,,10
+	.p2align 3
+.L102:
+	cmpq	$999, %rsi
+	ja	.L138
+	cmpq	$99, %rsi
+	ja	.L139
+	cmpq	$9, %rsi
+	ja	.L140
+	leal	48(%rsi), %eax
+	leaq	1(%rsp), %r13
+	movq	%rsp, %r8
+	movb	%al, (%rsp)
+	jmp	.L97
+.L132:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdi,4), %edx
+	movl	%ecx, 4(%rsp)
+	leaq	12(%rsp), %r13
+	movq	%rsp, %r8
+	movl	%eax, 8(%rsp)
+	movl	%edx, (%rsp)
+	jmp	.L97
+.L134:
+	movzwl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E(,%rsi,4), %eax
+	addq	$3, %rcx
+	movw	%ax, -3(%rcx)
+	movzbl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E+2(,%rsi,4), %eax
+	movb	%al, -1(%rcx)
+	jmp	.L112
+.L137:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rdx,4), %edx
+	movl	%eax, 4(%rsp)
+	leaq	8(%rsp), %r13
+	movq	%rsp, %r8
+	movl	%edx, (%rsp)
+	jmp	.L97
+.L140:
+	movzwl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E(%rsi,%rsi), %eax
+	leaq	2(%rsp), %r13
+	movq	%rsp, %r8
+	movw	%ax, (%rsp)
+	jmp	.L97
+.L138:
+	movl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E(,%rsi,4), %eax
+	leaq	4(%rsp), %r13
+	movq	%rsp, %r8
+	movl	%eax, (%rsp)
+	jmp	.L97
+.L139:
+	movzwl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E(,%rsi,4), %eax
+	leaq	3(%rsp), %r13
+	movq	%rsp, %r8
+	movw	%ax, (%rsp)
+	movzbl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E+2(,%rsi,4), %eax
+	movb	%al, 2(%rsp)
+	jmp	.L97
+.L123:
+	movq	%rax, %r12
+.L122:
+	movq	%rbp, %rdi
+	call	funlockfile
+	movq	%r12, %rdi
+.LEHB2:
 	call	_Unwind_Resume
-.LEHE13:
-.L159:
-.LEHB14:
-	call	_ZN7fast_io7details17input_base_numberIyLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
-.L225:
-	call	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERyEEvRT_OT0_.part.0
-.L167:
-	.p2align 4,,5
-	call	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERyEEvRT_OT0_.part.0
-	nop
-.LEHE14:
-	.seh_handler	__gxx_personality_seh0, @unwind, @except
-	.seh_handlerdata
-.LLSDA13723:
+.LEHE2:
+	.cfi_endproc
+.LFE14753:
+	.section	.gcc_except_table._ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,"aG",@progbits,_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,comdat
+.LLSDA14753:
 	.byte	0xff
 	.byte	0xff
 	.byte	0x1
-	.uleb128 .LLSDACSE13723-.LLSDACSB13723
-.LLSDACSB13723:
-	.uleb128 .LEHB10-.LFB13723
-	.uleb128 .LEHE10-.LEHB10
+	.uleb128 .LLSDACSE14753-.LLSDACSB14753
+.LLSDACSB14753:
+	.uleb128 .LEHB1-.LFB14753
+	.uleb128 .LEHE1-.LEHB1
+	.uleb128 .L123-.LFB14753
+	.uleb128 0
+	.uleb128 .LEHB2-.LFB14753
+	.uleb128 .LEHE2-.LEHB2
 	.uleb128 0
 	.uleb128 0
-	.uleb128 .LEHB11-.LFB13723
-	.uleb128 .LEHE11-.LEHB11
+.LLSDACSE14753:
+	.section	.text._ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,"axG",@progbits,_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_,comdat
+	.size	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_, .-_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	.section	.text.unlikely
+.LCOLDB4:
+	.section	.text.startup,"ax",@progbits
+.LHOTB4:
+	.p2align 4
+	.globl	main
+	.type	main, @function
+main:
+.LFB13614:
+	.cfi_startproc
+	.cfi_personality 0x3,__gxx_personality_v0
+	.cfi_lsda 0x3,.LLSDA13614
+	pushq	%r13
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
+	pushq	%r12
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
+	pushq	%rbp
+	.cfi_def_cfa_offset 32
+	.cfi_offset 6, -32
+	pushq	%rbx
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
+	subq	$24, %rsp
+	.cfi_def_cfa_offset 64
+	movq	stdin(%rip), %rbp
+	movq	%rbp, %rdi
+	call	flockfile
+.L147:
+	movq	8(%rbp), %rax
+	movq	16(%rbp), %rcx
+	cmpq	%rcx, %rax
+	jne	.L145
+	jmp	.L142
+	.p2align 4,,10
+	.p2align 3
+.L174:
+	addq	$1, %rax
+	cmpq	%rax, %rcx
+	je	.L142
+.L145:
+	movzbl	(%rax), %edx
+	cmpb	$13, %dl
+	jbe	.L174
+	cmpb	$32, %dl
+	je	.L174
+	movq	%rax, 8(%rbp)
+	cmpq	%rax, %rcx
+	je	.L168
+	xorl	%ebx, %ebx
+	xorl	%r12d, %r12d
+	jmp	.L146
+	.p2align 4,,10
+	.p2align 3
+.L209:
+	leaq	(%r12,%r12,4), %rcx
+	movzbl	%dl, %edx
+	addq	$1, %rax
+	addq	$1, %rbx
+	movq	%rax, 8(%rbp)
+	leaq	(%rdx,%rcx,2), %r12
+	cmpq	16(%rbp), %rax
+	je	.L208
+.L146:
+	movzbl	(%rax), %esi
+	leal	-48(%rsi), %edx
+	cmpb	$9, %dl
+	jbe	.L209
+.L149:
+	testq	%rbx, %rbx
+	je	.L202
+	cmpq	$19, %rbx
+	ja	.L210
+.L159:
+	movq	8(%rbp), %rax
+	movq	16(%rbp), %rcx
+	cmpq	%rcx, %rax
+	jne	.L157
+	jmp	.L154
+	.p2align 4,,10
+	.p2align 3
+.L176:
+	addq	$1, %rax
+	cmpq	%rax, %rcx
+	je	.L154
+.L157:
+	movzbl	(%rax), %edx
+	cmpb	$13, %dl
+	jbe	.L176
+	cmpb	$32, %dl
+	je	.L176
+	movq	%rax, 8(%rbp)
+	cmpq	%rax, %rcx
+	je	.L167
+	xorl	%r13d, %r13d
+	xorl	%ebx, %ebx
+	jmp	.L158
+	.p2align 4,,10
+	.p2align 3
+.L212:
+	leaq	(%rbx,%rbx,4), %rcx
+	movzbl	%dl, %edx
+	addq	$1, %rax
+	addq	$1, %r13
+	movq	%rax, 8(%rbp)
+	leaq	(%rdx,%rcx,2), %rbx
+	cmpq	16(%rbp), %rax
+	je	.L211
+.L158:
+	movzbl	(%rax), %edi
+	leal	-48(%rdi), %edx
+	cmpb	$9, %dl
+	jbe	.L212
+.L161:
+	testq	%r13, %r13
+	je	.L203
+	cmpq	$19, %r13
+	ja	.L213
+.L164:
+	movq	%rbp, %rdi
+	addq	%r12, %rbx
+	call	funlockfile
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+.LEHB3:
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+	movq	stdout(%rip), %rax
+	movq	%rsp, %rsi
+	movq	%rbx, (%rsp)
+	leaq	8(%rsp), %rdi
+	movq	%rax, 8(%rsp)
+	call	_ZN7fast_io7printlnIRNS_19basic_c_io_observerIcEEJmEEEvOT_DpOT0_
+.LEHE3:
+	addq	$24, %rsp
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	xorl	%eax, %eax
+	popq	%rbx
+	.cfi_def_cfa_offset 32
+	popq	%rbp
+	.cfi_def_cfa_offset 24
+	popq	%r12
+	.cfi_def_cfa_offset 16
+	popq	%r13
+	.cfi_def_cfa_offset 8
+	ret
+.L208:
+	.cfi_restore_state
+	movq	%rbp, %rdi
+	call	__underflow
+	addl	$1, %eax
+	je	.L149
+	movq	8(%rbp), %rax
+	jmp	.L146
+.L211:
+	movq	%rbp, %rdi
+	call	__underflow
+	addl	$1, %eax
+	je	.L161
+	movq	8(%rbp), %rax
+	jmp	.L158
+.L154:
+	movq	%rax, 8(%rbp)
+.L167:
+	movq	%rbp, %rdi
+	call	__underflow
+	addl	$1, %eax
+	jne	.L159
+.LEHB4:
+	call	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0
+.L142:
+	movq	%rax, 8(%rbp)
+.L168:
+	movq	%rbp, %rdi
+	call	__underflow
+	addl	$1, %eax
+	jne	.L147
+	call	_ZN7fast_io7details12scan_with_exINS_28basic_c_io_observer_unlockedIcEERmEEvRT_OT0_.part.0
+.LEHE4:
+.L213:
+	cmpq	$20, %r13
+	ja	.L177
+	cmpq	$10, %rbx
+	ja	.L164
+	jmp	.L177
+.L210:
+	cmpq	$20, %rbx
+	ja	.L175
+	cmpq	$10, %r12
+	ja	.L159
+	jmp	.L175
+.L200:
+	jmp	.L201
+	.section	.gcc_except_table,"a",@progbits
+.LLSDA13614:
+	.byte	0xff
+	.byte	0xff
+	.byte	0x1
+	.uleb128 .LLSDACSE13614-.LLSDACSB13614
+.LLSDACSB13614:
+	.uleb128 .LEHB3-.LFB13614
+	.uleb128 .LEHE3-.LEHB3
 	.uleb128 0
 	.uleb128 0
-	.uleb128 .LEHB12-.LFB13723
-	.uleb128 .LEHE12-.LEHB12
-	.uleb128 .L185-.LFB13723
+	.uleb128 .LEHB4-.LFB13614
+	.uleb128 .LEHE4-.LEHB4
+	.uleb128 .L200-.LFB13614
 	.uleb128 0
-	.uleb128 .LEHB13-.LFB13723
-	.uleb128 .LEHE13-.LEHB13
+.LLSDACSE13614:
+	.section	.text.startup
+	.cfi_endproc
+	.section	.text.unlikely
+	.cfi_startproc
+	.cfi_personality 0x3,__gxx_personality_v0
+	.cfi_lsda 0x3,.LLSDAC13614
+	.type	main.cold, @function
+main.cold:
+.LFSB13614:
+.L175:
+	.cfi_def_cfa_offset 64
+	.cfi_offset 3, -40
+	.cfi_offset 6, -32
+	.cfi_offset 12, -24
+	.cfi_offset 13, -16
+.LEHB5:
+	call	_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0
+.LEHE5:
+.L173:
+.L201:
+	movq	%rax, %r12
+	movq	%rbp, %rdi
+	call	funlockfile
+	movq	%r12, %rdi
+.LEHB6:
+	call	_Unwind_Resume
+.LEHE6:
+.L203:
+.LEHB7:
+	call	_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
+.L202:
+	call	_ZN7fast_io7details17input_base_numberImLDu10ELb0ENS_28basic_c_io_observer_unlockedIcEEEET_RT2_.part.0
+.L177:
+	call	_ZN7fast_io7details15detect_overflowILDu10EmEEvRKT0_m.part.0
+.LEHE7:
+	.cfi_endproc
+.LFE13614:
+	.section	.gcc_except_table
+.LLSDAC13614:
+	.byte	0xff
+	.byte	0xff
+	.byte	0x1
+	.uleb128 .LLSDACSEC13614-.LLSDACSBC13614
+.LLSDACSBC13614:
+	.uleb128 .LEHB5-.LCOLDB4
+	.uleb128 .LEHE5-.LEHB5
+	.uleb128 .L173-.LCOLDB4
+	.uleb128 0
+	.uleb128 .LEHB6-.LCOLDB4
+	.uleb128 .LEHE6-.LEHB6
 	.uleb128 0
 	.uleb128 0
-	.uleb128 .LEHB14-.LFB13723
-	.uleb128 .LEHE14-.LEHB14
-	.uleb128 .L185-.LFB13723
+	.uleb128 .LEHB7-.LCOLDB4
+	.uleb128 .LEHE7-.LEHB7
+	.uleb128 .L173-.LCOLDB4
 	.uleb128 0
-.LLSDACSE13723:
-	.section	.text.startup,"x"
-	.seh_endproc
-	.globl	_ZTSSt9exception
-	.section	.rdata$_ZTSSt9exception,"dr"
-	.linkonce same_size
-	.align 8
-_ZTSSt9exception:
-	.ascii "St9exception\0"
-	.globl	_ZTISt9exception
-	.section	.rdata$_ZTISt9exception,"dr"
-	.linkonce same_size
-	.align 8
-_ZTISt9exception:
-	.quad	_ZTVN10__cxxabiv117__class_type_infoE+16
-	.quad	_ZTSSt9exception
-	.globl	_ZTSN7fast_io14error_reporterE
-	.section	.rdata$_ZTSN7fast_io14error_reporterE,"dr"
-	.linkonce same_size
+.LLSDACSEC13614:
+	.section	.text.unlikely
+	.section	.text.startup
+	.size	main, .-main
+	.section	.text.unlikely
+	.size	main.cold, .-main.cold
+.LCOLDE4:
+	.section	.text.startup
+.LHOTE4:
+	.weak	_ZTSN7fast_io14error_reporterE
+	.section	.rodata._ZTSN7fast_io14error_reporterE,"aG",@progbits,_ZTSN7fast_io14error_reporterE,comdat
 	.align 16
+	.type	_ZTSN7fast_io14error_reporterE, @object
+	.size	_ZTSN7fast_io14error_reporterE, 27
 _ZTSN7fast_io14error_reporterE:
-	.ascii "N7fast_io14error_reporterE\0"
-	.globl	_ZTIN7fast_io14error_reporterE
-	.section	.rdata$_ZTIN7fast_io14error_reporterE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io14error_reporterE"
+	.weak	_ZTIN7fast_io14error_reporterE
+	.section	.rodata._ZTIN7fast_io14error_reporterE,"aG",@progbits,_ZTIN7fast_io14error_reporterE,comdat
 	.align 8
+	.type	_ZTIN7fast_io14error_reporterE, @object
+	.size	_ZTIN7fast_io14error_reporterE, 16
 _ZTIN7fast_io14error_reporterE:
 	.quad	_ZTVN10__cxxabiv117__class_type_infoE+16
 	.quad	_ZTSN7fast_io14error_reporterE
-	.globl	_ZTSN7fast_io13fast_io_errorE
-	.section	.rdata$_ZTSN7fast_io13fast_io_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTSN7fast_io13fast_io_errorE
+	.section	.rodata._ZTSN7fast_io13fast_io_errorE,"aG",@progbits,_ZTSN7fast_io13fast_io_errorE,comdat
 	.align 16
+	.type	_ZTSN7fast_io13fast_io_errorE, @object
+	.size	_ZTSN7fast_io13fast_io_errorE, 26
 _ZTSN7fast_io13fast_io_errorE:
-	.ascii "N7fast_io13fast_io_errorE\0"
-	.globl	_ZTIN7fast_io13fast_io_errorE
-	.section	.rdata$_ZTIN7fast_io13fast_io_errorE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io13fast_io_errorE"
+	.weak	_ZTIN7fast_io13fast_io_errorE
+	.section	.rodata._ZTIN7fast_io13fast_io_errorE,"aG",@progbits,_ZTIN7fast_io13fast_io_errorE,comdat
 	.align 8
+	.type	_ZTIN7fast_io13fast_io_errorE, @object
+	.size	_ZTIN7fast_io13fast_io_errorE, 24
 _ZTIN7fast_io13fast_io_errorE:
 	.quad	_ZTVN10__cxxabiv120__si_class_type_infoE+16
 	.quad	_ZTSN7fast_io13fast_io_errorE
 	.quad	_ZTISt9exception
-	.globl	_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
-	.section	.rdata$_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"dr"
-	.linkonce same_size
+	.weak	_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
+	.section	.rodata._ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"aG",@progbits,_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,comdat
 	.align 32
+	.type	_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, @object
+	.size	_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, 77
 _ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE:
-	.ascii "N7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE\0"
-	.globl	_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
-	.section	.rdata$_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE"
+	.weak	_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
+	.section	.rodata._ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"aG",@progbits,_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,comdat
 	.align 8
+	.type	_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, @object
+	.size	_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, 24
 _ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE:
 	.quad	_ZTVN10__cxxabiv120__si_class_type_infoE+16
 	.quad	_ZTSN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
 	.quad	_ZTIN7fast_io14error_reporterE
-	.globl	_ZTSN7fast_io18fast_io_text_errorE
-	.section	.rdata$_ZTSN7fast_io18fast_io_text_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTSN7fast_io18fast_io_text_errorE
+	.section	.rodata._ZTSN7fast_io18fast_io_text_errorE,"aG",@progbits,_ZTSN7fast_io18fast_io_text_errorE,comdat
 	.align 16
+	.type	_ZTSN7fast_io18fast_io_text_errorE, @object
+	.size	_ZTSN7fast_io18fast_io_text_errorE, 31
 _ZTSN7fast_io18fast_io_text_errorE:
-	.ascii "N7fast_io18fast_io_text_errorE\0"
-	.globl	_ZTIN7fast_io18fast_io_text_errorE
-	.section	.rdata$_ZTIN7fast_io18fast_io_text_errorE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io18fast_io_text_errorE"
+	.weak	_ZTIN7fast_io18fast_io_text_errorE
+	.section	.rodata._ZTIN7fast_io18fast_io_text_errorE,"aG",@progbits,_ZTIN7fast_io18fast_io_text_errorE,comdat
 	.align 8
+	.type	_ZTIN7fast_io18fast_io_text_errorE, @object
+	.size	_ZTIN7fast_io18fast_io_text_errorE, 24
 _ZTIN7fast_io18fast_io_text_errorE:
 	.quad	_ZTVN10__cxxabiv120__si_class_type_infoE+16
 	.quad	_ZTSN7fast_io18fast_io_text_errorE
 	.quad	_ZTIN7fast_io13fast_io_errorE
-	.globl	_ZTSN7fast_io3eofE
-	.section	.rdata$_ZTSN7fast_io3eofE,"dr"
-	.linkonce same_size
+	.weak	_ZTSN7fast_io3eofE
+	.section	.rodata._ZTSN7fast_io3eofE,"aG",@progbits,_ZTSN7fast_io3eofE,comdat
 	.align 8
+	.type	_ZTSN7fast_io3eofE, @object
+	.size	_ZTSN7fast_io3eofE, 15
 _ZTSN7fast_io3eofE:
-	.ascii "N7fast_io3eofE\0"
-	.globl	_ZTIN7fast_io3eofE
-	.section	.rdata$_ZTIN7fast_io3eofE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io3eofE"
+	.weak	_ZTIN7fast_io3eofE
+	.section	.rodata._ZTIN7fast_io3eofE,"aG",@progbits,_ZTIN7fast_io3eofE,comdat
 	.align 8
+	.type	_ZTIN7fast_io3eofE, @object
+	.size	_ZTIN7fast_io3eofE, 24
 _ZTIN7fast_io3eofE:
 	.quad	_ZTVN10__cxxabiv120__si_class_type_infoE+16
 	.quad	_ZTSN7fast_io3eofE
 	.quad	_ZTISt9exception
-	.globl	_ZTSN7fast_io11posix_errorE
-	.section	.rdata$_ZTSN7fast_io11posix_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTSN7fast_io11posix_errorE
+	.section	.rodata._ZTSN7fast_io11posix_errorE,"aG",@progbits,_ZTSN7fast_io11posix_errorE,comdat
 	.align 16
+	.type	_ZTSN7fast_io11posix_errorE, @object
+	.size	_ZTSN7fast_io11posix_errorE, 24
 _ZTSN7fast_io11posix_errorE:
-	.ascii "N7fast_io11posix_errorE\0"
-	.globl	_ZTIN7fast_io11posix_errorE
-	.section	.rdata$_ZTIN7fast_io11posix_errorE,"dr"
-	.linkonce same_size
+	.string	"N7fast_io11posix_errorE"
+	.weak	_ZTIN7fast_io11posix_errorE
+	.section	.rodata._ZTIN7fast_io11posix_errorE,"aG",@progbits,_ZTIN7fast_io11posix_errorE,comdat
 	.align 8
+	.type	_ZTIN7fast_io11posix_errorE, @object
+	.size	_ZTIN7fast_io11posix_errorE, 24
 _ZTIN7fast_io11posix_errorE:
 	.quad	_ZTVN10__cxxabiv120__si_class_type_infoE+16
 	.quad	_ZTSN7fast_io11posix_errorE
 	.quad	_ZTIN7fast_io13fast_io_errorE
-	.globl	_ZTVN7fast_io13fast_io_errorE
-	.section	.rdata$_ZTVN7fast_io13fast_io_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTVN7fast_io13fast_io_errorE
+	.section	.rodata._ZTVN7fast_io13fast_io_errorE,"aG",@progbits,_ZTVN7fast_io13fast_io_errorE,comdat
 	.align 8
+	.type	_ZTVN7fast_io13fast_io_errorE, @object
+	.size	_ZTVN7fast_io13fast_io_errorE, 48
 _ZTVN7fast_io13fast_io_errorE:
 	.quad	0
 	.quad	_ZTIN7fast_io13fast_io_errorE
@@ -1923,20 +1897,22 @@ _ZTVN7fast_io13fast_io_errorE:
 	.quad	0
 	.quad	_ZNK7fast_io13fast_io_error4whatEv
 	.quad	__cxa_pure_virtual
-	.globl	_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
-	.section	.rdata$_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"dr"
-	.linkonce same_size
+	.weak	_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
+	.section	.rodata._ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,"aG",@progbits,_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE,comdat
 	.align 8
+	.type	_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, @object
+	.size	_ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE, 40
 _ZTVN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE:
 	.quad	0
 	.quad	_ZTIN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEEE
 	.quad	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE10write_implEPKcS7_
-	.quad	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEy
+	.quad	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13oreserve_implEm
 	.quad	_ZN7fast_io7details19error_reporter_dervIRNS_25internal_temporary_bufferIcEEE13orelease_implEPc
-	.globl	_ZTVN7fast_io18fast_io_text_errorE
-	.section	.rdata$_ZTVN7fast_io18fast_io_text_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTVN7fast_io18fast_io_text_errorE
+	.section	.rodata._ZTVN7fast_io18fast_io_text_errorE,"aG",@progbits,_ZTVN7fast_io18fast_io_text_errorE,comdat
 	.align 8
+	.type	_ZTVN7fast_io18fast_io_text_errorE, @object
+	.size	_ZTVN7fast_io18fast_io_text_errorE, 48
 _ZTVN7fast_io18fast_io_text_errorE:
 	.quad	0
 	.quad	_ZTIN7fast_io18fast_io_text_errorE
@@ -1944,20 +1920,22 @@ _ZTVN7fast_io18fast_io_text_errorE:
 	.quad	_ZN7fast_io18fast_io_text_errorD0Ev
 	.quad	_ZNK7fast_io13fast_io_error4whatEv
 	.quad	_ZNK7fast_io18fast_io_text_error6reportERNS_14error_reporterE
-	.globl	_ZTVN7fast_io3eofE
-	.section	.rdata$_ZTVN7fast_io3eofE,"dr"
-	.linkonce same_size
+	.weak	_ZTVN7fast_io3eofE
+	.section	.rodata._ZTVN7fast_io3eofE,"aG",@progbits,_ZTVN7fast_io3eofE,comdat
 	.align 8
+	.type	_ZTVN7fast_io3eofE, @object
+	.size	_ZTVN7fast_io3eofE, 40
 _ZTVN7fast_io3eofE:
 	.quad	0
 	.quad	_ZTIN7fast_io3eofE
 	.quad	_ZN7fast_io3eofD1Ev
 	.quad	_ZN7fast_io3eofD0Ev
 	.quad	_ZNK7fast_io3eof4whatEv
-	.globl	_ZTVN7fast_io11posix_errorE
-	.section	.rdata$_ZTVN7fast_io11posix_errorE,"dr"
-	.linkonce same_size
+	.weak	_ZTVN7fast_io11posix_errorE
+	.section	.rodata._ZTVN7fast_io11posix_errorE,"aG",@progbits,_ZTVN7fast_io11posix_errorE,comdat
 	.align 8
+	.type	_ZTVN7fast_io11posix_errorE, @object
+	.size	_ZTVN7fast_io11posix_errorE, 48
 _ZTVN7fast_io11posix_errorE:
 	.quad	0
 	.quad	_ZTIN7fast_io11posix_errorE
@@ -1965,3905 +1943,3907 @@ _ZTVN7fast_io11posix_errorE:
 	.quad	_ZN7fast_io11posix_errorD0Ev
 	.quad	_ZNK7fast_io13fast_io_error4whatEv
 	.quad	_ZNK7fast_io11posix_error6reportERNS_14error_reporterE
-	.globl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E
-	.section	.rdata$_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E,"dr"
-	.linkonce same_size
+	.weak	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E
+	.section	.rodata._ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E,"aG",@progbits,_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E,comdat
 	.align 32
+	.type	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E, @gnu_unique_object
+	.size	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E, 4000
 _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table5E:
 	.byte	48
-	.space 3
+	.zero	3
 	.byte	49
-	.space 3
+	.zero	3
 	.byte	50
-	.space 3
+	.zero	3
 	.byte	51
-	.space 3
+	.zero	3
 	.byte	52
-	.space 3
+	.zero	3
 	.byte	53
-	.space 3
+	.zero	3
 	.byte	54
-	.space 3
+	.zero	3
 	.byte	55
-	.space 3
+	.zero	3
 	.byte	56
-	.space 3
+	.zero	3
 	.byte	57
-	.space 3
+	.zero	3
 	.byte	49
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	50
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	51
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	52
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	53
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	54
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	55
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	56
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	48
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	49
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	50
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	51
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	52
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	53
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	54
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	55
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	56
-	.space 2
+	.zero	2
 	.byte	57
 	.byte	57
-	.space 2
+	.zero	2
 	.byte	49
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	57
-	.space 1
-	.globl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E
-	.section	.rdata$_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E,"dr"
-	.linkonce same_size
+	.zero	1
+	.weak	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E
+	.section	.rodata._ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E,"aG",@progbits,_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E,comdat
 	.align 32
+	.type	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E, @gnu_unique_object
+	.size	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E, 40000
 _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E:
 	.byte	48
 	.byte	48
@@ -45865,4015 +45845,4017 @@ _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table4E:
 	.byte	57
 	.byte	57
 	.byte	57
-	.globl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E
-	.section	.rdata$_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E,"dr"
-	.linkonce same_size
+	.weak	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E
+	.section	.rodata._ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E,"aG",@progbits,_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E,comdat
 	.align 32
+	.type	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E, @gnu_unique_object
+	.size	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E, 4000
 _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table3E:
 	.byte	48
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	48
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	49
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	50
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	51
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	52
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	53
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	54
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	55
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	56
 	.byte	57
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	48
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	49
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	50
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	51
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	52
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	53
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	54
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	55
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	56
 	.byte	57
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	48
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	49
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	50
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	51
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	52
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	53
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	54
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	55
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	56
-	.space 1
+	.zero	1
 	.byte	57
 	.byte	57
 	.byte	57
-	.space 1
-	.globl	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E
-	.section	.rdata$_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E,"dr"
-	.linkonce same_size
+	.zero	1
+	.weak	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E
+	.section	.rodata._ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E,"aG",@progbits,_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E,comdat
 	.align 32
+	.type	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E, @gnu_unique_object
+	.size	_ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E, 200
 _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E:
 	.byte	48
 	.byte	48
@@ -50075,10 +50057,11 @@ _ZN7fast_io7details7jiaendu13static_tablesIcLDu48EE6table2E:
 	.byte	56
 	.byte	57
 	.byte	57
-	.globl	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE
-	.section	.rdata$_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE,"dr"
-	.linkonce same_size
+	.weak	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE
+	.section	.rodata._ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE,"aG",@progbits,_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE,comdat
 	.align 32
+	.type	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE, @gnu_unique_object
+	.size	_ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE, 1000
 _ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE:
 	.byte	1
 	.byte	1
@@ -51081,23 +51064,5 @@ _ZN7fast_io7details7jiaendu13static_offsetILb0EE6offsetE:
 	.byte	3
 	.byte	3
 	.weak	__cxa_pure_virtual
-	.ident	"GCC: (master HEAD with MCF thread model, built by cqwrteur.) 11.0.0 20200515 (experimental)"
-	.def	_ZNSt9exceptionD2Ev;	.scl	2;	.type	32;	.endef
-	.def	_ZdlPvy;	.scl	2;	.type	32;	.endef
-	.def	_ZdaPv;	.scl	2;	.type	32;	.endef
-	.def	__cxa_allocate_exception;	.scl	2;	.type	32;	.endef
-	.def	__cxa_throw;	.scl	2;	.type	32;	.endef
-	.def	memcpy;	.scl	2;	.type	32;	.endef
-	.def	_Znwy;	.scl	2;	.type	32;	.endef
-	.def	_ZSt17__throw_bad_allocv;	.scl	2;	.type	32;	.endef
-	.def	strerror;	.scl	2;	.type	32;	.endef
-	.def	strlen;	.scl	2;	.type	32;	.endef
-	.def	_Znay;	.scl	2;	.type	32;	.endef
-	.def	memmove;	.scl	2;	.type	32;	.endef
-	.def	__cxa_begin_catch;	.scl	2;	.type	32;	.endef
-	.def	__cxa_end_catch;	.scl	2;	.type	32;	.endef
-	.def	fwrite;	.scl	2;	.type	32;	.endef
-	.def	write;	.scl	2;	.type	32;	.endef
-	.def	_Unwind_Resume;	.scl	2;	.type	32;	.endef
-	.def	__cxa_free_exception;	.scl	2;	.type	32;	.endef
-	.def	__cxa_pure_virtual;	.scl	2;	.type	32;	.endef
+	.ident	"GCC: (cqwrteur) 11.0.0 20200627 (experimental)"
+	.section	.note.GNU-stack,"",@progbits
