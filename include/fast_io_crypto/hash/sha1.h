@@ -1,6 +1,6 @@
 #pragma once
 
-#if !(defined(__SHA__) && defined(__SSE4_1__))
+#if defined(__SHA__) && defined(__SSE4_1__)
 //requires -msse4.1 -msha
 #include <immintrin.h>  // for intrinsics for sha1 function
 #endif
