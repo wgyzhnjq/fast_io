@@ -1,7 +1,7 @@
 #pragma once
 
-#if defined(__SHA__) && defined(__SSE__)
-//requires -msse4.1 -msse2 -msha
+#if !(defined(__SHA__) && defined(__SSE4_1__))
+//requires -msse4.1 -msha
 #include <immintrin.h>  // for intrinsics for sha1 function
 #endif
 
@@ -9,7 +9,7 @@
 namespace fast_io
 {
 
-#if !(defined(__SHA__) && defined(__SSE__))
+#if !(defined(__SHA__) && defined(__SSE4_1__))
 namespace details::sha1
 {
 namespace
@@ -170,7 +170,7 @@ public:
 	static inline constexpr std::size_t block_size{64};
 	void operator()(std::span<std::uint32_t,5> state,std::span<std::byte const,64> block)
 	{
-#if defined(__SHA__) && defined(__SSE__)
+#if defined(__SHA__) && defined(__SSE4_1__)
 //https://stackoverflow.com/questions/21107350/how-can-i-access-sha-intrinsic
 		__m128i ABCD, ABCD_SAVE, E0, E0_SAVE, E1;
 		__m128i MASK, MSG0, MSG1, MSG2, MSG3;
@@ -528,7 +528,7 @@ public:
 
 	void operator()(std::span<std::uint32_t,5> state,std::span<std::byte const> blocks)
 	{
-#if defined(__SHA__) && defined(__SSE__)
+#if defined(__SHA__) && defined(__SSE4_1__)
 //https://stackoverflow.com/questions/21107350/how-can-i-access-sha-intrinsic
 		__m128i ABCD, ABCD_SAVE, E0, E0_SAVE, E1;
 		__m128i MASK, MSG0, MSG1, MSG2, MSG3;

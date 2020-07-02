@@ -5,7 +5,7 @@ https://github.com/noloader/SHA-Intrinsics/blob/master/sha256-x86.c
 
 namespace fast_io
 {
-#if !(defined(__SHA__) && defined(__SSE__))
+#if !(defined(__SHA__) && defined(__SSE4_1__))
 namespace details::sha256
 {
 inline constexpr std::uint32_t K256[] =
@@ -68,7 +68,7 @@ public:
 	static inline constexpr std::size_t block_size{64};
 	void operator()(std::span<std::uint32_t,8> state,std::span<std::byte const> blocks)
 	{
-#if defined(__SHA__) && defined(__SSE__)
+#if defined(__SHA__) && defined(__SSE4_1__)
 		__m128i STATE0, STATE1;
 		__m128i MSG, TMP;
 		__m128i MSG0, MSG1, MSG2, MSG3;
@@ -479,7 +479,7 @@ public:
 	}
 	void operator()(std::span<std::uint32_t,8> state,std::span<std::byte const,64> block)
 	{
-#if defined(__SHA__) && defined(__SSE__)
+#if defined(__SHA__) && defined(__SSE4_1__)
 		__m128i STATE0, STATE1;
 		__m128i MSG, TMP;
 		__m128i MSG0, MSG1, MSG2, MSG3;
