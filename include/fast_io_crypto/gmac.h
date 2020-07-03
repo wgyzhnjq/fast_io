@@ -69,7 +69,7 @@ inline constexpr std::uint64_t GET_UINT32_BE(std::array<std::byte, 16> const& h,
 
 }
 
-template<typename block_cipher = fast_io::crypto::aes::aes_enc_256>
+template<typename block_cipher>
 requires(block_cipher::block_size == 16)
 struct gmac
 {

@@ -117,12 +117,12 @@ inline constexpr Iter output_shortest(
 								else
 									my_copy_n(u8"e+",2,result);
 								result+=2;
-								my_copy_n(jiaendu::static_tables<char_type>::table2[v2_len-1].data(),2,result);
+								fp_output_two_digits(result,v2_len);
 								result+=2;
 							}
 							else
 							{
-								fp_output_unsigned(result,v2);
+								fp_output_unsigned_with_len(result,v2,v2_len);
 								result+=v2_len;
 							}
 						}
@@ -151,7 +151,7 @@ inline constexpr Iter output_shortest(
 					else
 						my_copy_n(u8"e+",2,result);
 					result+=2;
-					my_copy_n(jiaendu::static_tables<char_type>::table2[v2_len-1].data(),2,result);
+					fp_output_two_digits(result,v2_len-1);
 					result+=2;
 				}
 				return result;

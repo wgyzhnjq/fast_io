@@ -381,7 +381,7 @@ template<output_stream Ohandler,bool forcecopy,typename Buf>
 }
 
 template<output_stream Ohandler,bool forcecopy,typename Buf>
-[[nodiscard]] inline constexpr auto& obuffer_curr(basic_obuf<Ohandler,forcecopy,Buf>& ob)
+[[nodiscard]] inline constexpr auto obuffer_curr(basic_obuf<Ohandler,forcecopy,Buf>& ob)
 {
 	return ob.obuffer.curr;
 }

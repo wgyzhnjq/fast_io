@@ -69,19 +69,13 @@ constexpr io_scatter_t print_scatter_define(manip::chvw<T*> a)
 	return io_scatter(a.reference,a.reference+bsv.size());
 }
 
-template<std::integral char_type>
-constexpr io_scatter_t print_scatter_define(char_type const*)=delete;
 
-template<std::integral char_type>
-constexpr io_scatter_t print_scatter_define(std::basic_string_view<char_type> str)
+template<std::integral char_type,typename T>
+requires (!std::is_pointer_v<std::remove_cvref_t<T>>&&!std::is_array_v<std::remove_cvref_t<T>>&&
+(std::convertible_to<T,std::basic_string_view<char_type>>||(std::same_as<char_type,char>&&std::convertible_to<T,std::basic_string_view<char8_t>>)))
+constexpr io_scatter_t print_scatter_define(T&& convt_str)
 {
-	return io_scatter(str.data(),str.data()+str.size());
-}
-
-template<std::integral char_type>
-requires std::same_as<char_type,char>
-constexpr io_scatter_t print_scatter_define(std::basic_string_view<char8_t> str)
-{
+	std::basic_string_view<std::conditional_t<std::convertible_to<T,std::basic_string_view<char_type>>,char_type,char>> str(std::forward<T>(convt_str));
 	return io_scatter(str.data(),str.data()+str.size());
 }
 

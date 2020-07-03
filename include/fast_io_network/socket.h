@@ -45,8 +45,14 @@ public:
 	}
 #else
 	:handle(
-#if defined(__linux__)&&defined(__x86_64__)
-		system_call<32,int>
+#if defined(__linux__)&&(defined(__x86_64__) || defined(__arm64__) || defined(__aarch64__) )
+		system_call<
+		#if defined(__x86_64__)
+			32
+		#elif defined(__arm64__) || defined(__aarch64__)
+			23
+		#endif
+			,int>
 #else
 		dup
 #endif
@@ -72,8 +78,14 @@ public:
 		handle=bit_cast<sock::details::socket_type>(new_handle);
 #else
 		auto newfd(
-#if defined(__linux__)&&defined(__x86_64__)
-		system_call<33,int>
+#if defined(__linux__)&&(defined(__x86_64__) || defined(__arm64__) || defined(__aarch64__) )
+		system_call<
+		#if defined(__x86_64__)
+			33
+		#elif defined(__arm64__) || defined(__aarch64__)
+			24
+		#endif
+		,int>
 #else
 		dup2
 #endif

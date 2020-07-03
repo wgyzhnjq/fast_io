@@ -831,8 +831,7 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<basic_c_io_obs
 #include"musl.h"
 #elif defined(__BSD_VISIBLE)
 #include"bsd.h"
-#else
-#include"general.h"
 #endif
 
+#include"general.h"
 #include"done.h"
