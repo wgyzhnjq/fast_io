@@ -6,3 +6,4 @@
 #include"md5.h"
 #include"sha.h"
 #include"hmac.h"
+#include"poly1305.h"
