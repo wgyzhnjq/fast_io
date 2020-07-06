@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdio>
-
 namespace fast_io
 {
 
@@ -31,16 +29,17 @@ inline constexpr std::uint64_t U8TO64(std::byte const *p) {
 }
 
 #if defined(_MSC_VER)
+//TODO: MSVC support
 	#include <intrin.h>
 
 	struct uint128_t {
-		unsigned long long lo;
-		unsigned long long hi;
+		std::uint64_t lo;
+		std::uint64_t hi;
 	};
 
 	#define MUL(out, x, y) out.lo = _umul128((x), (y), &out.hi)
-	#define ADD(out, in) { unsigned long long t = out.lo; out.lo += in.lo; out.hi += (out.lo < t) + in.hi; }
-	#define ADDLO(out, in) { unsigned long long t = out.lo; out.lo += in; out.hi += (out.lo < t); }
+	#define ADD(out, in) { std::uint64_t t = out.lo; out.lo += in.lo; out.hi += (out.lo < t) + in.hi; }
+	#define ADDLO(out, in) { std::uint64_t t = out.lo; out.lo += in; out.hi += (out.lo < t); }
 	#define SHR(in, shift) (__shiftright128(in.lo, in.hi, (shift)))
 	#define LO(in) (in.lo)
 
@@ -75,6 +74,7 @@ struct poly1305
 		unsigned char buffer[block_size];
 		unsigned char final;
 	} internal_state;
+	std::array<unsigned char, 16> mac;
 	poly1305(std::span<std::byte const> init_key)
 	{
 		key_type key = {};
@@ -84,7 +84,7 @@ struct poly1305
 			memcpy(key.data(),init_key.data(),init_key.size());
 		}
 		poly1305_state_internal_t *st = &internal_state;
-		unsigned long long t0,t1;
+		std::uint64_t t0,t1;
 
 		/* r &= 0xffffffc0ffffffc0ffffffc0fffffff */
 		t0 = details::U8TO64(&key[0]);
@@ -111,19 +111,14 @@ struct poly1305
 	{
 		return 0;
 	}
-	void operator()(std::span<std::byte const> process_block)
+	void process_single_block(std::span<std::byte const> process_block)
 	{
-		if(process_block.size()!=block_size)
-		{
-			std::printf("size=%lld\n",process_block.size());
-			throw std::runtime_error("block size mismatch");
-		}
 		poly1305_state_internal_t *st = &internal_state;
-		const unsigned long long hibit = (st->final) ? 0 : ((unsigned long long)1 << 40); /* 1 << 128 */
-		unsigned long long r0,r1,r2;
-		unsigned long long s1,s2;
-		unsigned long long h0,h1,h2;
-		unsigned long long c;
+		const std::uint64_t hibit = (st->final) ? 0 : ((std::uint64_t)1 << 40); /* 1 << 128 */
+		std::uint64_t r0,r1,r2;
+		std::uint64_t s1,s2;
+		std::uint64_t h0,h1,h2;
+		std::uint64_t c;
 		uint128_t d0,d1,d2,d;
 
 		r0 = st->r[0];
@@ -141,7 +136,7 @@ struct poly1305
 
 		std::byte const * m(process_block.data());
 		{
-			unsigned long long t0,t1;
+			std::uint64_t t0,t1;
 
 			/* h += m[i] */
 			t0 = U8TO64(&m[0]);
@@ -167,11 +162,17 @@ struct poly1305
 		st->h[0] = h0;
 		st->h[1] = h1;
 		st->h[2] = h2;
-		//this->operator(process_block);
 	}
-	void operator()(std::span<std::byte const,block_size> process_blocks)
+	void operator()(std::span<std::byte const> process_blocks)
 	{
-		throw std::runtime_error("not implemented");//this->operator(process_blocks);
+		std::size_t num_blocks(process_blocks.size() / block_size);
+		for (std::size_t i(0); i < num_blocks; ++i) {
+			process_single_block(process_blocks.subspan(i * block_size, block_size));
+		}
+	}
+	void operator()(std::span<std::byte const,block_size> process_block)
+	{
+		process_single_block(process_block);
 	}
 	void digest(std::span<std::byte const> final_block)
 	{
@@ -225,21 +226,32 @@ struct poly1305
 		h0 = ((h0      ) | (h1 << 44));
 		h1 = ((h1 >> 20) | (h2 << 24));
 
-		// U64TO8(&mac[0], h0);
-		// U64TO8(&mac[8], h1);
+		details::U64TO8(reinterpret_cast<std::byte *>(&mac[0]), h0);
+		details::U64TO8(reinterpret_cast<std::byte *>(&mac[8]), h1);
 	}
 };
 
 
 inline constexpr std::size_t print_reserve_size(print_reserve_type_t<poly1305>)
 {
-	return 1;
+	return 32;
 }
 
 template<std::random_access_iterator caiter>
 inline constexpr caiter print_reserve_define(print_reserve_type_t<poly1305>,caiter iter,auto& i)
 {
-	return iter + 1;
+	auto to_hex([](unsigned char ch){return ch>=10?ch-10+'A':ch+'0';});
+	constexpr std::size_t offset{1};
+	for(auto e : i.mac)
+	{
+		unsigned char hi(e>>4);
+		unsigned char lo(e&0x0F);
+		*iter = to_hex(hi);
+		iter+=1;
+		*iter = to_hex(lo);
+		iter+=1;
+	}
+	return iter;
 }
 
 
