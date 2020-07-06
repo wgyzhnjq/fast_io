@@ -31,9 +31,12 @@ inline constexpr typename floating_traits<floating_type>::mantissa_type me10_to_
 		auto const p5bme10(pow5bits(-e10));
 		e2-=p5bme10;
 		auto j{e2-e10+p5bme10-1+floating_trait::pow5_inv_bitcount};
+#ifdef __SIZEOF_INT128__
 		if constexpr(std::same_as<floating_type,long double>)
 			m2=mul_shift_generic(m10, generic_compute_pow5_inv(-e10), j);
-		else if constexpr(std::same_as<floating_type,float>)
+		else
+#endif
+		if constexpr(std::same_as<floating_type,float>)
 			m2=mul_pow5_inv_div_pow2(m10,-e10,j);
 		else
 			m2=mul_shift(m10,pow5<floating_type,true>::inv_split[-e10],j);
@@ -43,9 +46,12 @@ inline constexpr typename floating_traits<floating_type>::mantissa_type me10_to_
 	{
 		e2+=log2pow5(e10);
 		auto j{e2-e10-pow5bits(e10)+floating_trait::pow5_bitcount};
+#ifdef __SIZEOF_INT128__
 		if constexpr(std::same_as<floating_type,long double>)
 			m2=mul_shift_generic(m10, generic_compute_pow5(e10),j);
-		else if constexpr(std::same_as<floating_type,float>)
+		else
+#endif
+		if constexpr(std::same_as<floating_type,float>)
 			m2=mul_pow5_div_pow2(m10,e10,j);
 		else
 			m2=mul_shift(m10,pow5<floating_type,true>::split[e10],j);

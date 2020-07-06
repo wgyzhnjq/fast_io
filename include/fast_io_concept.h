@@ -186,7 +186,7 @@ concept scatter_input_stream_impl = requires(T& in,std::span<io_scatter_t const>
 template<typename T>
 concept scatter_output_stream_impl = requires(T& out,std::span<io_scatter_t const> sp)
 {
-	{scatter_write(out,sp)}->std::same_as<std::size_t>;
+	scatter_write(out,sp);
 };
 
 }
