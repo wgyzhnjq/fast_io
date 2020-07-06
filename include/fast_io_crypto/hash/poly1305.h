@@ -18,14 +18,14 @@ inline constexpr void U64TO8(std::byte *p, std::uint64_t v) {
 }
 inline constexpr std::uint64_t U8TO64(std::byte const *p) {
 	return
-		(((std::uint64_t)(static_cast<std::uint64_t>(p[0]) & 0xff)      ) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[1]) & 0xff) <<  8) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[2]) & 0xff) << 16) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[3]) & 0xff) << 24) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[4]) & 0xff) << 32) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[5]) & 0xff) << 40) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[6]) & 0xff) << 48) |
-		(( std::uint64_t)(static_cast<std::uint64_t>(p[7]) & 0xff) << 56));
+		(((std::uint64_t)(std::to_integer<std::uint64_t>(p[0]))      ) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[1])) <<  8) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[2])) << 16) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[3])) << 24) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[4])) << 32) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[5])) << 40) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[6])) << 48) |
+		(( std::uint64_t)(std::to_integer<std::uint64_t>(p[7])) << 56));
 }
 
 #if defined(_MSC_VER)
