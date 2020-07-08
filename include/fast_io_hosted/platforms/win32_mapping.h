@@ -50,11 +50,7 @@ inline constexpr win32_file_map_attribute to_win32_file_map_attribute(file_map_a
 	case file_map_attribute::read_write:return win32_file_map_attribute::read|win32_file_map_attribute::write;
 	case file_map_attribute::write_copy:return win32_file_map_attribute::write|win32_file_map_attribute::copy;
 	default:
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("unknown file_mapping_attribute");
-#else
-		fast_terminate();
-#endif
+		FIO_TEXT_ERROR("unknown file_mapping_attribute");
 	};
 }
 
@@ -80,11 +76,7 @@ public:
 	,static_cast<std::uint32_t>(size),nullptr))
 	{
 		if(handle==nullptr)
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 	win32_file_mapping(win32_file_mapping const&)=delete;
 	win32_file_mapping& operator=(win32_file_mapping const&)=delete;
@@ -131,11 +123,7 @@ public:
 			,static_cast<std::uint32_t>(start_address),bytes)),bytes})
 	{
 		if(rg.data()==nullptr)
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 	win32_map_view_of_file(win32_map_view_of_file const&)=delete;
 	win32_map_view_of_file& operator=(win32_map_view_of_file const&)=delete;

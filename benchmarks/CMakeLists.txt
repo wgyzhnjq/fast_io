@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(fastio_examples)
+
+# project(fastio_examples)
+set(CMAKE_FOLDER "benchmarks")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   # using Visual Studio C++
@@ -21,7 +23,7 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 
 
-add_executable(output_10M_size_t "./0000.10m_size_t/output_10M_size_t.cc")
+add_executable(output_10M_size_t "./0000.10m_size_t/legacy/output_10M_size_t.cc")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 add_executable(tenm_size_t "./0000.10m_size_t/with_crypto/tenm_size_t.cc")
 endif()

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 
 project(fast_io)
 
+# add_subdirectory(benchmarks)
+add_subdirectory(examples)
+# add_subdirectory(testsuites)
+
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	# using Visual Studio C++
 add_definitions(/experimental:concepts)

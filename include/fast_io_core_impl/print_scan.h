@@ -29,11 +29,7 @@ inline constexpr void scan_with_ex(input &in,T&& t)
 	else
 	{
 		if(!scan_with_space(in,t))
-#ifdef __cpp_exceptions
-			throw eof();
-#else
-			fast_terminate();
-#endif
+			FIO_EOF();
 	}
 }
 

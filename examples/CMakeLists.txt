@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
-project(fastio_examples)
-find_package(Threceive)
+
+# project(fastio_examples)
+set(CMAKE_FOLDER "examples")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   # using Visual Studio C++

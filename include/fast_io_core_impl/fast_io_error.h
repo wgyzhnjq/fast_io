@@ -7,21 +7,9 @@ class error_reporter
 {
 public:
 	using char_type = char;
-	virtual
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	char const* write_impl(char const*,char const*)=0;
-	virtual
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	char_type* oreserve_impl(std::size_t)=0;
-	virtual
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void orelease_impl(char_type*)=0;
+	virtual FIO_CONSTEXPR char const* write_impl(char const*,char const*)=0;
+	virtual FIO_CONSTEXPR char_type* oreserve_impl(std::size_t)=0;
+	virtual FIO_CONSTEXPR void orelease_impl(char_type*)=0;
 };
 namespace details
 {
@@ -35,10 +23,7 @@ public:
 	template<typename... Args>
 	requires std::constructible_from<sm,Args...>
 	constexpr error_reporter_derv(std::in_place_t,Args&& ...args):reff(std::forward<Args>(args)...){}
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	char const* write_impl(char_type const* b,char_type const* e) override
+	FIO_CONSTEXPR char const* write_impl(char_type const* b,char_type const* e) override
 	{
 		if constexpr(std::same_as<decltype(write(reff,b,e)),void>)
 		{
@@ -48,27 +33,18 @@ public:
 		else
 			return write(reff,b,e);
 	}
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	char_type* oreserve_impl(std::size_t sz) override
+	FIO_CONSTEXPR char_type* oreserve_impl(std::size_t sz) override
 	{
 		return oreserve(reff,sz);
 	}
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void orelease_impl(char_type* ptr) override
+	FIO_CONSTEXPR void orelease_impl(char_type* ptr) override
 	{
 		orelease(reff,ptr);
 	}
 };
 }
 template<std::contiguous_iterator Iter>
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-Iter write(error_reporter& dev,Iter begin,Iter end)
+FIO_CONSTEXPR Iter write(error_reporter& dev,Iter begin,Iter end)
 {
 	if constexpr(std::same_as<std::iter_value_t<Iter>,char>)
 	{
@@ -84,17 +60,11 @@ Iter write(error_reporter& dev,Iter begin,Iter end)
 
 constexpr inline void flush(error_reporter&){}
 
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-inline auto oreserve(error_reporter& dev,std::size_t size)
+FIO_CONSTEXPR inline auto oreserve(error_reporter& dev,std::size_t size)
 {
 	return dev.oreserve_impl(size);
 }
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-inline void orelease(error_reporter& dev,char* ptr)
+FIO_CONSTEXPR inline void orelease(error_reporter& dev,char* ptr)
 {
 	dev.orelease_impl(ptr);
 }
@@ -108,11 +78,7 @@ class fast_io_error
 	details::temp_unique_arr_ptr<char> mutable uptr;
 #endif
 public:
-	virtual
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void report(error_reporter& err) const=0;
+	virtual FIO_CONSTEXPR void report(error_reporter& err) const=0;
 //.what() in std::exception was a horrible mistake
 #ifndef FAST_IO_ERROR_DISABLE_STD_EXCEPTION
 	char const* what() const noexcept override
@@ -195,11 +161,7 @@ class fast_io_text_error:public fast_io_error
 public:
 	std::string_view text;
 	explicit fast_io_text_error(std::string_view txt):text(txt){}
-	virtual
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void report(error_reporter& err) const override
+	virtual FIO_CONSTEXPR void report(error_reporter& err) const override
 	{
 		write(err,text.data(),text.data()+text.size());
 	}

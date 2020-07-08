@@ -150,11 +150,7 @@ inline constexpr bool irefill(basic_ibuf<Ihandler,Buf>& ib)
 	auto ed{ib.ibuffer.end};
 /*
 	if(ed==ib.ibuffer.beg+Buf::size)
-#ifdef __cpp_exceptions
-		throw posix_error(EIO);
-#else
-		fast_terminate();
-#endif
+		FIO_POSIX_ERROR(EIO);
 */
 	ib.ibuffer.end=read(ib.ih,ed,ib.ibuffer.beg+Buf::size);
 	return ib.ibuffer.end!=ed;
@@ -409,11 +405,7 @@ constexpr void obuf_write_force_copy(basic_obuf<Ohandler,forcecopy,Buf>& ob,Iter
 		if(it!=cend)
 		{
 			if(Buf::size<=static_cast<std::size_t>(cend-it))
-#ifdef __cpp_exceptions
-				throw posix_error(EIO);
-#else
-				fast_terminate();
-#endif
+				FIO_POSIX_ERROR(EIO);
 			if constexpr(init)
 			{
 				ob.obuffer.init_space();

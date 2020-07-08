@@ -36,11 +36,7 @@ public:
 		auto const current_process(win32::GetCurrentProcess());
 		void* new_handle{};
 		if(!win32::DuplicateHandle(current_process,bit_cast<void*>(other.handle),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 		handle=bit_cast<sock::details::socket_type>(new_handle);
 	}
 #else
@@ -68,11 +64,7 @@ public:
 		auto const current_process(win32::GetCurrentProcess());
 		void* new_handle{};
 		if(!win32::DuplicateHandle(current_process,bit_cast<void*>(other.handle),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 		if(handle)
 			fast_io::win32::CloseHandle(handle);
 		handle=bit_cast<sock::details::socket_type>(new_handle);
@@ -264,11 +256,7 @@ public:
 inline void unblock(basic_socket<true>& sv)
 {
 	if(::fcntl(sv.native_handle(), F_SETFL, O_NONBLOCK)==-1)
-#ifdef __cpp_exceptions
-		throw posix_error();
-#else
-		fast_terminate();
-#endif
+		FIO_POSIX_ERROR();
 }
 
 inline void unblock(basic_connected_server<true>& sv)

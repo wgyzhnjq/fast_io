@@ -3,3 +3,5 @@ benchmarks/*/*.txt
 */build/*
 !.cc
 *.app
+build/
+.vscode/

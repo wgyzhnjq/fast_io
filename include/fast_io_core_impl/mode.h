@@ -174,11 +174,7 @@ inline auto constexpr to_c_mode(open_mode const& m)
 		return "a+xb"sv;
 	break;
 	default:
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("unknown open mode");
-#else
-		fast_terminate();
-#endif
+		FIO_TEXT_ERROR("unknown open mode");
 	}
 }
 
@@ -217,11 +213,7 @@ inline auto constexpr from_c_mode(std::basic_string_view<ch_type> csm)
 			case 0x2b:
 			break;
 			default:
-#ifdef __cpp_exceptions
-				throw fast_io_text_error("unknown C-style open mode");
-#else
-				fast_terminate();
-#endif
+				FIO_TEXT_ERROR("unknown C-style open mode");
 		}
 	return v;
 }

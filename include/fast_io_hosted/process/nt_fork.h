@@ -35,26 +35,14 @@ inline void* nt_fork()
 {
 	auto mod(GetModuleHandleW(L"ntdll.dll"));
 	if(mod==nullptr)
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	auto proc_addr(GetProcAddress(mod,"RtlCloneUserProcess"));
 	if(proc_addr==nullptr)
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	auto RtlCloneUserProcess(bit_cast<std::uint32_t __stdcall (*)(std::uint32_t,void*,void*,void*,rtl_user_process_information*)>(proc_addr));
 	auto resume_proc_addr(GetProcAddress(mod,"NtResumeProcess"));
 	if(resume_proc_addr==nullptr)
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	auto NtResumeProcess(bit_cast<std::uint32_t __stdcall (*)(void*)>(resume_proc_addr));
 	rtl_user_process_information process_info{};
 
@@ -69,10 +57,8 @@ inline void* nt_fork()
 #ifdef __cpp_exceptions
 			win32::CloseHandle(process_info.thread);
 			win32::CloseHandle(process_info.process);
-			throw win32_error();
-#else
-			fast_terminate();
 #endif
+			FIO_WIN32_ERROR();
 		}
 		win32::CloseHandle(process_info.thread);
 		return process_info.process;
@@ -83,12 +69,7 @@ inline void* nt_fork()
 			throw win32_error();
 		return nullptr;
 	}
-#ifdef __cpp_exceptions
-	throw nt_error(v);
-#else
-	fast_terminate();
-	return nullptr;
-#endif
+	FIO_NT_ERROR(v);
 }
 
 }

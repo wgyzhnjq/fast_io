@@ -129,11 +129,7 @@ FILE_OVERWRITE_IF	Open the file, and overwrite it.	Create the file. 0x00000005
 	{
 		mode.CreateDisposition=1;		//FILE_OPEN
 		if((value&open_mode::trunc)!=open_mode::none)
-#ifdef __cpp_exceptions
-			throw posix_error(EINVAL);
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR(EINVAL);
 	}
 	else if ((value&open_mode::trunc)!=open_mode::none)
 	{
@@ -143,11 +139,7 @@ FILE_OVERWRITE_IF	Open the file, and overwrite it.	Create the file. 0x00000005
 			mode.CreateDisposition=0;	//FILE_SUPERSEDE
 		else
 		{
-#ifdef __cpp_exceptions
-			throw posix_error(EINVAL);
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR(EINVAL);
 		}
 	}
 	else if((value&open_mode::in)==open_mode::none)
@@ -214,11 +206,7 @@ inline Iter write(basic_nt_io_observer<ch_type> obs,Iter cbegin,Iter cend)
 	auto const status{win32::nt::nt_write_file(obs.handle,nullptr,nullptr,nullptr,
 		std::addressof(block), std::to_address(cbegin), static_cast<std::uint32_t>(to_write), nullptr, nullptr)};
 	if(status)
-#ifdef __cpp_exceptions
-		throw nt_error(status);
-#else
-		fast_terminate();
-#endif
+		FIO_NT_ERROR(status);
 	return cbegin+(*block.Information)/sizeof(*cbegin);
 }
 
@@ -305,11 +293,7 @@ public:
 		mode.DesiredAccess,std::addressof(obj),std::addressof(block),nullptr,mode.FileAttributes,
 		mode.ShareAccess,mode.CreateDisposition,mode.CreateOptions,nullptr,0)};
 		if(status)
-#ifdef __cpp_exceptions
-			throw nt_error(status);
-#else
-			fast_terminate();
-#endif
+			FIO_NT_ERROR(status);
 	}
 	~basic_nt_file()
 	{

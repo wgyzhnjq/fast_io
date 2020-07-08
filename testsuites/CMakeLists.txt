@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
-project(fastio_examples)
-find_package(Threceive)
+
+# project(fastio_examples)
+set(CMAKE_FOLDER "testsuites")
+
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

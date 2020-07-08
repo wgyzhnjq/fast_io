@@ -11,11 +11,7 @@ inline auto create_io_completion_port(Args&&... args)
 {
 	auto ptr{fast_io::win32::CreateIoCompletionPort(std::forward<Args>(args)...)};
 	if(ptr==nullptr)[[unlikely]]
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	return ptr;
 }
 
@@ -41,11 +37,7 @@ std::uint32_t dwFlagsAndAttributes)
 		dwFlagsAndAttributes,
 		nullptr));
 		if(handle==((void*) (std::intptr_t)-1))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 		return handle;
 	}
 	else
@@ -58,11 +50,7 @@ std::uint32_t dwFlagsAndAttributes)
 		dwFlagsAndAttributes,
 		nullptr));
 		if(handle==((void*) (std::intptr_t)-1))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 		return handle;
 	}
 }
@@ -166,11 +154,7 @@ does not exist
 	{
 		mode.dwCreationDisposition=1;//	CREATE_NEW
 		if((value&open_mode::trunc)!=open_mode::none)
-#ifdef __cpp_exceptions
-			throw posix_error(EINVAL);
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR(EINVAL);
 	}
 	else if ((value&open_mode::trunc)!=open_mode::none)
 	{
@@ -180,11 +164,7 @@ does not exist
 			mode.dwCreationDisposition=5;//TRUNCATE_EXISTING
 		else
 		{
-#ifdef __cpp_exceptions
-			throw posix_error(EINVAL);
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR(EINVAL);
 		}
 	}
 	else if((value&open_mode::in)==open_mode::none)
@@ -330,22 +310,14 @@ public:
 	{
 		auto const current_process(win32::GetCurrentProcess());
 		if(!win32::DuplicateHandle(current_process,other.native_handle(),current_process,std::addressof(this->native_handle()), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 	basic_win32_io_handle& operator=(basic_win32_io_handle const& other)
 	{
 		auto const current_process(win32::GetCurrentProcess());
 		void* new_handle{};
 		if(!win32::DuplicateHandle(current_process,other.native_handle(),current_process,std::addressof(new_handle), 0, true, 2/*DUPLICATE_SAME_ACCESS*/))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 		close_impl();
 		this->native_handle()=new_handle;
 		return *this;
@@ -383,11 +355,7 @@ inline std::common_type_t<std::int64_t, std::size_t> seek(basic_win32_io_observe
 	std::int64_t distance_to_move_high{};
 	std::int64_t seekposition{seek_precondition<std::int64_t,T,ch_type>(i)};
 	if(!win32::SetFilePointerEx(handle.native_handle(),seekposition,std::addressof(distance_to_move_high),static_cast<std::uint32_t>(s)))
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	return distance_to_move_high;
 }
 
@@ -410,11 +378,7 @@ inline Iter read(basic_win32_io_observer<ch_type> handle,Iter begin,Iter end)
 		auto err(win32::GetLastError());
 		if(err==109)
 			return begin;
-#ifdef __cpp_exceptions
-		throw win32_error(err);
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR(err);
 	}
 	return begin+(numberOfBytesRead/sizeof(*begin));
 }
@@ -428,11 +392,7 @@ inline Iter write(basic_win32_io_observer<ch_type> handle,Iter cbegin,Iter cend)
 			to_write=static_cast<std::size_t>(UINT32_MAX);
 	std::uint32_t numberOfBytesWritten;
 	if(!win32::WriteFile(handle.native_handle(),std::to_address(cbegin),static_cast<std::uint32_t>(to_write),std::addressof(numberOfBytesWritten),nullptr))
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 	return cbegin+numberOfBytesWritten/sizeof(*cbegin);
 }
 /*
@@ -460,10 +420,8 @@ inline void async_read(basic_win32_io_observer<ch_type> h,Iter begin,Iter end)
 #ifdef __cpp_exceptions
 		over->~overlapped();
 		delete[] ptr;
-		throw win32_error(err);
-#else
-		fast_terminate();
 #endif
+		FIO_WIN32_ERROR(err);
 	}
 }
 */
@@ -488,10 +446,8 @@ inline void async_write_callback(basic_win32_io_observer<ch_type> h,Iter cbegin,
 			return;
 #ifdef __cpp_exceptions
 		delete over;
-		throw win32_error(err);
-#else
-		fast_terminate();
 #endif
+		FIO_WIN32_ERROR(err);
 	}
 }
 
@@ -510,11 +466,7 @@ requires requires(basic_win32_io_observer<ch_type> h,Args&& ...args)
 inline void io_control(basic_win32_io_observer<ch_type> h,Args&& ...args)
 {
 	if(!fast_io::win32::DeviceIoControl(h.native_handle(),std::forward<Args>(args)...))
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 }
 
 /*
@@ -552,11 +504,7 @@ public:
 	basic_win32_file(fast_io::native_interface_t,Args&& ...args):basic_win32_io_handle<char_type>(win32::CreateFileW(std::forward<Args>(args)...))
 	{
 		if(native_handle()==((void*) (std::intptr_t)-1))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 
 	template<open_mode om,perms pm>
@@ -636,11 +584,7 @@ public:
 		if(this->native_handle())[[likely]]
 		{
 			if(win32::CloseHandle(this->native_handle()))
-#ifdef __cpp_exceptions
-				throw win32_error();
-#else
-				fast_terminate();
-#endif
+				FIO_WIN32_ERROR();
 			this->native_handle()=nullptr;
 		}
 	}
@@ -663,11 +607,7 @@ inline void truncate(basic_win32_io_observer<ch_type> handle,std::size_t size)
 {
 	seek(handle,size,seekdir::beg);
 	if(!win32::SetEndOfFile(handle.native_handle()))
-#ifdef __cpp_exceptions
-		throw win32_error();
-#else
-		fast_terminate();
-#endif
+		FIO_WIN32_ERROR();
 }
 
 template<std::integral ch_type>
@@ -690,11 +630,7 @@ public:
 			std::addressof(pipes.front().native_handle()),
 			std::addressof(pipes.back().native_handle()),
 			std::forward<Args>(args)...))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 	basic_win32_pipe()
 	{
@@ -708,11 +644,7 @@ public:
 			std::addressof(pipes.front().native_handle()),
 			std::addressof(pipes.back().native_handle()),
 			std::addressof(sec_attr),0))
-#ifdef __cpp_exceptions
-			throw win32_error();
-#else
-			fast_terminate();
-#endif
+			FIO_WIN32_ERROR();
 	}
 /*
 	template<std::size_t om>

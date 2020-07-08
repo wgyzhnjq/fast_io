@@ -26,10 +26,6 @@ inline constexpr void space_scan_define(input& in,manip::bound<T> a)
 	space_scan_define(in,a.reference);
 	if(a.lower<=a.reference&&a.reference<=a.upper)[[likely]]
 		return;
-#ifdef __cpp_exceptions
-	throw fast_io_text_error("malformed input");
-#else
-	fast_terminate();
-#endif
+	FIO_TEXT_ERROR("malformed input");
 }
 }

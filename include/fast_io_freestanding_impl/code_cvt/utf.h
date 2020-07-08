@@ -63,14 +63,8 @@ inline constexpr std::size_t utf_get_code_units(char32_t cdpt, T* pDst)
 			pDst[3] = static_cast<T>(0x80 | (cdpt         & 0x3F));
 			return 4;
 		}
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("illegal utf32 code unit");
-#else
-		fast_terminate();
-		return 0;
-#endif
+		FIO_TEXT_ERROR("illegal utf32 code unit");
 	}
-
 }
 
 
@@ -182,11 +176,7 @@ inline constexpr to_iter utf_code_convert_details(from_iter& p_src_begin_iter,fr
 						p_dst+=utf_get_code_units(cdpt, p_dst);
 				}
 				else
-#ifdef __cpp_exceptions
-					throw fast_io_text_error("illegal utf8");
-#else
-					fast_terminate();
-#endif
+					FIO_TEXT_ERROR("illegal utf8");
 			}
 		}
 
@@ -217,11 +207,7 @@ inline constexpr to_iter utf_code_convert_details(from_iter& p_src_begin_iter,fr
 						p_dst+=utf_get_code_units(cdpt, p_dst);
 				}
 				else
-#ifdef __cpp_exceptions
-					throw fast_io_text_error("illegal utf8");
-#else
-					fast_terminate();
-#endif
+					FIO_TEXT_ERROR("illegal utf8");
 			}
 		}
 		if constexpr(stream)

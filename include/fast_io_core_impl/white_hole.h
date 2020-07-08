@@ -121,11 +121,7 @@ inline constexpr Iter read(white_hole<ch_type>,Iter begin,Iter end)
 #ifdef __RDSEED__
 		return details::white_hole::read_impl(begin,end);
 #else
-#ifdef __cpp_exceptions
-		throw posix_error(EIO);
-#else
-		fast_terminate();
-#endif
+		FIO_POSIX_ERROR(EIO);
 #endif
 }
 

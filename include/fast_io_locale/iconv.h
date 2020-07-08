@@ -44,11 +44,7 @@ public:
 	posix_iconv(std::string_view to_code,std::string_view from_code):posix_iconv(bit_cast<std::uintptr_t>(iconv_open(to_code.data(),from_code.data())))
 	{
 		if(this->native_handle()==std::uintptr_t(-1))
-#ifdef __cpp_exceptions
-			throw posix_error();
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR();
 	}
 	posix_iconv(posix_iconv const&)=delete;
 	posix_iconv& operator=(posix_iconv const&)=delete;

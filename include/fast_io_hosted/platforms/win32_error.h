@@ -32,10 +32,7 @@ public:
 	{
 		return ec;
 	}
-#if __cpp_constexpr >= 201907L
-	constexpr
-#endif
-	void report(error_reporter& report) const override
+	FIO_CONSTEXPR void report(error_reporter& report) const override
 	{
 		details::report_win32_error(report,ec);
 	}
@@ -45,11 +42,7 @@ namespace details
 {
 inline void throw_win32_error()
 {
-#ifdef __cpp_exceptions
-	throw win32_error();
-#else
-	fast_terminate();
-#endif
+	FIO_WIN32_ERROR();
 }
 }
 }

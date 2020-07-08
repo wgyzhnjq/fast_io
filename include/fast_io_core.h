@@ -3,6 +3,7 @@
 //fast_io_core.h is required to be usable in freestanding environment with EVEN dynamic memory allocation and exceptions are disabled.
 
 #include"fast_io_concept.h"
+#include"fast_io_macros.h"
 
 #include<limits>
 #include<cstdint>

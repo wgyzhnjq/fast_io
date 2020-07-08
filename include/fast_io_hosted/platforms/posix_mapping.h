@@ -52,11 +52,7 @@ inline constexpr posix_file_map_attribute to_posix_file_map_attribute(file_map_a
 	case file_map_attribute::read_write:return posix_file_map_attribute::read|posix_file_map_attribute::write;
 	case file_map_attribute::write_copy:return posix_file_map_attribute::write;
 	default:
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("unknown file_mapping_attribute");
-#else
-		fast_terminate();
-#endif
+		FIO_TEXT_ERROR("unknown file_mapping_attribute");
 	};
 }
 
@@ -75,30 +71,18 @@ public:
         struct stat file_stat;
         auto fstat_ret(fstat(bf.native_handle(), std::addressof(file_stat)));
         if (fstat_ret == -1)
-#ifdef __cpp_exceptions
-                throw posix_error();
-#else
-		fast_terminate();
-#endif
+			FIO_POSIX_ERROR();
         std::size_t file_size_in_bytes(file_stat.st_size);
         if (bytes > file_size_in_bytes)
         {
             // allocate more space for this file
             auto fallocate_ret(fallocate(bf.native_handle(), 0, file_size_in_bytes, bytes - file_size_in_bytes));
             if (fallocate_ret == -1)
-#ifdef __cpp_exceptions
-                throw posix_error();
-#else
-		fast_terminate();
-#endif
+				FIO_POSIX_ERROR();
         }
         auto ret(static_cast<std::byte*>(mmap(nullptr, bytes, static_cast<int>(to_posix_file_map_attribute(attr)), MAP_SHARED, bf.native_handle(), start_address)));
         if (ret == MAP_FAILED)
-#ifdef __cpp_exceptions
-                throw posix_error();
-#else
-		fast_terminate();
-#endif
+			FIO_POSIX_ERROR();
         rg = {ret, bytes};
 	}
 	//auto native_handle() const {return wfm.native_handle();}

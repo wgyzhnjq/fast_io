@@ -19,10 +19,7 @@ public:
 	constexpr internal_temporary_buffer()=default;
 	internal_temporary_buffer(internal_temporary_buffer const&)=delete;
 	internal_temporary_buffer& operator=(internal_temporary_buffer const&)=delete;
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	~internal_temporary_buffer()
+	FIO_DYN_CONSTEXPR ~internal_temporary_buffer()
 	{
 		if(beg_ptr!=static_buffer.data())
 		{

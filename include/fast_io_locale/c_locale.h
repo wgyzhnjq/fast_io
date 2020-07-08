@@ -205,21 +205,13 @@ public:
 	c_locale_handle(c_locale_handle const& c):c_locale_observer(duplocale(c.native_handle()))
 	{
 		if(!*this)
-#ifdef __cpp_exceptions
-			throw posix_error();
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR();
 	}
 	c_locale_handle& operator=(c_locale_handle const& c)
 	{
 		auto cloned{duplocale(c.native_handle())};
 		if(cloned==static_cast<native_handle_type>(0))
-#ifdef __cpp_exceptions
-			throw posix_error();
-#else
-			fast_terminate();
-#endif
+			FIO_POSIX_ERROR();
 		if(*this)[[likely]]
 #if defined(__WINNT__) || defined(_MSC_VER)
 			_free_locale(this->native_handle());
@@ -268,11 +260,7 @@ public:
 )
 {
 	if(!*this)
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("unknown locale");
-#else
-		fast_terminate();
-#endif
+		FIO_TEXT_ERROR("unknown locale");
 }
 	c_locale(c_locale_category catg):
 		c_locale_handle(
@@ -284,11 +272,7 @@ public:
 )
 {
 	if(!*this)
-#ifdef __cpp_exceptions
-		throw fast_io_text_error("unknown locale");
-#else
-		fast_terminate();
-#endif
+		FIO_TEXT_ERROR("unknown locale");
 }
 	~c_locale()
 	{

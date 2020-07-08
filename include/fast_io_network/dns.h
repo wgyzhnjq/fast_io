@@ -51,11 +51,7 @@ inline address operator*(dns_iterator const &a)
 		memcpy(ret.storage.data(), std::addressof(addr.sin6_addr), sizeof(ret.storage));
 		return address(ret);
 	}
-#ifdef __cpp_exceptions
-	throw fast_io_text_error("unknown family");
-#else
-	fast_terminate();
-#endif
+	FIO_TEXT_ERROR("unknown family");
 }
 inline constexpr dns_iterator& operator++(dns_iterator& a)
 {

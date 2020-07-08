@@ -11,10 +11,7 @@ class temp_unique_arr_ptr
 public:
 	T* ptr{};
 	constexpr temp_unique_arr_ptr()=default;
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	temp_unique_arr_ptr(std::size_t size):ptr(new T[size]){}
+	FIO_DYN_CONSTEXPR temp_unique_arr_ptr(std::size_t size):ptr(new T[size]){}
 	temp_unique_arr_ptr(temp_unique_arr_ptr const&)=delete;
 	temp_unique_arr_ptr& operator=(temp_unique_arr_ptr const&)=delete;
 	constexpr temp_unique_arr_ptr(temp_unique_arr_ptr&& bmv) noexcept:ptr(bmv.ptr)
@@ -37,19 +34,13 @@ public:
 	{
 		return ptr;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	void reset(T* nptr) noexcept
+	FIO_DYN_CONSTEXPR void reset(T* nptr) noexcept
 	{
 		if(ptr)[[likely]]
 			delete[] ptr;
 		ptr=nptr;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	temp_unique_arr_ptr& operator=(temp_unique_arr_ptr&& bmv) noexcept
+	FIO_DYN_CONSTEXPR temp_unique_arr_ptr& operator=(temp_unique_arr_ptr&& bmv) noexcept
 	{
 		if(bmv.ptr==ptr)
 			return *this;
@@ -58,10 +49,7 @@ public:
 		bmv.ptr=nullptr;
 		return *this;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	~temp_unique_arr_ptr()
+	FIO_DYN_CONSTEXPR ~temp_unique_arr_ptr()
 	{
 		delete[] ptr;
 	}
@@ -75,10 +63,7 @@ public:
 	std::size_t size;
 	T* ptr;
 	constexpr temp_unique_allocator_ptr():size(),ptr(){}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	temp_unique_allocator_ptr(std::size_t sz):size(sz)
+	FIO_DYN_CONSTEXPR temp_unique_allocator_ptr(std::size_t sz):size(sz)
 	{
 		std::allocator<T> alloc;
 		ptr=std::allocator_traits<std::allocator<T>>::allocate(alloc,size);
@@ -106,10 +91,7 @@ public:
 	{
 		return ptr;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	void reset(T* nptr,std::size_t sz) noexcept
+	FIO_DYN_CONSTEXPR void reset(T* nptr,std::size_t sz) noexcept
 	{
 		if(ptr)[[likely]]
 		{
@@ -119,10 +101,7 @@ public:
 		size=sz;
 		ptr=nptr;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	temp_unique_allocator_ptr& operator=(temp_unique_allocator_ptr&& bmv) noexcept
+	FIO_DYN_CONSTEXPR temp_unique_allocator_ptr& operator=(temp_unique_allocator_ptr&& bmv) noexcept
 	{
 		if(bmv.ptr==ptr)
 			return *this;
@@ -137,10 +116,7 @@ public:
 		bmv.ptr=nullptr;
 		return *this;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	~temp_unique_allocator_ptr()
+	FIO_DYN_CONSTEXPR ~temp_unique_allocator_ptr()
 	{
 		if(ptr)[[likely]]
 		{

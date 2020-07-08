@@ -18,17 +18,11 @@ public:
 	constexpr vector_buffer()=default;
 	vector_buffer(vector_buffer const& other)=delete;
 	vector_buffer& operator=(vector_buffer const& other)=delete;
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	vector_buffer(vector_buffer&& other) noexcept:beg_ptr(other.beg_ptr),end_ptr(other.end_ptr),capacity_ptr(other.capacity_ptr)
+	FIO_DYN_CONSTEXPR vector_buffer(vector_buffer&& other) noexcept:beg_ptr(other.beg_ptr),end_ptr(other.end_ptr),capacity_ptr(other.capacity_ptr)
 	{
 		other.beg_ptr=other.end_ptr=other.capacity_ptr=nullptr;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	vector_buffer& operator=(vector_buffer&& other) noexcept
+	FIO_DYN_CONSTEXPR vector_buffer& operator=(vector_buffer&& other) noexcept
 	{
 		if(std::addressof(other)==this)
 			return *this;
@@ -43,10 +37,7 @@ public:
 		other.beg_ptr=other.end_ptr=other.capacity_ptr=nullptr;
 		return *this;
 	}
-#if __cpp_constexpr_dynamic_alloc >= 201907L
-	constexpr
-#endif
-	~vector_buffer()
+	FIO_DYN_CONSTEXPR ~vector_buffer()
 	{
 		if(beg_ptr)[[likely]]
 		{

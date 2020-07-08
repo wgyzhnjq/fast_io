@@ -12,10 +12,7 @@ public:
 	{
 		return ecd;
 	}
-#if __cpp_constexpr >= 201907L
-	//constexpr
-#endif
-	void report(error_reporter& report) const override
+	/* FIO_CONSTEXPR */ void report(error_reporter& report) const override
 	{
 		print(report,std::string_view(strerror(ecd)));
 	}
