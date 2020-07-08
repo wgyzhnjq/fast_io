@@ -866,8 +866,10 @@ inline constexpr caiter print_reserve_define(print_reserve_type_t<basic_c_io_obs
 #include"musl.h"
 #elif defined(__BSD_VISIBLE)
 #if defined(__NEWLIB__)
+#ifndef (__CUSTOM_FILE_IO__)
 #include"newlib.h"
-#elif !defined(__CUSTOM_FILE_IO__))
+#endif
+#else
 #include"bsd.h"
 #endif
 #endif
