@@ -44,7 +44,9 @@ For Linux, you can watch this video to help you install the latest GCC easily. h
 - Universal CRT
 - BSD libc
 - MUSL libc
-- To do: Bionic
+- To do (before we supported them, they will be emulated with POSIX apis):
+- Newlib
+- Bionic
 
 ## Supported C++ standard library std::streambuf/std::filebuf hacks platforms
 - GCC libstdc++
